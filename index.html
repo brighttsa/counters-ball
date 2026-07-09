@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Counters Ball 3D — Ghanaian Tabletop Football</title>
+<style>
+  :root {
+    --chalk: #fdf6e6;
+    --warm-shadow: rgba(43, 24, 8, 0.55);
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #2b1a0c; }
+  #game-canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  #game-canvas.aiming { cursor: grabbing; }
+
+  .hud { position: fixed; left: 0; right: 0; display: flex; justify-content: center;
+         pointer-events: none; font-family: "Chalkboard SE", "Comic Sans MS", "Segoe Print", cursive; }
+
+  #scoreboard { top: 18px; gap: 18px; align-items: baseline;
+    color: var(--chalk); text-shadow: 0 2px 6px var(--warm-shadow); }
+  #scoreboard .team-name { font-size: 15px; letter-spacing: 2px; opacity: 0.85; }
+  #scoreboard .score-digits { font-size: 34px; font-weight: 700; }
+  #scoreboard .turn-dot { width: 10px; height: 10px; border-radius: 50%;
+    align-self: center; box-shadow: 0 0 8px 2px rgba(255, 210, 120, 0.8); transition: opacity 0.3s; }
+  #turn-dot-red { background: #d6503a; }
+  #turn-dot-green { background: #3f9b6a; }
+  .turn-dot.inactive { opacity: 0.15; box-shadow: none; }
+
+  #flick-hint { bottom: 22px; color: var(--chalk); font-size: 14px; letter-spacing: 1px;
+    opacity: 0.65; text-shadow: 0 1px 4px var(--warm-shadow); transition: opacity 1s; }
+  #flick-hint.faded { opacity: 0; }
+
+  #goal-banner { top: 34%; font-size: clamp(48px, 9vw, 96px); font-weight: 800;
+    color: #ffe9b8; letter-spacing: 6px;
+    text-shadow: 0 0 24px rgba(255, 176, 64, 0.9), 0 4px 12px var(--warm-shadow);
+    opacity: 0; transform: scale(0.8); transition: opacity 0.25s, transform 0.35s cubic-bezier(.2,1.6,.4,1); }
+  #goal-banner.show { opacity: 1; transform: scale(1); }
+  #goal-banner .goal-scorer { display: block; text-align: center; font-size: 18px;
+    letter-spacing: 3px; margin-top: 4px; opacity: 0.85; }
+
+  #film-frame { position: fixed; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 140px 30px rgba(30, 14, 2, 0.55); }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <div id="scoreboard" class="hud">
+    <span id="turn-dot-red" class="turn-dot"></span>
+    <span class="team-name">ACCRA&nbsp;REDS</span>
+    <span class="score-digits"><span id="score-red">0</span>&nbsp;–&nbsp;<span id="score-green">0</span></span>
+    <span class="team-name">KUMASI&nbsp;GREENS</span>
+    <span id="turn-dot-green" class="turn-dot inactive"></span>
+  </div>
+
+  <div id="goal-banner" class="hud">
+    <span>GOOOAL!<span class="goal-scorer" id="goal-scorer-label"></span></span>
+  </div>
+
+  <div id="flick-hint" class="hud">drag a bottle cap back &nbsp;·&nbsp; release to flick</div>
+  <div id="film-frame"></div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
