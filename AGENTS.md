@@ -45,7 +45,7 @@ Codex's worktree uses port **4181** (see below). Open `http://localhost:<port>`.
 - Check the console for errors after every visual change.
 
 ## Git
-- If `git`/`python3` complain about the Xcode licence, use
+- If `git`/`python3` complain about the Xcode licence (Codex hits this too), use
   `/Library/Developer/CommandLineTools/usr/bin/git` (and `.../python3`).
 - Conventional commits (`feat:`, `fix:`, `refactor:`, `docs:`…), describe the
   change, **no AI/agent references** in messages. Small, focused commits.
@@ -54,7 +54,7 @@ Codex's worktree uses port **4181** (see below). Open `http://localhost:<port>`.
 ## Collaboration protocol (Claude Code ⇄ Codex)
 | | Claude Code | Codex |
 |---|---|---|
-| Folder | `/Users/bskt/Counters ball` | `/Users/bskt/Counters ball-codex` (git worktree) |
+| Folder | `/Users/bskt/Counters ball` | `/Users/bskt/Documents/ChatGPT/Counters ball` (git worktree) |
 | Branch | `main` | `codex/workspace` (or `codex/<task>`) |
 | Dev server port | 4180 | 4181 |
 
