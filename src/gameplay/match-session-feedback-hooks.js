@@ -80,6 +80,7 @@ export function wireMatchFeedback(session) {
     sound.whistle();
     if (versus || !rules.isAi(scorer)) sound.goalCheer();
     else sound.groan();
+    session.stage.backdrop.startle(); // the neighbourhood reacts too
     particles.confettiBurst(goalX);
     juice.wobbleGoal(Math.sign(goalX), 0.6);
     cameraDirector.celebrateGoal(goalX);

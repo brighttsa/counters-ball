@@ -72,6 +72,31 @@ backdrop tint and sun-glow colour, so a venue is a single coherent look.
 - **Chalk lines:** never straight — jittered segments, varying alpha, dust bleed,
   palm smudges along the touchlines.
 
+## 4b. Venue environments (`src/scene/environment/`)
+**Principle — the world lives at your feet.** The 45° play camera's top edge meets
+the ground ~6 units (≈1.2 m) behind the table and never sees the sky, so each
+venue is built where the eye actually lands: the ground, what lies on it, and
+the base of the building behind. Everything is true to bottle-cap scale
+(1 unit ≈ 19 cm) and pushed back into a **depth-of-field sharp zone**: the whole
+pitch stays crisp (±1.9 units of focus), the street falls off into bokeh.
+
+| Venue | Ground | On the ground | Behind | Air |
+|---|---|---|---|---|
+| Adabraka Primary | trampled playground, chalk hopscotch | school bag, exercise book, sandals, caps | cream classroom block, louvre windows, school sign | neem leaf shade |
+| Nima Market Road | red laterite, tyre tracks, oil stains | bottle crate, basin of oranges, sachets, caps | blue container kiosk, stocked hatch, "GOD'S TIME IS THE BEST" | light shade, motes |
+| Auntie Ama's veranda | polished red screed with scored squares, swept yard | raffia mat, slippers, snake plants in tins, oranges | terracotta house, green shutters | mango leaf shade |
+| Tema Junction | laterite shoulder, open gutter with loose slabs, asphalt | old tyre, coal pot, sachets | chop bar menu board, "NO KING AS GOD" | chickens cross the road |
+| Tamale Lorry Station | pale compacted sand, deep ruts | grain sacks, jerrycan, tyre | chalk destination board | harmattan dust banks, guinea fowl |
+| Jamestown | cracked damp concrete, sand, fish-scale glints | fishing net pile, lit coal pot, basin | canoe-stripe mural, lit "MAGIC SPOT" hatch | bulb + hatch spill flicker together |
+
+- **Animals:** chickens (guinea fowl in the north) wander, peck, look around and
+  scatter flapping on every goal. They stay at the top edge of frame so only
+  soft legs and bellies pass through — never a foreground prop.
+- **Props are real geometry**, casting and receiving real shadows (sun shadow
+  box widened to ±7.5, 4096² map, so the table itself shades the ground).
+- **Rejected:** sleeping dog/cat built from primitives (read as toys at this
+  distance); a sky dome (never on screen).
+
 ## 5. Motion & feedback grammar
 The rule: **every contact produces sound, particles, deformation and camera
 response, scaled by one shared 0..1 strength** (impulse → approach speed).
@@ -93,7 +118,8 @@ response, scaled by one shared 0..1 strength** (impulse → approach speed).
   wobble, camera push-in, trauma shake, bloom pulse, slammed `GOOOAL!` banner.
 
 ## 6. Post stack (order matters)
-Render → UnrealBloom (0.22 base, 0.32 at night, threshold 0.93) → OutputPass
+Render → Bokeh depth of field (sharp zone ±1.9 around the look target, then
+aperture 0.004 up to 0.013 max blur; focus tracks the camera director) → UnrealBloom (0.22 base, 0.32 at night, threshold 0.93) → OutputPass
 (ACES, per-preset exposure) → grain pass **after** tone mapping, like real film:
 35mm hash grain, warm grade, dust-haze veil toward the light, vignette floor
 0.72. The CSS `#film-frame` inset shadow completes the frame.

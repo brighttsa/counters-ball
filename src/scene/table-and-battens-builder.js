@@ -43,6 +43,7 @@ export function buildTableAndBattens(group, surface, seed) {
     new THREE.MeshStandardMaterial({ color: 0x5f4326, roughness: 0.95 })
   );
   crate.position.y = -0.49;
+  crate.castShadow = true;
   group.add(crate);
 
   const battenMat = new THREE.MeshStandardMaterial({

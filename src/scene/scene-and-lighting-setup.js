@@ -26,7 +26,7 @@ function configureSoftShadow(light, size, extent) {
     Object.assign(light.shadow.camera, { left: -extent, right: extent, top: extent, bottom: -extent });
   }
   light.shadow.camera.near = 0.5;
-  light.shadow.camera.far = 12;
+  light.shadow.camera.far = 30;
   light.shadow.bias = -0.0006;
   light.shadow.radius = 5; // soft penumbra edges
 }
@@ -37,8 +37,9 @@ export function buildLightRig(preset) {
   rig.name = 'light-rig';
 
   const sun = new THREE.DirectionalLight(preset.sun.color, preset.sun.intensity);
-  sun.position.set(...preset.sun.position);
-  configureSoftShadow(sun, 2048, 3.2);
+  // Pushed out along its direction so the shadow box covers the street around the table too.
+  sun.position.set(...preset.sun.position).multiplyScalar(2.5);
+  configureSoftShadow(sun, 4096, 7.5);
   rig.add(sun, sun.target);
 
   rig.add(new THREE.HemisphereLight(preset.hemi.sky, preset.hemi.ground, preset.hemi.intensity));

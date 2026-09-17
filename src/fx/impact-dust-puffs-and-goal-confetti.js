@@ -2,7 +2,7 @@
 // behind a fast ball, and a burst of newspaper + flag-coloured paper scraps
 // that flutters down and stays on the table until kickoff.
 import * as THREE from 'three';
-import { softGlowSpriteTexture } from '../scene/street-background-environment.js';
+import { softGlowSpriteTexture } from '../scene/environment/canvas-texture-helpers.js';
 import { WALL_HALF_LENGTH, WALL_HALF_WIDTH } from '../core/pitch-dimensions-and-constants.js';
 
 const DUST_POOL = 70;

@@ -6,6 +6,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 
 const FilmGrainWarmHazeShader = {
   uniforms: {
@@ -38,6 +39,16 @@ const FilmGrainWarmHazeShader = {
 export function createPostProcessing(renderer, scene, camera) {
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
+  // Shallow depth of field: sharp at the table, the street behind melts softly.
+  // The stock shader blurs linearly from the focal plane; a sharp zone keeps the whole
+  // pitch crisp and lets only the street beyond it fall off into bokeh.
+  const bokeh = new BokehPass(scene, camera, { focus: 5, aperture: 0.004, maxblur: 0.013 });
+  bokeh.uniforms.sharpZone = { value: 1.9 };
+  bokeh.materialBokeh.fragmentShader = bokeh.materialBokeh.fragmentShader
+    .replace('uniform float focus;', 'uniform float focus;\n\t\tuniform float sharpZone;')
+    .replace('float factor = ( focus + viewZ );', 'float delta = focus + viewZ;\n\t\t\tfloat factor = sign( delta ) * max( abs( delta ) - sharpZone, 0.0 );');
+  bokeh.materialBokeh.needsUpdate = true;
+  composer.addPass(bokeh);
   const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.22, 0.6, 0.93);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
@@ -60,6 +71,10 @@ export function createPostProcessing(renderer, scene, camera) {
       grain.uniforms.uHaze.value = preset.haze.amount;
       grain.uniforms.uHazeColor.value.set(...preset.haze.color);
       bloomBase = preset.bulb ? 0.32 : 0.22;
+    },
+
+    setFocus(distance) {
+      if (Number.isFinite(distance)) bokeh.uniforms.focus.value = distance;
     },
 
     pulseBloom(amount) {

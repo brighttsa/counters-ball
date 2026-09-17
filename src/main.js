@@ -165,6 +165,7 @@ function frame(now) {
   const t = now / 1000;
   app.session?.update(dt, t);
   cameraDirector.update(dt, t);
+  post.setFocus(cameraDirector.focusDistance);
   post.update(dt, t);
   post.render();
 }

@@ -130,6 +130,7 @@ export class CameraDirector {
     pos.z += shake * 0.06 * smoothNoise(t, 35, 3);
 
     this.camera.position.copy(pos);
+    this.focusDistance = pos.distanceTo(look); // depth-of-field focus rides the look target
     this.camera.lookAt(look);
     this.camera.rotateZ(shake * 0.03 * smoothNoise(t, 23, 4));
   }

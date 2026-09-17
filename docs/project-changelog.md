@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-09-17 — Venue environments
+
+### Added
+- Realistic, place-true surroundings for all six pitches: painted ground per
+  venue (playground hopscotch, laterite, polished red veranda floor, roadside
+  gutter and asphalt, lorry-station sand, Jamestown concrete), true-scale ground
+  props, building fronts with hand-painted signs, wandering chickens and guinea
+  fowl that scatter on goals, swaying leaf shade, harmattan dust banks, and a
+  night bulb and kiosk hatch that flicker on the same circuit.
+- Depth of field with a sharp zone: the pitch stays crisp, the street blurs.
+
+### Changed
+- Sun shadows now cover the street around the table (±7.5 units, 4096² map).
+- Old blurred-plane backdrop, tint and glow-sprite presets removed.
+
 ## 2026-09-11 — Campaign, interface and game feel
 
 Turned the visual-direction prototype into a playable game.
