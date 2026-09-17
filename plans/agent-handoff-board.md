@@ -26,7 +26,7 @@ Protocol: see `AGENTS.md` → Collaboration protocol.
 ## Done (newest first)
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|
-| Portrait framing (turn the view a quarter on tall screens) | Claude Code | pending | Camera director now swings 90° below 0.95 aspect: pitch runs up the screen, you attack upward, table ~54% bigger at 390×844. Landscape identical (fit 4.04). Verified flick direction, goal push-in, intro crane, no console errors. |
+| Portrait framing (turn the view a quarter on tall screens) | Claude Code | `4eb8791` | Camera director now swings 90° below 0.95 aspect: pitch runs up the screen, you attack upward, table ~54% bigger at 390×844. Landscape identical (fit 4.04). Verified flick direction, goal push-in, intro crane, no console errors. |
 | Mobile touch pass | Codex (built) + Claude Code (verified, merged) | `e982a1b` | Merged to `main`. Verified in browser at 375×812, 320×640, 640×360 and 844×390: 18px-miss touch grab works, pointercancel/blur abort without spending a flick, second finger ignored, mouse still flicks, right button ignored, HUD fits with no overflow, 48px controls, pause clear of sound. No console errors. Physical-device feel still unassessed. |
 | Deployment documentation handoff (documentation only) | Codex docs | Commit containing this note | Claimed and completed deployment board entry, handoff report, and shared `docs/journals/` entry. Checked supplied evidence and documentation diff; public delivery remains blocked above. No implementation changes. |
 | Realistic venue environments matched to pitch names | Claude Code | `1820560` | Ground, props, walls, fowl, shade, dust, night spill light, DOF sharp zone. Verified all 6 venues in browser, no errors. |
