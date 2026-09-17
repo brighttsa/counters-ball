@@ -48,8 +48,8 @@ level-card number badge and intro chip — one colour, everywhere that team appe
 | `harmattan` | `#ffe4c0` @ 1.7 + hemi 1.15 | Flat diffuse dust, fog pulled to 0.6–8.5 |
 | `night-bulb` | Moon `#7f92c4` @ 0.35 + warm spot bulb | One hanging bulb, deep falloff |
 
-Each preset also carries exposure, fog range, haze colour/amount, grain amount,
-backdrop tint and sun-glow colour, so a venue is a single coherent look.
+Each preset also carries exposure, fog range, haze colour/amount, grain amount
+and an optional bulb, so a venue is a single coherent look.
 
 ## 4. Materiality rules
 - **Everything procedural** (canvas 2D → `CanvasTexture`): no binary assets; wear

@@ -52,11 +52,11 @@ camera focus.
 - **New venue**: add an entry to `CAMPAIGN_LEVELS` (surface, lighting preset,
   backdrop key, obstacles, rules, opponent). No other file needs to change.
 - **New lighting**: add a preset to `LIGHTING_PRESETS`; it carries exposure, fog,
-  haze, grain, tint and optional bulb.
+  haze, grain and an optional bulb.
 - **New venue surroundings**: add an entry to `VENUE_ENVIRONMENTS`
   (`src/scene/environment/venue-environment-compositions.js`): ground painter,
   wall features, props `[builder, x, z, rotation, options]`, animals, shade, dust.
-  Keep bulky props and animals at z ≤ -4.6 so they stay soft behind the table.
+  Keep bulky props at z ≤ -4.6 and animals at z ≤ -4.0 so they stay soft behind the table.
 - **New obstacle**: add a builder + radius in
   `table-obstacles-pebbles-bottles-coins.js`; physics and AI handle it for free.
 - **New difficulty**: add an entry to `AI_DIFFICULTY` (search budget, aim noise,
