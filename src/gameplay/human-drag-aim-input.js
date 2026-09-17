@@ -20,14 +20,21 @@ export class HumanDragAimInput {
     this.ndc = new THREE.Vector2();
     this.groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     this.hit = new THREE.Vector3();
+    this.dragStart = new THREE.Vector2();
+    this.projected = new THREE.Vector3();
+    this.dragCamera = this.camera.clone();
 
     this.listeners = {
       pointerdown: (e) => this.onDown(e),
       pointermove: (e) => this.onMove(e),
       pointerup: (e) => this.onUp(e),
-      pointercancel: (e) => this.onUp(e),
+      pointercancel: (e) => this.onCancel(e),
+      lostpointercapture: (e) => this.onCancel(e),
     };
     for (const [type, fn] of Object.entries(this.listeners)) this.domElement.addEventListener(type, fn);
+    this.cancelGesture = () => this.cancel();
+    window.addEventListener('blur', this.cancelGesture);
+    window.addEventListener('resize', this.cancelGesture);
   }
 
   setEntries(entries) {
@@ -37,20 +44,37 @@ export class HumanDragAimInput {
   aimRay(e) {
     const rect = this.domElement.getBoundingClientRect();
     this.ndc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
-    this.raycaster.setFromCamera(this.ndc, this.camera);
+    this.raycaster.setFromCamera(this.ndc, this.selected ? this.dragCamera : this.camera);
   }
 
   pickEntry(e) {
     this.aimRay(e);
     const meshes = this.entries.map((entry) => entry.mesh);
     const hits = this.raycaster.intersectObjects(meshes, false);
-    return hits.length ? this.entries[meshes.indexOf(hits[0].object)] : null;
+    if (hits.length) return this.entries[meshes.indexOf(hits[0].object)];
+    if (e.pointerType !== 'touch') return null;
+    const rect = this.domElement.getBoundingClientRect();
+    let nearest = null;
+    let distance = 24;
+    for (const entry of this.entries) {
+      if (!this.canControl(entry.side)) continue;
+      entry.mesh.getWorldPosition(this.projected).project(this.camera);
+      const x = rect.left + (this.projected.x + 1) * rect.width / 2;
+      const y = rect.top + (1 - this.projected.y) * rect.height / 2;
+      const d = Math.hypot(x - e.clientX, y - e.clientY);
+      if (d < distance) { nearest = entry; distance = d; }
+    }
+    return nearest;
   }
 
   onDown(e) {
-    if (this.selected) return; // a second finger must not hijack the drag
+    if (this.selected || e.button !== 0) return; // a second finger must not hijack the drag
     const entry = this.pickEntry(e);
     if (!entry || !this.canControl(entry.side)) return;
+    this.dragCamera.copy(this.camera);
+    this.aimRay(e);
+    if (!this.raycaster.ray.intersectPlane(this.groundPlane, this.hit)) return;
+    this.dragStart.set(this.hit.x, this.hit.z);
     this.selected = entry;
     this.pointerId = e.pointerId;
     try { this.domElement.setPointerCapture(e.pointerId); } catch { /* synthetic events */ }
@@ -72,8 +96,8 @@ export class HumanDragAimInput {
     if (e.pointerId !== this.pointerId) return;
     this.aimRay(e);
     if (!this.raycaster.ray.intersectPlane(this.groundPlane, this.hit)) return;
-    const cap = this.selected.body.pos;
-    this.pull.set(cap.x - this.hit.x, cap.y - this.hit.z); // pull back, flick forward
+    // Freeze projection for the gesture so camera breathing cannot change its power.
+    this.pull.set(this.dragStart.x - this.hit.x, this.dragStart.y - this.hit.z);
     const len = this.pull.length();
     if (len > MAX_PULL) this.pull.multiplyScalar(MAX_PULL / len);
     this.visuals.show(this.selected.body, this.pull);
@@ -82,6 +106,7 @@ export class HumanDragAimInput {
 
   onUp(e) {
     if (!this.selected || e.pointerId !== this.pointerId) return;
+    this.onMove(e);
     const entry = this.selected;
     const power = this.pull.length() / MAX_PULL;
     const velocity = power > MIN_FLICK_POWER
@@ -89,6 +114,10 @@ export class HumanDragAimInput {
     this.clearSelection();
     if (velocity) this.onFlick(entry, velocity);
     else this.juice.release(entry, 0);
+  }
+
+  onCancel(e) {
+    if (e.pointerId === this.pointerId) this.cancel();
   }
 
   /** Drop any in-progress drag (pause, quit, turn change). */
@@ -99,8 +128,12 @@ export class HumanDragAimInput {
   }
 
   clearSelection() {
+    const pointerId = this.pointerId;
     this.selected = null;
     this.pointerId = null;
+    if (pointerId !== null && this.domElement.hasPointerCapture(pointerId)) {
+      this.domElement.releasePointerCapture(pointerId);
+    }
     this.visuals.hide();
     this.domElement.classList.remove('aiming');
   }
@@ -109,5 +142,7 @@ export class HumanDragAimInput {
     this.cancel();
     this.domElement.classList.remove('can-grab');
     for (const [type, fn] of Object.entries(this.listeners)) this.domElement.removeEventListener(type, fn);
+    window.removeEventListener('blur', this.cancelGesture);
+    window.removeEventListener('resize', this.cancelGesture);
   }
 }
