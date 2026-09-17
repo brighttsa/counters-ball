@@ -54,7 +54,7 @@ Codex's worktree uses port **4181** (see below). Open `http://localhost:<port>`.
 ## Collaboration protocol (Claude Code ⇄ Codex)
 | | Claude Code | Codex |
 |---|---|---|
-| Folder | `/Users/bskt/Counters ball` | `/Users/bskt/Documents/ChatGPT/Counters ball` (git worktree) |
+| Folder | `/Users/bskt/Counters ball` | `/Users/bskt/Documents/ChatGPT/Counters ball` (own clone) |
 | Branch | `main` | `codex/workspace` (or `codex/<task>`) |
 | Dev server port | 4180 | 4181 |
 
@@ -62,10 +62,10 @@ Codex's worktree uses port **4181** (see below). Open `http://localhost:<port>`.
    `git log --oneline -10 --all`.
 2. **Claim before you edit:** add your task to the board with the files/folders
    you will touch. Don't edit files another agent has claimed as *In progress*.
-3. **Stay in your folder.** Each agent only writes inside its own worktree.
-4. **Integrate through git:** Codex commits on its branch; Claude (or the user)
-   merges into `main`. Before starting new work, update from `main`
-   (`git merge main` in the Codex worktree).
+3. **Stay in your folder.** Each agent only writes inside its own folder.
+4. **Integrate through git:** Codex commits on its branch in its clone; Claude fetches it (remote `codex`) and
+   merges into `main`. Before starting new work, Codex updates from `main`
+   (`git pull origin main` in its clone — `origin` is Claude's repo).
 5. **Hand off in writing:** when you finish or stop, move the task on the board
    and leave a short note — what changed, how you verified it, what's left.
 6. **Shared files need care:** `AGENTS.md`, `docs/*`, and
