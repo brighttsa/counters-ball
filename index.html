@@ -2,45 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Counters Ball 3D — Ghanaian Tabletop Football</title>
-<style>
-  :root {
-    --chalk: #fdf6e6;
-    --warm-shadow: rgba(43, 24, 8, 0.55);
-  }
-  html, body { margin: 0; height: 100%; overflow: hidden; background: #2b1a0c; }
-  #game-canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
-  #game-canvas.aiming { cursor: grabbing; }
-
-  .hud { position: fixed; left: 0; right: 0; display: flex; justify-content: center;
-         pointer-events: none; font-family: "Chalkboard SE", "Comic Sans MS", "Segoe Print", cursive; }
-
-  #scoreboard { top: 18px; gap: 18px; align-items: baseline;
-    color: var(--chalk); text-shadow: 0 2px 6px var(--warm-shadow); }
-  #scoreboard .team-name { font-size: 15px; letter-spacing: 2px; opacity: 0.85; }
-  #scoreboard .score-digits { font-size: 34px; font-weight: 700; }
-  #scoreboard .turn-dot { width: 10px; height: 10px; border-radius: 50%;
-    align-self: center; box-shadow: 0 0 8px 2px rgba(255, 210, 120, 0.8); transition: opacity 0.3s; }
-  #turn-dot-red { background: #d6503a; }
-  #turn-dot-green { background: #3f9b6a; }
-  .turn-dot.inactive { opacity: 0.15; box-shadow: none; }
-
-  #flick-hint { bottom: 22px; color: var(--chalk); font-size: 14px; letter-spacing: 1px;
-    opacity: 0.65; text-shadow: 0 1px 4px var(--warm-shadow); transition: opacity 1s; }
-  #flick-hint.faded { opacity: 0; }
-
-  #goal-banner { top: 34%; font-size: clamp(48px, 9vw, 96px); font-weight: 800;
-    color: #ffe9b8; letter-spacing: 6px;
-    text-shadow: 0 0 24px rgba(255, 176, 64, 0.9), 0 4px 12px var(--warm-shadow);
-    opacity: 0; transform: scale(0.8); transition: opacity 0.25s, transform 0.35s cubic-bezier(.2,1.6,.4,1); }
-  #goal-banner.show { opacity: 1; transform: scale(1); }
-  #goal-banner .goal-scorer { display: block; text-align: center; font-size: 18px;
-    letter-spacing: 3px; margin-top: 4px; opacity: 0.85; }
-
-  #film-frame { position: fixed; inset: 0; pointer-events: none;
-    box-shadow: inset 0 0 140px 30px rgba(30, 14, 2, 0.55); }
-</style>
+<meta name="description" content="Flick bottle caps on a chalk-drawn cardboard pitch. Six Ghanaian street venues, one flick at a time." />
+<meta name="theme-color" content="#2b1a0c" />
+<link rel="icon" type="image/svg+xml" href="assets/counters-ball-favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@700&family=Lilita+One&family=Patrick+Hand&display=swap" />
+<link rel="stylesheet" href="styles/game-ui-base-and-hud.css" />
+<link rel="stylesheet" href="styles/game-ui-menus-and-results.css" />
 <script type="importmap">
 {
   "imports": {
@@ -51,23 +22,95 @@
 </script>
 </head>
 <body>
-  <canvas id="game-canvas"></canvas>
-
-  <div id="scoreboard" class="hud">
-    <span id="turn-dot-red" class="turn-dot"></span>
-    <span class="team-name">ACCRA&nbsp;REDS</span>
-    <span class="score-digits"><span id="score-red">0</span>&nbsp;–&nbsp;<span id="score-green">0</span></span>
-    <span class="team-name">KUMASI&nbsp;GREENS</span>
-    <span id="turn-dot-green" class="turn-dot inactive"></span>
-  </div>
-
-  <div id="goal-banner" class="hud">
-    <span>GOOOAL!<span class="goal-scorer" id="goal-scorer-label"></span></span>
-  </div>
-
-  <div id="flick-hint" class="hud">drag a bottle cap back &nbsp;·&nbsp; release to flick</div>
+  <canvas id="game-canvas" aria-label="Tabletop football pitch"></canvas>
   <div id="film-frame"></div>
 
+  <section class="screen screen-title" data-screen="title">
+    <div class="title-logo" id="title-logo" role="img" aria-label="Counters Ball 3D"></div>
+    <p class="tagline">Flick. Pass. Score. The bottle-cap football of every Ghanaian childhood.</p>
+    <nav class="menu-stack">
+      <button class="btn btn-primary" data-action="play-campaign">Play Campaign</button>
+      <button class="btn" data-action="play-versus" style="--tilt: 0.8deg">2-Player Table</button>
+    </nav>
+    <p class="title-stars" id="title-stars"></p>
+  </section>
+
+  <section class="screen screen-levels" data-screen="levels">
+    <header class="screen-header">
+      <button class="btn btn-small" data-action="back-to-title">← Back</button>
+      <h2 class="chalk-heading" id="levels-heading">Choose a Pitch</h2>
+      <span class="star-total" id="levels-star-total"></span>
+    </header>
+    <div class="level-grid" id="level-grid"></div>
+  </section>
+
+  <section class="screen screen-intro" data-screen="intro">
+    <article class="paper-card intro-card">
+      <span class="tape tape-left"></span><span class="tape tape-right"></span>
+      <p class="card-kicker" id="intro-number"></p>
+      <h2 class="card-title" id="intro-title"></h2>
+      <p class="intro-place" id="intro-place"></p>
+      <p class="intro-blurb" id="intro-blurb"></p>
+      <div class="intro-versus">
+        <span class="team-chip" id="intro-home"></span><span class="vs">vs</span><span class="team-chip" id="intro-away"></span>
+      </div>
+      <ul class="intro-rules" id="intro-rules"></ul>
+      <div class="card-actions">
+        <button class="btn btn-small" data-action="intro-back">Pitches</button>
+        <button class="btn btn-primary" data-action="kick-off">Kick Off</button>
+      </div>
+    </article>
+  </section>
+
+  <section id="hud" class="hud-layer" hidden>
+    <div class="scoreboard">
+      <span class="turn-dot home" id="turn-dot-home"></span>
+      <span class="team-name" id="hud-home-name"></span>
+      <span class="score-digits"><span id="score-home">0</span><span class="dash">–</span><span id="score-away">0</span></span>
+      <span class="team-name" id="hud-away-name"></span>
+      <span class="turn-dot away inactive" id="turn-dot-away"></span>
+    </div>
+    <div class="flick-meter"><b id="flicks-home"></b><span>flicks left</span><b id="flicks-away"></b></div>
+    <button class="icon-btn pause-btn" data-action="pause" aria-label="Pause">❚❚</button>
+    <div class="turn-banner" id="turn-banner" aria-live="polite"></div>
+    <div class="goal-banner" id="goal-banner" aria-live="assertive"><span class="goal-word">GOOOAL!</span><span class="goal-sub" id="goal-sub"></span></div>
+    <div class="tutorial-hand" id="tutorial-hand" hidden>
+      <span class="tutorial-ring"></span>
+      <svg class="tutorial-finger" viewBox="0 0 48 64" aria-hidden="true"><path d="M20 4c3 0 5 2 5 5v18l12 3c4 1 6 4 5 8l-3 15c-1 5-5 9-10 9H19c-4 0-7-2-9-6L3 42c-1-3 1-6 4-6 2 0 4 1 5 3l3 5V9c0-3 2-5 5-5z" fill="#fdf6e6" stroke="#2b1a0c" stroke-width="3" stroke-linejoin="round"/></svg>
+      <span class="tutorial-tip">Drag back from your cap · let go to flick</span>
+    </div>
+  </section>
+
+  <section class="screen screen-pause" data-screen="pause">
+    <article class="paper-card menu-card">
+      <span class="tape tape-left"></span>
+      <h2 class="card-title">Paused</h2>
+      <nav class="menu-stack">
+        <button class="btn btn-primary" data-action="resume">Resume</button>
+        <button class="btn" data-action="restart">Restart Match</button>
+        <button class="btn" data-action="quit">Quit to Pitches</button>
+      </nav>
+    </article>
+  </section>
+
+  <section class="screen screen-results" data-screen="results">
+    <article class="paper-card results-card">
+      <span class="tape tape-right"></span>
+      <p class="card-kicker">Full Time</p>
+      <h2 class="card-title results-title" id="results-title"></h2>
+      <p class="results-score" id="results-score"></p>
+      <ul class="results-stars" id="results-stars"></ul>
+      <p class="results-note" id="results-note"></p>
+      <div class="card-actions">
+        <button class="btn btn-small" data-action="results-levels">Pitches</button>
+        <button class="btn" data-action="replay">Replay</button>
+        <button class="btn btn-primary" data-action="next-level" id="btn-next">Next Pitch</button>
+      </div>
+    </article>
+  </section>
+
+  <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true">♪</button>
+  <noscript><p class="noscript">Counters Ball 3D needs JavaScript and WebGL.</p></noscript>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

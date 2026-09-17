@@ -1,8 +1,8 @@
 // The match ball — a crumpled paper wad, small and unpredictable — and the
 // improvised goals: matchstick posts with burnt heads and a matchstick crossbar.
 import * as THREE from 'three';
-import { createSeededRandom } from './seeded-random-number-generator.js';
-import { BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH } from './pitch-dimensions-and-constants.js';
+import { createSeededRandom } from '../core/seeded-random-number-generator.js';
+import { BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH } from '../core/pitch-dimensions-and-constants.js';
 
 function paintPaperBallTexture(rng) {
   const c = document.createElement('canvas');
@@ -33,13 +33,13 @@ function paintPaperBallTexture(rng) {
   return tex;
 }
 
-export function buildPaperMatchBall(scene) {
+export function buildPaperMatchBall(group) {
   const rng = createSeededRandom(4451);
   const geo = new THREE.IcosahedronGeometry(BALL_RADIUS, 2);
   const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
   for (let i = 0; i < pos.count; i++) { // seed-like irregular lumps
-    const v = new THREE.Vector3().fromBufferAttribute(pos, i);
-    v.multiplyScalar(1 + (rng() - 0.5) * 0.16);
+    v.fromBufferAttribute(pos, i).multiplyScalar(1 + (rng() - 0.5) * 0.16);
     pos.setXYZ(i, v.x, v.y, v.z);
   }
   geo.computeVertexNormals();
@@ -49,11 +49,12 @@ export function buildPaperMatchBall(scene) {
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.position.set(0, BALL_RADIUS, 0);
-  scene.add(mesh);
+  group.add(mesh);
   return mesh;
 }
 
-export function buildMatchstickGoals(scene) {
+/** @returns {{ postBodies, goals: Record<-1|1, THREE.Group> }} goal groups pivot at the ground for wobble */
+export function buildMatchstickGoals(group) {
   const rng = createSeededRandom(7802);
   const woodMat = new THREE.MeshStandardMaterial({ color: 0xd6b581, roughness: 0.8 });
   const headMat = new THREE.MeshStandardMaterial({ color: 0x53261a, roughness: 0.6 });
@@ -61,29 +62,29 @@ export function buildMatchstickGoals(scene) {
   const headGeo = new THREE.SphereGeometry(0.024, 10, 8);
   const barGeo = new THREE.CylinderGeometry(0.014, 0.014, GOAL_HALF_WIDTH * 2 + 0.05, 8);
 
-  const postBodies = []; // static circles so the ball can rattle off a post
+  const postBodies = []; // static circles so the ball can rattle off the woodwork
+  const goals = {};
   for (const side of [-1, 1]) {
     const goal = new THREE.Group();
     for (const zs of [-1, 1]) {
       const post = new THREE.Mesh(postGeo, woodMat);
       post.position.set(0, 0.12, zs * GOAL_HALF_WIDTH);
-      post.rotation.x = (rng() - 0.5) * 0.1; // leaning slightly, hand-planted
-      post.rotation.z = (rng() - 0.5) * 0.1;
+      post.rotation.set((rng() - 0.5) * 0.1, 0, (rng() - 0.5) * 0.1); // hand-planted lean
       post.castShadow = true;
       const head = new THREE.Mesh(headGeo, headMat);
       head.position.y = 0.12;
       post.add(head);
       goal.add(post);
-      postBodies.push({ x: side * GOAL_LINE_X, z: zs * GOAL_HALF_WIDTH, radius: 0.02 });
+      postBodies.push({ x: side * GOAL_LINE_X, z: zs * GOAL_HALF_WIDTH, radius: 0.02, kind: 'post' });
     }
     const bar = new THREE.Mesh(barGeo, woodMat);
-    bar.rotation.x = Math.PI / 2;
-    bar.position.set(0, 0.235, 0);
-    bar.rotation.z = (rng() - 0.5) * 0.06;
+    bar.rotation.set(Math.PI / 2, 0, (rng() - 0.5) * 0.06);
+    bar.position.y = 0.235;
     bar.castShadow = true;
     goal.add(bar);
     goal.position.set(side * GOAL_LINE_X, 0, 0);
-    scene.add(goal);
+    group.add(goal);
+    goals[side] = goal;
   }
-  return { postBodies };
+  return { postBodies, goals };
 }

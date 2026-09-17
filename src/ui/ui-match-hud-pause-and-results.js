@@ -1,0 +1,125 @@
+// In-match HUD (scoreboard, flick counts, turn banner, goal banner, tutorial
+// hand) and the full-time results card with stars revealed one by one.
+import { SIDE_HOME, SIDE_AWAY } from '../core/pitch-dimensions-and-constants.js';
+
+const $ = (id) => document.getElementById(id);
+
+function restartAnimation(el, className) {
+  el.classList.remove(className);
+  void el.offsetWidth; // reflow so the same animation can play again
+  el.classList.add(className);
+}
+
+export class MatchHud {
+  constructor() {
+    this.root = $('hud');
+    this.goalTimer = null;
+    this.resultTimers = [];
+  }
+
+  show(visible) {
+    this.root.hidden = !visible;
+    if (!visible) this.hideTutorial();
+  }
+
+  reset(level, homeTeam, awayTeam, versus) {
+    $('hud-home-name').textContent = versus ? homeTeam.name : 'YOU';
+    $('hud-away-name').textContent = versus ? awayTeam.name : level.opponent.kid.toUpperCase();
+    this.root.style.setProperty('--home-color', homeTeam.hudColor);
+    this.root.style.setProperty('--away-color', awayTeam.hudColor);
+    $('score-home').textContent = '0';
+    $('score-away').textContent = '0';
+    $('goal-banner').classList.remove('show');
+    $('turn-banner').classList.remove('show');
+    this.setFlicks(level.rules.flickLimit, level.rules.flickLimit);
+    this.hideTutorial();
+  }
+
+  setScore(scores, poppedSide) {
+    for (const side of [SIDE_HOME, SIDE_AWAY]) {
+      const el = $(`score-${side}`);
+      el.textContent = scores[side];
+      if (side === poppedSide) restartAnimation(el, 'pop');
+    }
+  }
+
+  setTurn(side, text) {
+    $('turn-dot-home').classList.toggle('inactive', side !== SIDE_HOME);
+    $('turn-dot-away').classList.toggle('inactive', side !== SIDE_AWAY);
+    const banner = $('turn-banner');
+    banner.textContent = text;
+    banner.style.setProperty('--turn-color', side === SIDE_AWAY ? 'var(--away-color)' : 'var(--home-color)');
+    restartAnimation(banner, 'show');
+  }
+
+  setFlicks(home, away) {
+    for (const [side, left] of [[SIDE_HOME, home], [SIDE_AWAY, away]]) {
+      const el = $(`flicks-${side}`);
+      el.textContent = left;
+      el.classList.toggle('low', left <= 3);
+    }
+  }
+
+  goal(label) {
+    $('goal-sub').textContent = label;
+    const banner = $('goal-banner');
+    restartAnimation(banner, 'show');
+    clearTimeout(this.goalTimer);
+    this.goalTimer = setTimeout(() => banner.classList.remove('show'), 2300);
+  }
+
+  showTutorial(x, y) {
+    const hand = $('tutorial-hand');
+    hand.hidden = false;
+    hand.style.setProperty('--x', `${x.toFixed(1)}px`);
+    hand.style.setProperty('--y', `${y.toFixed(1)}px`);
+  }
+
+  hideTutorial() {
+    $('tutorial-hand').hidden = true;
+  }
+
+  cancelResultReveal() {
+    this.resultTimers.forEach(clearTimeout);
+    this.resultTimers = [];
+  }
+
+  fillResults(result, level, mode, { hasNext, improved, isFinalVenue, onStar }) {
+    this.cancelResultReveal();
+    const versus = mode === 'versus';
+    const { winner, scores, starFlags } = result;
+    const kid = level.opponent.kid;
+    const title = $('results-title');
+
+    title.textContent = winner === null ? 'Draw!'
+      : versus ? `${winner === SIDE_HOME ? 'Accra Reds' : level.opponent.team.name} win!`
+        : winner === SIDE_HOME ? 'You win!' : `${kid} wins`;
+    title.dataset.outcome = winner === null ? 'draw' : versus || winner === SIDE_HOME ? 'win' : 'loss';
+    $('results-score').textContent = `${scores.home} – ${scores.away}`;
+
+    const labels = ['Win the match', 'Keep a clean sheet', `Win within ${level.rules.threeStarFlicks} flicks`];
+    const list = $('results-stars');
+    list.hidden = versus;
+    list.replaceChildren(...labels.map((label) => {
+      const li = document.createElement('li');
+      li.innerHTML = '<span class="result-star" aria-hidden="true">★</span><span class="result-star-label"></span>';
+      li.lastChild.textContent = label;
+      return li;
+    }));
+    if (!versus) {
+      starFlags.forEach((earned, i) => {
+        if (!earned) return;
+        this.resultTimers.push(setTimeout(() => {
+          list.children[i].classList.add('earned');
+          onStar(i);
+        }, 650 + i * 450));
+      });
+    }
+
+    let note = '';
+    if (!versus && winner === SIDE_HOME) note = isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
+    else if (!versus) note = winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;
+    $('results-note').textContent = note;
+    $('btn-next').hidden = !hasNext;
+  }
+}

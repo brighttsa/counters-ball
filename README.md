@@ -1,48 +1,61 @@
 # Counters Ball 3D
 
-A web-based 3D visual-direction prototype for a Ghanaian tabletop football
-game. Flattened bottle caps are the players, a crumpled paper wad is the ball,
-the pitch is chalk on cardboard, and the goals are matchsticks — played with a
-single flick, in warm late-afternoon street light.
+A browser game of Ghanaian tabletop football. Flattened bottle caps are the
+players, a crumpled paper wad is the ball, the pitch is chalk on cardboard and
+the goals are matchsticks — flicked across six street venues, from a schoolyard
+at midday to a Jamestown table under a single bulb.
+
+No build step, no binary assets: every texture, sound and sprite is generated in
+the browser.
 
 ## Run
 
-No build step. Serve the folder statically and open it:
-
 ```bash
-python3 -m http.server 4173 --directory "/Users/bskt/Counters ball"
-# then open http://localhost:4173
+python3 -m http.server 4180 --directory "/Users/bskt/Counters ball"
 ```
 
-Requires internet access (Three.js r160 loads from the jsDelivr CDN).
+Then open http://localhost:4180 (needs internet: Three.js r160 loads from a CDN).
 
 ## Play
 
-- Red flicks first. Drag one of your caps **back** (slingshot) — a curved
-  trajectory line shows direction and power, the cap's rim glows.
-- Release to flick. Caps slide with weight; the ball skims and caroms.
-- Knock the ball between the matchsticks to score: camera push-in, screen
-  shake, bloom swell, **GOOOAL!** banner, then kickoff for the conceding team.
-- Turns alternate after each play resolves.
+- **Campaign** — six pitches, each with a neighbourhood opponent. Win a pitch to
+  unlock the next. Earn up to three stars per pitch: win · clean sheet · win
+  within the flick budget. Progress is saved in your browser.
+- **2-Player Table** — hot-seat on any pitch, no AI.
+- Hover a cap of your colour, press and **drag back** — a curved trajectory and
+  a power ring show direction and strength — then release to flick.
+- Knock the ball between the matchsticks to score. Each side gets a limited
+  number of flicks; most goals when they run out wins.
+- `Esc` pauses. Input is single-pointer by design (turn-based game).
 
-Input is single-pointer by design: the game is turn-based, so only one drag can
-be live at a time and a second touch is ignored.
+## The venues
 
-## Structure
+| # | Venue | Table | Light | Twist |
+|---|---|---|---|---|
+| 1 | Schoolyard Break | cardboard | midday | tutorial, first to 1 |
+| 2 | Kiosk Corner | cardboard | late afternoon | first to 2 |
+| 3 | Veranda Derby | plywood | golden hour | pebbles on the table |
+| 4 | Roadside Showdown | plywood | late afternoon | bottle + coin stacks |
+| 5 | Harmattan Haze | dusty cardboard | harmattan | heavy dust, caps drag |
+| 6 | Lights Out Final | school desk | night bulb | bottles, and the champion |
 
-Everything is procedural — zero image assets. See
-[docs/design-guidelines.md](docs/design-guidelines.md) for the full art bible
-and [plans/](plans/) for the implementation plan.
+## How it is built
 
-| File | Purpose |
+| Folder | What lives there |
 |---|---|
-| `src/main.js` | Bootstrap, game loop, turn/goal state |
-| `src/scene-and-lighting-setup.js` | Renderer, 45° camera, warm sun |
-| `src/cardboard-pitch-surface.js` | Cardboard texture, table, battens |
-| `src/chalk-pitch-markings.js` | Hand-wobbly chalk lines |
-| `src/bottle-cap-players.js` | Cap geometry + worn team textures |
-| `src/match-ball-and-goal-posts.js` | Paper ball, matchstick goals |
-| `src/street-background-environment.js` | Blurred street, dust, sun glow |
-| `src/flick-physics-engine.js` | 2D circle physics, goals |
-| `src/aim-input-controls.js` | Drag aim, trajectory, rim glow |
-| `src/post-processing-and-celebration.js` | Bloom, grain, goal celebration |
+| `src/core/` | Dimensions, seeded RNG, save data, hit-stop/slow-motion clock |
+| `src/levels/` | The six venue definitions, teams and rules |
+| `src/scene/` | Lighting presets, table surfaces, chalk, caps, ball, goals, obstacles, backdrops, stage build/dispose |
+| `src/gameplay/` | Physics, match rules, aim visuals, human input, AI planner + performer, session runtime |
+| `src/fx/` | Camera director, juice springs, particles, post-processing |
+| `src/audio/` | Procedural sound effects and ambience beds |
+| `src/ui/` | Menu screens and match HUD |
+| `styles/`, `assets/` | Interface CSS, logo and favicon |
+
+The AI plans by rehearsal: it clones the physics table, simulates candidate
+flicks to rest and scores the outcomes, so it understands rebounds, obstacles
+and bank shots without any special-casing. Difficulty is the search budget plus
+human-like aiming error.
+
+See [docs/design-guidelines.md](docs/design-guidelines.md) for the art and
+motion bible, and [plans/](plans/) for implementation plans.

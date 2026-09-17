@@ -2,7 +2,7 @@
 // cardboard texture canvas. All positions are in world units, mapped to px.
 import {
   PITCH_HALF_LENGTH as PL, PITCH_HALF_WIDTH as PW, GOAL_HALF_WIDTH,
-} from './pitch-dimensions-and-constants.js';
+} from '../core/pitch-dimensions-and-constants.js';
 
 const CHALK = '#ece1c6';
 

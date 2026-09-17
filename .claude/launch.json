@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "counters-ball-3d",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4180", "--directory", "/Users/bskt/Counters ball"],
+      "port": 4180
+    }
+  ]
+}
