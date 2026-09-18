@@ -1,68 +1,65 @@
-// Looping background beds for each venue: a soft daytime street hum, gusting
-// harmattan wind, or night crickets pulsing under the kiosk bulb.
-export class StreetAmbienceBeds {
-  constructor() {
-    this.kind = null;
-    this.nodes = [];
-  }
+// Environmental noise beds: no simulated speech or invented local music.
+export const AMBIENCE_PROFILES = {
+  schoolyard: { frequency: 1100, level: 0.018, gust: 0.19, depth: 150 },
+  kiosk: { frequency: 480, level: 0.035, gust: 0.23, depth: 120 },
+  veranda: { frequency: 1700, level: 0.012, gust: 0.11, depth: 350 },
+  roadside: { frequency: 240, level: 0.055, gust: 0.08, depth: 150 },
+  harmattan: { frequency: 650, level: 0.06, gust: 0.13, depth: 260 },
+  night: { frequency: 850, level: 0.024, gust: 0.09, depth: 280 },
+};
 
-  /** Called once the audio context exists; restarts whatever was requested earlier. */
+export class StreetAmbienceBeds {
+  constructor() { this.kind = null; this.nodes = []; this.sources = []; this.heat = 0; }
+
   attach(ctx, master, noiseBuffer) {
     Object.assign(this, { ctx, master, noiseBuffer });
     this.start(this.kind);
   }
 
-  /** @param kind 'day' | 'harmattan' | 'night' | null */
   set(kind) {
-    if (kind === this.kind && this.nodes.length) return;
-    this.kind = kind;
-    this.start(kind);
+    const key = kind === 'day' ? 'kiosk' : kind;
+    if (key === this.kind && this.nodes.length) return;
+    this.kind = key;
+    this.start(key);
+  }
+
+  setHeat(heat) {
+    this.heat = Number.isFinite(heat) ? Math.max(0, Math.min(1, heat)) : 0;
+    this.updateLevel();
+  }
+
+  setTension(tension) { this.tension = Boolean(tension); this.updateLevel(); }
+  gainScale() { return (1 + this.heat * 0.35) * (this.tension ? 0.6 : 1); }
+  updateLevel() {
+    if (this.level) this.level.gain.setTargetAtTime(this.baseLevel * this.gainScale(), this.ctx.currentTime, 0.3);
   }
 
   stop() {
-    this.nodes.forEach((node) => { try { node.stop(); } catch { /* already stopped */ } });
-    this.nodes = [];
+    this.sources.forEach((node) => { try { node.stop(); } catch { /* already stopped */ } });
+    this.nodes.forEach((node) => node.disconnect());
+    this.nodes = []; this.sources = []; this.level = null;
   }
 
   start(kind) {
     this.stop();
-    if (!this.ctx || !kind) return;
+    const profile = AMBIENCE_PROFILES[kind];
+    if (!this.ctx || !profile) return;
     const { ctx, master } = this;
-
-    const bed = ctx.createBufferSource();
+    const bed = ctx.createBufferSource(), filter = ctx.createBiquadFilter();
+    const level = ctx.createGain(), gust = ctx.createOscillator(), depth = ctx.createGain();
     bed.buffer = this.noiseBuffer;
     bed.loop = true;
-    const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = kind === 'harmattan' ? 650 : 380;
-    const level = ctx.createGain();
-    level.gain.value = kind === 'harmattan' ? 0.07 : 0.035;
+    filter.frequency.value = profile.frequency;
+    level.gain.value = profile.level * this.gainScale();
+    gust.frequency.value = profile.gust;
+    depth.gain.value = profile.depth;
     bed.connect(filter).connect(level).connect(master);
-    bed.start();
-    this.nodes = [bed];
-
-    const addLfo = (freq, depthValue, target, type = 'sine') => {
-      const osc = ctx.createOscillator();
-      const depth = ctx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      depth.gain.value = depthValue;
-      osc.connect(depth).connect(target);
-      osc.start();
-      this.nodes.push(osc);
-    };
-
-    if (kind === 'harmattan') addLfo(0.13, 260, filter.frequency); // gusting dry wind
-    if (kind === 'night') {
-      const cricket = ctx.createOscillator();
-      const gate = ctx.createGain();
-      cricket.frequency.value = 4300;
-      gate.gain.value = 0;
-      cricket.connect(gate).connect(master);
-      cricket.start();
-      this.nodes.push(cricket);
-      addLfo(22, 0.01, gate.gain, 'square');  // chirp rate
-      addLfo(0.7, 0.01, gate.gain, 'square'); // bursts between silences
-    }
+    gust.connect(depth).connect(filter.frequency);
+    this.nodes = [bed, filter, level, gust, depth];
+    this.sources = [bed, gust];
+    this.level = level;
+    this.baseLevel = profile.level;
+    bed.start(); gust.start();
   }
 }

@@ -8,6 +8,7 @@ import {
   GROUND_ZONE, GROUND_PPU as PPU, GROUND_CANVAS_W as W, GROUND_CANVAS_H as H, px, pz,
 } from './ground-zone-mapping.js';
 import { footprints, tyreTracks, hopscotch } from './ground-marking-painters.js';
+import { venueRoughnessTexture } from './venue-surface-roughness-texture.js';
 
 const rows = (z0, z1) => [pz(z0), pz(z1) - pz(z0)];
 
@@ -115,7 +116,8 @@ export function buildVenueGround(kind, rng) {
   const group = new THREE.Group();
   const zone = new THREE.Mesh(
     new THREE.PlaneGeometry(W / PPU, H / PPU),
-    new THREE.MeshStandardMaterial({ map: toTexture(canvas), roughness: kind === 'verandaFloor' ? 0.55 : 0.97 })
+    new THREE.MeshStandardMaterial({ map: toTexture(canvas), roughness: 0.97,
+      roughnessMap: venueRoughnessTexture(kind, rng) })
   );
   zone.rotation.x = -Math.PI / 2;
   zone.position.set((GROUND_ZONE.minX + GROUND_ZONE.maxX) / 2, GROUND_Y, (GROUND_ZONE.minZ + GROUND_ZONE.maxZ) / 2);

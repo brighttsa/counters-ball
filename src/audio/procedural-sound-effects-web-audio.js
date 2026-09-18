@@ -3,12 +3,15 @@
 // tinks, a pea whistle, crowd swell and star dings. All contact effects take
 // a strength in 0..1 so a paper ball and a steel cap compare fairly.
 import { StreetAmbienceBeds } from './street-ambience-beds-web-audio.js';
+import { BoundedAudioVoiceSynthesis } from './bounded-audio-voice-synthesis.js';
+import { playSoundEvent, normalizedStrength } from './semantic-sound-event-mapping.js';
 
 const NOISE_SECONDS = 1;
 const MASTER_LEVEL = 0.9;
 
-export class ProceduralSoundBoard {
+export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   constructor({ muted = false } = {}) {
+    super();
     this.ctx = null;
     this.muted = muted;
     this.sfxLevel = 1;
@@ -25,16 +28,17 @@ export class ProceduralSoundBoard {
         this.ctx = new AudioCtx();
         this.master = this.ctx.createGain();
         this.master.gain.value = this.muted ? 0 : MASTER_LEVEL;
-        this.master.connect(this.ctx.createDynamicsCompressor()).connect(this.ctx.destination);
+        this.compressor = this.ctx.createDynamicsCompressor();
+        this.master.connect(this.compressor).connect(this.ctx.destination);
         const buffer = this.ctx.createBuffer(1, this.ctx.sampleRate * NOISE_SECONDS, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
         this.noiseBuffer = buffer;
         this.ambience.attach(this.ctx, this.master, buffer);
       }
-      if (this.ctx.state === 'suspended') this.ctx.resume();
+      this.setPaused(this.paused);
     } catch {
-      this.ctx = null; // audio unavailable: the game stays playable in silence
+      this.dispose(); // audio unavailable: the game stays playable in silence
     }
   }
 
@@ -44,55 +48,23 @@ export class ProceduralSoundBoard {
   }
 
   setSfxLevel(level) {
-    this.sfxLevel = level;
+    this.sfxLevel = normalizedStrength(level);
   }
 
   setAmbience(kind) {
     this.ambience.set(kind);
   }
 
+  event(name, strength = 0.5) { playSoundEvent(this, name, strength); }
+  setHeat(value) { this.ambience.setHeat(normalizedStrength(value)); }
+  setTension(value) { this.ambience.setTension(Boolean(value)); }
+
   can(key, gapMs = 28) {
-    if (!this.ctx || this.muted) return false;
-    const now = performance.now();
+    if (!this.available()) return false;
+    const now = this.ctx.currentTime * 1000;
     if (now - (this.last[key] ?? -1e9) < gapMs) return false;
     this.last[key] = now;
     return true;
-  }
-
-  envelope(level, start, attack, duration) {
-    const g = this.ctx.createGain();
-    g.gain.setValueAtTime(0.0001, start);
-    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, level * this.sfxLevel), start + attack);
-    g.gain.exponentialRampToValueAtTime(0.0001, start + attack + duration);
-    g.connect(this.master);
-    return g;
-  }
-
-  tone({ freq, to = freq, duration = 0.1, type = 'sine', gain = 0.2, attack = 0.003, delay = 0 }) {
-    const t0 = this.ctx.currentTime + delay;
-    const osc = this.ctx.createOscillator();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, t0);
-    if (to !== freq) osc.frequency.exponentialRampToValueAtTime(to, t0 + duration);
-    osc.connect(this.envelope(gain, t0, attack, duration));
-    osc.start(t0);
-    osc.stop(t0 + attack + duration + 0.05);
-    return { osc, t0 };
-  }
-
-  noise({ duration = 0.1, filter = 'bandpass', freq = 1000, to = freq, q = 1, gain = 0.2, attack = 0.002, delay = 0 }) {
-    const t0 = this.ctx.currentTime + delay;
-    const src = this.ctx.createBufferSource();
-    src.buffer = this.noiseBuffer;
-    src.loop = true;
-    const f = this.ctx.createBiquadFilter();
-    f.type = filter;
-    f.Q.value = q;
-    f.frequency.setValueAtTime(freq, t0);
-    if (to !== freq) f.frequency.exponentialRampToValueAtTime(to, t0 + duration);
-    src.connect(f).connect(this.envelope(gain, t0, attack, duration));
-    src.start(t0, Math.random() * 0.5);
-    src.stop(t0 + attack + duration + 0.05);
   }
 
   flick(s) {
@@ -139,12 +111,16 @@ export class ProceduralSoundBoard {
   whistle() {
     if (!this.can('whistle', 400)) return;
     for (const [delay, length] of [[0, 0.16], [0.24, 0.42]]) {
-      const { osc, t0 } = this.tone({ freq: 2750, duration: length, gain: 0.14, attack: 0.01, delay });
+      if (this.voices.size > 29) break;
+      const voice = this.tone({ freq: 2750, duration: length, gain: 0.14, attack: 0.01, delay });
+      if (!voice) break;
+      const { osc, t0 } = voice;
       const lfo = this.ctx.createOscillator();
       const depth = this.ctx.createGain();
       lfo.frequency.value = 38; // the pea rattling inside
       depth.gain.value = 140;
       lfo.connect(depth).connect(osc.frequency);
+      this.track(lfo, [lfo, depth]);
       lfo.start(t0);
       lfo.stop(t0 + length + 0.1);
       this.noise({ duration: length, freq: 2750, q: 8, gain: 0.04, delay });

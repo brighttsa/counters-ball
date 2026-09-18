@@ -43,3 +43,18 @@ export const LIGHTING_PRESETS = {
     bulb: { color: 0xffc27a, intensity: 42, position: [0.25, 2.3, 0.45], angle: 0.95, penumbra: 0.65 },
   },
 };
+
+// Small environmental bounce shifts preserve the table's key-light clarity.
+const VENUE_BOUNCE = {
+  schoolyard: { color: 0xc9deeb, intensity: 0.34 },
+  kiosk: { color: 0xa7c9cb, intensity: 0.32 },
+  veranda: { color: 0xb8c5a0, intensity: 0.28 },
+  roadside: { color: 0xc5d3e0, intensity: 0.42 },
+  harmattan: { color: 0xe0d0bc, intensity: 0.45 },
+  night: { color: 0x78a9ac, intensity: 0.16 },
+};
+
+export function lightingForVenue(lighting, backdrop) {
+  const preset = LIGHTING_PRESETS[lighting] ?? LIGHTING_PRESETS['late-afternoon'];
+  return { ...preset, fill: VENUE_BOUNCE[backdrop] ?? preset.fill };
+}

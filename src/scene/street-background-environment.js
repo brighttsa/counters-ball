@@ -17,6 +17,7 @@ import {
   buildDappledLeafShade, buildHarmattanDustSheets, buildBulbFlicker,
 } from './environment/light-shade-and-dust-overlays.js';
 import { VENUE_ENVIRONMENTS } from './environment/venue-environment-compositions.js';
+import { buildLocationPhotograph } from './environment/optional-distant-location-photograph.js';
 
 const PROP_BUILDERS = { ...EVERYDAY_PROP_BUILDERS, ...VENUE_PROP_BUILDERS };
 // Footprint radius animals walk around (flat props like mats and sachets are walkable).
@@ -93,11 +94,13 @@ function addDustMotes(group, rng, count) {
 /**
  * @returns {{ update(t, dt): void, startle(): void }} — startle() on goals
  */
-export function buildStreetBackdrop(group, key, preset) {
+export function buildStreetBackdrop(group, key, preset, { camera, photograph } = {}) {
   const spec = VENUE_ENVIRONMENTS[key] ?? VENUE_ENVIRONMENTS.kiosk;
   const rng = createSeededRandom(hashKey(key));
   const updaters = [];
   const creatures = [];
+  const photo = buildLocationPhotograph(group, key, preset, camera, photograph);
+  let elapsed = 0;
 
   group.add(buildVenueGround(spec.ground, rng));
   const { glowMaterials, spillLights } = addWall(group, spec.wall, rng);
@@ -132,7 +135,12 @@ export function buildStreetBackdrop(group, key, preset) {
   updaters.push(addDustMotes(group, rng, spec.dust ?? 90));
 
   return {
-    update(t, dt) { for (const update of updaters) update(t, dt); },
+    update(_t, dt) {
+      elapsed += Math.max(0, dt);
+      for (const update of updaters) update(elapsed, dt);
+      photo.update(elapsed, dt);
+    },
+    dispose() { photo.dispose(); },
     startle() { for (const creature of creatures) creature.startle(); },
   };
 }
