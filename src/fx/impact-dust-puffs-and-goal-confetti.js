@@ -58,8 +58,20 @@ export class ImpactParticles {
     }
   }
 
-  trail(x, z) {
-    this.spawnDust(x, 0.01, z, 0, 0.015, 0, 0.022, 0.5, 0.16);
+  trail(x, z, velocity = { x: 0, y: 0 }) {
+    const speed = Math.hypot(velocity.x, velocity.y);
+    const fast = Math.min(1, speed / 5);
+    this.spawnDust(x, 0.01, z, -velocity.x * 0.04, 0.015, -velocity.y * 0.04,
+      0.018 + fast * 0.012, 0.12 + fast * 0.1, 0.12 + fast * 0.12);
+  }
+
+  contactFlash(x, z) {
+    this.spawnDust(x, 0.04, z, 0, 0.015, 0, 0.11, 0.1, 0.8);
+  }
+
+  setVisible(visible) {
+    this.confetti.visible = visible;
+    for (const p of this.dust) p.sprite.visible = visible && p.life > 0;
   }
 
   confettiBurst(goalX) {

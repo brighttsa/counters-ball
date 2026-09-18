@@ -9,6 +9,7 @@ import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio
 import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
 import { MatchHud } from './ui/ui-match-hud-pause-and-results.js';
+import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { CAMPAIGN_LEVELS, ATTRACT_MODE_LEVEL, HOME_TEAM } from './levels/campaign-level-definitions.js';
 import {
   loadProgress, saveProgress, recordLevelStars, isLevelUnlocked, totalStars,
@@ -24,12 +25,14 @@ const hud = new MatchHud();
 const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false };
-const AMBIENCE = { 'night-bulb': 'night', harmattan: 'harmattan' };
 
 function replaceSession(options, sessionHud) {
   hud.cancelResultReveal(); // leaving results early must not ding stars into the next screen
   app.session?.dispose();
   app.paused = false;
+  sound.setPaused?.(false);
+  sound.setHeat?.(0);
+  sound.setTension?.(false);
   app.session = new MatchSession({ renderer, scene, camera, canvas, cameraDirector, post, sound, hud: sessionHud }, options);
 }
 
@@ -61,15 +64,26 @@ function showTitle() {
 
 function showLevels(mode = app.mode) {
   app.mode = mode;
-  ensureAttractMode();
   menus.renderLevels(CAMPAIGN_LEVELS, progress, mode,
     (i) => mode === 'versus' || isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
   menus.show('levels');
+  previewLevel(app.levelIndex);
+}
+
+function previewLevel(index) {
+  const level = CAMPAIGN_LEVELS[index];
+  if (!level) return;
+  replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team,
+    controllers: { home: 'human', away: 'human' }, isPreview: true }, silentHud);
+  hud.show(false);
+  sound.setAmbience(level.backdrop);
+  cameraDirector.setMode('attract');
+  menus.previewLevel(level, index, app.mode === 'versus' || isLevelUnlocked(progress, CAMPAIGN_LEVELS, index), app.mode);
 }
 
 function prepareMatch(index) {
   const level = CAMPAIGN_LEVELS[index];
-  if (!level) return showLevels();
+  if (!level || (app.mode !== 'versus' && !isLevelUnlocked(progress, CAMPAIGN_LEVELS, index))) return showLevels();
   const versus = app.mode === 'versus';
   app.levelIndex = index;
   replaceSession({
@@ -78,14 +92,18 @@ function prepareMatch(index) {
     onEnd: (result) => showResults(result),
   }, hud);
   sound.setSfxLevel(1);
-  sound.setAmbience(AMBIENCE[level.lighting] ?? 'day');
+  sound.setAmbience(level.backdrop);
   hud.reset(level, HOME_TEAM, level.opponent.team, versus);
   cameraDirector.playIntro(2.6);
   menus.fillIntro(level, index, CAMPAIGN_LEVELS.length, app.mode, HOME_TEAM);
   menus.show('intro');
+  const session = app.session;
+  session.schedule(3, () => { if (app.session === session && menus.current === 'intro') kickOff(); });
 }
 
 function kickOff() {
+  if (app.session.rules.phase !== 'waiting') return;
+  cameraDirector.setMode('play');
   menus.show(null);
   hud.show(true);
   sound.whistle();
@@ -118,8 +136,15 @@ const actions = {
   'play-versus': () => showLevels('versus'),
   'back-to-title': () => showTitle(),
   'select-level': (el) => prepareMatch(Number(el.dataset.index)),
+  'preview-level': (el) => previewLevel(Number(el.dataset.index)),
   'intro-back': () => showLevels(),
   'kick-off': () => kickOff(),
+  'skip-replay': () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); },
+  'toggle-camera-motion': (el) => {
+    cameraDirector.setMotion(!cameraDirector.motionEnabled);
+    el.setAttribute('aria-pressed', String(cameraDirector.motionEnabled));
+    if (!cameraDirector.motionEnabled && app.session?.presentation.replay.active) app.session.presentation.finishReplay();
+  },
   pause: () => setPaused(true),
   resume: () => setPaused(false),
   restart: () => prepareMatch(app.levelIndex),
@@ -147,32 +172,10 @@ window.addEventListener('keydown', (e) => {
   if (menus.current === 'pause') setPaused(false);
   else if (menus.current === null && app.session && !app.session.options.isAttract) setPaused(true);
 });
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // the window may change displays
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  post.setSize(window.innerWidth, window.innerHeight);
-  cameraDirector.fitToViewport();
-});
-
-let lastFrame = performance.now();
-function frame(now) {
-  requestAnimationFrame(frame);
-  // rAF timestamps can predate the boot-time performance.now(): never let dt go negative.
-  const dt = Math.max(0, Math.min((now - lastFrame) / 1000, 0.05));
-  lastFrame = now;
-  const t = now / 1000;
-  app.session?.update(dt, t);
-  cameraDirector.update(dt, t);
-  post.setFocus(cameraDirector.focusDistance);
-  post.update(dt, t);
-  post.render();
-}
 
 menus.setSoundIcon(progress.muted);
 showTitle();
-requestAnimationFrame(frame);
+startGameRenderLoop({ app, camera, cameraDirector, renderer, post });
 
 // Inspection handle for automated verification.
 window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, actions };

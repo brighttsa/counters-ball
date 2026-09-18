@@ -1,7 +1,8 @@
 # Codebase Summary
 
 No build step. ES modules + import map, Three.js r160 from CDN, served statically.
-Zero binary assets: textures, sounds and sprites are generated at runtime.
+Default assets remain runtime-generated. Licensed, same-origin distant photographs
+are optional and disabled by default; missing images leave procedural scenery intact.
 
 ## Boot and flow
 `index.html` holds every screen as static markup; `src/main.js` wires it up.
@@ -16,8 +17,11 @@ main.js
  └─ MatchSession (one per venue) ► built, disposed and replaced per match
 ```
 
-App states: title (live AI-vs-AI attract match behind the menu) → level select →
-intro card + camera flyover → match → results. Progress lives in localStorage.
+App states: title (live AI-vs-AI attract match) → Circuit venue preview →
+skippable, automatically advancing intro → match → results. Progress lives in
+localStorage. Circuit previews replace the venue without starting a match;
+locked venues can be previewed but cannot be entered in campaign mode.
+`core/game-render-loop-and-viewport.js` owns rendering, resize and motion preferences.
 
 ## MatchSession (`src/gameplay/match-session-runtime.js`)
 Owns everything venue-specific and disposes it cleanly:
@@ -31,10 +35,32 @@ Owns everything venue-specific and disposes it cleanly:
 | `AimVisuals` | Trajectory, power ring, rim glow — shared by human and AI |
 | `JuiceAnimator`, `ImpactParticles`, `GameTimeController` | Feel: springs, dust, hit-stop |
 | `wireMatchFeedback` | Maps engine + rules events onto sound, fx, camera, HUD |
+| `MatchPresentationDirector` | Skill recognition, Heat, match point and replay lifecycle |
+| `CompactTransformReplay` | Bounded timestamped mesh history; never re-simulates goals |
 
-`update(realDt)` order: timers → game time (hit-stop/slow-mo) → physics →
-rest check → mesh sync → AI → juice → particles → aim visuals → backdrop →
-camera focus.
+`update(realDt)` first checks pause/disposal, then advances presentation. Replay
+short-circuits simulation. Otherwise: timers → game time → physics → rest check →
+mesh sync → AI → juice → replay capture → particles → aim → backdrop → camera focus.
+
+## Presentation contracts
+- `MenuScreens.previewLevel(level, index, unlocked, mode)` fills the hero and
+  selected route state. `preview-level` selects scenery; `select-level` enters.
+- `MatchHud.event(label, {direction, priority, duration})` uses one prioritized
+  callout lane. `update(dt)` advances it; `clearEvents()` clears callout/replay UI.
+  `setHeat(home, away)` accepts 0..1; `replay(active, label)` controls the skip UI.
+- `FlickGestureSampler` measures recent draw speed/stability, with an aligned
+  draw boost capped at 8%. `SkillPlayEventTracker` observes real contacts for
+  Sweet Spot, productive Bank, defensive Counter and successful Street Play.
+  Skill rewards and Heat are presentation-only; neither writes physics state.
+- Replay holds up to three seconds at a target 30 samples/s in typed arrays,
+  evicts by timestamp as well as capacity, and plays for 2–4 seconds. Skip/end
+  restores live transforms and exits replay camera mode. If restoration happens
+  while paused, rules continue only after resume; scoring is never replayed.
+- Camera motion can be disabled; reduced motion disables it and ends an active
+  replay. Presentation clocks freeze during pause.
+- Semantic procedural audio uses a 32-source transient voice cap, node cleanup,
+  Heat ambience gain and match-point tension ducking. Ambience has separate nodes.
+- Coarse-pointer devices use 2048² sun shadows; other devices use 4096².
 
 ## Conventions
 - Physics space is 2D: `Vector2.x` = world x, `Vector2.y` = world z. The third
@@ -61,3 +87,13 @@ camera focus.
   `table-obstacles-pebbles-bottles-coins.js`; physics and AI handle it for free.
 - **New difficulty**: add an entry to `AI_DIFFICULTY` (search budget, aim noise,
   blunder chance).
+- **Licensed photographs**: configure `LOCATION_PHOTOGRAPHS` in
+  `scene/environment/location-photograph-configuration.js`; supply a root-relative
+  same-origin path, credit and license before enabling a venue. Parameters cover
+  horizon, focal crop, exposure, grade, haze, parallax and plane placement.
+
+## Verification status
+Deterministic implementation tests exist, with additional coverage underway.
+Local preview on port 4181 returned HTTP 200. Admin policy prevented automated
+browser inspection; rendered layouts, console behavior, real touch feel and
+GPU/performance remain unverified.

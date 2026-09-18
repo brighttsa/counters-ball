@@ -7,6 +7,8 @@ Protocol: see `AGENTS.md` → Collaboration protocol.
 ## In progress
 | Task | Owner | Branch | Files / folders claimed | Started |
 |---|---|---|---|---|
+| Venue identity and Flick Vector (audit/plan; awaiting implementation approval) | Codex | `codex/workspace` | `src/scene/`, `src/gameplay/aim-*`, new flick-vector modules, input/session integration, camera, shared `src/levels/`, audio/photo profiles, `tests/`, shared `docs/*`, `plans/260918-venue-identity-flick-vector/`; continuation of own broadcast claim | 2026-09-18 |
+| Broadcast sport and Flick Craft redesign | Codex | `codex/workspace` | `src/`, `styles/`, `index.html`, `tests/`, `plans/260917-broadcast-sport/`, shared `docs/*`; includes continuation of own mobile task | 2026-09-17 |
 | Mobile touch pass (implementation complete; browser verification blocked) | Codex | `codex/workspace` | `src/gameplay/human-drag-aim-input.js`, `styles/game-ui-base-and-hud.css`, `plans/agent-handoff-board.md` | 2026-09-17 |
 
 ### Mobile touch pass handoff - 2026-09-17

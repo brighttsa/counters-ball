@@ -1,0 +1,56 @@
+/* The generated venue occupies the open right half; the route stays in flow. */
+.screen-levels {
+  grid-template-rows: auto minmax(min-content, 1fr) auto; align-items: start;
+  background: linear-gradient(90deg, rgba(18,21,20,.88), rgba(18,21,20,.45) 45%, rgba(18,21,20,.08) 78%);
+  gap: 24px;
+}
+.screen-levels .screen-header { text-shadow: 0 2px 8px #101411; }
+.circuit-hero { width: min(1120px, 100%); padding: 18px 0; align-self: center; }
+.circuit-venue-copy { max-width: 470px; text-shadow: 0 2px 8px #101411; }
+.circuit-venue-copy h3 {
+  margin: 10px 0 12px; font: 64px/1.02 var(--font-display); text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.circuit-venue-copy p { margin: 8px 0; line-height: 1.5; }
+#circuit-venue-place { font-size: 20px; }
+#circuit-venue-opponent { font-size: 14px; }
+#circuit-venue-conditions, #circuit-venue-rules { font-size: 13px; }
+#circuit-venue-note { font: 22px/1.3 var(--font-hand); max-width: 36ch; margin: 16px 0; }
+#circuit-venue-stars { color: var(--gold); font-size: 13px; }
+#circuit-enter { margin-top: 10px; }
+#circuit-enter:disabled { background: #343a36; color: #c0c6bd; cursor: not-allowed; border-color: #737a70; }
+#circuit-lock-note { font-size: 13px; margin: 8px 0 0; min-height: 20px; }
+.screen-levels .level-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); padding: 0; }
+.screen-levels .level-card {
+  min-height: 172px; padding: 48px 12px 12px; gap: 6px; background: rgba(18,21,20,.8);
+  border-top: 2px solid #69736a; cursor: pointer;
+}
+.screen-levels .level-card::before { top: 24px; left: 0; width: 100%; height: 1px; }
+.screen-levels .level-number { top: 8px; left: 12px; }
+.screen-levels .level-name { font-size: 21px; }
+.screen-levels .level-place { font-size: 11px; }
+.screen-levels .level-stars { min-height: 20px; }
+.screen-levels .level-stars i { font-size: 16px; }
+.screen-levels .level-lock { font-size: 12px; }
+.screen-levels .level-card[aria-pressed='true'] { border-top-color: var(--gold); background: rgba(43,52,43,.95); }
+.screen-levels .level-card:hover { background: #343b35; }
+@media (max-width: 900px) {
+  .screen-levels .level-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .circuit-venue-copy { max-width: 400px; }
+  .circuit-venue-copy h3 { font-size: 48px; }
+}
+@media (max-width: 560px) {
+  .screen-levels { grid-template-rows: auto auto auto; gap: 16px;
+    background: linear-gradient(90deg, rgba(18,21,20,.8), rgba(18,21,20,.25)); }
+  .circuit-hero { padding: 96px 0 8px; }
+  .circuit-venue-copy { max-width: 100%; }
+  .circuit-venue-copy h3 { font-size: 36px; }
+  #circuit-venue-place { font-size: 17px; }
+  #circuit-venue-note { font-size: 20px; }
+  .screen-levels .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .screen-levels .level-card { min-height: 164px; }
+}
+@media (max-height: 520px) {
+  .circuit-hero { padding-top: 8px; }
+  .circuit-venue-copy h3 { font-size: 36px; }
+}

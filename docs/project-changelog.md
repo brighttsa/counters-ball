@@ -1,5 +1,32 @@
 # Project Changelog
 
+## 2026-09-17 — Broadcast sport and Flick Craft
+
+### Added
+- Selected-venue Circuit hero over procedural scenery, six preview stops with
+  campaign lock enforcement, broadcast intros/results, compact HUD, persistent
+  turn ownership, one-shot low-flick attention and elapsed-time priority callouts.
+- Gesture speed/stability sampling with bounded aligned-draw boost; contact-based
+  Sweet Spot, Bank, Counter and Street Play recognition. Heat affects presentation
+  only; skill rewards do not alter physics or campaign star saves.
+- Timestamp-bounded transform replay with skippable 2–4 second playback and
+  restored live meshes. Playback never re-scores; paused restoration defers rule
+  continuation until resume. Camera-motion control respects reduced motion.
+- Semantic procedural audio, transient voice cap of 32, Heat ambience intensity
+  and match-point tension ducking.
+- Default-off licensed same-origin distant-photo configuration with horizon,
+  crop, grading, haze and parallax; procedural fallback and resource cleanup.
+
+### Changed
+- Presentation clock freezes with pause. Coarse-pointer sun shadows use 2048²
+  instead of 4096²; desktop retains 4096². Existing no-build architecture remains.
+
+### Verification
+- Deterministic implementation tests are present; additional tests are underway.
+  Local preview at `http://localhost:4181` serves HTTP 200.
+- Admin policy prevented automated browser inspection. No claim of verified
+  screenshots, mobile layout/touch, console cleanliness or GPU/performance.
+
 ## 2026-09-17 — Venue environments
 
 ### Added

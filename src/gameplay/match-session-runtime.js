@@ -13,12 +13,13 @@ import { JuiceAnimator } from '../fx/cap-ball-goal-juice-springs.js';
 import { ImpactParticles } from '../fx/impact-dust-puffs-and-goal-confetti.js';
 import { GameTimeController } from '../core/game-time-hit-stop-and-slow-motion.js';
 import { createSeededRandom } from '../core/seeded-random-number-generator.js';
+import { MatchPresentationDirector } from './match-presentation-director.js';
+import { syncMatchMeshes } from './match-mesh-motion.js';
 import {
   BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH, MAX_FLICK_SPEED, SIDE_HOME,
 } from '../core/pitch-dimensions-and-constants.js';
 
 const projected = new THREE.Vector3();
-const rollAxis = new THREE.Vector3();
 
 export class MatchSession {
   /**
@@ -30,7 +31,8 @@ export class MatchSession {
     this.options = options;
     const level = (this.level = options.level);
 
-    this.stage = buildLevelStage({ scene: ctx.scene, renderer: ctx.renderer, level, homeTeam: options.homeTeam, awayTeam: options.awayTeam });
+    this.stage = buildLevelStage({ scene: ctx.scene, renderer: ctx.renderer, camera: ctx.camera,
+      level, homeTeam: options.homeTeam, awayTeam: options.awayTeam });
     ctx.post.applyPreset(this.stage.preset);
     ctx.cameraDirector.setFogRange(this.stage.preset.fogRange);
 
@@ -52,14 +54,15 @@ export class MatchSession {
     this.input = new HumanDragAimInput({
       camera: ctx.camera, domElement: ctx.canvas, visuals: this.visuals, juice: this.juice,
       canControl: (side) => !this.paused && !this.rules.isAi(side) && this.rules.canFlick(side),
-      onFlick: (entry, velocity) => this.flick(entry, velocity),
-      onAimStart: () => this.hideTutorial(),
+      onFlick: (entry, velocity, gesture) => this.flick(entry, velocity, gesture),
+      onAimStart: () => { this.hideTutorial(); this.sound.event?.('aimStart'); },
     });
     this.input.setEntries(this.entries);
     this.ai = new AiTurnPerformer({
       physics: this.physics, visuals: this.visuals, juice: this.juice,
       rng: createSeededRandom(Date.now() % 1e9), onFlick: (entry, velocity) => this.flick(entry, velocity),
     });
+    this.presentation = new MatchPresentationDirector(this);
     wireMatchFeedback(this);
   }
 
@@ -71,8 +74,9 @@ export class MatchSession {
     return this.entries.filter((e) => e.side === side);
   }
 
-  flick(entry, velocity) {
+  flick(entry, velocity, gesture = null) {
     if (!this.rules.registerFlick(entry.side)) return;
+    this.presentation.begin(entry, velocity, gesture);
     entry.body.vel.copy(velocity);
     const power = velocity.length() / MAX_FLICK_SPEED;
     this.slowMoUsed = false;
@@ -105,13 +109,15 @@ export class MatchSession {
 
   setPaused(paused) {
     this.paused = paused;
+    this.sound.setPaused?.(paused);
     if (paused) this.input.cancel();
   }
 
   update(realDt, t) {
     if (this.paused || this.disposed) return;
+    if (this.presentation.update(realDt)) return;
     this.runTimers(realDt);
-    if (this.disposed) return;
+    if (this.disposed || this.presentation.replay.active) return;
 
     const dt = this.time.step(realDt);
     this.physics.advance(dt);
@@ -119,13 +125,14 @@ export class MatchSession {
       this.watchForDramaticShot();
       if (this.physics.allBodiesResting()) this.rules.resolvePlayAtRest();
     }
-    this.syncMeshes(dt);
+    syncMatchMeshes(this, dt);
     this.ai.update(realDt);
     this.juice.update(dt);
+    this.presentation.capture(realDt);
     this.particles.update(dt);
     this.visuals.update(t);
     this.stage.backdrop.update(t, realDt);
-    this.cameraDirector.setFocus(this.ballBody.pos.x, this.ballBody.pos.y);
+    this.cameraDirector.setFocus(this.ballBody.pos.x, this.ballBody.pos.y, this.ballBody.vel);
     if (this.tutorialActive) this.positionTutorial();
   }
 
@@ -154,28 +161,7 @@ export class MatchSession {
     this.sound.slowMoWhoosh();
   }
 
-  syncMeshes(dt) {
-    for (const e of this.entries) {
-      e.pivot.position.x = e.body.pos.x;
-      e.pivot.position.z = e.body.pos.y;
-      const speed = e.body.vel.length();
-      if (speed > 0.01) e.mesh.rotation.y += speed * dt * 2.2; // sliding spin
-    }
-    const { pos, vel } = this.ballBody;
-    const mesh = this.stage.ballMesh;
-    mesh.position.x = pos.x;
-    mesh.position.z = pos.y;
-    const speed = vel.length();
-    if (speed > 0.01 && dt > 0) {
-      rollAxis.set(vel.y, 0, -vel.x).normalize(); // up × velocity
-      mesh.rotateOnWorldAxis(rollAxis, (speed * dt) / BALL_RADIUS);
-      this.trailClock += dt;
-      if (speed > 1.2 && this.trailClock > 0.045) {
-        this.trailClock = 0;
-        this.particles.trail(pos.x, pos.y);
-      }
-    }
-  }
+  syncMeshes(dt) { syncMatchMeshes(this, dt); }
 
   positionTutorial() {
     const ball = this.ballBody.pos;
@@ -190,6 +176,7 @@ export class MatchSession {
     this.timers = [];
     this.ai.cancel();
     this.input.dispose();
+    this.presentation.dispose();
     this.hud.hideTutorial();
     this.stage.dispose();
   }

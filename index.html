@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Counters Ball 3D — Ghanaian Tabletop Football</title>
 <meta name="description" content="Flick bottle caps on a chalk-drawn cardboard pitch. Six Ghanaian street venues, one flick at a time." />
-<meta name="theme-color" content="#2b1a0c" />
+<meta name="theme-color" content="#191b1b" />
 <link rel="icon" type="image/svg+xml" href="assets/counters-ball-favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@700&family=Lilita+One&family=Patrick+Hand&display=swap" />
 <link rel="stylesheet" href="styles/game-ui-base-and-hud.css" />
 <link rel="stylesheet" href="styles/game-ui-menus-and-results.css" />
+<link rel="stylesheet" href="styles/broadcast-identity-and-circuit.css" />
+<link rel="stylesheet" href="styles/broadcast-match-presentation.css" />
+<link rel="stylesheet" href="styles/circuit-venue-preview.css" />
 <script type="importmap">
 {
   "imports": {
@@ -38,10 +41,24 @@
   <section class="screen screen-levels" data-screen="levels">
     <header class="screen-header">
       <button class="btn btn-small" data-action="back-to-title">← Back</button>
-      <h2 class="chalk-heading" id="levels-heading">Choose a Pitch</h2>
+      <h2 class="chalk-heading" id="levels-heading">The Circuit</h2>
       <span class="star-total" id="levels-star-total"></span>
     </header>
-    <div class="level-grid" id="level-grid"></div>
+    <article class="circuit-hero" aria-labelledby="circuit-venue-name">
+      <div class="circuit-venue-copy" aria-live="polite" aria-atomic="true">
+        <p class="card-kicker" id="circuit-match-number"></p>
+        <h3 id="circuit-venue-name"></h3>
+        <p id="circuit-venue-place"></p>
+        <p id="circuit-venue-opponent"></p>
+        <p id="circuit-venue-conditions"></p>
+        <p id="circuit-venue-rules"></p>
+        <p id="circuit-venue-note"></p>
+        <p id="circuit-venue-stars"></p>
+      </div>
+      <button class="btn btn-primary" id="circuit-enter" data-action="select-level" disabled>Enter match →</button>
+      <p id="circuit-lock-note"></p>
+    </article>
+    <nav class="level-grid" id="level-grid" aria-label="Ghana venue circuit"></nav>
   </section>
 
   <section class="screen screen-intro" data-screen="intro">
@@ -71,9 +88,11 @@
       <span class="turn-dot away inactive" id="turn-dot-away"></span>
     </div>
     <div class="flick-meter"><b id="flicks-home"></b><span>flicks left</span><b id="flicks-away"></b></div>
+    <div class="heat-meter" aria-label="Team heat"><span id="heat-home">Home 0</span><span>HEAT</span><span id="heat-away">Away 0</span></div>
     <button class="icon-btn pause-btn" data-action="pause" aria-label="Pause">❚❚</button>
     <div class="turn-banner" id="turn-banner" aria-live="polite"></div>
-    <div class="goal-banner" id="goal-banner" aria-live="assertive"><span class="goal-word">GOOOAL!</span><span class="goal-sub" id="goal-sub"></span></div>
+    <div class="goal-banner" id="goal-banner" role="status" aria-live="polite" aria-atomic="true" hidden><span class="goal-word">GOAL</span><span class="goal-sub" id="goal-sub"></span></div>
+    <div class="replay-controls" id="replay-controls" hidden><span id="replay-label">Replay</span><button class="btn btn-small" data-action="skip-replay">Skip replay →</button></div>
     <div class="tutorial-hand" id="tutorial-hand" hidden>
       <span class="tutorial-ring"></span>
       <svg class="tutorial-finger" viewBox="0 0 48 64" aria-hidden="true"><path d="M20 4c3 0 5 2 5 5v18l12 3c4 1 6 4 5 8l-3 15c-1 5-5 9-10 9H19c-4 0-7-2-9-6L3 42c-1-3 1-6 4-6 2 0 4 1 5 3l3 5V9c0-3 2-5 5-5z" fill="#fdf6e6" stroke="#2b1a0c" stroke-width="3" stroke-linejoin="round"/></svg>
@@ -88,6 +107,7 @@
       <nav class="menu-stack">
         <button class="btn btn-primary" data-action="resume">Resume</button>
         <button class="btn" data-action="restart">Restart Match</button>
+        <button class="btn" id="camera-motion-toggle" data-action="toggle-camera-motion" aria-pressed="true">Camera motion</button>
         <button class="btn" data-action="quit">Quit to Pitches</button>
       </nav>
     </article>
@@ -99,6 +119,7 @@
       <p class="card-kicker">Full Time</p>
       <h2 class="card-title results-title" id="results-title"></h2>
       <p class="results-score" id="results-score"></p>
+      <p class="results-opponent" id="results-opponent"></p>
       <ul class="results-stars" id="results-stars"></ul>
       <p class="results-note" id="results-note"></p>
       <div class="card-actions">

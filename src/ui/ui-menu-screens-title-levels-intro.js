@@ -2,10 +2,16 @@
 // tickets with stars and locks) and the pre-match intro card. One delegated
 // click handler routes every [data-action] button to the app.
 import { totalStars } from '../core/save-progress-local-storage.js';
+import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => ESCAPES[c]);
+const LIGHT = { midday: 'Midday sun', 'late-afternoon': 'Late afternoon',
+  'golden-hour': 'Golden hour', harmattan: 'Harmattan dust', 'night-bulb': 'Under the bulb' };
+const conditions = (level) => `${LIGHT[level.lighting] ?? level.lighting} · ${
+  level.surface.dusty ? 'Dusty cardboard' : level.surface.kind === 'wood' ? 'Plywood' : 'Cardboard'} · ${
+  level.obstacles.length ? `${level.obstacles.length} obstacles` : 'Open table'}`;
 
 export class MenuScreens {
   /** @param onAction (action: string, element: HTMLElement) => void */
@@ -33,7 +39,7 @@ export class MenuScreens {
   show(name) {
     for (const [key, el] of Object.entries(this.screens)) el.classList.toggle('is-active', key === name);
     this.current = name;
-    const focusable = name && this.screens[name]?.querySelector('.btn-primary:not([hidden]), .level-card:not([disabled]), .btn');
+    const focusable = name && this.screens[name]?.querySelector('.btn-primary:not([hidden]):not([disabled]), .level-card:not([disabled]), .btn:not([disabled])');
     focusable?.focus({ preventScroll: true });
   }
 
@@ -51,31 +57,34 @@ export class MenuScreens {
   }
 
   renderLevels(levels, progress, mode, isUnlocked) {
+    this.circuitProgress = progress;
     const versus = mode === 'versus';
-    $('levels-heading').textContent = versus ? 'Pick a Table · 2 Players' : 'Choose a Pitch';
+    $('levels-heading').textContent = versus ? 'The Circuit · 2 Players' : 'The Circuit';
     $('levels-star-total').textContent = versus ? '' : `★ ${totalStars(progress)} / ${levels.length * 3}`;
     $('level-grid').innerHTML = levels.map((level, i) => {
       const unlocked = isUnlocked(i);
       const stars = progress.stars[level.id] ?? 0;
       const starRow = versus ? '' : `<span class="level-stars" aria-label="${stars} of 3 stars">${
         [0, 1, 2].map((n) => `<i class="${n < stars ? 'on' : ''}">★</i>`).join('')}</span>`;
-      const who = versus ? escapeHtml(level.opponent.team.name) : `vs ${escapeHtml(level.opponent.kid)}`;
-      return `<button class="level-card${unlocked ? '' : ' locked'}" data-action="select-level" data-index="${i}"
-        ${unlocked ? '' : 'disabled'} style="--tilt:${(((i * 37) % 5) - 2) * 0.6}deg;--accent:${level.opponent.team.hudColor};--delay:${i * 70}ms">
+      return `<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
+        aria-pressed="false" style="--accent:${level.opponent.team.hudColor}">
         <span class="level-number">${i + 1}</span>
         <span class="level-name">${escapeHtml(level.name)}</span>
         <span class="level-place">${escapeHtml(level.place)}</span>
-        <span class="level-opponent">${who} · first to ${level.rules.goalsToWin}</span>
         ${starRow}
-        ${unlocked ? '' : '<span class="level-lock">Win the pitch before<br>to unlock</span>'}
+        ${unlocked ? '' : '<span class="level-lock">Locked · Preview</span>'}
       </button>`;
     }).join('');
+  }
+
+  previewLevel(level, index, unlocked, mode) {
+    fillVenuePreview(level, index, unlocked, mode, this.circuitProgress?.stars[level.id] ?? 0, conditions(level));
   }
 
   fillIntro(level, index, total, mode, homeTeam) {
     const versus = mode === 'versus';
     const { rules, opponent } = level;
-    $('intro-number').textContent = `Pitch ${index + 1} of ${total}`;
+    $('intro-number').textContent = `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
     $('intro-title').textContent = level.name;
     $('intro-place').textContent = level.place;
     $('intro-blurb').textContent = versus ? 'Two players, one table. Take turns on the same screen.' : level.blurb;
@@ -86,7 +95,7 @@ export class MenuScreens {
     home.style.setProperty('--chip', homeTeam.hudColor);
     away.style.setProperty('--chip', opponent.team.hudColor);
 
-    const lines = [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''}`, `${rules.flickLimit} flicks each`];
+    const lines = [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
     if (level.obstacles.length) lines.push('Obstacles on the table: play the rebounds');
     if ((level.frictionScale ?? 1) > 1) lines.push('Dusty surface: caps stop sooner');
     if (!versus) lines.push('★ Win', '★ Keep a clean sheet', `★ Win within ${rules.threeStarFlicks} flicks`);

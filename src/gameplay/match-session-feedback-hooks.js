@@ -19,6 +19,8 @@ export function wireMatchFeedback(session) {
   physics.onImpact = (a, b, impulse, x, z) => {
     // Impulse → approach speed → 0..1 strength, so a paper ball and a cap compare fairly.
     const strength = Math.min(1, (impulse * (a.invMass + b.invMass)) / (BODY_RESTITUTION_FACTOR * MAX_FLICK_SPEED));
+    if (rules.phase === 'moving') session.presentation.skills.impact(a, b, strength);
+    if (strength > 0.6) sound.event?.('hardContact', strength);
     const ball = a.kind === 'ball' ? a : b.kind === 'ball' ? b : null;
     if (ball) {
       const other = ball === a ? b : a;
@@ -51,14 +53,19 @@ export function wireMatchFeedback(session) {
 
   physics.onWallHit = (body, impulse, x, z) => {
     const strength = Math.min(1, impulse / (WALL_RESTITUTION_FACTOR * body.mass * MAX_FLICK_SPEED));
+    if (rules.phase === 'moving') session.presentation.skills.wall(body, strength);
     sound.woodKnock(strength * 0.8);
     if (strength > 0.25) particles.dustPuff(x, z, strength * 0.6);
   };
 
   physics.onGoalScored = (sign) => rules.registerGoal(sign);
+  physics.onStep = (dt) => {
+    if (rules.phase === 'moving') session.presentation.skills.update(dt, session.ballBody);
+  };
 
   rules.on('turn', (side) => {
     session.input.cancel();
+    session.presentation.turn(side);
     syncFlicks();
     if (rules.isAi(side)) {
       hud.setTurn(side, `${side === SIDE_AWAY ? kid : nameOf(side)} is lining up…`);
@@ -76,6 +83,7 @@ export function wireMatchFeedback(session) {
   });
 
   rules.on('goal', ({ scorer, scores }) => {
+    const highlight = session.presentation.goal(scorer);
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
     sound.whistle();
     if (versus || !rules.isAi(scorer)) sound.goalCheer();
@@ -88,17 +96,19 @@ export function wireMatchFeedback(session) {
     post.pulseBloom(0.55);
     time.slowMotion(0.35, 0.7);
     hud.setScore(scores, scorer);
-    hud.goal(versus ? `${nameOf(scorer)} score!` : scorer === SIDE_HOME ? 'What a flick!' : `${kid} scores`);
-    session.schedule(2.6, () => rules.finishGoalCelebration());
+    hud.goal(highlight || (versus ? `${nameOf(scorer)} score!` : scorer === SIDE_HOME ? 'What a flick!' : `${kid} scores`));
+    session.schedule(2.6, () => session.presentation.afterGoal());
   });
 
-  rules.on('kickoff', () => session.resetToKickoff());
+  rules.on('kickoff', () => { session.presentation.skills.kickoff(); session.resetToKickoff(); });
 
   rules.on('end', (result) => {
     session.ai.cancel();
     session.input.cancel();
     hud.setTurn(null, 'Full time!');
     sound.whistle();
+    if (result.winner) sound.event?.(versus || result.winner === SIDE_HOME ? 'win' : 'loss');
+    hud.event(result.winner ? 'WINNER' : 'FULL TIME', { priority: 12, duration: 1.2 });
     session.schedule(1.5, () => options.onEnd?.(result));
   });
 }
