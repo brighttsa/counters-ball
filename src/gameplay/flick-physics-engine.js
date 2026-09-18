@@ -23,6 +23,7 @@ export class FlickPhysicsEngine {
     this.onGoalScored = null; // (sign: -1|1)
     this.onImpact = null;     // (a, b, impulse, x, z)
     this.onWallHit = null;    // (body, impulse, x, z)
+    this.onStep = null;       // presentation observer; omitted from AI clones
   }
 
   addBody({ x, z, radius, mass, kind, side = null }) {
@@ -68,6 +69,7 @@ export class FlickPhysicsEngine {
     this.integrate(h);
     this.resolveBodyCollisions();
     this.resolveWalls();
+    this.onStep?.(h);
   }
 
   integrate(h) {

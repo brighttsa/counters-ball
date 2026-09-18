@@ -3,6 +3,7 @@
 // release flicks. One pointer drives a drag; extra touches are ignored.
 import * as THREE from 'three';
 import { MAX_PULL, MAX_FLICK_SPEED } from '../core/pitch-dimensions-and-constants.js';
+import { FlickGestureSampler } from './flick-gesture-sampler.js';
 
 const MIN_FLICK_POWER = 0.06;
 
@@ -23,6 +24,7 @@ export class HumanDragAimInput {
     this.dragStart = new THREE.Vector2();
     this.projected = new THREE.Vector3();
     this.dragCamera = this.camera.clone();
+    this.gesture = new FlickGestureSampler();
 
     this.listeners = {
       pointerdown: (e) => this.onDown(e),
@@ -75,6 +77,7 @@ export class HumanDragAimInput {
     this.aimRay(e);
     if (!this.raycaster.ray.intersectPlane(this.groundPlane, this.hit)) return;
     this.dragStart.set(this.hit.x, this.hit.z);
+    this.gesture.reset(this.hit.x, this.hit.z, e.timeStamp);
     this.selected = entry;
     this.pointerId = e.pointerId;
     try { this.domElement.setPointerCapture(e.pointerId); } catch { /* synthetic events */ }
@@ -96,6 +99,7 @@ export class HumanDragAimInput {
     if (e.pointerId !== this.pointerId) return;
     this.aimRay(e);
     if (!this.raycaster.ray.intersectPlane(this.groundPlane, this.hit)) return;
+    this.gesture.add(this.hit.x, this.hit.z, e.timeStamp);
     // Freeze projection for the gesture so camera breathing cannot change its power.
     this.pull.set(this.dragStart.x - this.hit.x, this.dragStart.y - this.hit.z);
     const len = this.pull.length();
@@ -109,10 +113,11 @@ export class HumanDragAimInput {
     this.onMove(e);
     const entry = this.selected;
     const power = this.pull.length() / MAX_PULL;
+    const gesture = this.gesture.measure(this.pull);
     const velocity = power > MIN_FLICK_POWER
-      ? this.pull.clone().normalize().multiplyScalar(power * MAX_FLICK_SPEED) : null;
+      ? this.pull.clone().normalize().multiplyScalar(Math.min(1, power * gesture.boost) * MAX_FLICK_SPEED) : null;
     this.clearSelection();
-    if (velocity) this.onFlick(entry, velocity);
+    if (velocity) this.onFlick(entry, velocity, gesture);
     else this.juice.release(entry, 0);
   }
 

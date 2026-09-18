@@ -65,8 +65,8 @@ export class AimVisuals {
 
     if (p < 0.02) { this.line.material.opacity = 0; return; }
     const dir = pull.clone().normalize();
-    const len = 0.22 + p * 1.05;
-    const bow = new THREE.Vector2(-dir.y, dir.x).multiplyScalar(len * 0.07);
+    const len = 0.16 + p * 0.52;
+    const bow = new THREE.Vector2(0, 0);
     const y = 0.035;
     const curve = new THREE.QuadraticBezierCurve3(
       new THREE.Vector3(body.pos.x, y, body.pos.y),

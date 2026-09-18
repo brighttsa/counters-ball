@@ -10,7 +10,8 @@ export function loadProgress() {
     if (!raw) return fresh;
     const parsed = JSON.parse(raw);
     return {
-      stars: parsed && typeof parsed.stars === 'object' ? parsed.stars : {},
+      stars: parsed?.stars && typeof parsed.stars === 'object' && !Array.isArray(parsed.stars)
+        ? Object.fromEntries(Object.entries(parsed.stars).filter(([, value]) => Number.isInteger(value) && value >= 0 && value <= 3)) : {},
       muted: Boolean(parsed?.muted),
     };
   } catch {
