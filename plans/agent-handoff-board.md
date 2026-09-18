@@ -7,17 +7,8 @@ Protocol: see `AGENTS.md` → Collaboration protocol.
 ## In progress
 | Task | Owner | Branch | Files / folders claimed | Started |
 |---|---|---|---|---|
-| Venue identity and Flick Vector (audit/plan; awaiting implementation approval) | Codex | `codex/workspace` | `src/scene/`, `src/gameplay/aim-*`, new flick-vector modules, input/session integration, camera, shared `src/levels/`, audio/photo profiles, `tests/`, shared `docs/*`, `plans/260918-venue-identity-flick-vector/`; continuation of own broadcast claim | 2026-09-18 |
+| Venue identity and Flick Vector (approved; implementation) | Codex | `codex/workspace` | `src/scene/`, `src/gameplay/aim-*`, new flick-vector modules, input/session integration, camera, shared `src/levels/`, audio/photo profiles, `tests/`, shared `docs/*`, `plans/260918-venue-identity-flick-vector/`; continuation of own broadcast claim | 2026-09-18 |
 | Broadcast sport and Flick Craft redesign | Codex | `codex/workspace` | `src/`, `styles/`, `index.html`, `tests/`, `plans/260917-broadcast-sport/`, shared `docs/*`; includes continuation of own mobile task | 2026-09-17 |
-| Mobile touch pass (implementation complete; browser verification blocked) | Codex | `codex/workspace` | `src/gameplay/human-drag-aim-input.js`, `styles/game-ui-base-and-hud.css`, `plans/agent-handoff-board.md` | 2026-09-17 |
-
-### Mobile touch pass handoff - 2026-09-17
-- Added nearest controllable-cap selection within 24 CSS pixels for touch misses, finger-relative pull with a frozen camera projection, and release-position sampling.
-- Pointer cancellation, lost capture, window blur, resize, and pause discard the gesture without spending a flick. Pointer capture is released on cleanup; secondary mouse buttons are ignored.
-- Narrow/coarse landscape HUD uses bounded, wrapping team names and 48px controls; pause sits at the safe-area bottom left, opposite sound.
-- All source JavaScript syntax checks and `git diff --check` passed. Served this clone on port 4181; Playwright reported the game page title on initial navigation.
-- Full browser verification remains blocked: the browser tool could not verify the admin-enforced policy for localhost. No visual/touch checks are claimed. Keep this task out of Done until portrait (320/390px), landscape, desktop, touch cancellation/multitouch, pause/resume, rendered canvas, and console checks pass. Physical-device feel remains to be assessed.
-- Implementation is in the commit containing this note on `codex/workspace`; merge through the normal clone workflow after verification.
 
 ## Blocked
 
@@ -37,6 +28,8 @@ Protocol: see `AGENTS.md` → Collaboration protocol.
 ## Done (newest first)
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|
+| Portrait framing (turn the view a quarter on tall screens) | Claude Code | `4eb8791` | Camera director now swings 90° below 0.95 aspect: pitch runs up the screen, you attack upward, table ~54% bigger at 390×844. Landscape identical (fit 4.04). Verified flick direction, goal push-in, intro crane, no console errors. |
+| Mobile touch pass | Codex (built) + Claude Code (verified, merged) | `e982a1b` | Merged to `main`. Verified in browser at 375×812, 320×640, 640×360 and 844×390: 18px-miss touch grab works, pointercancel/blur abort without spending a flick, second finger ignored, mouse still flicks, right button ignored, HUD fits with no overflow, 48px controls, pause clear of sound. No console errors. Physical-device feel still unassessed. |
 | Deployment documentation handoff (documentation only) | Codex docs | Commit containing this note | Claimed and completed deployment board entry, handoff report, and shared `docs/journals/` entry. Checked supplied evidence and documentation diff; public delivery remains blocked above. No implementation changes. |
 | Realistic venue environments matched to pitch names | Claude Code | `1820560` | Ground, props, walls, fowl, shade, dust, night spill light, DOF sharp zone. Verified all 6 venues in browser, no errors. |
 | Campaign, AI opponent, menus, game feel | Claude Code | `171cb18` | Full game loop verified; review fixes applied. |

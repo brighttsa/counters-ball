@@ -20,6 +20,10 @@ expressed through a single flick.
 | `play` | Breathing drift (0.22/0.31 Hz, ±3 cm) + a 12% lean toward the ball |
 | `goal` | Smoothstep push-in toward the scoring goal, 55% positional lerp |
 
+- **Orientation:** below a 0.95 aspect the whole view swings a quarter turn — the
+  pitch runs up the screen and the player attacks upward, which is how phones
+  hold football. Fitting a wide pitch across a narrow screen instead would push
+  the camera back ~54% further and shrink the table. Landscape is unchanged.
 - **Kick:** every flick nudges the camera with a spring impulse along the flick
   direction. **Shake:** trauma-based (`trauma²`) driven by *smooth* summed-sine
   noise, never `Math.random` jitter. Motion-off/reduced motion removes directed

@@ -27,6 +27,18 @@
 - Admin policy prevented automated browser inspection. No claim of verified
   screenshots, mobile layout/touch, console cleanliness or GPU/performance.
 
+## 2026-09-17 — Mobile
+
+### Added
+- Portrait framing: on tall screens the view turns a quarter so the pitch runs
+  up the screen and you attack upward; the table is ~54% bigger on a phone.
+
+### Changed
+- Touch aiming: a tap within 24 px grabs the nearest cap, the pull is measured
+  from the finger, and the aim projection is frozen for the gesture so camera
+  drift cannot change shot power. Cancel, lost capture, blur and resize abort a
+  drag without spending a flick. Compact HUD for narrow and landscape phones.
+
 ## 2026-09-17 — Venue environments
 
 ### Added
