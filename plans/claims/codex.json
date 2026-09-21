@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "owner": "codex",
+  "branch": "codex/workspace",
+  "task": "Paused venue identity and Flick Vector",
+  "status": "active",
+  "paths": [
+    "plans/260918-venue-identity-flick-vector/plan.md",
+    "src/fx/camera-director-attract-intro-play-goal.js",
+    "src/fx/venue-establishing-camera-profiles.js",
+    "src/gameplay/human-drag-aim-input.js",
+    "src/gameplay/match-session-runtime.js",
+    "src/main.js",
+    "src/scene/level-stage-builder-and-disposal.js",
+    "src/scene/match-ball-and-goal-posts.js",
+    "src/scene/table-and-battens-builder.js",
+    "src/scene/environment/venue-architecture-building-parts.js",
+    "src/scene/environment/venue-architecture-domestic-courtyards.js",
+    "src/scene/venue-construction-primitives.js",
+    "src/scene/venue-goal-construction.js",
+    "src/scene/venue-table-boundaries.js",
+    "src/scene/venue-table-supports.js",
+    "src/scene/venue-visual-profiles.js"
+  ],
+  "updatedAt": "2026-09-21T12:09:29.710Z",
+  "head": "3dd59d460d03d9c3d66bb1df854e8e7c5129b473"
+}

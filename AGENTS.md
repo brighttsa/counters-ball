@@ -59,14 +59,22 @@ Codex's worktree uses port **4181** (see below). Open `http://localhost:<port>`.
 | Dev server port | 4180 | 4181 |
 
 1. **Start of every session:** read `plans/agent-handoff-board.md` and
-   `git log --oneline -10 --all`.
-2. **Claim before you edit:** add your task to the board with the files/folders
-   you will touch. Don't edit files another agent has claimed as *In progress*.
+   `git log --oneline -10 --all`; run `node scripts/collaboration-workflow.mjs status`
+   to inspect the peer clone's live claims and uncommitted files.
+2. **Claim before you edit:** run `node scripts/collaboration-workflow.mjs claim
+   "Task title" file.js folder/`. Each owner writes only their own
+   `plans/claims/<owner>.json`. Read the board too; until both clones adopt
+   live claims, board claims still require manual coordination.
 3. **Stay in your folder.** Each agent only writes inside its own folder.
 4. **Integrate through git:** Codex commits on its branch in its clone; Claude fetches it (remote `codex`) and
-   merges into `main`. Before starting new work, Codex updates from `main`
-   (`git pull origin main` in its clone — `origin` is Claude's repo).
+   reviews and merges the exact handed-off commit into `main`. Before new work,
+   Codex runs `node scripts/collaboration-workflow.mjs sync` on a clean tree.
+   Never auto-stash or mix unrelated unfinished changes into a handoff.
 5. **Hand off in writing:** when you finish or stop, move the task on the board
    and leave a short note — what changed, how you verified it, what's left.
 6. **Shared files need care:** `AGENTS.md`, `docs/*`, and
    `src/levels/campaign-level-definitions.js` change rarely — note it on the board.
+7. **Before committing:** rerun status, verify, release your completed claim,
+   and stage only intended files. Run `node scripts/collaboration-workflow.mjs handoff`
+   after committing. Keep paused work claimed. See `docs/collaboration-workflow.md`
+   for bootstrap, commands and integration rules.
