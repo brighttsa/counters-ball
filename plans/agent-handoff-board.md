@@ -13,12 +13,6 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 |---|---|---|---|---|
 
 ## Paused / Awaiting Review
-- Venue identity and Flick Vector: Codex paused implementation for workflow
-  setup. Partial construction, architecture, camera and input/session changes
-  remain uncommitted in the Codex clone. The live claim lists the exact reserved
-  files; old broad `src/`, `tests/` and `docs/*` reservations are released.
-  Surface painters, environment wiring, the new aim renderer and visual/mobile
-  verification remain incomplete. Do not deploy this working tree.
 - Broadcast checkpoint: `ca5d192`, `66db37c`, `9a6845c`; portrait integration
   `3dd59d4`. These commits are available for review, not a claim over all source
   files. Rendered appearance, touch feel and performance still need verification.
@@ -41,6 +35,7 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 ## Done (newest first)
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|
+| Venue identity and Flick Vector implementation | Codex | `5301752`, `cb5a228` | Six constructions, seeded surfaces/markings, layered surroundings/openings, four-part mobile-readable aim and camera lock. 90 tests pass; all six venues/openings and 320/375/390/430 aim captured on 4181. Independent reviewer hit usage limit; physical-device checks and unattributed browser MutationObserver diagnostic remain. See `docs/venue-flick-vector-verification.md`. Claude clone unchanged; no deployment. |
 | Collaboration workflow | Codex | Commit containing this note | Live cross-clone claim/dirty-file checks; owner-only claim records; clean, fast-forward-only sync; exact-commit handoff. 10 workflow tests and full 74-test suite pass, no skips. Claude clone unchanged. Claude must fetch and cherry-pick this workflow-only commit to adopt it; game redesign WIP excluded. No new browser verification needed for CLI-only changes. |
 | Portrait framing (turn the view a quarter on tall screens) | Claude Code | `4eb8791` | Camera director now swings 90° below 0.95 aspect: pitch runs up the screen, you attack upward, table ~54% bigger at 390×844. Landscape identical (fit 4.04). Verified flick direction, goal push-in, intro crane, no console errors. |
 | Mobile touch pass | Codex (built) + Claude Code (verified, merged) | `e982a1b` | Merged to `main`. Verified in browser at 375×812, 320×640, 640×360 and 844×390: 18px-miss touch grab works, pointercancel/blur abort without spending a flick, second finger ignored, mouse still flicks, right button ignored, HUD fits with no overflow, 48px controls, pause clear of sound. No console errors. Physical-device feel still unassessed. |

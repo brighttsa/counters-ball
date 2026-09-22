@@ -16,7 +16,7 @@ expressed through a single flick.
 | Mode | Behaviour |
 |---|---|
 | `attract` | Slow yawing sweep around the table behind the menus (±0.55 rad, 0.09 Hz) |
-| `intro` | 2.6 s crane-in from high and off to the side, `easeInOutCubic` into the play pose |
+| `intro` | 2.8 s venue-specific establishing composition easing into the play pose |
 | `play` | Breathing drift (0.22/0.31 Hz, ±3 cm) + a 12% lean toward the ball |
 | `goal` | Smoothstep push-in toward the scoring goal, 55% positional lerp |
 
@@ -72,8 +72,8 @@ and an optional bulb, so a venue is a single coherent look.
   number, diagonal stripes, dot.
 - **Ball:** displaced icosahedron (±8%) with paper creases — visibly smaller,
   lighter and less predictable than the caps.
-- **Goals:** matchstick posts with burnt heads, hand-planted lean, matchstick
-  crossbar; posts are physical, so shots rattle off the woodwork.
+- **Goals:** painted wood, bent wire, lashed timber, rusted steel, twigs and PVC
+  vary by venue. Four standardized physical post colliders preserve fair shots.
 - **Obstacles:** flattened pebbles, a capless glass bottle with a paper label,
   stacked brass/nickel coins. All are static circles in physics.
 - **Chalk lines:** never straight — jittered segments, varying alpha, dust bleed,
@@ -113,10 +113,12 @@ pitch stays crisp (±1.9 units of focus), the street falls off into bokeh.
 The rule: **every contact produces sound, particles, deformation and camera
 response, scaled by one shared 0..1 strength** (impulse → approach speed).
 
-- **Aim:** hover glow on flickable caps; drag back for a curved dashed
-  trajectory (quadratic bezier, 7% lateral bow) plus a power ring that sweeps
-  clockwise and warms chalk → orange → red. The cap sinks into the table and
-  leans its top toward the finger.
+- **Aim:** grounded origin ring, tapered ivory ribbon and broad arrowhead.
+  Length/weight express power; gold core and restrained enamel edges signal
+  tension without a red laser. One conservative first-contact ghost shows
+  approximate alignment, never a full future path. Camera pose/FOV lock during
+  human aim; cancellation unlocks without release effects. Mobile width is
+  projected to a 14-24px equivalent, not a fixed world-space line.
 - **Release:** squash-and-overshoot spring on the cap, dust puff, fingernail-snap
   sound, camera kick along the flick.
 - **Impact:** hit-stop of 20–85 ms on the strike (the whole sim freezes, which is
@@ -184,6 +186,6 @@ local music or recorded voices. Pause suspends the audio context, including ambi
 - Random jitter as "juice": shake is smooth-noise, springs are real springs.
 - Sterile emptiness: the frame always carries grain, dust, haze and street colour.
 
-Verification: deterministic checks do not certify appearance or frame rate.
-Port 4181 serves HTTP 200; automated browser inspection was blocked by admin
-policy. Mobile layout, touch feel, console and GPU/performance checks are pending.
+Verification: six play/opening captures and four mobile aim widths inspected on
+4181. See `venue-flick-vector-verification.md` for the 90-test result and remaining
+independent review, browser diagnostic and physical-device checks.

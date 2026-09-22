@@ -32,7 +32,7 @@ Owns everything venue-specific and disposes it cleanly:
 | `FlickPhysicsEngine` | Fixed 1/240 s circle physics; impact/wall/goal events |
 | `MatchRules` | Turns, flick budgets, goals, kickoffs, result + stars |
 | `HumanDragAimInput` / `AiTurnPerformer` | The two ways a flick happens |
-| `AimVisuals` | Trajectory, power ring, rim glow — shared by human and AI |
+| `AimVisuals` | Origin ring, projected ribbon/head, first-contact ghost and release scrape; shared by human and AI |
 | `JuiceAnimator`, `ImpactParticles`, `GameTimeController` | Feel: springs, dust, hit-stop |
 | `wireMatchFeedback` | Maps engine + rules events onto sound, fx, camera, HUD |
 | `MatchPresentationDirector` | Skill recognition, Heat, match point and replay lifecycle |
@@ -93,7 +93,7 @@ mesh sync → AI → juice → replay capture → particles → aim → backdrop
   horizon, focal crop, exposure, grade, haze, parallax and plane placement.
 
 ## Verification status
-Deterministic implementation tests exist, with additional coverage underway.
-Local preview on port 4181 returned HTTP 200. Admin policy prevented automated
-browser inspection; rendered layouts, console behavior, real touch feel and
-GPU/performance remain unverified.
+The venue/Flick Vector pass has 90 passing tests and browser captures of all six
+venues/openings and aiming at 320/375/390/430 widths. Port 4181 is the preview.
+See `venue-flick-vector-verification.md` for evidence and remaining independent
+review, console-diagnostic and physical-device checks.

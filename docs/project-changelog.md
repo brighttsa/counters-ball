@@ -1,5 +1,17 @@
 # Project Changelog
 
+## 2026-09-22 - Venue Identity and Flick Vector
+
+- Added seeded venue-specific surfaces, wear/roughness, markings, support/rail/
+  goal construction and safe outer silhouettes; gameplay bounds remain unchanged.
+- Added layered venue architecture, restrained ambient motion, six establishing
+  openings and licensed-photo grading controls (photographs disabled by default).
+- Replaced dashed aiming with a grounded selection ring, broad tapered vector,
+  projected mobile sizing, approximate first-contact ghost and immediate release
+  flash/scrape. Human aim locks the camera until release or cancellation.
+- Verified 90 tests, six UI-hidden venue captures, six opening views and phone
+  aiming at four widths. See `venue-flick-vector-verification.md` for limitations.
+
 ## 2026-09-17 — Broadcast sport and Flick Craft
 
 ### Added

@@ -1,6 +1,6 @@
 ---
 title: Six venue constructions and the Flick Vector
-status: pending
+status: implemented-awaiting-independent-review
 priority: P1
 effort: large
 branch: codex/workspace
@@ -15,9 +15,9 @@ ghost. Preserve campaign IDs, stories, rules, saves, AI, cap formation, obstacle
 friction and every physics boundary. No framework, bundler, binary assets,
 unlicensed imagery, full trajectory solver, fake spin or unrelated menu redesign.
 
-The prior broadcast implementation is present but uncommitted. Preserve it;
-checkpoint reviewed changes separately before this implementation. Existing
-visual verification remains blocked, not silently converted into a pass.
+The prior broadcast implementation is checkpointed in ca5d192, 66db37c and
+9a6845c; portrait integration is 3dd59d4. Implementation resumed 2026-09-21
+after collaboration tooling completion. Rendered verification is required.
 
 ## Current Venue Audit
 
@@ -53,30 +53,33 @@ pieces away from input, FX or physics space.
 
 ## Implementation Steps
 
-- [ ] A: Review and approve this plan; checkpoint previous broadcast work and
+- [x] A: Review and approve this plan; checkpoint previous broadcast work and
   merge origin/main at 160614f. Pull correctly refused to overwrite dirty camera
   and documentation files. Preserve upstream 90-degree portrait framing (4eb8791)
   and mobile verification handoff; resolve camera integration explicitly.
-- [ ] B: Small venue visual profiles keyed by existing backdrop IDs; separate
+- [x] B: Small venue visual profiles keyed by existing backdrop IDs; separate
   surface wear, support/boundary construction and goal builders. Seed texture
   wear, roughness and all persistent decoration. Keep every file under 200 lines.
-- [ ] C: Extend existing architecture with genuinely different silhouettes,
+- [x] C: Extend existing architecture with genuinely different silhouettes,
   layered framing, cheap ambient movement and venue-specific 2-4 second intros.
   Restrict moving props outside the gameplay view; obey pause/reduced motion.
-- [ ] D: Replace dashed aim with reusable mesh geometry and a restrained textured
+- [x] D: Replace dashed aim with reusable mesh geometry and a restrained
   material. Measure projected width at the cap using the actual camera/canvas:
   desktop 10-18 CSS-pixel equivalent, coarse/mobile 14-24. Power changes both
   length and width; ivory body, gold core/contact, enamel accent only at high power.
-- [ ] E: Pure first-contact estimate using swept cap radius against ball, caps,
+- [x] E: Pure first-contact estimate using swept cap radius against ball, caps,
   obstacle circles, posts and walls. Show one approximate ghost only, no rebounds
   or future ball path. Gold tightening uses contact alignment, not a success claim.
-- [ ] F: Lock actual camera pose/FOV throughout human aim; release/cancel/resize/
+- [x] F: Lock actual camera pose/FOV throughout human aim; release/cancel/resize/
   pause/disposal clear lock. Snap vector off on release; short origin expansion
   and directional scrape run on pausable time. Cancellation has no release flash.
-- [ ] G: Extend default-disabled photo configuration with saturation, temperature,
+- [x] G: Extend default-disabled photo configuration with saturation, temperature,
   blur and opacity alongside existing crop/focal/horizon/exposure/haze/parallax.
   Same-origin licensed files only; preserve complete procedural fallback.
 - [ ] H: Tester and reviewer passes, documentation, focused commits and handoff.
+  Implementation tests (90/90), visual captures and documentation are complete.
+  Independent reviewer was blocked by the account usage limit. Physical-device
+  assessment remains open; see `docs/venue-flick-vector-verification.md`.
 
 ## Interfaces and Ownership
 
@@ -106,9 +109,9 @@ bloat. Profile lookup must handle attract mode and nightbulb -> night explicitly
   camera, then six-way contact sheet; separate intro and phone-aim captures.
 - Check nonblank changing canvas pixels, console, resource loads, campaign/AI/
   hot-seat/goals/results/restart/pause and representative visible-pane FPS.
-- Mandatory visual gate remains outstanding while the browser tool cannot
-  verify its admin policy. Do not bypass that restriction or claim screenshots,
-  touch feel, cinematic framing or phone performance from CPU tests alone.
+- Mandatory visual gate requires actual browser evidence. Browser access is
+  available on resumption; never infer touch feel or phone performance from
+  CPU tests alone.
 
 ## Preview
 
@@ -120,4 +123,5 @@ is part of this pass. Preserve `.DS_Store` and `.playwright-cli/` untracked file
 Read-only reviewer checked architecture and proposed tests on 2026-09-18. Plan
 incorporates collider parity, expanded-circle contact estimation, projected CSS
 width, rendered-camera lock and pausable presentation time. No implementation
-changes for this pass yet; human plan approval is the next Cook gate.
+changes preceded approval. User approved implementation on 2026-09-18.
+Broadcast checkpoints: ca5d192, 66db37c, 9a6845c; portrait merge: 3dd59d4.
