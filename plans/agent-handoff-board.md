@@ -12,11 +12,6 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 | Task | Owner | Branch | Files / folders claimed | Started |
 |---|---|---|---|---|
 
-## Paused / Awaiting Review
-- Broadcast checkpoint: `ca5d192`, `66db37c`, `9a6845c`; portrait integration
-  `3dd59d4`. These commits are available for review, not a claim over all source
-  files. Rendered appearance, touch feel and performance still need verification.
-
 ## Blocked
 
 ### Public deployment - 2026-09-17
@@ -30,11 +25,14 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 | Task | Suggested owner | Notes |
 |---|---|---|
 | Measure frame rate on a phone-sized viewport with the pane visible; tune shadow map size / bokeh if under 50 fps | either | 4096² sun shadow + BokehPass are the likely costs |
-| Automated regression script driving `session.update()` (flick → goal → results → stars) | either | Would replace the manual console checks |
+| Physical-phone pass (iOS Safari + Android Chrome) | user + either | Flick Vector feel/readability in sunlight, camera lock and recovery on release, 2.8 s openings and auto kick-off, replay skip, audio (tension/heat beds, pause silence), sustained fps and heat, rotation mid-drag and mid-replay |
+| Ignore local tool debris | Codex | Its clone has untracked `.DS_Store` and `.playwright-cli/` snapshots; add both to `.gitignore` so they never get staged |
+| Skip render on a zero-size viewport | either | A 0×0 window (collapsed pane, some mobile transitions) makes the bloom/bokeh targets zero-sized → `GL_INVALID_FRAMEBUFFER_OPERATION` spam. Pre-existing; guard in `src/core/game-render-loop-and-viewport.js` |
 
 ## Done (newest first)
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|
+| Review + integrate broadcast, venue identity and Flick Vector range (`ca5d192`…`144fce4`) | Claude Code | `144fce4` (fast-forward) | Read the full range (88 files). Reran suite on r160: 90 pass, 0 fail, 0 skip; syntax clean, no src file >200 lines. On 4182/4180: all six venue previews and openings reach play with 0 GL errors and a clean console; real flick → moving → AI turn → goal → 3-star result; locked venue refuses entry; menu overlay covers the preview table; portrait 375×812 aim points up-field, camera locks while aiming and unlocks on release/cancel with no flick spent. MutationObserver diagnostic: an instrumented `observe` recorded zero calls from game code across all venues. With no source URL it is most likely injected by Codex's browser automation (`.playwright-cli/` snapshots in its clone), and it never appears in the in-app browser. Desktop now frames wider (`LANDSCAPE_FIT` 2.2×1.9) by design. No deployment. |
 | Venue identity and Flick Vector implementation | Codex | `5301752`, `cb5a228` | Six constructions, seeded surfaces/markings, layered surroundings/openings, four-part mobile-readable aim and camera lock. 90 tests pass; all six venues/openings and 320/375/390/430 aim captured on 4181. Independent reviewer hit usage limit; physical-device checks and unattributed browser MutationObserver diagnostic remain. See `docs/venue-flick-vector-verification.md`. Claude clone unchanged; no deployment. |
 | Collaboration workflow | Codex | Commit containing this note | Live cross-clone claim/dirty-file checks; owner-only claim records; clean, fast-forward-only sync; exact-commit handoff. 10 workflow tests and full 74-test suite pass, no skips. Claude clone unchanged. Claude must fetch and cherry-pick this workflow-only commit to adopt it; game redesign WIP excluded. No new browser verification needed for CLI-only changes. |
 | Portrait framing (turn the view a quarter on tall screens) | Claude Code | `4eb8791` | Camera director now swings 90° below 0.95 aspect: pitch runs up the screen, you attack upward, table ~54% bigger at 390×844. Landscape identical (fit 4.04). Verified flick direction, goal push-in, intro crane, no console errors. |
