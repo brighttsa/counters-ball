@@ -133,6 +133,7 @@ export class HumanDragAimInput {
   }
 
   clearSelection() {
+    const wasAiming = Boolean(this.selected);
     const pointerId = this.pointerId;
     this.selected = null;
     this.pointerId = null;
@@ -141,6 +142,7 @@ export class HumanDragAimInput {
     }
     this.visuals.hide();
     this.domElement.classList.remove('aiming');
+    if (wasAiming) this.onAimEnd?.();
   }
 
   dispose() {

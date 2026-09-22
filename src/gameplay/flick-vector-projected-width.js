@@ -1,0 +1,23 @@
+import * as THREE from 'three';
+
+export function projectedFlickWidth(camera, canvas, origin, direction, power, coarse = false) {
+  const rect = canvas?.getBoundingClientRect?.();
+  const pixels = (coarse ? 14 : 10) + (coarse ? 10 : 8) * power;
+  if (!camera || !rect?.width || !rect?.height) return 0.065 + power * 0.045;
+  camera.updateMatrixWorld();
+  const center = new THREE.Vector3(origin.x, 0.035, origin.y);
+  const perpendicular = new THREE.Vector3(-direction.y, 0, direction.x);
+  const projected = width => {
+    const a = center.clone().addScaledVector(perpendicular, width / 2).project(camera);
+    const b = center.clone().addScaledVector(perpendicular, -width / 2).project(camera);
+    return Math.hypot((a.x - b.x) * rect.width / 2, (a.y - b.y) * rect.height / 2);
+  };
+  // Solve actual perspective projection, including portrait camera rotation.
+  let low = 0, high = 2;
+  for (let i = 0; i < 24; i++) {
+    const middle = (low + high) / 2;
+    if (projected(middle) < pixels) low = middle;
+    else high = middle;
+  }
+  return (low + high) / 2;
+}

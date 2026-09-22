@@ -33,6 +33,7 @@ function replaceSession(options, sessionHud) {
   sound.setPaused?.(false);
   sound.setHeat?.(0);
   sound.setTension?.(false);
+  cameraDirector.setVenue(options.level.backdrop);
   app.session = new MatchSession({ renderer, scene, camera, canvas, cameraDirector, post, sound, hud: sessionHud }, options);
 }
 
@@ -94,7 +95,7 @@ function prepareMatch(index) {
   sound.setSfxLevel(1);
   sound.setAmbience(level.backdrop);
   hud.reset(level, HOME_TEAM, level.opponent.team, versus);
-  cameraDirector.playIntro(2.6);
+  cameraDirector.playIntro(2.8);
   menus.fillIntro(level, index, CAMPAIGN_LEVELS.length, app.mode, HOME_TEAM);
   menus.show('intro');
   const session = app.session;

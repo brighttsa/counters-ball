@@ -46,7 +46,7 @@ export class MatchSession {
 
     this.rules = new MatchRules(level.rules, options.controllers);
     this.time = new GameTimeController();
-    this.visuals = new AimVisuals(this.stage.group);
+    this.visuals = new AimVisuals(this.stage.group, { camera: ctx.camera, canvas: ctx.canvas, physics: this.physics });
     this.juice = new JuiceAnimator(this.entries, this.stage.ballMesh, this.stage.goals);
     this.particles = new ImpactParticles(this.stage.group);
     Object.assign(this, { timers: [], paused: false, disposed: false, slowMoUsed: false, trailClock: 0, tutorialActive: false, tutorialDone: false });
@@ -55,7 +55,8 @@ export class MatchSession {
       camera: ctx.camera, domElement: ctx.canvas, visuals: this.visuals, juice: this.juice,
       canControl: (side) => !this.paused && !this.rules.isAi(side) && this.rules.canFlick(side),
       onFlick: (entry, velocity, gesture) => this.flick(entry, velocity, gesture),
-      onAimStart: () => { this.hideTutorial(); this.sound.event?.('aimStart'); },
+      onAimStart: () => { this.cameraDirector.setAimLocked(true); this.hideTutorial(); this.sound.event?.('aimStart'); },
+      onAimEnd: () => this.cameraDirector.setAimLocked(false),
     });
     this.input.setEntries(this.entries);
     this.ai = new AiTurnPerformer({
@@ -77,6 +78,7 @@ export class MatchSession {
   flick(entry, velocity, gesture = null) {
     if (!this.rules.registerFlick(entry.side)) return;
     this.presentation.begin(entry, velocity, gesture);
+    this.visuals.release?.(entry.body, velocity);
     entry.body.vel.copy(velocity);
     const power = velocity.length() / MAX_FLICK_SPEED;
     this.slowMoUsed = false;
@@ -130,7 +132,7 @@ export class MatchSession {
     this.juice.update(dt);
     this.presentation.capture(realDt);
     this.particles.update(dt);
-    this.visuals.update(t);
+    this.visuals.update(t, realDt);
     this.stage.backdrop.update(t, realDt);
     this.cameraDirector.setFocus(this.ballBody.pos.x, this.ballBody.pos.y, this.ballBody.vel);
     if (this.tutorialActive) this.positionTutorial();

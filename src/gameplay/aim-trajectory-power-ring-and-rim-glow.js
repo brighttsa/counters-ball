@@ -1,105 +1,142 @@
-// Aim feedback shared by the human drag input and the AI performer: a curved
-// dashed trajectory, a power ring that sweeps around the cap and warms from
-// chalk-white to red, and an additive rim glow (hover + selected states).
-import * as THREE from 'three';
-import { MAX_PULL } from '../core/pitch-dimensions-and-constants.js';
+import { MAX_FLICK_SPEED } from '../core/pitch-dimensions-and-constants.js';
+import { flickPreview } from './flick-vector-contact-preview.js';
+import { projectedFlickWidth } from './flick-vector-projected-width.js';
+import { createFlickMeshes, shapeRibbon, IVORY } from './flick-vector-meshes.js';
 
-const CHALK = new THREE.Color(1.0, 0.95, 0.82);
-const WARM = new THREE.Color(1.0, 0.62, 0.25);
-const HOT = new THREE.Color(0.95, 0.3, 0.2);
-
-const powerRingMaterial = () => new THREE.ShaderMaterial({
-  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  uniforms: { uProgress: { value: 0 }, uColor: { value: new THREE.Color() }, uOpacity: { value: 0 } },
-  vertexShader: /* glsl */`
-    varying vec2 vPos;
-    void main() { vPos = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-  fragmentShader: /* glsl */`
-    uniform float uProgress; uniform vec3 uColor; uniform float uOpacity;
-    varying vec2 vPos;
-    void main() {
-      float a = fract(atan(vPos.x, vPos.y) / 6.28318 + 1.0); // 0 at 12 o'clock, clockwise
-      if (a > uProgress) discard;
-      float head = smoothstep(uProgress - 0.08, uProgress, a); // brighter leading edge
-      gl_FragColor = vec4(uColor * (1.0 + head * 0.8), uOpacity);
-    }`,
-});
+const preference = query => globalThis.matchMedia?.(query)?.matches ?? false;
 
 export class AimVisuals {
-  constructor(parent) {
-    this.lineGeo = new THREE.BufferGeometry().setFromPoints(
-      Array.from({ length: 25 }, () => new THREE.Vector3()));
-    this.line = new THREE.Line(this.lineGeo, new THREE.LineDashedMaterial({
-      color: 0xfff1cf, dashSize: 0.045, gapSize: 0.03, transparent: true, opacity: 0, depthWrite: false,
-    }));
-    this.line.frustumCulled = false;
-
-    this.glow = new THREE.Mesh(new THREE.RingGeometry(1.02, 1.42, 40),
-      new THREE.MeshBasicMaterial({ color: 0xffd07a, transparent: true, opacity: 0,
-        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
-    this.ring = new THREE.Mesh(new THREE.RingGeometry(1.6, 1.86, 64), powerRingMaterial());
-    for (const m of [this.glow, this.ring]) m.rotation.x = -Math.PI / 2;
-    this.ring.visible = false;
-    parent.add(this.line, this.glow, this.ring);
-
-    this.activeBody = null;
-    this.hoverBody = null;
-    this.power = 0;
-    this.color = new THREE.Color();
+  constructor(parent, { camera, canvas, physics } = {}) {
+    Object.assign(this, { camera, canvas, physics }, createFlickMeshes(parent));
+    this.activeBody = this.hoverBody = null;
+    this.pull = { x: 0, y: 0 };
+    this.power = this.effectAge = this.effectDuration = 0;
+    this.elapsed = 0;
+    this.disposed = false;
   }
 
-  /** @param pull THREE.Vector2 — flick direction scaled by pull length */
   show(body, pull) {
+    if (this.disposed) return;
     this.activeBody = body;
-    this.power = Math.min(1, pull.length() / MAX_PULL);
-    const p = this.power;
-    this.color.copy(CHALK).lerp(WARM, Math.min(1, p * 1.6));
-    if (p > 0.62) this.color.lerp(HOT, (p - 0.62) / 0.38);
+    this.pull = { x: pull.x, y: pull.y };
+    this.draw();
+  }
 
-    this.ring.visible = true;
-    this.ring.position.set(body.pos.x, 0.005, body.pos.y);
-    this.ring.scale.setScalar(body.radius);
-    this.ring.material.uniforms.uProgress.value = p;
-    this.ring.material.uniforms.uColor.value.copy(this.color);
-    this.ring.material.uniforms.uOpacity.value = 0.55;
-
-    if (p < 0.02) { this.line.material.opacity = 0; return; }
-    const dir = pull.clone().normalize();
-    const len = 0.16 + p * 0.52;
-    const bow = new THREE.Vector2(0, 0);
-    const y = 0.035;
-    const curve = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(body.pos.x, y, body.pos.y),
-      new THREE.Vector3(body.pos.x + dir.x * len * 0.5 + bow.x, y, body.pos.y + dir.y * len * 0.5 + bow.y),
-      new THREE.Vector3(body.pos.x + dir.x * len, y, body.pos.y + dir.y * len));
-    this.lineGeo.setFromPoints(curve.getPoints(24));
-    this.line.computeLineDistances();
-    this.line.material.color.copy(this.color);
-    this.line.material.opacity = 0.3 + p * 0.65;
+  draw() {
+    const body = this.activeBody;
+    const preview = flickPreview(body, this.pull, this.physics?.bodies);
+    const { power, direction, range, contact } = preview;
+    this.power = power;
+    this.preview = preview;
+    this.ring.visible = this.glow.visible = this.ringShadow.visible = true;
+    for (const mesh of [this.ring, this.glow, this.ringShadow]) {
+      mesh.position.set(body.pos.x, 0.012, body.pos.y);
+      mesh.scale.setScalar(body.radius * (1 - power * 0.08));
+    }
+    this.ring.material.color.set(IVORY).lerp(this.core.material.color, power * 0.45);
+    this.glow.material.opacity = 0.18 + power * 0.16;
+    for (const mesh of [this.notch, this.ribbon, this.ribbonShadow, this.core, this.edge, this.ghost, this.ghostFill]) mesh.visible = false;
+    if (power < 0.02) return;
+    const angle = -Math.atan2(direction.y, direction.x);
+    const width = projectedFlickWidth(this.camera, this.canvas, body.pos, direction, power,
+      preference('(pointer: coarse)') || (this.canvas?.getBoundingClientRect?.().width ?? 1000) < 600)
+      * (power > 0.95 && !preference('(prefers-reduced-motion: reduce)') ? 1 + Math.sin(this.elapsed * 5) * 0.025 : 1);
+    const distance = Math.max(0.42 + power * 0.65, Math.min(1.35, contact?.distance ?? range));
+    const start = body.radius * 1.72;
+    const length = Math.max(0, distance - start);
+    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.12, 0.028], [this.edge, 1.16, 0.03],
+      [this.ribbon, 1, 0.034], [this.core, 0.32, 0.038]]) {
+      shapeRibbon(mesh, length, width * scale, start, Math.min(length * 0.45, width * 1.65));
+      mesh.position.set(body.pos.x, y, body.pos.y);
+      mesh.rotation.y = angle;
+      mesh.visible = length > 0.008 && (mesh === this.ribbon || mesh === this.ribbonShadow
+        || (mesh === this.core ? power > 0.58 : power > 0.9));
+    }
+    this.core.material.opacity = Math.max(0, (power - 0.58) / 0.42) * 0.88;
+    shapeRibbon(this.notch, body.radius * 0.55, body.radius * 0.42, body.radius * 1.23);
+    this.notch.position.set(body.pos.x, 0.041, body.pos.y);
+    this.notch.rotation.y = angle;
+    this.notch.visible = true;
+    if (contact) {
+      for (const mesh of [this.ghost, this.ghostFill]) {
+        mesh.visible = true;
+        mesh.position.set(contact.position.x, 0.018, contact.position.y);
+        mesh.scale.setScalar(body.radius);
+      }
+      this.ghost.material.color.set(IVORY).lerp(this.notch.material.color, contact.alignment);
+      this.ghost.material.opacity = 0.4 + contact.alignment * 0.4;
+      if (contact.kind === 'wall') {
+        this.ghost.position.set(contact.position.x - contact.normal.x * body.radius, 0.018,
+          contact.position.y - contact.normal.y * body.radius);
+        this.ghost.scale.set(body.radius * 1.6, body.radius * 0.22, 1);
+        this.ghost.rotation.z = Math.atan2(contact.normal.y, contact.normal.x) + Math.PI / 2;
+        this.ghostFill.visible = false;
+      } else {
+        this.ghost.rotation.z = 0;
+        if (contact.distance < 0.01) this.ghost.material.color.set(0xa86b60);
+      }
+    }
   }
 
   hide() {
-    this.activeBody = null;
-    this.line.material.opacity = 0;
-    this.ring.visible = false;
+    this.activeBody = this.hoverBody = null;
+    for (const mesh of this.group.children) mesh.visible = false;
+    this.effectDuration = 0;
+    this.preview = null;
   }
 
   hover(body) {
+    if (this.disposed) return;
     this.hoverBody = body;
+    if (!body && !this.activeBody) this.glow.visible = false;
   }
 
-  update(t) {
-    const body = this.activeBody ?? this.hoverBody;
-    const mat = this.glow.material;
-    if (body) {
-      this.glow.position.set(body.pos.x, 0.004, body.pos.y);
-      this.glow.scale.setScalar(body.radius);
-      const target = this.activeBody
-        ? 0.35 + Math.sin(t * 6) * 0.12 + this.power * 0.3
-        : 0.16 + Math.sin(t * 4) * 0.06;
-      mat.opacity += (target - mat.opacity) * 0.35;
-    } else {
-      mat.opacity *= 0.85;
+  release(body, velocity) {
+    this.hide();
+    if (this.disposed) return;
+    const speed = Math.hypot(velocity.x, velocity.y);
+    if (!speed) return;
+    this.effectAge = 0;
+    this.effectRadius = body.radius;
+    this.effectDuration = preference('(prefers-reduced-motion: reduce)') ? 0.08 : 0.18;
+    this.flash.position.set(body.pos.x, 0.025, body.pos.y);
+    this.flash.scale.setScalar(body.radius);
+    this.flash.material.opacity = 0.65;
+    this.flash.visible = true;
+    shapeRibbon(this.scrape, 0.12 + Math.min(1, speed / MAX_FLICK_SPEED) * 0.2, body.radius * 0.55);
+    this.scrape.position.set(body.pos.x, 0.023, body.pos.y);
+    this.scrape.rotation.y = Math.PI - Math.atan2(velocity.y, velocity.x);
+    this.scrape.material.opacity = 0.5;
+    this.scrape.visible = this.effectDuration > 0.08;
+  }
+
+  update(t, dt = 0) {
+    if (this.disposed) return;
+    this.elapsed += Math.max(0, dt);
+    if (this.activeBody) this.draw();
+    else if (this.hoverBody) {
+      this.glow.visible = true;
+      this.glow.position.set(this.hoverBody.pos.x, 0.012, this.hoverBody.pos.y);
+      this.glow.scale.setScalar(this.hoverBody.radius);
+      this.glow.material.opacity = 0.2;
     }
+    if (!this.effectDuration) return;
+    this.effectAge += Math.max(0, dt);
+    const progress = Math.min(1, this.effectAge / this.effectDuration);
+    this.flash.scale.setScalar(this.effectRadius * (1 + (this.effectDuration > 0.08 ? progress * 0.9 : 0)));
+    this.flash.material.opacity = (1 - progress) * 0.65;
+    this.scrape.material.opacity = (1 - progress) ** 2 * 0.5;
+    if (progress === 1) {
+      this.flash.visible = this.scrape.visible = false;
+      this.effectDuration = 0;
+    }
+  }
+
+  dispose() {
+    if (this.disposed) return;
+    this.hide();
+    this.disposed = true;
+    this.group.removeFromParent();
+    this.group.traverse(mesh => { mesh.geometry?.dispose(); mesh.material?.dispose(); });
   }
 }

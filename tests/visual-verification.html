@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Counters Ball visual verification</title>
+<style>
+html,body{margin:0;background:#191b1b;color:white;font:12px system-ui;height:100%}
+iframe{display:block;width:100%;height:100%;border:0}
+nav{position:fixed;bottom:0;left:0;right:0;background:#191b1b;display:flex;flex-wrap:wrap;gap:4px;padding:4px}
+button,select{min-height:28px}body.clean nav{display:none}
+</style>
+<iframe title="Real game" src="/" id="game"></iframe>
+<nav><select id="venue" aria-label="Venue"></select>
+<button id="view">UI hidden</button><button id="low">Low aim</button><button id="mid">Medium aim</button>
+<button id="high">Full aim</button><button id="release">Release shot</button>
+<button id="intro">Opening</button><button id="measure">Measure motion</button><button id="refresh">Refresh modules</button><button id="clean">Hide controls</button><output id="status"></output></nav>
+<script type="module" src="./visual-verification.js"></script></html>
