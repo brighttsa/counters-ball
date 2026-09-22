@@ -4,7 +4,8 @@ import {
   SIDE_HOME, SIDE_AWAY, GOAL_LINE_X, MAX_FLICK_SPEED,
 } from '../core/pitch-dimensions-and-constants.js';
 
-const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink' };
+const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
+  boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack' };
 const BODY_RESTITUTION_FACTOR = 1.72;
 const WALL_RESTITUTION_FACTOR = 1.55;
 
@@ -20,6 +21,7 @@ export function wireMatchFeedback(session) {
     // Impulse → approach speed → 0..1 strength, so a paper ball and a cap compare fairly.
     const strength = Math.min(1, (impulse * (a.invMass + b.invMass)) / (BODY_RESTITUTION_FACTOR * MAX_FLICK_SPEED));
     if (rules.phase === 'moving') session.presentation.skills.impact(a, b, strength);
+    session.mechanic?.noteImpact(a, b, strength);
     if (strength > 0.6) sound.event?.('hardContact', strength);
     const ball = a.kind === 'ball' ? a : b.kind === 'ball' ? b : null;
     if (ball) {
@@ -61,6 +63,7 @@ export function wireMatchFeedback(session) {
   physics.onGoalScored = (sign) => rules.registerGoal(sign);
   physics.onStep = (dt) => {
     if (rules.phase === 'moving') session.presentation.skills.update(dt, session.ballBody);
+    if (rules.phase === 'moving') session.mechanic?.observe(session.ballBody);
   };
 
   rules.on('turn', (side) => {
@@ -83,7 +86,12 @@ export function wireMatchFeedback(session) {
   });
 
   rules.on('goal', ({ scorer, scores }) => {
-    const highlight = session.presentation.goal(scorer);
+    // A venue's own hero moment outranks the generic skill label.
+    const skillLabel = session.presentation.goal(scorer); // always: it also arms the replay
+    const venueLabel = session.mechanic?.goalLabel(scorer);
+    if (venueLabel) session.presentation.highlight = { ...session.presentation.highlight, label: venueLabel,
+      replay: true, direction: scorer === SIDE_HOME ? 1 : -1 };
+    const highlight = venueLabel || skillLabel;
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
     sound.whistle();
     if (versus || !rules.isAi(scorer)) sound.goalCheer();

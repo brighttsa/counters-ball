@@ -44,15 +44,17 @@ export class AimVisuals {
     const distance = Math.max(0.42 + power * 0.65, Math.min(1.35, contact?.distance ?? range));
     const start = body.radius * 1.72;
     const length = Math.max(0, distance - start);
-    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.12, 0.028], [this.edge, 1.16, 0.03],
-      [this.ribbon, 1, 0.034], [this.core, 0.32, 0.038]]) {
-      shapeRibbon(mesh, length, width * scale, start, Math.min(length * 0.45, width * 1.65));
+    const head = Math.min(length * 0.42, width * 1.5);
+    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.2, 0.028], [this.edge, 1.12, 0.03],
+      [this.ribbon, 1, 0.034], [this.core, 0.36, 0.038]]) {
+      shapeRibbon(mesh, length, width * scale, start, head * (mesh === this.core ? 0.7 : 1));
       mesh.position.set(body.pos.x, y, body.pos.y);
       mesh.rotation.y = angle;
       mesh.visible = length > 0.008 && (mesh === this.ribbon || mesh === this.ribbonShadow
-        || (mesh === this.core ? power > 0.58 : power > 0.9));
+        || (mesh === this.core ? power > 0.3 : power > 0.85));
     }
-    this.core.material.opacity = Math.max(0, (power - 0.58) / 0.42) * 0.88;
+    // A gold core fills in as the pull deepens; the enamel rim marks the top of the range.
+    this.core.material.opacity = Math.min(1, Math.max(0, (power - 0.3) / 0.5)) * 0.9;
     shapeRibbon(this.notch, body.radius * 0.55, body.radius * 0.42, body.radius * 1.23);
     this.notch.position.set(body.pos.x, 0.041, body.pos.y);
     this.notch.rotation.y = angle;

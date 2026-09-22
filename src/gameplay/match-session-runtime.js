@@ -15,6 +15,7 @@ import { GameTimeController } from '../core/game-time-hit-stop-and-slow-motion.j
 import { createSeededRandom } from '../core/seeded-random-number-generator.js';
 import { MatchPresentationDirector } from './match-presentation-director.js';
 import { syncMatchMeshes } from './match-mesh-motion.js';
+import { createVenueMechanic } from './street-legends-venue-mechanic-wiring.js';
 import {
   BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH, MAX_FLICK_SPEED, SIDE_HOME,
 } from '../core/pitch-dimensions-and-constants.js';
@@ -41,10 +42,12 @@ export class MatchSession {
       ...cap,
       body: this.physics.addBody({ x: cap.home[0], z: cap.home[1], radius: cap.radius, mass: 1, kind: 'cap', side: cap.side }),
     }));
-    this.ballBody = this.physics.addBody({ x: 0, z: 0, radius: BALL_RADIUS, mass: 0.12, kind: 'ball' });
+    const [ballX, ballZ] = level.ballStart ?? [0, 0]; // Street Legends acts may place the ball to teach
+    this.ballBody = this.physics.addBody({ x: ballX, z: ballZ, radius: BALL_RADIUS, mass: 0.12, kind: 'ball' });
     for (const body of [...this.stage.postBodies, ...this.stage.obstacleBodies]) this.physics.addStaticCircle(body);
 
     this.rules = new MatchRules(level.rules, options.controllers);
+    this.mechanic = createVenueMechanic(this); // Street Legends only; null on classic tables
     this.time = new GameTimeController();
     this.visuals = new AimVisuals(this.stage.group, { camera: ctx.camera, canvas: ctx.canvas, physics: this.physics });
     this.juice = new JuiceAnimator(this.entries, this.stage.ballMesh, this.stage.goals);
@@ -53,7 +56,7 @@ export class MatchSession {
 
     this.input = new HumanDragAimInput({
       camera: ctx.camera, domElement: ctx.canvas, visuals: this.visuals, juice: this.juice,
-      canControl: (side) => !this.paused && !this.rules.isAi(side) && this.rules.canFlick(side),
+      canControl: (side) => !this.paused && !this.rules.isAi(side) && this.rules.canFlick(side) && !this.mechanic?.busy,
       onFlick: (entry, velocity, gesture) => this.flick(entry, velocity, gesture),
       onAimStart: () => { this.cameraDirector.setAimLocked(true); this.hideTutorial(); this.sound.event?.('aimStart'); },
       onAimEnd: () => this.cameraDirector.setAimLocked(false),
@@ -62,6 +65,7 @@ export class MatchSession {
     this.ai = new AiTurnPerformer({
       physics: this.physics, visuals: this.visuals, juice: this.juice,
       rng: createSeededRandom(Date.now() % 1e9), onFlick: (entry, velocity) => this.flick(entry, velocity),
+      mechanic: this.mechanic,
     });
     this.presentation = new MatchPresentationDirector(this);
     wireMatchFeedback(this);
@@ -91,7 +95,7 @@ export class MatchSession {
   resetToKickoff() {
     for (const body of [...this.entries.map((e) => e.body), this.ballBody]) body.vel.set(0, 0);
     for (const e of this.entries) e.body.pos.set(e.home[0], e.home[1]);
-    this.ballBody.pos.set(0, 0);
+    this.ballBody.pos.set(...(this.level.ballStart ?? [0, 0]));
     this.physics.resetGoalCooldown();
     this.physics.accumulator = 0;
     this.juice.reset();
@@ -134,6 +138,7 @@ export class MatchSession {
     this.particles.update(dt);
     this.visuals.update(t, realDt);
     this.stage.backdrop.update(t, realDt);
+    this.mechanic?.update(realDt);
     this.cameraDirector.setFocus(this.ballBody.pos.x, this.ballBody.pos.y, this.ballBody.vel);
     if (this.tutorialActive) this.positionTutorial();
   }

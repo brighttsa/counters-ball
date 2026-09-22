@@ -36,8 +36,13 @@ export class MatchRules {
     return this.controllers[side] === 'ai';
   }
 
+  /** Flick allowance for one side; `awayFlickLimit: 0` makes a solo challenge against still caps. */
+  flickLimitFor(side) {
+    return side === SIDE_AWAY && Number.isInteger(this.rules.awayFlickLimit) ? this.rules.awayFlickLimit : this.rules.flickLimit;
+  }
+
   flicksLeft(side) {
-    return Math.max(0, this.rules.flickLimit - this.flicksUsed[side]);
+    return Math.max(0, this.flickLimitFor(side) - this.flicksUsed[side]);
   }
 
   start(side = SIDE_HOME) {

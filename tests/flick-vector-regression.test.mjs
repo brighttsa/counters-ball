@@ -31,7 +31,7 @@ test('caps, obstacles, posts, tangency, overlap and both wall directions', () =>
 
 test('projected mobile widths and pausable aim lifecycle', { skip: !process.env.COUNTERS_TEST_THREE }, async () => {
   const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
-  const { projectedFlickWidth } = await import('../src/gameplay/flick-vector-projected-width.js');
+  const { projectedFlickWidth, flickWidthPixels } = await import('../src/gameplay/flick-vector-projected-width.js');
   const { AimVisuals } = await import('../src/gameplay/aim-trajectory-power-ring-and-rim-glow.js');
   for (const width of [320, 375, 390, 430, 1440]) {
     const height = width < 600 ? 844 : 960, mobile = width < 600;
@@ -44,7 +44,8 @@ test('projected mobile widths and pausable aim lifecycle', { skip: !process.env.
       const a = new THREE.Vector3(0, 0.035, w / 2).project(camera);
       const b = new THREE.Vector3(0, 0.035, -w / 2).project(camera);
       const pixels = Math.hypot((a.x - b.x) * width / 2, (a.y - b.y) * height / 2);
-      assert.ok(Math.abs(pixels - ((mobile ? 14 : 10) + power * (mobile ? 10 : 8))) < 0.001);
+      assert.ok(Math.abs(pixels - flickWidthPixels(power, mobile)) < 0.001);
+      assert.ok(flickWidthPixels(power, mobile) >= (mobile ? 24 : 18)); // bold enough to read under a thumb
     }
     const parent = new THREE.Group(), aim = new AimVisuals(parent, { camera, canvas, physics: { bodies: [] } });
     aim.show(cap(), { x: 0.085, y: 0 }); assert.equal(aim.ribbon.visible, true);

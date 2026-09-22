@@ -92,13 +92,16 @@ pitch stays crisp (±1.9 units of focus), the street falls off into bokeh.
 | Adabraka Primary | trampled playground, chalk hopscotch | school bag, exercise book, sandals, caps | cream classroom block, louvre windows, school sign | neem leaf shade |
 | Nima Market Road | red laterite, tyre tracks, oil stains | bottle crate, basin of oranges, sachets, caps | blue container kiosk, stocked hatch, "GOD'S TIME IS THE BEST" | light shade, motes |
 | Auntie Ama's veranda | polished red screed with scored squares, swept yard | raffia mat, slippers, snake plants in tins, oranges | terracotta house, green shutters | mango leaf shade |
-| Tema Junction | laterite shoulder, open gutter with loose slabs, asphalt | old tyre, coal pot, sachets | chop bar menu board, "NO KING AS GOD" | chickens cross the road |
+| Tema Junction | laterite shoulder, open gutter with loose slabs, asphalt | old tyre, coal pot, sachets | chop bar menu board, "NO KING AS GOD" | Street Legends: toll canopy gantry, booths and booms |
 | Tamale Lorry Station | pale compacted sand, deep ruts | grain sacks, jerrycan, tyre | chalk destination board | harmattan dust banks, guinea fowl |
 | Jamestown | cracked damp concrete, sand, fish-scale glints | fishing net pile, lit coal pot, basin | canoe-stripe mural, lit "MAGIC SPOT" hatch | bulb + hatch spill flicker together |
 
-- **Animals:** chickens (guinea fowl in the north) wander, peck, look around and
-  scatter flapping on every goal. They stay at the top edge of frame so only
-  soft legs and bellies pass through — never a foreground prop.
+- **Animals:** only where the place demands them. Today that means guinea fowl at
+  Tamale Lorry Station, which wander, peck and scatter on goals. No universal
+  chickens: repeated generic creatures made venues feel assembled, not designed.
+- **Street Legends set pieces** are built from the place's architecture (the Tema
+  toll plaza, booths, booms and canopy), not scattered props. A mechanic's
+  telegraph must read on a phone: lamp, coloured floor pool and a HUD line.
 - **Props are real geometry**, casting and receiving real shadows (sun shadow
   box ±7.5; 2048² sun map on coarse pointers, 4096² otherwise).
 - **Rejected:** sleeping dog/cat built from primitives (read as toys at this
@@ -117,8 +120,10 @@ response, scaled by one shared 0..1 strength** (impulse → approach speed).
   Length/weight express power; gold core and restrained enamel edges signal
   tension without a red laser. One conservative first-contact ghost shows
   approximate alignment, never a full future path. Camera pose/FOV lock during
-  human aim; cancellation unlocks without release effects. Mobile width is
-  projected to a 14-24px equivalent, not a fixed world-space line.
+  human aim; cancellation unlocks without release effects. Width is projected
+  to 18–42 px on desktop and 24–52 px on touch (thick, tapered to 62% at the
+  neck), the head is twice the shaft width, and a dark outline keeps it legible
+  on pale tables. It's never a fixed world-space line.
 - **Release:** squash-and-overshoot spring on the cap, dust puff, fingernail-snap
   sound, camera kick along the flick.
 - **Impact:** hit-stop of 20–85 ms on the strike (the whole sim freezes, which is

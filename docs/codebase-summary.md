@@ -87,6 +87,14 @@ mesh sync → AI → juice → replay capture → particles → aim → backdrop
   `table-obstacles-pebbles-bottles-coins.js`; physics and AI handle it for free.
 - **New difficulty**: add an entry to `AI_DIFFICULTY` (search budget, aim noise,
   blunder chance).
+- **Street Legends venue mechanic**: acts live in `src/levels/street-legends-*.js`
+  (spread the real campaign venue, add `mechanic`, `objective`, `introLines`, `legend`,
+  optional `rules.awayFlickLimit` and `awaySlots`). `createVenueMechanic(session)`
+  in `street-legends-venue-mechanic-wiring.js` returns the session's `mechanic`:
+  `update`, `busy` (locks human input), `observe(ball)`, `noteImpact`, `goalLabel`,
+  `aiCandidates(side)`, `aiScore(sim, side, ballIndex)`. It is created before
+  `wireMatchFeedback`, so the signal steps before the AI plans. State changes only
+  between turns. Raised booms use `body.disabled` on static circles.
 - **Licensed photographs**: configure `LOCATION_PHOTOGRAPHS` in
   `scene/environment/location-photograph-configuration.js`; supply a root-relative
   same-origin path, credit and license before enabling a venue. Parameters cover

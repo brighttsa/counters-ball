@@ -14,8 +14,8 @@ const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => res
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, Math.max(0, ms)));
 
 export class AiTurnPerformer {
-  constructor({ physics, visuals, juice, rng, onFlick }) {
-    Object.assign(this, { physics, visuals, juice, rng, onFlick });
+  constructor({ physics, visuals, juice, rng, onFlick, mechanic = null }) {
+    Object.assign(this, { physics, visuals, juice, rng, onFlick, mechanic });
     this.token = 0;
     this.anim = null;
     this.thinking = null;
@@ -29,7 +29,7 @@ export class AiTurnPerformer {
 
     let plan = await planAiShot({
       physics: this.physics, side, capBodies: entries.map((e) => e.body), ballBody, difficulty,
-      rng: this.rng, yieldToFrame: nextFrame, isCancelled: () => token !== this.token,
+      rng: this.rng, yieldToFrame: nextFrame, isCancelled: () => token !== this.token, mechanic: this.mechanic,
     });
     if (token !== this.token) return;
     await wait(difficulty.think * 1000 - (performance.now() - startedAt));

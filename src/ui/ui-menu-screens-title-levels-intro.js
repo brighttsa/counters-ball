@@ -61,7 +61,7 @@ export class MenuScreens {
     this.circuitProgress = progress;
     const versus = mode === 'versus';
     $('levels-heading').textContent = versus ? 'The Circuit · 2 Players' : 'The Circuit';
-    $('levels-star-total').textContent = versus ? '' : `★ ${totalStars(progress)} / ${levels.length * 3}`;
+    $('levels-star-total').textContent = versus ? '' : `★ ${totalStars(progress, levels)} / ${levels.length * 3}`;
     $('level-grid').innerHTML = levels.map((level, i) => {
       const unlocked = isUnlocked(i);
       const stars = progress.stars[level.id] ?? 0;
@@ -85,8 +85,10 @@ export class MenuScreens {
   fillIntro(level, index, total, mode, homeTeam) {
     const versus = mode === 'versus';
     const { rules, opponent } = level;
-    $('intro-number').textContent = `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
-    $('intro-title').textContent = level.name;
+    const legend = level.legend;
+    $('intro-number').textContent = legend ? `Street Legends / ${level.name} / Act ${legend.act} of ${legend.acts}`
+      : `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
+    $('intro-title').textContent = legend ? level.actTitle : level.name;
     $('intro-place').textContent = level.place;
     $('intro-blurb').textContent = versus ? 'Two players, one table. Take turns on the same screen.' : level.blurb;
 
@@ -96,8 +98,9 @@ export class MenuScreens {
     home.style.setProperty('--chip', homeTeam.hudColor);
     away.style.setProperty('--chip', opponent.team.hudColor);
 
-    const lines = [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
-    if (level.obstacles.length) lines.push('Obstacles on the table: play the rebounds');
+    const lines = level.introLines ? [...level.introLines]
+      : [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
+    if (level.obstacles.length && !legend) lines.push('Obstacles on the table: play the rebounds');
     if ((level.frictionScale ?? 1) > 1) lines.push('Dusty surface: caps stop sooner');
     if (!versus) lines.push('★ Win', '★ Keep a clean sheet', `★ Win within ${rules.threeStarFlicks} flicks`);
     const list = $('intro-rules');

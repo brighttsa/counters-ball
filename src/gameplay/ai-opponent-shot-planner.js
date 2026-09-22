@@ -21,7 +21,7 @@ function gaussian(rng) {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-function candidateShots(cap, ball, side, difficulty, rng) {
+function candidateShots(cap, ball, side, difficulty, rng, mechanic) {
   const shots = [];
   const add = (dx, dz, powers) => {
     const len = Math.hypot(dx, dz);
@@ -40,6 +40,13 @@ function candidateShots(cap, ball, side, difficulty, rng) {
     const cut = (ax * toBallX + az * toBallZ) / ((Math.hypot(ax, az) || 1) * toBallLen);
     if (cut >= 0.35) add(ax, az, difficulty.powers); // skip cuts too thin to make
   }
+  // Venue mechanics add their own ideas: aim the ball through an open lane, or park a cap to block.
+  const extra = mechanic?.aiCandidates(side);
+  for (const point of extra?.ballTargets ?? []) {
+    const px = point.x - ball.pos.x, pz = point.z - ball.pos.y, pl = Math.hypot(px, pz) || 1;
+    add(ball.pos.x - (px / pl) * contact - cap.pos.x, ball.pos.y - (pz / pl) * contact - cap.pos.y, difficulty.powers);
+  }
+  for (const point of extra?.blockPoints ?? []) add(point.x - cap.pos.x, point.z - cap.pos.y, [0.3, 0.45, 0.6]);
   add(toBallX, toBallZ, [0.4, 0.8]); // straight through the ball: a clearance
   for (let i = 0; i < difficulty.randomSamples; i++) {
     const a = rng() * Math.PI * 2;
@@ -48,7 +55,7 @@ function candidateShots(cap, ball, side, difficulty, rng) {
   return shots;
 }
 
-function scoreOutcome(sim, side, ballIndex, goal) {
+function scoreOutcome(sim, side, ballIndex, goal, mechanic) {
   const dir = attackDirection(side);
   if (goal === dir) return 10000;
   if (goal === -dir) return -10000;
@@ -72,13 +79,14 @@ function scoreOutcome(sim, side, ballIndex, goal) {
     const aligned = (cx * toOwnX + cz * toOwnZ) / (d * toOwnLen);
     if (aligned > 0.6 && d < 0.8) score -= (0.8 - d) * aligned * 160;
   }
-  return score;
+  return score + (mechanic?.aiScore(sim, side, ballIndex) ?? 0);
 }
 
 /**
+ * @param mechanic optional venue mechanic: { aiCandidates(side), aiScore(sim, side, ballIndex) }
  * @returns {Promise<{ body, velocity: THREE.Vector2 } | null>} null if cancelled
  */
-export async function planAiShot({ physics, side, capBodies, ballBody, difficulty, rng, yieldToFrame, isCancelled }) {
+export async function planAiShot({ physics, side, capBodies, ballBody, difficulty, rng, yieldToFrame, isCancelled, mechanic = null }) {
   const sim = physics.cloneForSimulation();
   const base = sim.snapshot();
   const ballIndex = physics.bodies.indexOf(ballBody);
@@ -87,12 +95,12 @@ export async function planAiShot({ physics, side, capBodies, ballBody, difficult
 
   for (const cap of capBodies) {
     const capIndex = physics.bodies.indexOf(cap);
-    for (const shot of candidateShots(cap, ballBody, side, difficulty, rng)) {
+    for (const shot of candidateShots(cap, ballBody, side, difficulty, rng, mechanic)) {
       sim.restore(base);
       const speed = shot.power * MAX_FLICK_SPEED;
       sim.bodies[capIndex].vel.set(shot.dx * speed, shot.dz * speed);
       const goal = sim.simulateUntilRest(3.5);
-      evaluated.push({ cap, shot, score: scoreOutcome(sim, side, ballIndex, goal) });
+      evaluated.push({ cap, shot, score: scoreOutcome(sim, side, ballIndex, goal, mechanic) });
       if (++sinceYield >= SIMS_PER_FRAME) {
         sinceYield = 0;
         await yieldToFrame(); // spread the search across frames: no hitches

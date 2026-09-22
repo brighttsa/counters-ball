@@ -119,13 +119,17 @@ function createFlattenedCapGeometry(rng) {
   return geo;
 }
 
-/** @returns [{ pivot, mesh, side, home:[x,z], radius }] */
-export function buildBottleCapTeams(group, homePalette, awayPalette, seed = 9917) {
+/**
+ * @param awaySlots optional TEAM_FORMATION indices the away side fields (solo challenges field fewer caps)
+ * @returns [{ pivot, mesh, side, home:[x,z], radius }]
+ */
+export function buildBottleCapTeams(group, homePalette, awayPalette, seed = 9917, awaySlots = null) {
   const rng = createSeededRandom(seed);
   const metal = new THREE.MeshStandardMaterial({ color: 0xc9c9cc, metalness: 0.85, roughness: 0.38 });
   const caps = [];
   for (const [side, mirror, palette] of [[SIDE_HOME, 1, homePalette], [SIDE_AWAY, -1, awayPalette]]) {
     TEAM_FORMATION.forEach(([fx, fz], i) => {
+      if (side === SIDE_AWAY && awaySlots && !awaySlots.includes(i)) return;
       const top = new THREE.MeshStandardMaterial({
         map: paintCapTopTexture(palette, seed + (mirror > 0 ? 1000 : 2000) + i * 37),
         metalness: 0.55, roughness: 0.5,

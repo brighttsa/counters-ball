@@ -35,8 +35,16 @@ export class MatchHud {
     this.lowAttention.clear();
     this.setHeat(0, 0);
     $('turn-banner').textContent = '';
-    this.setFlicks(level.rules.flickLimit, level.rules.flickLimit);
+    this.setFlicks(level.rules.flickLimit, level.rules.awayFlickLimit ?? level.rules.flickLimit);
+    this.setObjective(level.objective ?? null);
     this.hideTutorial();
+  }
+
+  /** Street Legends objective + live signal reading; hidden on classic tables. */
+  setObjective(text) {
+    const el = $('hud-objective');
+    el.hidden = !text;
+    el.textContent = text ?? '';
   }
 
   setScore(scores, poppedSide) {
@@ -135,7 +143,8 @@ export class MatchHud {
         : winner === SIDE_HOME ? 'You win!' : `${kid} wins`;
     title.dataset.outcome = winner === null ? 'draw' : versus || winner === SIDE_HOME ? 'win' : 'loss';
     $('results-score').textContent = `${scores.home} – ${scores.away}`;
-    $('results-opponent').textContent = `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
+    $('results-opponent').textContent = level.legend ? `Street Legends · ${level.name} · Act ${level.legend.act}: ${level.actTitle}`
+      : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
 
     const labels = ['Win the match', 'Keep a clean sheet', `Win within ${level.rules.threeStarFlicks} flicks`];
     const list = $('results-stars');
@@ -158,9 +167,13 @@ export class MatchHud {
     }
 
     let note = '';
-    if (!versus && winner === SIDE_HOME) note = isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
+    const legend = level.legend;
+    if (!versus && winner === SIDE_HOME) note = legend ? (isFinalVenue ? `Street Legend of ${level.place}!` : 'The booms bow to you. Next act unlocked.')
+      : isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
+    else if (legend && level.rules.awayFlickLimit === 0) note = 'Out of flicks. Watch the amber lane and set the ball up for it.';
     else if (!versus) note = winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;
     $('results-note').textContent = note;
     $('btn-next').hidden = !hasNext;
+    $('btn-next').textContent = legend ? 'Next Act' : 'Next Pitch';
   }
 }

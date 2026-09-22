@@ -1,0 +1,20 @@
+/* Street Legends: title entry and the in-match objective / signal reading. */
+.btn-legends {
+  display: inline-grid; justify-items: center; gap: 2px;
+  background: #1f5a3a; border-color: #e2b93b; color: #fdf6e6;
+}
+.btn-legends:hover, .btn-legends:active { background: #266b46; }
+.btn-legends small { font: 700 11px/1.2 var(--font-body); color: #e2b93b; text-transform: uppercase; }
+
+.legend-objective {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  top: calc(max(14px, env(safe-area-inset-top)) + 118px);
+  width: min(440px, calc(100% - 32px)); padding: 6px 10px;
+  background: rgba(31, 90, 58, 0.92); border-left: 3px solid #e2b93b;
+  font: 700 12px/1.4 var(--font-body); color: #fdf6e6; text-align: center;
+  overflow-wrap: anywhere; pointer-events: none;
+}
+.legend-objective[hidden] { display: none; }
+@media (max-height: 500px) {
+  .legend-objective { top: auto; bottom: max(70px, calc(env(safe-area-inset-bottom) + 56px)); width: min(420px, calc(100% - 180px)); }
+}

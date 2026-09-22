@@ -40,6 +40,8 @@ export function isLevelUnlocked(progress, levels, index) {
   return (progress.stars[levels[index - 1].id] ?? 0) >= 1;
 }
 
-export function totalStars(progress) {
-  return Object.values(progress.stars).reduce((sum, n) => sum + n, 0);
+/** Stars across `levels` (defaults to everything saved, including Street Legends acts). */
+export function totalStars(progress, levels = null) {
+  const values = levels ? levels.map((level) => progress.stars[level.id] ?? 0) : Object.values(progress.stars);
+  return values.reduce((sum, n) => sum + n, 0);
 }

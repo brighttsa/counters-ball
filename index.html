@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="styles/broadcast-identity-and-circuit.css" />
 <link rel="stylesheet" href="styles/broadcast-match-presentation.css" />
 <link rel="stylesheet" href="styles/circuit-venue-preview.css" />
+<link rel="stylesheet" href="styles/street-legends-mode.css" />
 <script type="importmap">
 {
   "imports": {
@@ -34,6 +35,7 @@
     <nav class="menu-stack">
       <button class="btn btn-primary" data-action="play-campaign">Play Campaign</button>
       <button class="btn" data-action="play-versus" style="--tilt: 0.8deg">2-Player Table</button>
+      <button class="btn btn-legends" data-action="play-legends" style="--tilt: -1.2deg">Street Legends <small>New · Tema toll gates</small></button>
     </nav>
     <p class="title-stars" id="title-stars"></p>
   </section>
@@ -91,6 +93,7 @@
     <div class="heat-meter" aria-label="Team heat"><span id="heat-home">Home 0</span><span>HEAT</span><span id="heat-away">Away 0</span></div>
     <button class="icon-btn pause-btn" data-action="pause" aria-label="Pause">❚❚</button>
     <div class="turn-banner" id="turn-banner" aria-live="polite"></div>
+    <div class="legend-objective" id="hud-objective" aria-live="polite" hidden></div>
     <div class="goal-banner" id="goal-banner" role="status" aria-live="polite" aria-atomic="true" hidden><span class="goal-word">GOAL</span><span class="goal-sub" id="goal-sub"></span></div>
     <div class="replay-controls" id="replay-controls" hidden><span id="replay-label">Replay</span><button class="btn btn-small" data-action="skip-replay">Skip replay →</button></div>
     <div class="tutorial-hand" id="tutorial-hand" hidden>

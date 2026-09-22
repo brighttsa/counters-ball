@@ -30,7 +30,7 @@ export function buildLevelStage({ scene, renderer, level, homeTeam, awayTeam, ca
   const seed = hashString(level.id);
   const visualProfile = getVenueVisualProfile(level.backdrop);
   buildTableAndBattens(group, level.surface, seed, visualProfile);
-  const caps = buildBottleCapTeams(group, homeTeam.palette, awayTeam.palette, seed);
+  const caps = buildBottleCapTeams(group, homeTeam.palette, awayTeam.palette, seed, level.awaySlots);
   const ballMesh = buildPaperMatchBall(group);
   const { postBodies, goals } = buildMatchstickGoals(group, visualProfile, seed);
   const obstacleBodies = buildTableObstacles(group, level.obstacles, seed);

@@ -21,12 +21,13 @@ export function ribbonMesh(color, opacity) {
   return mesh;
 }
 
-// Reusable vertices form a tapered shaft and a broad triangular head.
-export function shapeRibbon(mesh, length, width, start = 0, head = Math.min(length * 0.45, width * 1.65)) {
+// Reusable vertices form a thick tapered shaft (full width at the cap, 62% at
+// the neck) and a broad arrowhead twice the shaft's starting width.
+export function shapeRibbon(mesh, length, width, start = 0, head = Math.min(length * 0.42, width * 1.5)) {
   const neck = start + length - head;
   const points = [[start, -width * 0.5], [start, width * 0.5],
-    [neck, -width * 0.28], [neck, width * 0.28],
-    [neck, -width * 0.92], [neck, width * 0.92], [start + length, 0]];
+    [neck, -width * 0.31], [neck, width * 0.31],
+    [neck, -width], [neck, width], [start + length, 0]];
   const attribute = mesh.geometry.attributes.position;
   points.forEach(([x, z], i) => attribute.setXYZ(i, x, 0, z));
   attribute.needsUpdate = true;
@@ -34,12 +35,13 @@ export function shapeRibbon(mesh, length, width, start = 0, head = Math.min(leng
 
 export function createFlickMeshes(parent) {
   const group = new THREE.Group();
-  const ring = flatRing(1.28, 1.67, IVORY, 0.8);
-  const ringShadow = flatRing(1.22, 1.76, 0x3a3024, 0.35);
-  const ribbonShadow = ribbonMesh(0x3a3024, 0.3);
-  const glow = flatRing(1.02, 2.05, GOLD, 0.18);
+  const ring = flatRing(1.25, 1.85, IVORY, 0.9);
+  const ringShadow = flatRing(1.18, 1.98, 0x241c14, 0.45);
+  // Dark outline under the ribbon keeps it readable on pale cardboard and in sunlight.
+  const ribbonShadow = ribbonMesh(0x241c14, 0.5);
+  const glow = flatRing(1.02, 2.3, GOLD, 0.2);
   const notch = ribbonMesh(GOLD, 0.95);
-  const ribbon = ribbonMesh(IVORY, 0.88);
+  const ribbon = ribbonMesh(IVORY, 0.95);
   const core = ribbonMesh(GOLD, 0.85);
   const edge = ribbonMesh(ENAMEL, 0.8);
   const ghost = flatRing(0.84, 1, GOLD, 0.7);

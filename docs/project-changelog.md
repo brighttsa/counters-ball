@@ -1,5 +1,34 @@
 # Project Changelog
 
+## 2026-09-22 — Street Legends: Roadside toll gates
+
+### Added
+- **Street Legends mode** (title → Street Legends): a separate track layered on the
+  real Roadside Showdown venue at Tema Motorway Junction. It has three acts: *Green
+  Means Go* (solo), *Rush Hour* and *Last Toll Before the Motorway*. Classic
+  Campaign and the 2-Player Table are unchanged.
+- **Toll gates**: a toll plaza guards each goal approach, with two booths, three lanes
+  and a red-and-white boom per lane. One boom is down, and each time that plaza's attacker
+  starts a turn it steps left → centre → right → centre. Green means open, blinking
+  amber means shuts on your next shot, red means down. Caps slide under the booms; the ball
+  cannot. A boom cannot come down on the ball resting beneath it: it jams open.
+  Booms move only between turns.
+- Hero goals: THROUGH THE … TOLL, BOOM BANK and JAMMED THE GATE (each earns the replay).
+- The AI reads the toll plazas: it aims through open lanes, parks a cap in the open lane
+  the ball faces, sets up in front of lanes that stay open, and weights these by rival.
+  Akosua plays as a "toll collector".
+- Rules: optional `awayFlickLimit` (solo challenges). Levels: optional `awaySlots`
+  and `ballStart`. Physics: static bodies can be `disabled` or `blocksOnly: 'ball'`.
+- Toll canopy gantry behind the table; HUD objective line with the live signal.
+- Design matrix for all six venues: `docs/street-legends-design-matrix.md`.
+
+### Changed
+- **Flick Vector**: a much thicker tapered ribbon (18–42 px desktop, 24–52 px touch),
+  an arrowhead twice the shaft width, a dark outline for bright tables, a larger
+  origin ring, and a gold core from 30% power.
+- Removed chickens from the shared venue compositions; guinea fowl remain only
+  at Tamale Lorry Station, where they belong.
+
 ## 2026-09-22 - Venue Identity and Flick Vector
 
 - Added seeded venue-specific surfaces, wear/roughness, markings, support/rail/

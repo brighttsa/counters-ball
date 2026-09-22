@@ -20,7 +20,6 @@ export const VENUE_ENVIRONMENTS = {
       ['schoolBag', -5.4, -4.9, 0.5], ['slippers', 5.2, -3.0, -0.5, { color: '#1d1a17' }],
       ['exerciseBook', -3.4, -3.1, 0.8], ['caps', -1.2, -2.8, 0, { count: 6 }], ['sachets', 6.4, -5.8, 0, { count: 2 }],
     ],
-    animals: [['chicken', { variant: 'brown', start: [-2.5, -6.4] }], ['chicken', { variant: 'white', start: [4.5, -6.8] }]],
     shade: 0.5, dust: 60,
   },
 
@@ -37,9 +36,6 @@ export const VENUE_ENVIRONMENTS = {
     props: [
       ['bottleCrate', -3.5, -4.1, 0.25], ['basinOranges', 3.8, -4.2, 0], ['caps', 0.6, -3.0, 0, { count: 14 }],
       ['sachets', -2.4, -3.4, 0, { count: 4 }], ['slippers', 5.8, -3.0, 1.1, { color: '#2f6fa0' }],
-    ],
-    animals: [
-      ['chicken', { variant: 'brown', start: [-1, -6.6] }], ['chicken', { variant: 'black', start: [2.5, -6] }],
     ],
     shade: 0.2, dust: 90,
   },
@@ -75,14 +71,12 @@ export const VENUE_ENVIRONMENTS = {
       ['gutter', 0, -3.9, 0], ['oldTyre', -4.2, -4.8, 0], ['sachets', 2.4, -3.0, 0, { count: 5 }],
       ['coalPot', 6.0, -3.8, 0], ['caps', -1.6, -3.2, 0, { count: 10 }],
     ],
-    animals: [
-      ['chicken', { variant: 'brown', start: [1.5, -6.6], zone: { minZ: -7.6, maxZ: -5.8 } }],
-      ['chicken', { variant: 'white', start: [-3, -7], zone: { minZ: -7.6, maxZ: -5.8 } }],
-    ],
     shade: 0, dust: 110,
   },
 
-  // Tamale Lorry Station — harmattan dust, grain sacks, guinea fowl.
+  // Tamale Lorry Station — harmattan dust, grain sacks, guinea fowl. The only
+  // venue with animals: guinea fowl belong to the northern savanna; generic
+  // yard chickens everywhere made the venues feel assembled, not designed.
   harmattan: {
     ground: 'stationSand',
     wall: { z: -11.2, base: '#d8c29c', skirting: '#9a7a52', skirtH: 1.8, kerb: 0xb8a684, features: [

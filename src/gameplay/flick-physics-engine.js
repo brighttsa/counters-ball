@@ -92,7 +92,8 @@ export class FlickPhysicsEngine {
       for (let j = i + 1; j < bodies.length; j++) {
         const b = bodies[j];
         const totalInv = a.invMass + b.invMass;
-        if (totalInv === 0) continue;
+        if (totalInv === 0 || a.disabled || b.disabled) continue; // raised toll booms let play through
+        if ((a.blocksOnly && a.blocksOnly !== b.kind) || (b.blocksOnly && b.blocksOnly !== a.kind)) continue; // low caps slide under booms
         // Overlap is tested before any velocity shortcut: a cluster pushed together can come to
         // rest interpenetrating, and must still be separated. Squared distance keeps this cheap.
         let nx = b.pos.x - a.pos.x, nz = b.pos.y - a.pos.y;
