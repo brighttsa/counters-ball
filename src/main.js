@@ -10,7 +10,7 @@ import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
 import { MatchHud } from './ui/ui-match-hud-pause-and-results.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
-import { CAMPAIGN_LEVELS, ATTRACT_MODE_LEVEL, HOME_TEAM } from './levels/campaign-level-definitions.js';
+import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
 import { STREET_LEGENDS_ACTS, isLegendActUnlocked } from './levels/street-legends-acts-and-unlocks.js';
 import {
   loadProgress, saveProgress, recordLevelStars, isLevelUnlocked, totalStars,
@@ -30,6 +30,7 @@ const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false };
 const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : CAMPAIGN_LEVELS);
 const unlockedIn = (mode, i) => mode === 'versus'
   || (mode === 'legends' ? isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, i) : isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
+const featuredIndex = STREET_LEGENDS_ACTS.findIndex(level => level.id === 'legends-roadside-act-1');
 
 function replaceSession(options, sessionHud) {
   hud.cancelResultReveal(); // leaving results early must not ding stars into the next screen
@@ -39,12 +40,15 @@ function replaceSession(options, sessionHud) {
   sound.setHeat?.(0);
   sound.setTension?.(false);
   cameraDirector.setVenue(options.level.backdrop);
+  cameraDirector.poster = Boolean(options.isAttract && options.level.mechanic?.type === 'toll-gates');
+  document.body.classList.toggle('ink-roadside', options.level.mechanic?.type === 'toll-gates');
   app.session = new MatchSession({ renderer, scene, camera, canvas, cameraDirector, post, sound, hud: sessionHud }, options);
 }
 
 function ensureAttractMode() {
   if (app.session?.options.isAttract) return;
-  const level = ATTRACT_MODE_LEVEL;
+  const level = { ...STREET_LEGENDS_ACTS[featuredIndex],
+    rules: { goalsToWin: 99, flickLimit: 999, threeStarFlicks: 3 }, awaySlots: null, homeDifficulty: 'easy' };
   replaceSession({
     level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, isAttract: true,
     controllers: { home: 'ai', away: 'ai' }, homeDifficulty: level.homeDifficulty,
@@ -140,6 +144,7 @@ function setPaused(paused) {
 }
 
 const actions = {
+  'play-featured': () => { app.mode = 'legends'; prepareMatch(featuredIndex); },
   'play-campaign': () => showLevels('campaign'),
   'play-versus': () => showLevels('versus'),
   'play-legends': () => showLevels('legends'),

@@ -16,6 +16,8 @@ import { createSeededRandom } from '../core/seeded-random-number-generator.js';
 import { MatchPresentationDirector } from './match-presentation-director.js';
 import { syncMatchMeshes } from './match-mesh-motion.js';
 import { createVenueMechanic } from './street-legends-venue-mechanic-wiring.js';
+import { applyRoadsideInkTreatment } from '../scene/roadside-ink-treatment.js';
+import { InkImpactBursts } from '../fx/ink-impact-contact-bursts.js';
 import {
   BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH, MAX_FLICK_SPEED, SIDE_HOME,
 } from '../core/pitch-dimensions-and-constants.js';
@@ -48,6 +50,7 @@ export class MatchSession {
 
     this.rules = new MatchRules(level.rules, options.controllers);
     this.mechanic = createVenueMechanic(this); // Street Legends only; null on classic tables
+    if (applyRoadsideInkTreatment(this.stage, level)) this.inkBursts = new InkImpactBursts(this.stage.group);
     this.time = new GameTimeController();
     this.visuals = new AimVisuals(this.stage.group, { camera: ctx.camera, canvas: ctx.canvas, physics: this.physics });
     this.juice = new JuiceAnimator(this.entries, this.stage.ballMesh, this.stage.goals);
@@ -85,6 +88,7 @@ export class MatchSession {
     this.visuals.release?.(entry.body, velocity);
     entry.body.vel.copy(velocity);
     const power = velocity.length() / MAX_FLICK_SPEED;
+    this.inkBursts?.burst(entry.body.pos.x, entry.body.pos.y, power, velocity);
     this.slowMoUsed = false;
     this.juice.release(entry, power);
     this.sound.flick(power);
@@ -136,6 +140,7 @@ export class MatchSession {
     this.juice.update(dt);
     this.presentation.capture(realDt);
     this.particles.update(dt);
+    this.inkBursts?.update(dt);
     this.visuals.update(t, realDt);
     this.stage.backdrop.update(t, realDt);
     this.mechanic?.update(realDt);

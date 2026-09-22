@@ -144,6 +144,9 @@ export class CameraDirector {
       const horizontal = Math.hypot(viewDirection.x, viewDirection.z) * r;
       pos.set(Math.sin(yaw) * horizontal, viewDirection.y * r * (0.86 + Math.sin(t * 0.13) * 0.06 * motion), Math.cos(yaw) * horizontal);
       look.set(0, 0, 0);
+      if (this.poster) {
+        pos.set(3.6 + Math.sin(t * .09) * .2 * motion, 3.6, 6.8); look.set(0, .4, -2);
+      }
     } else {
       pos.copy(BASE_TARGET).addScaledVector(viewDirection, this.fitDistance);
       pos.x += Math.sin(t * 0.22) * 0.01 * motion;

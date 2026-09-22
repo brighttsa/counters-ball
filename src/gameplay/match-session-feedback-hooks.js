@@ -51,6 +51,7 @@ export function wireMatchFeedback(session) {
       juice.hitCap(entry, strength, dx / d, dz / d);
     }
     particles.dustPuff(x, z, strength);
+    session.inkBursts?.burst(x, z, strength);
   };
 
   physics.onWallHit = (body, impulse, x, z) => {
@@ -104,7 +105,8 @@ export function wireMatchFeedback(session) {
     post.pulseBloom(0.55);
     time.slowMotion(0.35, 0.7);
     hud.setScore(scores, scorer);
-    hud.goal(highlight || (versus ? `${nameOf(scorer)} score!` : scorer === SIDE_HOME ? 'What a flick!' : `${kid} scores`));
+    const detail = highlight || (versus ? `${nameOf(scorer)} score!` : scorer === SIDE_HOME ? 'What a flick!' : `${kid} scores`);
+    hud.goal(session.inkBursts ? `${detail} / ${scores.home}-${scores.away} / ${level.place}` : detail);
     session.schedule(2.6, () => session.presentation.afterGoal());
   });
 

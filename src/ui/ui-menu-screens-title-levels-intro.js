@@ -4,6 +4,7 @@
 import { totalStars } from '../core/save-progress-local-storage.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
+import { paintInkCapPoster } from './ink-impact-cap-poster.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -24,6 +25,7 @@ export class MenuScreens {
       if (el && !el.disabled) onAction(el.dataset.action, el);
     });
     this.loadLogo();
+    paintInkCapPoster($('home-cap-print'));
   }
 
   async loadLogo() {
@@ -38,6 +40,7 @@ export class MenuScreens {
   }
 
   show(name) {
+    document.body.dataset.screen = name ?? 'match';
     for (const [key, el] of Object.entries(this.screens)) el.classList.toggle('is-active', key === name);
     this.current = name;
     const focusable = name && this.screens[name]?.querySelector('.btn-primary:not([hidden]):not([disabled]), .level-card:not([disabled]), .btn:not([disabled])');
@@ -58,6 +61,7 @@ export class MenuScreens {
   }
 
   renderLevels(levels, progress, mode, isUnlocked) {
+    document.body.classList.toggle('ink-menus', mode === 'legends');
     this.circuitProgress = progress;
     const versus = mode === 'versus';
     $('levels-heading').textContent = mode === 'legends' ? 'Street Legends' : versus ? 'The Circuit · 2 Players' : 'The Circuit';
