@@ -8,7 +8,7 @@ venue keeps its name, place, rival, team and palette from
 `src/levels/campaign-level-definitions.js`. It adds one signature mechanic,
 one objective and one hero moment, taught through a three-act structure.
 
-Status: **Five venues are built and playable** (Schoolyard Break, Kiosk Corner, Veranda Derby, Roadside Showdown, Harmattan Haze). Lights Out Final is designed, not built.
+Status: **All six venues are built and playable** (Schoolyard Break, Kiosk Corner, Veranda Derby, Roadside Showdown, Harmattan Haze, Lights Out Final): 18 acts.
 Street Legends lists every built venue's acts; each venue's Act 1 is always open.
 
 ## Design rules for every venue
@@ -19,7 +19,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 ## The six venues
 
-| | 1 Schoolyard Break ✅ | 2 Kiosk Corner ✅ | 3 Veranda Derby ✅ | 4 Roadside Showdown ✅ | 5 Harmattan Haze ✅ | 6 Lights Out Final |
+| | 1 Schoolyard Break ✅ | 2 Kiosk Corner ✅ | 3 Veranda Derby ✅ | 4 Roadside Showdown ✅ | 5 Harmattan Haze ✅ | 6 Lights Out Final ✅ |
 |---|---|---|---|---|---|---|
 | **Place** | Adabraka Primary, Accra | Nima Market Road | Auntie Ama's Veranda, Kumasi | Tema Motorway Junction | Tamale Lorry Station | Jamestown, under the kiosk bulb |
 | **Rival** | Kwame (rookie) | Esi (easy) | Yaw (medium) | Akosua (medium → hard) | Abdul (hard) | Kofi "Magic" (champion) |
@@ -64,6 +64,21 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 **AI**: rehearses shots on the cloned table (booms included), aims candidates through open lanes, and tries blocking moves into the open lane the ball faces. It rewards setups in front of a lane still open on its next turn and penalises leaving the ball lined up for the player. In solo acts the defensive terms are off. Akosua's weights: block 1.6, setup 0.8, caution 1.3.
 
 **Balance history (headless, medium bot as the player proxy)**: see `plans/reports/playtest-260922-street-legends-roadside-toll-gates.md`.
+
+## Implemented: Lights Out Final — Coin-Stack Chain
+
+**How it works**
+- Both goals are **padlocked**: an iron bar with a brass padlock across the mouth stops the ball (a static segment).
+- Each side has its own chain of three coin stacks in the half it attacks (point-symmetric): midfield, the far flank, then off the goal's shoulder. Chalk dots mark the order.
+- A lighthouse beam stands on the stack to strike next (white for you, gold for Magic). Strike it **with the ball or one of your own caps, on your own flick** and it lights amber; the beam moves on. Out-of-order strikes and the other side's caps do nothing.
+- Three lit: **LIGHTS ON**, the padlock drops and that goal is open. After every goal the scorer's bulb goes out and the padlock returns from the next turn; relight the chain to score again. The other side keeps its progress.
+- Physics: stacks are static circles flagged `target`; the touch bookkeeping records who struck them on this flick (`hitBall`, `hitCaps`), cleared each flick and on every AI rehearsal restore.
+- Hero labels: LIGHTS ON (last stack and the goal on one flick), OFF THE COINS (the ball rattled a stack on the way in).
+- Nothing moves between turns; the change is the beam and the lock, both visible a turn ahead.
+
+**AI**: aims the ball into the beam stack or flicks a cap straight at it, rewards lighting it (more for two in one flick), and leaves the ball near the stack after next, or in front of the goal once the chain opens. Caution keeps the ball off the opponent's beam stack. Magic plans ahead: setup 2, caution 1.2.
+
+**Acts**: 1 *Light the Bulb* (solo, keeper only, ball between stacks two and three, 14 flicks), 2 *Magic's Table* (first to 1, 20 flicks, easy Magic), 3 *Lights Out* (first to 2, 24 flicks, easy Magic; the bulb goes out after every goal).
 
 ## Implemented: Veranda Derby — Clay-Pot Maze
 

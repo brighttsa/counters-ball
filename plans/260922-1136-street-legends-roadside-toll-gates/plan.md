@@ -30,7 +30,7 @@ Priority is set by fun-per-effort and by how much new tech each venue needs.
 | 2 ✅ | Schoolyard Break (Adabraka) | Ruler seesaw: rebound surface re-angles each turn | Teaches banking early in the mode; a simple static line collider | Segment (capsule) collider in physics |
 | 3 ✅ | Kiosk Corner (Nima) | Change dish rotating in the goal mouth | Reuses the segment collider from #2 | Rotated arc of beads |
 | 4 ✅ | Veranda Derby (Kumasi) | Pot maze + bank-only goals | Pure layout + a goal-validity rule; cheap once the kit exists | Goal validity hook in rules |
-| 5 | Lights Out Final (Jamestown) | Lights-on target chain unlocking the goal | Finale; combines targets, a locked goal and beam telegraph | Target bodies, goal lock |
+| 5 ✅ | Lights Out Final (Jamestown) | Lights-on target chain unlocking the goal | Finale; combines targets, a locked goal and beam telegraph | Target bodies, goal lock |
 
 Each venue ships as: 3 acts → headless balance playtest → browser/mobile check → docs row.
 

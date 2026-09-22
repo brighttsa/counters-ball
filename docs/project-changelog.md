@@ -1,5 +1,16 @@
 # Project Changelog
 
+## 2026-09-22 — Street Legends: Lights Out Final coin-stack chain
+
+### Added
+- **Coin-stack chain** at Jamestown, under the kiosk bulb (Street Legends): both goals are
+  padlocked; strike your three coin stacks in beam order (ball or your own cap) to light the
+  bulb and drop the padlock. The bulb goes out after every goal. Hero goals: LIGHTS ON,
+  OFF THE COINS. All six Street Legends venues are now built (18 acts).
+- Three acts: *Light the Bulb* (solo), *Magic's Table*, *Lights Out*. Magic plans the chain ahead.
+- Physics: static bodies flagged `target` record per-flick strikes (`targetStruckFor`), cleared
+  with the bank touches so AI rehearsals see them too.
+
 ## 2026-09-22 — Street Legends: Veranda Derby clay-pot maze
 
 ### Added

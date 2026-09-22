@@ -17,6 +17,7 @@ import { createDepartingLorryMechanic } from './departing-lorry-venue-mechanic.j
 import { createRulerSeesawMechanic } from './ruler-seesaw-venue-mechanic.js';
 import { createChangeDishMechanic } from './change-dish-venue-mechanic.js';
 import { createClayPotMazeMechanic } from './clay-pot-maze-venue-mechanic.js';
+import { createCoinStackChainMechanic } from './coin-stack-chain-venue-mechanic.js';
 
 const FACTORIES = {
   'toll-gates': createTollGateMechanic,
@@ -24,6 +25,7 @@ const FACTORIES = {
   'ruler-seesaw': createRulerSeesawMechanic,
   'change-dish': createChangeDishMechanic,
   'clay-pot-maze': createClayPotMazeMechanic,
+  'coin-stack-chain': createCoinStackChainMechanic,
 };
 const SIGNAL_SOUND_STRENGTH = 0.55;
 

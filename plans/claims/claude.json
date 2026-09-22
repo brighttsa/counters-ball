@@ -2,17 +2,17 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Street Legends: Veranda Derby pot maze + bank-only goal rule",
+  "task": "Street Legends: Lights Out Final coin-stack target chain + padlocked goals",
   "status": "released",
   "paths": [
     "src/levels/",
     "src/gameplay/",
-    "src/scene/veranda-clay-pot-maze.js",
+    "src/scene/jamestown-coin-stack-chain-and-padlock.js",
     "tests/",
     "docs/",
     "plans/",
     "index.html"
   ],
-  "updatedAt": "2026-09-22T17:21:38.929Z",
-  "head": "6a6a089344eb28eb0365a95bbc0661bd7812dca7"
+  "updatedAt": "2026-09-22T17:50:04.171Z",
+  "head": "361ad71181f2e8bf7bb693324697c9f9c81fca6c"
 }

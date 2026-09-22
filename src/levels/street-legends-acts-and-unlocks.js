@@ -6,9 +6,10 @@ import { KIOSK_CHANGE_DISH_ACTS } from './street-legends-kiosk-change-dish-acts.
 import { VERANDA_CLAY_POT_ACTS } from './street-legends-veranda-clay-pot-acts.js';
 import { ROADSIDE_TOLL_GATE_ACTS } from './street-legends-roadside-toll-gate-acts.js';
 import { HARMATTAN_DEPARTING_LORRY_ACTS } from './street-legends-harmattan-departing-lorry-acts.js';
+import { LIGHTS_OUT_COIN_STACK_ACTS } from './street-legends-lights-out-coin-stack-acts.js';
 
 export const STREET_LEGENDS_ACTS = [...SCHOOLYARD_RULER_SEESAW_ACTS, ...KIOSK_CHANGE_DISH_ACTS, ...VERANDA_CLAY_POT_ACTS,
-  ...ROADSIDE_TOLL_GATE_ACTS, ...HARMATTAN_DEPARTING_LORRY_ACTS];
+  ...ROADSIDE_TOLL_GATE_ACTS, ...HARMATTAN_DEPARTING_LORRY_ACTS, ...LIGHTS_OUT_COIN_STACK_ACTS];
 
 export function isLegendActUnlocked(progress, acts, index) {
   const level = acts[index];

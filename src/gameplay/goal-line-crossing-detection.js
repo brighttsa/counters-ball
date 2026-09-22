@@ -1,4 +1,5 @@
-// Swept goal test for the ball, plus an optional bank rule.
+// Swept goal test for the ball, plus an optional bank rule and target-strike
+// bookkeeping (both are per-flick touch records cleared by clearBankTouches).
 //
 // Where did the ball cross the goal plane this step, and was it inside the
 // mouth (which may sit off-centre on moving-goal venues)? If the venue sets
@@ -26,8 +27,23 @@ export function checkGoalCrossing(engine, b) {
   engine.onGoalScored?.(sign);
 }
 
-/** Collision bookkeeping for the bank rule: remember the ball hit a required kind. */
+const CAP_BIT = { home: 1, away: 2 };
+
+/** A static target (`body.target`) remembers who struck it this flick: the ball, and which sides' caps. */
+function noteTargetStrike(target, striker) {
+  if (striker.kind === 'ball') target.hitBall = true;
+  else if (striker.kind === 'cap') target.hitCaps |= CAP_BIT[striker.side] ?? 0;
+}
+
+/** Was this target struck this flick by the ball or by one of `side`'s caps? */
+export function targetStruckFor(target, side) {
+  return Boolean(target.hitBall || (target.hitCaps & CAP_BIT[side]));
+}
+
+/** Collision bookkeeping on a real impact: target strikes, and the bank rule's required kinds. */
 export function noteBankTouch(engine, a, b) {
+  if (a.target) noteTargetStrike(a, b);
+  else if (b.target) noteTargetStrike(b, a);
   const kinds = engine.goalRequiresTouchOf;
   if (!kinds) return;
   if (a.kind === 'ball' && kinds.includes(b.kind)) a.bankedOff = true;
@@ -39,7 +55,10 @@ export function noteRailBank(engine, b) {
   if (b.kind === 'ball' && engine.goalRequiresTouchOf?.includes('rail')) b.bankedOff = true;
 }
 
-/** A new flick (or a new AI rehearsal) starts with no bank touches. */
+/** A new flick (or a new AI rehearsal) starts with no bank touches and no target strikes. */
 export function clearBankTouches(engine) {
-  for (const b of engine.bodies) if (b.kind === 'ball') b.bankedOff = false;
+  for (const b of engine.bodies) {
+    if (b.kind === 'ball') b.bankedOff = false;
+    if (b.target) { b.hitBall = false; b.hitCaps = 0; }
+  }
 }

@@ -76,3 +76,17 @@ Open: RULER BANK is rare for the bot proxy (about 2 of 69 goals). The ruler most
 | Act 3 (18 flicks, easy Yaw) | 40% wins, 13% losses, 47% draws; DOUBLE POT twice |
 
 Open: Act 1 sits just under the 60% target. Bank shots need precision the medium bot's aim noise lacks, and the aware player beats the blind one by 15 points, so reading the pots is a real skill. A human playtest with the aim line decides whether Act 1 needs a closer start. Act 3 uses the same Yaw difficulty as Act 2 and relies on first to 2 plus Yaw's setup habit for the step up.
+
+# Lights Out Final — coin-stack chain (same harness)
+
+| Run | Result |
+|---|---|
+| Act 1, ball (0, 0), 12 flicks, chain-aware | 43% wins; chain lit in 29 of 30 games by flick ~4; scoring after the unlock is the bottleneck |
+| Act 1, chain-blind player | 0% wins: without the beam the bot never finds the order (a human sees the beam) |
+| Act 1, ball-start sweep | (0.8, 0.2) 57%; (0.85, 0) 55% with the most LIGHTS ON goals; (0.95, 0.15) 37% |
+| Act 1, **ball (0.85, 0), 14 flicks** | **62% wins**; LIGHTS ON 6, OFF THE COINS 3 of 37 goals |
+| Act 2 (20 flicks, easy Magic) | 37% wins, 10% losses, 53% draws; both sides light their chains (51 LIGHTS ON in 30 games) |
+| Act 3, medium Magic | 6% wins, 44% losses → **easy Magic** |
+| Act 3 (24 flicks, easy Magic) | 29% wins, 4% losses, 67% draws |
+
+Open: Act 2–3 draws are high here too: both chains open, then neither bot finishes. Same finishing weakness seen at every venue; needs a human playtest before any sudden-death rule. LIGHTS ON is rare for the bot (it lights with a cap, then shoots next flick).
