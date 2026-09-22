@@ -60,7 +60,7 @@ export class MenuScreens {
   renderLevels(levels, progress, mode, isUnlocked) {
     this.circuitProgress = progress;
     const versus = mode === 'versus';
-    $('levels-heading').textContent = versus ? 'The Circuit · 2 Players' : 'The Circuit';
+    $('levels-heading').textContent = mode === 'legends' ? 'Street Legends' : versus ? 'The Circuit · 2 Players' : 'The Circuit';
     $('levels-star-total').textContent = versus ? '' : `★ ${totalStars(progress, levels)} / ${levels.length * 3}`;
     $('level-grid').innerHTML = levels.map((level, i) => {
       const unlocked = isUnlocked(i);
@@ -69,9 +69,9 @@ export class MenuScreens {
         [0, 1, 2].map((n) => `<i class="${n < stars ? 'on' : ''}">★</i>`).join('')}</span>`;
       return `<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
         aria-pressed="false" style="--accent:${level.opponent.team.hudColor}">
-        <span class="level-number">${i + 1}</span>
-        <span class="level-name">${escapeHtml(level.name)}</span>
-        <span class="level-place">${escapeHtml(level.place)}</span>
+        <span class="level-number">${level.legend?.act ?? i + 1}</span>
+        <span class="level-name">${escapeHtml(level.actTitle ?? level.name)}</span>
+        <span class="level-place">${escapeHtml(level.legend ? `${level.name} · Act ${level.legend.act}` : level.place)}</span>
         ${starRow}
         ${unlocked ? '' : '<span class="level-lock">Locked · Preview</span>'}
       </button>`;

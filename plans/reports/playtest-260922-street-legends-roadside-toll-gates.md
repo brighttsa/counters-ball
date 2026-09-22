@@ -25,3 +25,17 @@ Akosua with her tactics. Harness: session scratchpad `headless-toll-gate-playtes
 - Act 2/3 draw rates of 53–62% for the bot proxy (target ≤35%). The classic roadside table draws about 40% with the same bot, so part of this is the proxy being a weak long-range finisher. A human playtest is needed before changing rules. If draws persist, options are a golden-flick sudden death, or +2 flicks.
 - Most Act 1 goals are two-stage (ball through the toll on one flick, finished on the next) and get no hero label. Consider a "PAID THE TOLL" label for that finish.
 - Render cost measurements were noisy while playtests loaded the machine. Static plaza meshes are merged (63 → 33 meshes); sustained phone fps is unmeasured.
+
+# Harmattan Haze — departing lorry (same harness, medium bot as player)
+
+| Run | Result |
+|---|---|
+| Classic Harmattan baseline (no mechanic) | 3 / 3 / 14 draws of 20: the dust (friction ×1.35) is draw-heavy on its own |
+| Act 1, lorry-blind player | 60% wins |
+| Act 1, lorry-aware player | **82% wins**: reading the next stop is a skill that pays |
+| Act 2, 14 flicks | 13–23% wins, 53–70% draws → raised to 18 flicks |
+| Act 2, 18 flicks | **30% wins, 27% losses, 43% draws**; 14 of 17 goals carry a lorry label |
+| Act 3, 16 flicks | 8% wins, 79% draws → raised to 20 flicks |
+| Act 3, 20 flicks | **25% wins, 21% losses, 54% draws**; 16 of 22 goals carry a lorry label |
+
+Open: Act 3 draws remain above target. This is shared with Roadside and needs a human playtest before any sudden-death rule.

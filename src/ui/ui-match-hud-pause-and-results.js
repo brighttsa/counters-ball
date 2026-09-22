@@ -168,7 +168,7 @@ export class MatchHud {
 
     let note = '';
     const legend = level.legend;
-    if (!versus && winner === SIDE_HOME) note = legend ? (isFinalVenue ? `Street Legend of ${level.place}!` : 'The booms bow to you. Next act unlocked.')
+    if (!versus && winner === SIDE_HOME) note = legend ? (legend.act === legend.acts ? `Street Legend of ${level.place}!` : 'The booms bow to you. Next act unlocked.')
       : isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
     else if (legend && level.rules.awayFlickLimit === 0) note = 'Out of flicks. Watch the amber lane and set the ball up for it.';
     else if (!versus) note = winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;

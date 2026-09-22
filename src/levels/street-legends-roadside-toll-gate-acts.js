@@ -25,7 +25,7 @@ const act = (number, overrides) => ({
   ...overrides,
 });
 
-export const STREET_LEGENDS_ACTS = [
+export const ROADSIDE_TOLL_GATE_ACTS = [
   act(1, {
     id: 'legends-roadside-act-1',
     actTitle: 'Green Means Go',

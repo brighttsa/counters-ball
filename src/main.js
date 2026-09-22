@@ -11,7 +11,7 @@ import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
 import { MatchHud } from './ui/ui-match-hud-pause-and-results.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { CAMPAIGN_LEVELS, ATTRACT_MODE_LEVEL, HOME_TEAM } from './levels/campaign-level-definitions.js';
-import { STREET_LEGENDS_ACTS } from './levels/street-legends-roadside-toll-gate-acts.js';
+import { STREET_LEGENDS_ACTS, isLegendActUnlocked } from './levels/street-legends-acts-and-unlocks.js';
 import {
   loadProgress, saveProgress, recordLevelStars, isLevelUnlocked, totalStars,
 } from './core/save-progress-local-storage.js';
@@ -28,6 +28,8 @@ const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match t
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false };
 // Street Legends is its own track of acts; campaign and 2-player share the classic circuit.
 const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : CAMPAIGN_LEVELS);
+const unlockedIn = (mode, i) => mode === 'versus'
+  || (mode === 'legends' ? isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, i) : isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
 
 function replaceSession(options, sessionHud) {
   hud.cancelResultReveal(); // leaving results early must not ding stars into the next screen
@@ -67,35 +69,28 @@ function showTitle() {
 }
 
 function showLevels(mode = app.mode) {
+  if (mode !== app.mode && (mode === 'legends' || app.mode === 'legends')) app.levelIndex = 0; // different track
   app.mode = mode;
-  menus.renderLevels(CAMPAIGN_LEVELS, progress, mode,
-    (i) => mode === 'versus' || isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
+  menus.renderLevels(trackFor(mode), progress, mode, (i) => unlockedIn(mode, i));
   menus.show('levels');
   previewLevel(app.levelIndex);
 }
 
 function previewLevel(index) {
-  const level = CAMPAIGN_LEVELS[index];
+  const level = trackFor(app.mode)[index];
   if (!level) return;
   replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team,
     controllers: { home: 'human', away: 'human' }, isPreview: true }, silentHud);
   hud.show(false);
   sound.setAmbience(level.backdrop);
   cameraDirector.setMode('attract');
-  menus.previewLevel(level, index, app.mode === 'versus' || isLevelUnlocked(progress, CAMPAIGN_LEVELS, index), app.mode);
-}
-
-/** Street Legends opens on the first act not yet won. */
-function startLegends() {
-  app.mode = 'legends';
-  const next = STREET_LEGENDS_ACTS.findIndex((level) => !(progress.stars[level.id] >= 1));
-  prepareMatch(next === -1 ? STREET_LEGENDS_ACTS.length - 1 : next);
+  menus.previewLevel(level, index, unlockedIn(app.mode, index), app.mode);
 }
 
 function prepareMatch(index) {
   const track = trackFor(app.mode);
   const level = track[index];
-  if (!level || (app.mode !== 'versus' && !isLevelUnlocked(progress, track, index))) return leaveMatch();
+  if (!level || !unlockedIn(app.mode, index)) return showLevels();
   const versus = app.mode === 'versus';
   app.levelIndex = index;
   replaceSession({
@@ -137,9 +132,6 @@ function showResults(result) {
   menus.show('results');
 }
 
-/** Back out of a match: Street Legends returns to the title, the circuit to its pitch list. */
-const leaveMatch = () => (app.mode === 'legends' ? showTitle() : showLevels());
-
 function setPaused(paused) {
   if (!app.session || app.session.options.isAttract) return;
   app.paused = paused;
@@ -150,11 +142,11 @@ function setPaused(paused) {
 const actions = {
   'play-campaign': () => showLevels('campaign'),
   'play-versus': () => showLevels('versus'),
-  'play-legends': () => startLegends(),
+  'play-legends': () => showLevels('legends'),
   'back-to-title': () => showTitle(),
   'select-level': (el) => prepareMatch(Number(el.dataset.index)),
   'preview-level': (el) => previewLevel(Number(el.dataset.index)),
-  'intro-back': () => leaveMatch(),
+  'intro-back': () => showLevels(),
   'kick-off': () => kickOff(),
   'skip-replay': () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); },
   'toggle-camera-motion': (el) => {
@@ -165,8 +157,8 @@ const actions = {
   pause: () => setPaused(true),
   resume: () => setPaused(false),
   restart: () => prepareMatch(app.levelIndex),
-  quit: () => leaveMatch(),
-  'results-levels': () => leaveMatch(),
+  quit: () => showLevels(),
+  'results-levels': () => showLevels(),
   replay: () => prepareMatch(app.levelIndex),
   'next-level': () => prepareMatch(app.levelIndex + 1),
   'toggle-sound': () => {

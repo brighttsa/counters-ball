@@ -24,6 +24,8 @@ export class FlickPhysicsEngine {
     this.onImpact = null;     // (a, b, impulse, x, z)
     this.onWallHit = null;    // (body, impulse, x, z)
     this.onStep = null;       // presentation observer; omitted from AI clones
+    // Goal mouth centre (z) per end: +1 = the goal home attacks. Moving-goal venues slide these.
+    this.goalCenters = { 1: 0, [-1]: 0 };
   }
 
   addBody({ x, z, radius, mass, kind, side = null }) {
@@ -125,7 +127,7 @@ export class FlickPhysicsEngine {
         const sign = Math.sign(b.pos.x);
         const t = (sign * GOAL_DEPTH - b.prev.x) / (b.pos.x - b.prev.x);
         const zAtCrossing = b.prev.y + (b.pos.y - b.prev.y) * t;
-        if (Math.abs(zAtCrossing) < GOAL_HALF_WIDTH - b.radius) {
+        if (Math.abs(zAtCrossing - this.goalCenters[sign]) < GOAL_HALF_WIDTH - b.radius) {
           this.goalCooldown = true;
           this.onGoalScored?.(sign);
         }
@@ -150,6 +152,7 @@ export class FlickPhysicsEngine {
   /** Identical copy (no callbacks) for AI shot rehearsal. Body order is preserved. */
   cloneForSimulation() {
     const sim = new FlickPhysicsEngine({ frictionScale: this.frictionScale });
+    sim.goalCenters = { ...this.goalCenters };
     sim.bodies = this.bodies.map((b) => ({
       ...b, pos: b.pos.clone(), prev: b.prev.clone(), vel: b.vel.clone(),
     }));

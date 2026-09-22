@@ -21,7 +21,7 @@ function gaussian(rng) {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-function candidateShots(cap, ball, side, difficulty, rng, mechanic) {
+function candidateShots(cap, ball, side, difficulty, rng, mechanic, goalZ = 0) {
   const shots = [];
   const add = (dx, dz, powers) => {
     const len = Math.hypot(dx, dz);
@@ -33,7 +33,7 @@ function candidateShots(cap, ball, side, difficulty, rng, mechanic) {
 
   for (const targetZ of difficulty.targets) {
     // Ghost ball: where the cap must be at contact to send the ball at the target.
-    const gx = attackDirection(side) * GOAL_LINE_X * 1.04 - ball.pos.x, gz = targetZ - ball.pos.y;
+    const gx = attackDirection(side) * GOAL_LINE_X * 1.04 - ball.pos.x, gz = goalZ + targetZ - ball.pos.y;
     const gl = Math.hypot(gx, gz) || 1;
     const ax = ball.pos.x - (gx / gl) * contact - cap.pos.x;
     const az = ball.pos.y - (gz / gl) * contact - cap.pos.y;
@@ -61,17 +61,18 @@ function scoreOutcome(sim, side, ballIndex, goal, mechanic) {
   if (goal === -dir) return -10000;
 
   const ball = sim.bodies[ballIndex].pos;
+  const ownZ = sim.goalCenters?.[-dir] ?? 0, theirZ = sim.goalCenters?.[dir] ?? 0; // goals may sit off-centre
   let score = ball.x * dir * 120; // territory
-  const dOwn = Math.hypot(ball.x + dir * GOAL_LINE_X, ball.y);
+  const dOwn = Math.hypot(ball.x + dir * GOAL_LINE_X, ball.y - ownZ);
   if (dOwn < 0.75) score -= (0.75 - dOwn) * 600;
-  score += Math.max(0, 0.9 - Math.hypot(ball.x - dir * GOAL_LINE_X, ball.y)) * 180; // chance next turn
+  score += Math.max(0, 0.9 - Math.hypot(ball.x - dir * GOAL_LINE_X, ball.y - theirZ)) * 180; // chance next turn
 
-  const toOwnX = -dir * GOAL_LINE_X - ball.x, toOwnZ = -ball.y;
+  const toOwnX = -dir * GOAL_LINE_X - ball.x, toOwnZ = ownZ - ball.y;
   const toOwnLen = Math.hypot(toOwnX, toOwnZ) || 1;
   for (const b of sim.bodies) {
     if (b.kind !== 'cap') continue;
     if (b.side === side) { // reward keeping a cap home in the goal mouth
-      if (Math.abs(b.pos.x + dir * GOAL_LINE_X) < 0.35 && Math.abs(b.pos.y) < 0.3) score += 25;
+      if (Math.abs(b.pos.x + dir * GOAL_LINE_X) < 0.35 && Math.abs(b.pos.y - ownZ) < 0.3) score += 25;
       continue;
     }
     // Counter-attack risk: an opponent cap lined up behind the ball, facing our goal.
@@ -95,7 +96,7 @@ export async function planAiShot({ physics, side, capBodies, ballBody, difficult
 
   for (const cap of capBodies) {
     const capIndex = physics.bodies.indexOf(cap);
-    for (const shot of candidateShots(cap, ballBody, side, difficulty, rng, mechanic)) {
+    for (const shot of candidateShots(cap, ballBody, side, difficulty, rng, mechanic, physics.goalCenters?.[attackDirection(side)])) {
       sim.restore(base);
       const speed = shot.power * MAX_FLICK_SPEED;
       sim.bodies[capIndex].vel.set(shot.dx * speed, shot.dz * speed);

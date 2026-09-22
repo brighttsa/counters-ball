@@ -1,56 +1,56 @@
 // Attaches a Street Legends venue mechanic to a match session. Classic
 // campaign and 2-player levels have no `mechanic` and are untouched.
 //
-// Must be created BEFORE wireMatchFeedback: its 'turn' listener steps the toll
-// signal first, so the AI (started by the feedback 'turn' listener) always
-// plans against the booms that are actually up for its turn.
+// Each mechanic type registers a factory returning a small definition:
+//   { view: { animating, update(dt) }, onTurn(side, bodies) → callout labels,
+//     describe(side), hint: { label, detail }, onFlick?(side), observe?(ball),
+//     noteImpact?(a, b, strength), goalLabel(scorer),
+//     aiCandidates(side, ballZ, { defend }), aiScore(sim, side, ballIndex, { defend }) }
+// Everything shared (turn wiring, HUD line, input lock, solo detection) lives here.
+//
+// Must be created BEFORE wireMatchFeedback: its 'turn' listener steps the venue
+// first, so the AI (started by the feedback 'turn' listener) always plans
+// against the table as it actually is for its turn.
 import { otherSide } from '../core/pitch-dimensions-and-constants.js';
-import { TollGateLaneSignals, LANE_KEYS } from './toll-gate-lane-signal-state.js';
-import { tollGateCandidatePoints, scoreTollGateOutcome } from './toll-gate-ai-lane-evaluation.js';
-import { buildTollPlaza } from '../scene/toll-plaza-booths-booms-and-signals.js';
+import { createTollGateMechanic } from './toll-gate-venue-mechanic.js';
+import { createDepartingLorryMechanic } from './departing-lorry-venue-mechanic.js';
 
-const BOOM_SOUND_STRENGTH = 0.55;
+const FACTORIES = {
+  'toll-gates': createTollGateMechanic,
+  'departing-lorry': createDepartingLorryMechanic,
+};
+const SIGNAL_SOUND_STRENGTH = 0.55;
 
 export function createVenueMechanic(session) {
-  const spec = session.level.mechanic;
-  if (spec?.type !== 'toll-gates') return null;
+  const factory = FACTORIES[session.level.mechanic?.type];
+  if (!factory) return null;
   const { physics, rules, hud, sound, level } = session;
-  const gates = new TollGateLaneSignals(spec);
-  gates.attach(physics);
-  const view = buildTollPlaza(session.stage.group, gates);
-  const tactics = level.opponent.tactics;
+  const m = factory(session);
   const dynamicBodies = () => physics.bodies.filter((b) => b.invMass > 0);
   // Defending only matters when the other side will ever flick (not in solo acts).
   const defends = (side) => ({ defend: rules.flickLimitFor(otherSide(side)) > 0 });
   let turns = 0;
 
   rules.on('turn', (side) => {
-    const jams = gates.advance(side, dynamicBodies());
+    const callouts = m.onTurn(side, dynamicBodies());
     turns += 1;
-    hud.setObjective?.(`${level.objective} · ${gates.describe(side)}`);
-    sound.woodKnock?.(BOOM_SOUND_STRENGTH); // the booms clack as the signal changes
-    for (const jam of jams) {
-      hud.event?.(`JAMMED ${LANE_KEYS[jam.lane].toUpperCase()} BOOM`, { priority: 3, duration: 1.1 });
-    }
-    if (turns === 1) hud.event?.('GREEN LANES ARE OPEN', { priority: 2, duration: 1.6, detail: 'Amber closes on your next shot' });
+    hud.setObjective?.(`${level.objective} · ${m.describe(side)}`);
+    sound.woodKnock?.(SIGNAL_SOUND_STRENGTH); // booms clack / tailboards knock as the venue changes
+    for (const label of callouts) hud.event?.(label, { priority: 3, duration: 1.1 });
+    if (turns === 1) hud.event?.(m.hint.label, { priority: 2, duration: 1.6, detail: m.hint.detail });
   });
-  rules.on('flick', ({ side }) => gates.beginFlick(side));
+  rules.on('flick', ({ side }) => m.onFlick?.(side));
 
   return {
-    gates,
-    view,
-    /** Human input waits while booms are still swinging into place. */
-    get busy() { return view.animating; },
-    update(dt) { view.update(dt); },
-    observe(ball) { gates.observe(ball); },
-    noteImpact(a, b, strength) {
-      gates.noteImpact(a, b);
-      const boom = a.kind === 'boom' ? a : b.kind === 'boom' ? b : null;
-      if (boom) view.shake(boom.plaza, boom.lane, strength);
-    },
-    goalLabel(scorer) { return gates.goalLabel(scorer); },
+    definition: m,
+    /** Human input waits while the venue is still moving into place. */
+    get busy() { return m.view.animating; },
+    update(dt) { m.view.update(dt); },
+    observe(ball) { m.observe?.(ball); },
+    noteImpact(a, b, strength) { m.noteImpact?.(a, b, strength); },
+    goalLabel(scorer) { return m.goalLabel(scorer); },
     // AI interface used by the shot planner.
-    aiCandidates(side) { return tollGateCandidatePoints(gates, side, session.ballBody.pos.y, defends(side)); },
-    aiScore(sim, side, ballIndex) { return scoreTollGateOutcome(sim, side, ballIndex, gates, tactics, defends(side)); },
+    aiCandidates(side) { return m.aiCandidates(side, session.ballBody.pos.y, defends(side)); },
+    aiScore(sim, side, ballIndex) { return m.aiScore(sim, side, ballIndex, defends(side)); },
   };
 }

@@ -162,7 +162,8 @@ export class MatchSession {
     const distToLine = Math.sign(vel.x) * GOAL_LINE_X - pos.x;
     if (Math.sign(distToLine) !== Math.sign(vel.x) || Math.abs(distToLine) > 0.45) return;
     const zAtLine = pos.y + vel.y * (Math.abs(distToLine) / Math.abs(vel.x));
-    if (Math.abs(zAtLine) > GOAL_HALF_WIDTH + 0.03) return; // includes agonising near-misses
+    const mouthZ = this.physics.goalCenters?.[Math.sign(vel.x)] ?? 0; // moving goals slide off-centre
+    if (Math.abs(zAtLine - mouthZ) > GOAL_HALF_WIDTH + 0.03) return; // includes agonising near-misses
     this.slowMoUsed = true;
     this.time.slowMotion(0.28, 0.5);
     this.sound.slowMoWhoosh();

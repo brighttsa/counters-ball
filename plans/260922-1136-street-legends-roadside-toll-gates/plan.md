@@ -14,7 +14,7 @@ Design source: `docs/street-legends-design-matrix.md`.
 - [x] Headless balance playtests; unit/regression tests
 - [ ] Physical-phone pass (touch feel, lamp readability in sunlight, fps)
 
-## Phase 2 — Reusable mechanic kit (next, before any new venue)
+## Phase 2 — Reusable mechanic kit (registry done with Harmattan)
 Extract what every venue mechanic needs, so the next five are content, not plumbing:
 - `mechanic` interface already used: `update`, `busy`, `observe`, `noteImpact`, `goalLabel`, `aiCandidates`, `aiScore`.
 - Add a registry `type → factory` in `street-legends-venue-mechanic-wiring.js`.
@@ -26,7 +26,7 @@ Priority is set by fun-per-effort and by how much new tech each venue needs.
 
 | # | Venue | Mechanic | Why this order | New tech |
 |---|---|---|---|---|
-| 1 | Harmattan Haze (Tamale) | Departing lorry: moving goal, one notch per turn | Most "WAIT, I can do that?" after toll gates, and it reuses the per-turn signal pattern | Movable goal colliders + goal detection at a moving x/z |
+| 1 ✅ | Harmattan Haze (Tamale) | Departing lorry: moving goal, one notch per turn | Most "WAIT, I can do that?" after toll gates, and it reuses the per-turn signal pattern | Movable goal colliders + goal detection at a moving x/z |
 | 2 | Schoolyard Break (Adabraka) | Ruler seesaw: rebound surface re-angles each turn | Teaches banking early in the mode; a simple static line collider | Segment (capsule) collider in physics |
 | 3 | Kiosk Corner (Nima) | Change dish rotating in the goal mouth | Reuses the segment collider from #2 | Rotated arc of beads |
 | 4 | Veranda Derby (Kumasi) | Pot maze + bank-only goals | Pure layout + a goal-validity rule; cheap once the kit exists | Goal validity hook in rules |

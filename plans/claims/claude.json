@@ -2,15 +2,13 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Street Legends: Roadside toll-gate vertical slice, Flick Vector redesign, chicken removal",
+  "task": "Street Legends: Harmattan Haze departing-lorry moving goal + mechanic registry",
   "status": "released",
   "paths": [
     "src/levels/",
     "src/gameplay/",
+    "src/scene/departing-lorry-track-and-toy-lorries.js",
     "src/scene/level-stage-builder-and-disposal.js",
-    "src/scene/bottle-cap-players.js",
-    "src/scene/toll-plaza-booths-booms-and-signals.js",
-    "src/scene/environment/venue-environment-compositions.js",
     "src/main.js",
     "src/ui/",
     "src/core/save-progress-local-storage.js",
@@ -18,9 +16,8 @@
     "styles/",
     "tests/",
     "docs/",
-    "plans/260922-1136-street-legends-roadside-toll-gates/",
-    "plans/agent-handoff-board.md"
+    "plans/"
   ],
-  "updatedAt": "2026-09-22T14:48:16.724Z",
-  "head": "fc94b703f8f7b1b1ba61306f92d148e988daddb0"
+  "updatedAt": "2026-09-22T15:45:01.761Z",
+  "head": "c8bacef705b906b04eb2d28cce326588b8c877d2"
 }

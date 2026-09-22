@@ -1,5 +1,21 @@
 # Project Changelog
 
+## 2026-09-22 — Street Legends: Harmattan Haze departing lorry
+
+### Added
+- **Departing-lorry goals** at Tamale Lorry Station (Street Legends): each goal rides a toy lorry
+  along the end line through five stops, one stop per attacker turn, turning back at the far
+  stops. A ghost goal shows the next stop. Hero goals: CAUGHT THE LORRY, LAST STOP!
+- Three acts: *Catch the Lorry* (solo), *Loading Bay*, *Last Lorry to Bolgatanga*. Abdul
+  chases where the lorry goes next.
+- Street Legends now opens a list of every built venue's acts (Act 1 of each is always open).
+- Venue-mechanic registry (`street-legends-venue-mechanic-wiring.js`): a mechanic is a
+  factory returning view, turn step, HUD line, hero label and AI hooks.
+
+### Changed
+- Physics tracks a goal-mouth centre per end (`goalCenters`); the AI planner, slow-motion
+  trigger and AI rehearsal clones use it. Classic venues keep both at 0.
+
 ## 2026-09-22 — Street Legends: Roadside toll gates
 
 ### Added
