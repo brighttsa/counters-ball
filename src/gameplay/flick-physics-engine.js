@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import {
   WALL_HALF_LENGTH as WX, WALL_HALF_WIDTH as WZ, GOAL_LINE_X, GOAL_HALF_WIDTH,
 } from '../core/pitch-dimensions-and-constants.js';
+import { createStaticSegment, cloneSegment, resolveSegmentContacts } from './static-segment-collisions.js';
 
 export const FIXED_STEP = 1 / 240;
 const REST_SPEED = 0.015;
@@ -26,6 +27,13 @@ export class FlickPhysicsEngine {
     this.onStep = null;       // presentation observer; omitted from AI clones
     // Goal mouth centre (z) per end: +1 = the goal home attacks. Moving-goal venues slide these.
     this.goalCenters = { 1: 0, [-1]: 0 };
+    this.segments = [];       // straight static edges (a ruler on its edge)
+  }
+
+  addStaticSegment(spec) {
+    const segment = createStaticSegment(spec);
+    this.segments.push(segment);
+    return segment;
   }
 
   addBody({ x, z, radius, mass, kind, side = null }) {
@@ -70,6 +78,7 @@ export class FlickPhysicsEngine {
   stepFixed(h) {
     this.integrate(h);
     this.resolveBodyCollisions();
+    if (this.segments.length) resolveSegmentContacts(this);
     this.resolveWalls();
     this.onStep?.(h);
   }
@@ -153,6 +162,7 @@ export class FlickPhysicsEngine {
   cloneForSimulation() {
     const sim = new FlickPhysicsEngine({ frictionScale: this.frictionScale });
     sim.goalCenters = { ...this.goalCenters };
+    sim.segments = this.segments.map(cloneSegment);
     sim.bodies = this.bodies.map((b) => ({
       ...b, pos: b.pos.clone(), prev: b.prev.clone(), vel: b.vel.clone(),
     }));

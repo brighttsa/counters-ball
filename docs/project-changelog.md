@@ -1,5 +1,28 @@
 # Project Changelog
 
+## 2026-09-22 — Street Legends: Kiosk Corner change dish
+
+### Added
+- **Change dish** at Nima Market Road (Street Legends): an enamel change tray on its edge
+  around each goal mouth covers a 100° arc and turns one notch per attacker turn (open left →
+  open edges → open right). Chalk marks the next notch. Hero goals: EXACT CHANGE, OFF THE DISH.
+- Three acts: *Exact Change* (solo), *Rush at the Hatch*, *Closing Time*. Esi waits for the gap.
+- `pushClearOfSegment` shared by turning venue pieces (dish and ruler sweep things aside).
+
+### Changed
+- Schoolyard ruler: the turn now sweeps caps aside too (cap pinning froze it on ~40% of turns);
+  Act 1 starts the ball at (0.5, 0.42) with 10 flicks (78% win for the bot proxy, was ~38%).
+
+## 2026-09-22 — Street Legends: Schoolyard Break ruler seesaw
+
+### Added
+- **Ruler seesaw** at Adabraka Primary (Street Legends): a 30 cm ruler on its edge in each half,
+  pinned through an eraser, turns 45° each time its attacker starts a turn. Chalk shows the
+  next angle. Whatever rests in its sweep is pushed aside as it turns. Hero goal: RULER BANK.
+- Three acts: *Before the Bell* (solo), *Ruler Rules*, *Last Bell*. Kwame barely reads the ruler.
+- Physics: static segment collider (`addStaticSegment`, `static-segment-collisions.js`) and
+  dependency-free segment geometry (`segment-geometry-helpers.js`), cloned for AI rehearsal.
+
 ## 2026-09-22 — Street Legends: Harmattan Haze departing lorry
 
 ### Added

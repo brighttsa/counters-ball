@@ -5,7 +5,7 @@ import {
 } from '../core/pitch-dimensions-and-constants.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
-  boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack' };
+  boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
 const BODY_RESTITUTION_FACTOR = 1.72;
 const WALL_RESTITUTION_FACTOR = 1.55;
 

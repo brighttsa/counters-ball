@@ -39,3 +39,26 @@ Akosua with her tactics. Harness: session scratchpad `headless-toll-gate-playtes
 | Act 3, 20 flicks | **25% wins, 21% losses, 54% draws**; 16 of 22 goals carry a lorry label |
 
 Open: Act 3 draws remain above target. This is shared with Roadside and needs a human playtest before any sudden-death rule.
+
+# Schoolyard Break — ruler seesaw (same harness)
+
+| Run | Result |
+|---|---|
+| Classic Schoolyard baseline | 14 / 0 / 6 of 20 (rookie Kwame) |
+| Act 1, ruler pinned by caps or ball | 30–40% wins; ~40% of turns frozen → ball swept, caps still pin |
+| Act 1, caps still pin | still ~40% of turns frozen (caps rest against the ruler after bouncing) → everything swept |
+| Act 1, ball (0.35, 0.12), 8 flicks | 35–40% wins → moved the ball start |
+| Act 1, ball (0.5, 0.42), 8 / **10** flicks | 63% / **78%** wins → 10 flicks chosen |
+| Act 2 (14 flicks) | 37% wins, 7% losses, 57% draws |
+| Act 3 (16 flicks) | 46% wins, 12% losses, 42% draws |
+
+Open: RULER BANK is rare for the bot proxy (about 2 of 69 goals). The ruler mostly acts as a turning obstacle. A human playtest will show whether players bank on purpose.
+
+# Kiosk Corner — change dish (same harness)
+
+| Run | Result |
+|---|---|
+| Classic Kiosk baseline | 11 / 1 / 8 of 20 |
+| Act 1, dish-blind / dish-aware | 55% / **65%** wins; EXACT CHANGE on 14 of 26 goals (aware) |
+| Act 2 (14 flicks) | 30–40% wins, 13–17% losses, 47–53% draws |
+| Act 3 (16 flicks) | 25% wins, 21% losses, 54% draws |

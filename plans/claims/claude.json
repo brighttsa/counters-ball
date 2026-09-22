@@ -2,22 +2,18 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Street Legends: Harmattan Haze departing-lorry moving goal + mechanic registry",
+  "task": "Street Legends: Schoolyard ruler (finish) + Kiosk Corner change dish",
   "status": "released",
   "paths": [
     "src/levels/",
     "src/gameplay/",
-    "src/scene/departing-lorry-track-and-toy-lorries.js",
-    "src/scene/level-stage-builder-and-disposal.js",
-    "src/main.js",
-    "src/ui/",
-    "src/core/save-progress-local-storage.js",
-    "index.html",
-    "styles/",
+    "src/scene/ruler-seesaw-and-chalk-telegraph.js",
+    "src/scene/change-dish-enamel-tray-and-chalk.js",
     "tests/",
     "docs/",
-    "plans/"
+    "plans/",
+    "index.html"
   ],
-  "updatedAt": "2026-09-22T15:45:01.761Z",
-  "head": "c8bacef705b906b04eb2d28cce326588b8c877d2"
+  "updatedAt": "2026-09-22T16:40:20.267Z",
+  "head": "7b162070d62f87bc5c068f2c7bdc628ef04ebbd1"
 }

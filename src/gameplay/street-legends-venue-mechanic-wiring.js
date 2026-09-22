@@ -14,10 +14,14 @@
 import { otherSide } from '../core/pitch-dimensions-and-constants.js';
 import { createTollGateMechanic } from './toll-gate-venue-mechanic.js';
 import { createDepartingLorryMechanic } from './departing-lorry-venue-mechanic.js';
+import { createRulerSeesawMechanic } from './ruler-seesaw-venue-mechanic.js';
+import { createChangeDishMechanic } from './change-dish-venue-mechanic.js';
 
 const FACTORIES = {
   'toll-gates': createTollGateMechanic,
   'departing-lorry': createDepartingLorryMechanic,
+  'ruler-seesaw': createRulerSeesawMechanic,
+  'change-dish': createChangeDishMechanic,
 };
 const SIGNAL_SOUND_STRENGTH = 0.55;
 

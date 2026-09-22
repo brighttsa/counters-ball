@@ -8,7 +8,7 @@ venue keeps its name, place, rival, team and palette from
 `src/levels/campaign-level-definitions.js`. It adds one signature mechanic,
 one objective and one hero moment, taught through a three-act structure.
 
-Status: **Roadside Showdown and Harmattan Haze are built and playable.** The other four are designed, not built.
+Status: **Schoolyard Break, Kiosk Corner, Roadside Showdown and Harmattan Haze are built and playable.** Veranda Derby and Lights Out Final are designed, not built.
 Street Legends lists every built venue's acts; each venue's Act 1 is always open.
 
 ## Design rules for every venue
@@ -19,7 +19,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 ## The six venues
 
-| | 1 Schoolyard Break | 2 Kiosk Corner | 3 Veranda Derby | 4 Roadside Showdown ✅ | 5 Harmattan Haze ✅ | 6 Lights Out Final |
+| | 1 Schoolyard Break ✅ | 2 Kiosk Corner ✅ | 3 Veranda Derby | 4 Roadside Showdown ✅ | 5 Harmattan Haze ✅ | 6 Lights Out Final |
 |---|---|---|---|---|---|---|
 | **Place** | Adabraka Primary, Accra | Nima Market Road | Auntie Ama's Veranda, Kumasi | Tema Motorway Junction | Tamale Lorry Station | Jamestown, under the kiosk bulb |
 | **Rival** | Kwame (rookie) | Esi (easy) | Yaw (medium) | Akosua (medium → hard) | Abdul (hard) | Kofi "Magic" (champion) |
@@ -29,7 +29,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 | **Goals / boundaries** | Pencil-case goals, ruler rails | Crate-slat goals, counter lip rails | Clay-pot goalposts, veranda step edge | Steel goals, kerb islands, three-lane toll plazas | Tailboard bolts, rope goal nets | Carved goals, coin-stack posts |
 | **Environmental story** | Break time, and Kwame bet his toffee before the bell | Esi plays between customers while the hatch opens and shuts | Auntie Ama's pots are off-limits, but Yaw banks off them | Rush hour: the booms decide who gets through | The lorry is loading; catch it before it leaves | Magic has never lost under this bulb |
 | **Light / atmosphere** | Hard midday, sharp veranda shade | Late-afternoon side light, awning shadow | Golden hour through the balustrade | Late-afternoon sodium haze, traffic glare | Harmattan white-out, low contrast | Single bulb, deep falloff, beam sweep |
-| **Signature mechanic** | **Ruler seesaw**: a ruler pivots on an eraser at midfield and settles to a new angle each turn; a chalk arrow shows the next angle | **Change dish**: a rotating saucer in each goal mouth turns one notch per turn, so its gap guards a different part of the goal | **Pot maze + bank rule**: low clay pots form three routes; goals only count after a pot bank | **Toll gates**: three lanes per plaza, one boom down per turn on a visible cycle; amber warns which lane shuts next; caps slide under booms, the ball can't; a ball under a boom jams it | **Departing lorry**: each goal rides a toy lorry along the end line, one of five stops per attacker turn, turning back at the far stops; a ghost goal shows the next stop | **Lights-on chain**: strike three coin stacks in beam order to unlock Magic's padlocked goal |
+| **Signature mechanic** | **Ruler seesaw**: a 30 cm ruler on its edge, pinned through an eraser in front of each goal, turns 45° per attacker turn; chalk shows the next angle; it sweeps resting caps and the ball aside | **Change dish**: an enamel change tray on its edge around each goal mouth covers a 100° arc and turns one notch per attacker turn (open left → open edges → open right → open edges); chalk shows the next notch | **Pot maze + bank rule**: low clay pots form three routes; goals only count after a pot bank | **Toll gates**: three lanes per plaza, one boom down per turn on a visible cycle; amber warns which lane shuts next; caps slide under booms, the ball can't; a ball under a boom jams it | **Departing lorry**: each goal rides a toy lorry along the end line, one of five stops per attacker turn, turning back at the far stops; a ghost goal shows the next stop | **Lights-on chain**: strike three coin stacks in beam order to unlock Magic's padlocked goal |
 | **Mechanic family** | Moving rebound surface | Rotating defender | Tactical maze + ricochet challenge | Opening/closing lane + tactical jam | Moving goal | Target chain + multi-stage shot |
 | **Objective** | Score before the bell | Score through the dish gap | Win with bank goals only | Beat Akosua through the booms | Score before the lorry leaves | Light the bulb, then beat Magic |
 | **Hero moment** | RULER BANK | EXACT CHANGE | OFF THE POT | THROUGH THE TOLL · BOOM BANK · JAMMED THE GATE | CAUGHT THE LORRY | LIGHTS ON |
@@ -65,6 +65,33 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **Balance history (headless, medium bot as the player proxy)**: see `plans/reports/playtest-260922-street-legends-roadside-toll-gates.md`.
 
+## Implemented: Kiosk Corner — Change Dish
+
+**How it works**
+- A curved white enamel change tray with a blue rim (the dish every kiosk keeps coins in) stands on its edge around each goal mouth, radius 0.3 from the goal centre, just outside the posts. It covers a 100° arc of the approach.
+- Each time its **attacker** starts a turn it turns one notch: open left → open edges (centre covered) → open right → open edges. Both start covering the centre; the two dishes turn in mirror image, so the table is point-symmetric.
+- A chalk arc on the table marks where it covers **next**; the HUD reads "Their dish: OPEN RIGHT → next OPEN EDGES". Whatever rests in its path is swept aside as it turns.
+- Physics: six short static segments (the same collider as the ruler), cloned for AI rehearsal.
+- Hero labels: EXACT CHANGE (scored while only the edges were open), OFF THE DISH (the ball rattled the rim and still went in). Both earn the replay.
+
+**AI**: rehearses rattles off the pieces; aims the ball into the middle of each open window; rewards a clear line past their dish's next notch and penalises one past its own. Esi waits for the gap: setup 1.6, block 0.8, caution 1.
+
+**Acts**: 1 *Exact Change* (solo, keeper only, score in 10), 2 *Rush at the Hatch* (first to 1, 14 flicks, easy Esi), 3 *Closing Time* (first to 2, 16 flicks, medium Esi).
+
+## Implemented: Schoolyard Break — Ruler Seesaw
+
+**How it works**
+- A 30 cm wooden school ruler stands on its edge in each half, pinned through a pink-and-blue eraser at `x = ±0.75`, in front of each goal.
+- Each time its **attacker** starts a turn it turns 45° the same way round: open (along the pitch) → slanted → across → slanted back. Both start open, so the table is point-symmetric.
+- Chalk on the table shows the **next** angle: a dashed ghost line, with curved arrows at both ends for the direction. The HUD reads "Their ruler: SLANTED → next ACROSS".
+- Whatever rests in its sweep is pushed aside as it turns. (Letting caps pin it was playtested: caps come to rest against the ruler after bouncing off it and it froze on ~40% of turns, so the mechanic stalled.)
+- Physics: a new static segment collider (`addStaticSegment`; capsule with restitution 0.72), cloned for AI rehearsal. The bounce loses energy along the normal, so banks come off flatter than a mirror aim; judging that is the skill.
+- Hero label: RULER BANK (the ball touched a ruler on the scoring flick). It earns the replay.
+
+**AI**: rehearses bounces on the cloned segments; adds a mirrored-goal bank aim; rewards leaving the ball a clear line past their ruler's *next* angle; penalises a clear line past its own. Kwame "ignores the ruler": setup 0.4, block 0.5, caution 0.6.
+
+**Acts**: 1 *Before the Bell* (solo, keeper only, ball off to one side at (0.5, 0.42), score in 10), 2 *Ruler Rules* (first to 1, 14 flicks, rookie Kwame), 3 *Last Bell* (first to 2, 16 flicks, easy Kwame).
+
 ## Implemented: Harmattan Haze — Departing Lorry
 
 **How it works**
@@ -78,5 +105,5 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **Acts**: 1 *Catch the Lorry* (solo, keeper only, ball starts near the end, score in 8), 2 *Loading Bay* (first to 1, 18 flicks), 3 *Last Lorry to Bolgatanga* (first to 2, 20 flicks, pebbles). Abdul chases the goal: setup 1.5, block 0.8, caution 0.8.
 
-## Build order for the remaining four
+## Build order for the remaining two
 See `plans/260922-1136-street-legends-roadside-toll-gates/plan.md`.

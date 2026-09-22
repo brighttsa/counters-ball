@@ -96,7 +96,8 @@ mesh sync → AI → juice → replay capture → particles → aim → backdrop
   goalLabel, aiCandidates(side, ballZ, { defend }), aiScore(sim, side, i, { defend }) }`.
   The wiring is created before `wireMatchFeedback`, so the venue steps before the AI
   plans. State changes only between turns. Physics hooks: `body.disabled`,
-  `body.blocksOnly`, `physics.goalCenters[±1]` (moving goal mouths).
+  `body.blocksOnly`, `physics.goalCenters[±1]` (moving goal mouths),
+  `physics.addStaticSegment({ ax, az, bx, bz, radius, kind })` (straight edges).
 - **Licensed photographs**: configure `LOCATION_PHOTOGRAPHS` in
   `scene/environment/location-photograph-configuration.js`; supply a root-relative
   same-origin path, credit and license before enabling a venue. Parameters cover
