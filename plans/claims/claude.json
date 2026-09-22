@@ -2,18 +2,17 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Street Legends: Schoolyard ruler (finish) + Kiosk Corner change dish",
+  "task": "Street Legends: Veranda Derby pot maze + bank-only goal rule",
   "status": "released",
   "paths": [
     "src/levels/",
     "src/gameplay/",
-    "src/scene/ruler-seesaw-and-chalk-telegraph.js",
-    "src/scene/change-dish-enamel-tray-and-chalk.js",
+    "src/scene/veranda-clay-pot-maze.js",
     "tests/",
     "docs/",
     "plans/",
     "index.html"
   ],
-  "updatedAt": "2026-09-22T16:40:20.267Z",
-  "head": "7b162070d62f87bc5c068f2c7bdc628ef04ebbd1"
+  "updatedAt": "2026-09-22T17:21:38.929Z",
+  "head": "6a6a089344eb28eb0365a95bbc0661bd7812dca7"
 }

@@ -8,7 +8,7 @@ venue keeps its name, place, rival, team and palette from
 `src/levels/campaign-level-definitions.js`. It adds one signature mechanic,
 one objective and one hero moment, taught through a three-act structure.
 
-Status: **Schoolyard Break, Kiosk Corner, Roadside Showdown and Harmattan Haze are built and playable.** Veranda Derby and Lights Out Final are designed, not built.
+Status: **Five venues are built and playable** (Schoolyard Break, Kiosk Corner, Veranda Derby, Roadside Showdown, Harmattan Haze). Lights Out Final is designed, not built.
 Street Legends lists every built venue's acts; each venue's Act 1 is always open.
 
 ## Design rules for every venue
@@ -19,7 +19,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 ## The six venues
 
-| | 1 Schoolyard Break ✅ | 2 Kiosk Corner ✅ | 3 Veranda Derby | 4 Roadside Showdown ✅ | 5 Harmattan Haze ✅ | 6 Lights Out Final |
+| | 1 Schoolyard Break ✅ | 2 Kiosk Corner ✅ | 3 Veranda Derby ✅ | 4 Roadside Showdown ✅ | 5 Harmattan Haze ✅ | 6 Lights Out Final |
 |---|---|---|---|---|---|---|
 | **Place** | Adabraka Primary, Accra | Nima Market Road | Auntie Ama's Veranda, Kumasi | Tema Motorway Junction | Tamale Lorry Station | Jamestown, under the kiosk bulb |
 | **Rival** | Kwame (rookie) | Esi (easy) | Yaw (medium) | Akosua (medium → hard) | Abdul (hard) | Kofi "Magic" (champion) |
@@ -29,7 +29,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 | **Goals / boundaries** | Pencil-case goals, ruler rails | Crate-slat goals, counter lip rails | Clay-pot goalposts, veranda step edge | Steel goals, kerb islands, three-lane toll plazas | Tailboard bolts, rope goal nets | Carved goals, coin-stack posts |
 | **Environmental story** | Break time, and Kwame bet his toffee before the bell | Esi plays between customers while the hatch opens and shuts | Auntie Ama's pots are off-limits, but Yaw banks off them | Rush hour: the booms decide who gets through | The lorry is loading; catch it before it leaves | Magic has never lost under this bulb |
 | **Light / atmosphere** | Hard midday, sharp veranda shade | Late-afternoon side light, awning shadow | Golden hour through the balustrade | Late-afternoon sodium haze, traffic glare | Harmattan white-out, low contrast | Single bulb, deep falloff, beam sweep |
-| **Signature mechanic** | **Ruler seesaw**: a 30 cm ruler on its edge, pinned through an eraser in front of each goal, turns 45° per attacker turn; chalk shows the next angle; it sweeps resting caps and the ball aside | **Change dish**: an enamel change tray on its edge around each goal mouth covers a 100° arc and turns one notch per attacker turn (open left → open edges → open right → open edges); chalk shows the next notch | **Pot maze + bank rule**: low clay pots form three routes; goals only count after a pot bank | **Toll gates**: three lanes per plaza, one boom down per turn on a visible cycle; amber warns which lane shuts next; caps slide under booms, the ball can't; a ball under a boom jams it | **Departing lorry**: each goal rides a toy lorry along the end line, one of five stops per attacker turn, turning back at the far stops; a ghost goal shows the next stop | **Lights-on chain**: strike three coin stacks in beam order to unlock Magic's padlocked goal |
+| **Signature mechanic** | **Ruler seesaw**: a 30 cm ruler on its edge, pinned through an eraser in front of each goal, turns 45° per attacker turn; chalk shows the next angle; it sweeps resting caps and the ball aside | **Change dish**: an enamel change tray on its edge around each goal mouth covers a 100° arc and turns one notch per attacker turn (open left → open edges → open right → open edges); chalk shows the next notch | **Pot maze + bank rule**: a big clay pot guarding each goal mouth and two splitting the approach; no straight goals: the ball must bounce off a pot or the rail on that flick | **Toll gates**: three lanes per plaza, one boom down per turn on a visible cycle; amber warns which lane shuts next; caps slide under booms, the ball can't; a ball under a boom jams it | **Departing lorry**: each goal rides a toy lorry along the end line, one of five stops per attacker turn, turning back at the far stops; a ghost goal shows the next stop | **Lights-on chain**: strike three coin stacks in beam order to unlock Magic's padlocked goal |
 | **Mechanic family** | Moving rebound surface | Rotating defender | Tactical maze + ricochet challenge | Opening/closing lane + tactical jam | Moving goal | Target chain + multi-stage shot |
 | **Objective** | Score before the bell | Score through the dish gap | Win with bank goals only | Beat Akosua through the booms | Score before the lorry leaves | Light the bulb, then beat Magic |
 | **Hero moment** | RULER BANK | EXACT CHANGE | OFF THE POT | THROUGH THE TOLL · BOOM BANK · JAMMED THE GATE | CAUGHT THE LORRY | LIGHTS ON |
@@ -64,6 +64,20 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 **AI**: rehearses shots on the cloned table (booms included), aims candidates through open lanes, and tries blocking moves into the open lane the ball faces. It rewards setups in front of a lane still open on its next turn and penalises leaving the ball lined up for the player. In solo acts the defensive terms are off. Akosua's weights: block 1.6, setup 0.8, caution 1.3.
 
 **Balance history (headless, medium bot as the player proxy)**: see `plans/reports/playtest-260922-street-legends-roadside-toll-gates.md`.
+
+## Implemented: Veranda Derby — Clay-Pot Maze
+
+**How it works**
+- Three terracotta pots of snake plant in each half (point-symmetric): a big one just in front of the keeper, and two splitting the approach. Each is circled in chalk so the bank surfaces read on a phone.
+- **Auntie Ama's rule: no straight goals.** A goal only counts if the ball bounced off a pot or the table rail on that flick. A straight goal is waved off ("NO BANK, NO GOAL") and play continues; a ball left in the net is thrown back out at the start of the next turn.
+- The rule was playtested three ways. Pots alone, further out: ~20% Act 1 wins. Pots beside the posts: ~23%. A big pot in front of the keeper: ~20%. Each made a goal a hard cap→ball→pot chain. Adding the rail kept the rule clearly defined; widening the pots (radius 0.13) and starting the ball beside the big pot made Act 1 achievable (~55% for the bot proxy).
+- The only Street Legends venue with nothing moving between turns. The novelty is the rule and the bank geometry.
+- Physics: `physics.goalRequiresTouchOf = ['pot', 'rail']`; the ball records `bankedOff` on a real impact (not resting contact), cleared each flick and on every AI rehearsal restore, so the AI never plans a goal that won't count. Slow motion only fires for shots that could count.
+- Hero labels: OFF THE POT, DOUBLE POT (two different pots), OFF THE RAIL. Every valid goal earns the replay.
+
+**AI**: ghost-ball aims onto each pot, angled into the goal mouth (the bisector contact). It rewards leaving the ball where a pot can turn it into their goal and penalises leaving it bankable into its own. Yaw banks everything: setup 1.5.
+
+**Acts**: 1 *Auntie Ama's Rule* (solo, keeper only, ball beside the big pot, 10 flicks), 2 *Mind the Pots* (first to 1, 16 flicks, easy Yaw), 3 *The Derby* (first to 2, 18 flicks, easy Yaw; medium Yaw won 33% vs the proxy's 17%).
 
 ## Implemented: Kiosk Corner — Change Dish
 
@@ -105,5 +119,5 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **Acts**: 1 *Catch the Lorry* (solo, keeper only, ball starts near the end, score in 8), 2 *Loading Bay* (first to 1, 18 flicks), 3 *Last Lorry to Bolgatanga* (first to 2, 20 flicks, pebbles). Abdul chases the goal: setup 1.5, block 0.8, caution 0.8.
 
-## Build order for the remaining two
+## Build order for the remaining one
 See `plans/260922-1136-street-legends-roadside-toll-gates/plan.md`.

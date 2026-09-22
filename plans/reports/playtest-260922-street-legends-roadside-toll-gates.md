@@ -62,3 +62,17 @@ Open: RULER BANK is rare for the bot proxy (about 2 of 69 goals). The ruler most
 | Act 1, dish-blind / dish-aware | 55% / **65%** wins; EXACT CHANGE on 14 of 26 goals (aware) |
 | Act 2 (14 flicks) | 30–40% wins, 13–17% losses, 47–53% draws |
 | Act 3 (16 flicks) | 25% wins, 21% losses, 54% draws |
+
+# Veranda Derby — clay-pot maze (same harness)
+
+| Run | Result |
+|---|---|
+| Act 1, pot-only bank rule, three pot layouts | ~20–23% wins: every goal needed a cap → ball → pot chain → **rail counts too** |
+| Act 1, pot or rail, pots r 0.1, ball (0.72, 0.36) | 35% wins, 65% draws (aware and blind alike) |
+| Act 1, ball-start grid; no keeper; 12 flicks | best ~45%; no keeper ~50%; extra flicks change nothing (bot scores early or never) |
+| Act 1, **pots r 0.13, ball (1.2, 0.22)** | **55% aware / 40% blind**; 44 goals, rail 24 / pot 20 |
+| Act 2 (16 flicks, easy Yaw) | 40% wins, 20% losses, 40% draws; 17 of 18 goals banked off a pot or rail |
+| Act 3, medium Yaw | 17% wins, 33% losses → **easy Yaw** |
+| Act 3 (18 flicks, easy Yaw) | 40% wins, 13% losses, 47% draws; DOUBLE POT twice |
+
+Open: Act 1 sits just under the 60% target. Bank shots need precision the medium bot's aim noise lacks, and the aware player beats the blind one by 15 points, so reading the pots is a real skill. A human playtest with the aim line decides whether Act 1 needs a closer start. Act 3 uses the same Yaw difficulty as Act 2 and relies on first to 2 plus Yaw's setup habit for the step up.

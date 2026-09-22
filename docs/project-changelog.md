@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-09-22 — Street Legends: Veranda Derby clay-pot maze
+
+### Added
+- **Clay-pot maze** at Auntie Ama's Veranda, Kumasi (Street Legends): three pots in each half
+  (a big one guarding the goal mouth) and a no-straight-goals rule. A goal counts only if the
+  ball bounced off a pot or the rail on that flick; straight goals are waved off ("NO BANK,
+  NO GOAL"). Hero goals: OFF THE POT, DOUBLE POT, OFF THE RAIL.
+- Three acts: *Auntie Ama's Rule* (solo), *Mind the Pots*, *The Derby*. Yaw looks for the bank.
+  Pots are radius 0.13 (a wider bank face); Act 1 starts the ball beside the big pot.
+- Physics: goal-line detection moved to `goal-line-crossing-detection.js`, with an optional
+  `goalRequiresTouchOf` rule (kinds, incl. 'rail'), `onGoalDenied` hook and per-flick
+  `bankedOff` tracking (real impacts only).
+
 ## 2026-09-22 — Street Legends: Kiosk Corner change dish
 
 ### Added

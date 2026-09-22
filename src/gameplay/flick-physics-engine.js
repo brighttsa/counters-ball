@@ -4,15 +4,15 @@
 // AI can rehearse shots on an identical copy of the table.
 import * as THREE from 'three';
 import {
-  WALL_HALF_LENGTH as WX, WALL_HALF_WIDTH as WZ, GOAL_LINE_X, GOAL_HALF_WIDTH,
+  WALL_HALF_LENGTH as WX, WALL_HALF_WIDTH as WZ,
 } from '../core/pitch-dimensions-and-constants.js';
 import { createStaticSegment, cloneSegment, resolveSegmentContacts } from './static-segment-collisions.js';
+import { checkGoalCrossing, noteBankTouch, noteRailBank, clearBankTouches } from './goal-line-crossing-detection.js';
 
 export const FIXED_STEP = 1 / 240;
 const REST_SPEED = 0.015;
 const WALL_RESTITUTION = 0.55;
 const BODY_RESTITUTION = 0.72;
-const GOAL_DEPTH = GOAL_LINE_X + 0.03; // counts a little past the chalk so dying shots don't score
 const MIN_EVENT_IMPULSE = 0.02;
 
 export class FlickPhysicsEngine {
@@ -28,6 +28,8 @@ export class FlickPhysicsEngine {
     // Goal mouth centre (z) per end: +1 = the goal home attacks. Moving-goal venues slide these.
     this.goalCenters = { 1: 0, [-1]: 0 };
     this.segments = [];       // straight static edges (a ruler on its edge)
+    this.goalRequiresTouchOf = null; // e.g. ['pot', 'rail']: only banked goals count (see goal-line-crossing-detection)
+    this.onGoalDenied = null; // (sign) a crossing that the bank rule refused
   }
 
   addStaticSegment(spec) {
@@ -66,6 +68,9 @@ export class FlickPhysicsEngine {
   resetGoalCooldown() {
     this.goalCooldown = false;
   }
+
+  /** Start of a flick: the bank rule only credits touches made on this flick. */
+  clearBankTouches() { clearBankTouches(this); }
 
   advance(dt) {
     this.accumulator = Math.min(this.accumulator + dt, 0.1);
@@ -117,6 +122,7 @@ export class FlickPhysicsEngine {
         b.pos.x += nx * push * b.invMass; b.pos.y += nz * push * b.invMass;
         const relVel = (b.vel.x - a.vel.x) * nx + (b.vel.y - a.vel.y) * nz;
         if (relVel > 0) continue;
+        if (relVel < -0.02) noteBankTouch(this, a, b); // a real impact, not a ball resting against a pot
         const impulse = (-(1 + BODY_RESTITUTION) * relVel) / totalInv;
         a.vel.x -= nx * impulse * a.invMass; a.vel.y -= nz * impulse * a.invMass;
         b.vel.x += nx * impulse * b.invMass; b.vel.y += nz * impulse * b.invMass;
@@ -130,17 +136,7 @@ export class FlickPhysicsEngine {
   resolveWalls() {
     for (const b of this.bodies) {
       if (b.invMass === 0) continue; // static circles never move
-      // Swept goal test: where did the ball cross the goal plane this step?
-      if (!this.goalCooldown && b.kind === 'ball'
-          && Math.abs(b.pos.x) > GOAL_DEPTH && Math.abs(b.prev.x) <= GOAL_DEPTH) {
-        const sign = Math.sign(b.pos.x);
-        const t = (sign * GOAL_DEPTH - b.prev.x) / (b.pos.x - b.prev.x);
-        const zAtCrossing = b.prev.y + (b.pos.y - b.prev.y) * t;
-        if (Math.abs(zAtCrossing - this.goalCenters[sign]) < GOAL_HALF_WIDTH - b.radius) {
-          this.goalCooldown = true;
-          this.onGoalScored?.(sign);
-        }
-      }
+      checkGoalCrossing(this, b);
       this.bounceAxis(b, 'x', WX);
       this.bounceAxis(b, 'y', WZ);
     }
@@ -153,6 +149,7 @@ export class FlickPhysicsEngine {
     const into = overMin ? -b.vel[axis] : b.vel[axis];
     b.pos[axis] = overMin ? -limit + b.radius : limit - b.radius;
     if (into <= 0) return;
+    noteRailBank(this, b);
     b.vel[axis] = (overMin ? into : -into) * WALL_RESTITUTION;
     const impulse = into * (1 + WALL_RESTITUTION) * b.mass;
     if (this.onWallHit && impulse > MIN_EVENT_IMPULSE) this.onWallHit(b, impulse, b.pos.x, b.pos.y);
@@ -163,6 +160,7 @@ export class FlickPhysicsEngine {
     const sim = new FlickPhysicsEngine({ frictionScale: this.frictionScale });
     sim.goalCenters = { ...this.goalCenters };
     sim.segments = this.segments.map(cloneSegment);
+    sim.goalRequiresTouchOf = this.goalRequiresTouchOf;
     sim.bodies = this.bodies.map((b) => ({
       ...b, pos: b.pos.clone(), prev: b.prev.clone(), vel: b.vel.clone(),
     }));
@@ -182,6 +180,7 @@ export class FlickPhysicsEngine {
       b.vel.set(s[i * 4 + 2], s[i * 4 + 3]);
     });
     this.goalCooldown = false;
+    clearBankTouches(this); // each rehearsal is a fresh flick
   }
 
   /** Run until everything settles or a goal; returns goal sign (0 = none). */

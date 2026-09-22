@@ -157,6 +157,7 @@ export class MatchSession {
   /** Slow the world down when a shot is about to reach the goal mouth. */
   watchForDramaticShot() {
     if (this.slowMoUsed || this.time.isSlowMotion) return;
+    if (this.physics.goalRequiresTouchOf && !this.ballBody.bankedOff) return; // a shot that can't count
     const { pos, vel } = this.ballBody;
     if (Math.abs(vel.x) < 0.5) return;
     const distToLine = Math.sign(vel.x) * GOAL_LINE_X - pos.x;

@@ -99,5 +99,5 @@ test('Street Legends unlocks: every venue\'s first act is open, later acts need 
   assert.equal(isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, second), false);
   progress.stars['legends-harmattan-act-1'] = 1;
   assert.equal(isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, second), true);
-  for (const level of STREET_LEGENDS_ACTS) assert.ok(['schoolyard', 'kiosk', 'roadside', 'harmattan'].includes(level.backdrop), 'real venues only');
+  for (const level of STREET_LEGENDS_ACTS) assert.ok(['schoolyard', 'kiosk', 'veranda', 'roadside', 'harmattan'].includes(level.backdrop), 'real venues only');
 });
