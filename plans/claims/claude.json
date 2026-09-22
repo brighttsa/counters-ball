@@ -2,17 +2,12 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Street Legends: Lights Out Final coin-stack target chain + padlocked goals",
+  "task": "Add .gitignore for local tool debris (unblocks Codex sync)",
   "status": "released",
   "paths": [
-    "src/levels/",
-    "src/gameplay/",
-    "src/scene/jamestown-coin-stack-chain-and-padlock.js",
-    "tests/",
-    "docs/",
-    "plans/",
-    "index.html"
+    ".gitignore",
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-22T17:50:04.171Z",
-  "head": "361ad71181f2e8bf7bb693324697c9f9c81fca6c"
+  "updatedAt": "2026-09-22T18:08:23.458Z",
+  "head": "f766c91be5460138ccfc6d4d8c18792438066f7e"
 }
