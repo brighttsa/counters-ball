@@ -1,7 +1,7 @@
-// Procedural table surfaces painted onto canvas: rough cardboard (optionally
-// harmattan-dusty) or wood (plywood / carved school desk), with bump maps and
-// the hand-drawn chalk pitch on top.
+// Seeded albedo, bump and roughness maps share the same world-aligned sheet.
 import { drawChalkPitchMarkings } from './chalk-pitch-markings.js';
+import { paintConcreteSurface } from './table-surface-concrete-painter.js';
+import { paintSurfaceMaterialWear } from './table-surface-material-wear-painter.js';
 import { createSeededRandom } from '../core/seeded-random-number-generator.js';
 import { TABLE_HALF_LENGTH as TL } from '../core/pitch-dimensions-and-constants.js';
 
@@ -69,7 +69,7 @@ function paintCardboard(ctx, rng, s) {
 function paintWood(ctx, rng, s) {
   ctx.fillStyle = s.base;
   ctx.fillRect(0, 0, W, H);
-  const planks = s.carvings ? 5 : 1; // a school desk is planks, plywood is one sheet
+  const planks = s.planks ?? (s.carvings ? 5 : 1);
   for (let p = 0; p < planks; p++) {
     const y0 = (p * H) / planks;
     ctx.fillStyle = rng() > 0.5 ? 'rgba(255, 230, 190, 0.05)' : 'rgba(30, 16, 6, 0.08)';
@@ -131,13 +131,19 @@ function paintBump(bctx, rng, s) {
   for (let i = 0; i < 26; i++) softBlotch(bctx, rng() * W, rng() * H, 14 + rng() * 42, 'rgba(52, 52, 52, 0.55)');
 }
 
-export function paintTableSurfaceTextures(surface, seed) {
+export function paintTableSurfaceTextures(surface, seed, profile) {
+  surface = profile?.surface ?? surface;
   const rng = createSeededRandom(seed);
   const colorCanvas = document.createElement('canvas');
   colorCanvas.width = W; colorCanvas.height = H;
   const ctx = colorCanvas.getContext('2d');
-  (surface.kind === 'wood' ? paintWood : paintCardboard)(ctx, rng, surface);
-  drawChalkPitchMarkings(ctx, toPx, rng);
+  if (surface.kind === 'concrete') paintConcreteSurface(ctx, rng, surface, W, H);
+  else (surface.kind === 'wood' ? paintWood : paintCardboard)(ctx, rng, surface);
+  const wear = (context, channel) => paintSurfaceMaterialWear(context,
+    createSeededRandom(seed ^ 0x51f15e), surface, W, H, channel);
+  wear(ctx, 'color');
+  // Markings have their own stream, so extra surface wear cannot move the pitch.
+  drawChalkPitchMarkings(ctx, toPx, createSeededRandom(seed ^ 0xc4a1), profile?.markings);
 
   const edge = ctx.createRadialGradient(W / 2, H / 2, H * 0.42, W / 2, H / 2, H * 0.86);
   edge.addColorStop(0, 'rgba(0,0,0,0)');
@@ -148,5 +154,12 @@ export function paintTableSurfaceTextures(surface, seed) {
   const bumpCanvas = document.createElement('canvas');
   bumpCanvas.width = W; bumpCanvas.height = H;
   paintBump(bumpCanvas.getContext('2d'), rng, surface);
-  return { colorCanvas, bumpCanvas };
+  wear(bumpCanvas.getContext('2d'), 'bump');
+  const roughnessCanvas = document.createElement('canvas');
+  roughnessCanvas.width = W; roughnessCanvas.height = H;
+  const rctx = roughnessCanvas.getContext('2d');
+  rctx.fillStyle = surface.varnished ? '#969696' : surface.kind === 'wood' ? '#cccccc' : '#ededed';
+  rctx.fillRect(0, 0, W, H);
+  wear(rctx, 'roughness');
+  return { colorCanvas, bumpCanvas, roughnessCanvas };
 }

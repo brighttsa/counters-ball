@@ -1,10 +1,11 @@
-// Hand-drawn chalk pitch markings, drawn with deliberate wobble onto the
-// cardboard texture canvas. All positions are in world units, mapped to px.
+// Venue-specific chalk, ink and paint share the exact same world coordinates.
 import {
   PITCH_HALF_LENGTH as PL, PITCH_HALF_WIDTH as PW, GOAL_HALF_WIDTH,
 } from '../core/pitch-dimensions-and-constants.js';
 
-const CHALK = '#ece1c6';
+const DEFAULT_STYLE = { color: '#ece1c6', width: 5, alpha: 0.76, jitter: 2.5, blur: 3 };
+
+function createMarkingBrush(style) {
 
 // A chalk line is never straight: split into short segments, jitter each,
 // vary opacity, and let shadowBlur read as chalk dust bleeding into fibres.
@@ -12,17 +13,17 @@ function wobblyLine(ctx, x1, y1, x2, y2, rng) {
   const len = Math.hypot(x2 - x1, y2 - y1);
   const steps = Math.max(2, Math.round(len / 14));
   ctx.save();
-  ctx.strokeStyle = CHALK;
+  ctx.strokeStyle = style.color;
   ctx.lineCap = 'round';
-  ctx.shadowColor = 'rgba(249, 241, 222, 0.8)';
+  ctx.shadowColor = style.color;
   let px = x1, py = y1;
   for (let i = 1; i <= steps; i++) {
     const t = i / steps;
-    const nx = x1 + (x2 - x1) * t + (rng() - 0.5) * 5;
-    const ny = y1 + (y2 - y1) * t + (rng() - 0.5) * 5;
-    ctx.globalAlpha = 0.42 + rng() * 0.34;
-    ctx.lineWidth = 4 + rng() * 2;
-    ctx.shadowBlur = 2 + rng() * 2;
+    const nx = x1 + (x2 - x1) * t + (i === steps ? 0 : (rng() - 0.5) * style.jitter * 2);
+    const ny = y1 + (y2 - y1) * t + (i === steps ? 0 : (rng() - 0.5) * style.jitter * 2);
+    ctx.globalAlpha = style.alpha * (0.72 + rng() * 0.28);
+    ctx.lineWidth = style.width * (0.8 + rng() * 0.4);
+    ctx.shadowBlur = style.blur;
     ctx.beginPath();
     ctx.moveTo(px, py);
     ctx.lineTo(nx, ny);
@@ -38,7 +39,7 @@ function wobblyCircle(ctx, cx, cy, r, rng, startA = 0, endA = Math.PI * 2) {
   let py = cy + Math.sin(startA) * r;
   for (let i = 1; i <= steps; i++) {
     const a = startA + (endA - startA) * (i / steps);
-    const rr = r + (rng() - 0.5) * 7;
+    const rr = r + (i === steps ? 0 : (rng() - 0.5) * style.jitter * 2);
     const nx = cx + Math.cos(a) * rr;
     const ny = cy + Math.sin(a) * rr;
     wobblySegment(ctx, px, py, nx, ny, rng);
@@ -48,12 +49,12 @@ function wobblyCircle(ctx, cx, cy, r, rng, startA = 0, endA = Math.PI * 2) {
 
 function wobblySegment(ctx, x1, y1, x2, y2, rng) {
   ctx.save();
-  ctx.strokeStyle = CHALK;
+  ctx.strokeStyle = style.color;
   ctx.lineCap = 'round';
-  ctx.globalAlpha = 0.42 + rng() * 0.32;
-  ctx.lineWidth = 3.5 + rng() * 2;
-  ctx.shadowColor = 'rgba(249, 241, 222, 0.8)';
-  ctx.shadowBlur = 2.5;
+  ctx.globalAlpha = style.alpha * (0.72 + rng() * 0.28);
+  ctx.lineWidth = style.width * (0.8 + rng() * 0.4);
+  ctx.shadowColor = style.color;
+  ctx.shadowBlur = style.blur;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -63,33 +64,41 @@ function wobblySegment(ctx, x1, y1, x2, y2, rng) {
 
 function chalkSpot(ctx, x, y, r, rng) {
   ctx.save();
-  ctx.fillStyle = CHALK;
-  ctx.globalAlpha = 0.85;
-  ctx.shadowColor = 'rgba(249, 241, 222, 0.9)';
-  ctx.shadowBlur = 8;
+  ctx.fillStyle = style.color;
+  ctx.globalAlpha = style.alpha;
+  ctx.shadowColor = style.color;
+  ctx.shadowBlur = style.blur * 2;
   ctx.beginPath();
-  ctx.arc(x + (rng() - 0.5) * 3, y + (rng() - 0.5) * 3, r, 0, Math.PI * 2);
+  ctx.arc(x, y, r * style.width / 5, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
 
 // Chalk residue: faint smudges where a palm dragged across a line.
 function chalkSmudges(ctx, toPx, rng) {
+  if (!style.blur) return;
+  ctx.save();
+  ctx.globalAlpha = style.alpha * 0.2;
   for (let i = 0; i < 26; i++) {
     const onLongLine = rng() > 0.5;
     const [x, y] = onLongLine
       ? toPx((rng() * 2 - 1) * PL, (rng() > 0.5 ? 1 : -1) * PW)
       : toPx((rng() > 0.5 ? 1 : -1) * PL, (rng() * 2 - 1) * PW);
     const g = ctx.createRadialGradient(x, y, 0, x, y, 14 + rng() * 26);
-    g.addColorStop(0, 'rgba(249, 241, 222, 0.16)');
-    g.addColorStop(1, 'rgba(249, 241, 222, 0)');
+    g.addColorStop(0, style.color);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = g;
     ctx.fillRect(x - 44, y - 44, 88, 88);
   }
+  ctx.restore();
+}
+
+return { wobblyLine, wobblyCircle, chalkSpot, chalkSmudges };
 }
 
 /** Draw every marking. `toPx(worldX, worldZ) -> [px, py]`. */
-export function drawChalkPitchMarkings(ctx, toPx, rng) {
+export function drawChalkPitchMarkings(ctx, toPx, rng, markings = DEFAULT_STYLE) {
+  const { wobblyLine, wobblyCircle, chalkSpot, chalkSmudges } = createMarkingBrush({ ...DEFAULT_STYLE, ...markings });
   const [x0, y0] = toPx(-PL, -PW);
   const [x1, y1] = toPx(PL, PW);
   const [cx, cy] = toPx(0, 0);

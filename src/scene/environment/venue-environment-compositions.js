@@ -35,7 +35,7 @@ export const VENUE_ENVIRONMENTS = {
       { type: 'slogan', x: 9, y: 7.2, text: "GOD'S TIME\nIS THE BEST", color: '#fdf1d8', size: 1.1 },
     ] },
     props: [
-      ['bottleCrate', -5.6, -5.6, 0.25], ['basinOranges', 5.2, -5.4, 0], ['caps', 0.6, -3.0, 0, { count: 14 }],
+      ['bottleCrate', -3.5, -4.1, 0.25], ['basinOranges', 3.8, -4.2, 0], ['caps', 0.6, -3.0, 0, { count: 14 }],
       ['sachets', -2.4, -3.4, 0, { count: 4 }], ['slippers', 5.8, -3.0, 1.1, { color: '#2f6fa0' }],
     ],
     animals: [
@@ -55,8 +55,8 @@ export const VENUE_ENVIRONMENTS = {
       { type: 'slogan', x: -9.5, y: 12.4, text: 'AUNTIE AMA', color: '#f3e0b8', size: 0.8 },
     ] },
     props: [
-      ['raffiaMat', -5.3, -3.6, 0.12], ['slippers', -5.6, -2.5, 0.35, { color: '#7a3a1c' }],
-      ['pottedPlant', 6.4, -6.3, 0], ['pottedPlant', 7.9, -5.7, 0.6], ['basinOranges', 3.8, -6.1, 0], ['caps', 1.2, -3.1, 0, { count: 5 }],
+      ['raffiaMat', -3.7, -3.6, 0.12], ['slippers', -3.8, -2.5, 0.35, { color: '#7a3a1c' }],
+      ['pottedPlant', 3.4, -4.1, 0], ['pottedPlant', 4.6, -4.5, 0.6], ['basinOranges', 3.8, -6.1, 0], ['caps', 1.2, -3.1, 0, { count: 5 }],
     ],
     shade: 0.55, dust: 70,
   },
@@ -64,7 +64,7 @@ export const VENUE_ENVIRONMENTS = {
   // Tema Motorway Junction — chop bar across an open gutter from the road.
   roadside: {
     ground: 'roadside',
-    wall: { z: -7.2, base: '#3a78b5', skirting: '#1f3f60', skirtH: 1.8, kerb: 0x8f8a80, features: [
+    wall: { z: -13.2, base: '#3a78b5', skirting: '#1f3f60', skirtH: 1.8, kerb: 0x8f8a80, features: [
       { type: 'corrugated', y: 13.2, h: 1.8, color: '#8a5a38' },
       { type: 'menu', x: -6.5, y: 3.4, w: 9, h: 8, title: 'CHOP BAR', lines: ['Waakye', 'Banku & tilapia', 'Kenkey & fish', 'Red red'], bg: '#f0c040', fg: '#8a1e12' },
       { type: 'door', x: 3.2, w: 3.6, h: 9.6, color: '#1f3f60' },
@@ -72,7 +72,7 @@ export const VENUE_ENVIRONMENTS = {
       { type: 'slogan', x: 9, y: 6, text: 'NO KING\nAS GOD', color: '#fdf1d8', size: 1.0 },
     ] },
     props: [
-      ['gutter', 0, -4.8, 0], ['oldTyre', -5.6, -6.6, 0], ['sachets', 2.4, -3.0, 0, { count: 5 }],
+      ['gutter', 0, -3.9, 0], ['oldTyre', -4.2, -4.8, 0], ['sachets', 2.4, -3.0, 0, { count: 5 }],
       ['coalPot', 6.0, -3.8, 0], ['caps', -1.6, -3.2, 0, { count: 10 }],
     ],
     animals: [
@@ -85,13 +85,13 @@ export const VENUE_ENVIRONMENTS = {
   // Tamale Lorry Station — harmattan dust, grain sacks, guinea fowl.
   harmattan: {
     ground: 'stationSand',
-    wall: { z: -7.2, base: '#d8c29c', skirting: '#9a7a52', skirtH: 1.8, kerb: 0xb8a684, features: [
+    wall: { z: -11.2, base: '#d8c29c', skirting: '#9a7a52', skirtH: 1.8, kerb: 0xb8a684, features: [
       { type: 'board', x: -4, y: 4.6, w: 14, h: 6.4, title: 'TAMALE STATION', lines: ['Bolgatanga · 2 hrs', 'Wa · 4 hrs', 'Kumasi · 8 hrs', 'Accra · 12 hrs'] },
       { type: 'door', x: 9.2, w: 3.8, h: 10, color: '#7a4a2a' },
       { type: 'slogan', x: -4, y: 12.6, text: 'SAFE JOURNEY', color: '#7a4a2a', size: 1.0 },
     ] },
     props: [
-      ['grainSack', -5.6, -5.8, 0.3], ['grainSack', -4.0, -6.8, -0.7], ['jerrycan', 5.0, -5.4, 0.5],
+      ['grainSack', -3.5, -4.3, 0.3], ['grainSack', -4.5, -5.4, -0.7], ['jerrycan', 3.4, -4.0, 0.5],
       ['oldTyre', 7.0, -6.8, 0], ['sachets', 1.1, -3.4, 0, { count: 3 }],
     ],
     animals: [['guineafowl', { start: [-1, -6.2] }], ['guineafowl', { start: [2, -5.6] }], ['guineafowl', { start: [0.5, -7] }]],
@@ -108,7 +108,7 @@ export const VENUE_ENVIRONMENTS = {
       { type: 'slogan', x: 9.4, y: 7.4, text: 'JAMESTOWN\nNO. 1', color: '#f0c040', size: 1.0 },
     ] },
     props: [
-      ['fishingNet', -5.4, -5.6, 0.4], ['coalPot', 5.2, -5.2, 0, { lit: true }], ['caps', 0.2, -3.0, 0, { count: 8 }],
+      ['fishingNet', -3.3, -4.1, 0.4], ['coalPot', 3.5, -4.0, 0, { lit: true }], ['caps', 0.2, -3.0, 0, { count: 8 }],
       ['slippers', 3.1, -3.3, -0.9, { color: '#d23b2a' }], ['basinOranges', -2.4, -6.4, 0, { empty: true }],
     ],
     shade: 0, dust: 40,

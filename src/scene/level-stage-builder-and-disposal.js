@@ -2,6 +2,7 @@
 // goals, obstacles, backdrop) so switching venues is build → dispose, with
 // no GPU memory left behind.
 import * as THREE from 'three';
+import { getVenueVisualProfile } from './venue-visual-profiles.js';
 import { lightingForVenue } from './lighting-presets-by-time-of-day.js';
 import { buildLightRig } from './scene-and-lighting-setup.js';
 import { buildTableAndBattens } from './table-and-battens-builder.js';
@@ -27,16 +28,17 @@ export function buildLevelStage({ scene, renderer, level, homeTeam, awayTeam, ca
 
   group.add(buildLightRig(preset));
   const seed = hashString(level.id);
-  buildTableAndBattens(group, level.surface, seed);
+  const visualProfile = getVenueVisualProfile(level.backdrop);
+  buildTableAndBattens(group, level.surface, seed, visualProfile);
   const caps = buildBottleCapTeams(group, homeTeam.palette, awayTeam.palette, seed);
   const ballMesh = buildPaperMatchBall(group);
-  const { postBodies, goals } = buildMatchstickGoals(group);
+  const { postBodies, goals } = buildMatchstickGoals(group, visualProfile, seed);
   const obstacleBodies = buildTableObstacles(group, level.obstacles, seed);
   const backdrop = buildStreetBackdrop(group, level.backdrop, preset, { camera, photograph });
   scene.add(group);
 
   return {
-    group, preset, caps, ballMesh, goals, postBodies, obstacleBodies, backdrop,
+    group, preset, caps, ballMesh, goals, postBodies, obstacleBodies, backdrop, visualProfile,
     dispose() {
       backdrop.dispose();
       scene.remove(group);

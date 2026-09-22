@@ -18,6 +18,7 @@ import {
 } from './environment/light-shade-and-dust-overlays.js';
 import { VENUE_ENVIRONMENTS } from './environment/venue-environment-compositions.js';
 import { buildLocationPhotograph } from './environment/optional-distant-location-photograph.js';
+import { buildVenueArchitecture, resolveEnvironmentKey } from './environment/venue-architecture-composition.js';
 
 const PROP_BUILDERS = { ...EVERYDAY_PROP_BUILDERS, ...VENUE_PROP_BUILDERS };
 // Footprint radius animals walk around (flat props like mats and sachets are walkable).
@@ -95,15 +96,21 @@ function addDustMotes(group, rng, count) {
  * @returns {{ update(t, dt): void, startle(): void }} — startle() on goals
  */
 export function buildStreetBackdrop(group, key, preset, { camera, photograph } = {}) {
+  key = resolveEnvironmentKey(key);
   const spec = VENUE_ENVIRONMENTS[key] ?? VENUE_ENVIRONMENTS.kiosk;
   const rng = createSeededRandom(hashKey(key));
   const updaters = [];
   const creatures = [];
   const photo = buildLocationPhotograph(group, key, preset, camera, photograph);
   let elapsed = 0;
+  let disposed = false;
+  const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
 
   group.add(buildVenueGround(spec.ground, rng));
   const { glowMaterials, spillLights } = addWall(group, spec.wall, rng);
+  // Use an independent stream so added architecture never reshuffles existing props.
+  const architecture = buildVenueArchitecture(group, key, createSeededRandom(hashKey(`${key}-architecture`)), spec.wall);
+  updaters.push(architecture.update);
 
   const obstacles = [];
   for (const [kind, x, z, rotationY = 0, options = {}] of spec.props) {
@@ -124,6 +131,7 @@ export function buildStreetBackdrop(group, key, preset, { camera, photograph } =
     const creature = buildFowl(kind, rng, { ...options, obstacles });
     creature.object.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
     group.add(creature.object);
+    creature.update(0, Number.EPSILON);
     updaters.push(creature.update);
     creatures.push(creature);
   }
@@ -136,11 +144,14 @@ export function buildStreetBackdrop(group, key, preset, { camera, photograph } =
 
   return {
     update(_t, dt) {
-      elapsed += Math.max(0, dt);
-      for (const update of updaters) update(elapsed, dt);
+      if (disposed || !Number.isFinite(dt) || dt <= 0) return;
+      if (!reducedMotion?.matches) {
+        elapsed += dt;
+        for (const update of updaters) update(elapsed, dt);
+      }
       photo.update(elapsed, dt);
     },
-    dispose() { photo.dispose(); },
-    startle() { for (const creature of creatures) creature.startle(); },
+    dispose() { disposed = true; photo.dispose(); },
+    startle() { if (!disposed && !reducedMotion?.matches) for (const creature of creatures) creature.startle(); },
   };
 }

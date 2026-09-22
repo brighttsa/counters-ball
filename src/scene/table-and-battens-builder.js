@@ -1,15 +1,18 @@
-// The physical table: painted surface sheet, plywood board, crate stand and
-// the wooden battens nailed around the rim that the caps bounce off.
+// Visual construction stays aligned with the unchanged physics plane and walls.
 import * as THREE from 'three';
 import { paintTableSurfaceTextures } from './table-surface-texture-painters.js';
+import { buildVenueTableSupports } from './venue-table-supports.js';
+import { buildVenueTableBoundaries } from './venue-table-boundaries.js';
+import { venueSurfaceGeometry } from './venue-playing-surface-outline.js';
 import {
   TABLE_HALF_LENGTH as TL, TABLE_HALF_WIDTH as TW,
   WALL_HALF_LENGTH as WL, WALL_HALF_WIDTH as WW,
 } from '../core/pitch-dimensions-and-constants.js';
 
-export function buildTableAndBattens(group, surface, seed) {
+export function buildTableAndBattens(group, surface, seed, profile) {
+  surface = profile?.surface ?? surface;
   const isWood = surface.kind === 'wood';
-  const { colorCanvas, bumpCanvas } = paintTableSurfaceTextures(surface, seed);
+  const { colorCanvas, bumpCanvas, roughnessCanvas } = paintTableSurfaceTextures(surface, seed, profile);
 
   const map = new THREE.CanvasTexture(colorCanvas);
   map.colorSpace = THREE.SRGBColorSpace;
@@ -17,26 +20,33 @@ export function buildTableAndBattens(group, surface, seed) {
   const bumpMap = new THREE.CanvasTexture(bumpCanvas);
 
   const top = new THREE.Mesh(
-    new THREE.PlaneGeometry(TL * 2, TW * 2),
+    profile ? venueSurfaceGeometry(profile.construction) : new THREE.PlaneGeometry(TL * 2, TW * 2),
     new THREE.MeshStandardMaterial({
-      map, bumpMap,
+      map, bumpMap, roughnessMap: roughnessCanvas ? new THREE.CanvasTexture(roughnessCanvas) : null,
       bumpScale: isWood ? 0.55 : 0.9,
-      roughness: isWood ? 0.72 : 0.96, // varnished wood catches a little sheen
+      roughness: 1, // The map carries varnish, tape and dry wear independently.
       metalness: 0,
     })
   );
-  top.rotation.x = -Math.PI / 2;
+  if (!profile) top.rotation.x = -Math.PI / 2;
   top.receiveShadow = true;
   group.add(top);
 
   // Board underneath + rough crate stand give the table real depth.
   const board = new THREE.Mesh(
-    new THREE.BoxGeometry(TL * 2 + 0.04, 0.06, TW * 2 + 0.04),
-    new THREE.MeshStandardMaterial({ color: 0x8a6238, roughness: 0.9 })
+    profile ? venueSurfaceGeometry(profile.construction, profile.depth)
+      : new THREE.BoxGeometry(TL * 2 + 0.04, 0.06, TW * 2 + 0.04),
+    new THREE.MeshStandardMaterial({ color: profile?.surface.base ?? 0x8a6238, roughness: 0.9 })
   );
-  board.position.y = -0.032;
+  board.position.y = profile ? 0 : -0.032;
   board.castShadow = true;
   group.add(board);
+
+  if (profile) {
+    buildVenueTableSupports(group, profile);
+    buildVenueTableBoundaries(group, profile);
+    return top;
+  }
 
   const crate = new THREE.Mesh(
     new THREE.BoxGeometry(2.4, 0.85, 1.6),

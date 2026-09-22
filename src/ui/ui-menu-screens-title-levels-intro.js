@@ -3,6 +3,7 @@
 // click handler routes every [data-action] button to the app.
 import { totalStars } from '../core/save-progress-local-storage.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
+import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -10,7 +11,7 @@ const escapeHtml = (text) => String(text).replace(/[&<>"']/g, (c) => ESCAPES[c])
 const LIGHT = { midday: 'Midday sun', 'late-afternoon': 'Late afternoon',
   'golden-hour': 'Golden hour', harmattan: 'Harmattan dust', 'night-bulb': 'Under the bulb' };
 const conditions = (level) => `${LIGHT[level.lighting] ?? level.lighting} · ${
-  level.surface.dusty ? 'Dusty cardboard' : level.surface.kind === 'wood' ? 'Plywood' : 'Cardboard'} · ${
+  getVenueVisualProfile(level.backdrop).surfaceLabel} · ${
   level.obstacles.length ? `${level.obstacles.length} obstacles` : 'Open table'}`;
 
 export class MenuScreens {

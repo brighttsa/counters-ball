@@ -1,6 +1,7 @@
 // The match ball — a crumpled paper wad, small and unpredictable — and the
 // improvised goals: matchstick posts with burnt heads and a matchstick crossbar.
 import * as THREE from 'three';
+import { buildVenueGoals } from './venue-goal-construction.js';
 import { createSeededRandom } from '../core/seeded-random-number-generator.js';
 import { BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH } from '../core/pitch-dimensions-and-constants.js';
 
@@ -54,7 +55,8 @@ export function buildPaperMatchBall(group) {
 }
 
 /** @returns {{ postBodies, goals: Record<-1|1, THREE.Group> }} goal groups pivot at the ground for wobble */
-export function buildMatchstickGoals(group) {
+export function buildMatchstickGoals(group, profile, seed) {
+  if (profile) return buildVenueGoals(group, profile, seed);
   const rng = createSeededRandom(7802);
   const woodMat = new THREE.MeshStandardMaterial({ color: 0xd6b581, roughness: 0.8 });
   const headMat = new THREE.MeshStandardMaterial({ color: 0x53261a, roughness: 0.6 });
