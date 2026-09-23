@@ -1,3 +1,4 @@
 # Local tool debris: never part of the game.
 .DS_Store
 .playwright-cli/
+.vercel/

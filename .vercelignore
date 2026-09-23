@@ -1,0 +1,6 @@
+# Publish only what the game loads: index.html, assets/, src/, styles/.
+/*
+!/index.html
+!/assets
+!/src
+!/styles
