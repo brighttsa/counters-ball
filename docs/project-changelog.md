@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-23 — Closer Street Level camera
+
+### Changed
+- Street Level is a low (about 27°) close shot of the shot itself: your cap, the ball and the next metre of the
+  way to goal, clear of the scoreboard. It no longer backs off to fit your own end of the table, so it sits
+  about 58% closer in open play (1.9 units from the action instead of 4.5) and your own goal leaves the frame.
+
 ## 2026-09-23 — Table square to the screen
 
 ### Fixed

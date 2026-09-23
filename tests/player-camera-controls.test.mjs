@@ -82,17 +82,31 @@ test('Street Level reframes moved pieces and ignores a selected cap from the oth
   assert.ok(playerCameraPose(camera, 'street', session).target.distanceTo(pose.target) > .1);
 });
 
-test('Street Level keeps cap, ball, and goal readable without extreme foreground scale', () => {
-  for (const aspect of [320/844, 390/844, 844/390, 1024/768]) {
-    const camera = new THREE.PerspectiveCamera(42, aspect, .1, 100);
-    const session = { rules: { turn: 'home' }, entries: [{ side: 'home', body: { pos: new THREE.Vector2(-.4,.2) } }],
-      physics: { goalCenters: { 1: 0 } }, ballBody: { pos: new THREE.Vector2(0,0) } };
-    const pose = playerCameraPose(camera, 'street', session);
-    camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
-    assert.ok(camera.position.distanceTo(pose.target) >= 2.8);
-    for (const [x,z] of [[-.4,.2],[0,0],[1.7,0],[-1.5,-1.05],[-1.5,1.05]]) {
-      const p = new THREE.Vector3(x,0,z).project(camera);
-      assert.ok(Math.abs(p.x) < .9 && p.y < .8 && p.y > -.82, `${aspect}: ${x},${z}`);
+test('Street Level comes in close on the cap, ball and goal, clear of the HUD, without a giant foreground cap', () => {
+  const previous = globalThis.window;
+  try {
+    for (const [width, height] of [[847, 751], [1280, 720], [1920, 1080], [844, 390], [390, 844]]) {
+      globalThis.window = { innerWidth: width, innerHeight: height };
+      for (const [cap, ball] of [[[-.4, .2], [0, 0]], [[-1.3, .5], [.2, -.3]], [[.8, -.2], [1.1, .1]]]) {
+        const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
+        const session = { rules: { turn: 'home' }, entries: [{ side: 'home', body: { pos: new THREE.Vector2(...cap) } }],
+          physics: { goalCenters: { 1: 0 } }, ballBody: { pos: new THREE.Vector2(...ball) } };
+        const pose = playerCameraPose(camera, 'street', session);
+        camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+        const label = `${width}x${height} cap ${cap}`;
+        const { top } = hudReservePixels(width, height);
+        // Cap, ball and the next stretch of the shot's path stay clear of the HUD; the goal is on screen.
+        const path = new THREE.Vector3(ball[0], 0, ball[1]).lerp(new THREE.Vector3(1.5, 0, 0), .5);
+        for (const point of [new THREE.Vector3(cap[0], 0, cap[1]), new THREE.Vector3(ball[0], 0, ball[1]), path]) {
+          const p = point.project(camera);
+          assert.ok(Math.abs(p.x) < .96 && (1 - p.y) / 2 * height > top - 1 && p.y > -1, `${label}: ${point.x},${point.z} in view`);
+        }
+        const goal = new THREE.Vector3(1.5, 0, 0).project(camera);
+        assert.ok(Math.abs(goal.x) < 1 && Math.abs(goal.y) < 1 && goal.z < 1, `${label}: goal on screen`);
+        const rim = [-.085, .085].map(dx => new THREE.Vector3(cap[0] + dx, 0, cap[1]).project(camera).x * width / 2);
+        assert.ok(Math.abs(rim[1] - rim[0]) < .22 * Math.min(width, height), `${label}: cap not overwhelming`);
+        if (width === 1280 && cap[0] === -.4) assert.ok(pose.position.distanceTo(pose.target) < 2.2, 'much closer than the old 4.3');
+      }
     }
-  }
+  } finally { globalThis.window = previous; }
 });

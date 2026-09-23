@@ -131,6 +131,8 @@ export function overviewPose(camera, session) {
 }
 
 /** @param viewer the side the view belongs to: the human in a match against the computer, the side to play in 2-Player */
+const STREET_LOOK_AHEAD = 1; // table units of the shot's path framed beyond the ball
+
 export function playerCameraPose(camera, mode, session, selected, viewer = session?.rules?.turn) {
   const portrait = camera.aspect < .95;
   if (mode === 'broadcast') return followBallPose(broadcastFrame(camera, session), session?.ballBody?.pos.x ?? 0);
@@ -144,9 +146,15 @@ export function playerCameraPose(camera, mode, session, selected, viewer = sessi
     const goal = new THREE.Vector3(side * 1.7, 0, session.physics.goalCenters?.[side] ?? 0);
     const origin = new THREE.Vector3(cap?.x ?? -side, 0, cap?.y ?? 0);
     const target = ball.clone().lerp(origin, .46);
-    const near = [-1.05, 1.05].map(z => new THREE.Vector3(-side * 1.5, 0, z));
-    return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? 1.15 : .9, .28),
-      [...near, origin, ball, goal], 2.8, { x: .9, top: .8, bottom: -.82 });
+    // Street is the shot itself, from low behind the cap (about 27° in landscape): the cap with its whole
+    // rim, the ball, and the way on toward the goal mouth, up to STREET_LOOK_AHEAD past the ball, kept
+    // clear of the scoreboard and the bottom controls. Nothing behind the cap is framed and a distant goal
+    // is not forced in, so the camera comes in close instead of backing off to fit the whole table.
+    const rim = [[-1, 0], [1, 0], [0, -1], [0, 1]].map(([dx, dz]) => origin.clone().add(new THREE.Vector3(dx * .1, 0, dz * .1)));
+    const mouth = [-.26, .26].flatMap(dz => [0, .24].map(y => goal.clone().setX(side * 1.5).add(new THREE.Vector3(0, y, dz))))
+      .map(post => (post.distanceTo(ball) > STREET_LOOK_AHEAD ? ball.clone().add(post.sub(ball).setLength(STREET_LOOK_AHEAD)) : post));
+    return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? .8 : .55, .28),
+      [...rim, ball, ...mouth], 1.2, viewBounds(undefined, r => Math.min(r.bottom, 60)));
   }
   if (mode !== 'tactical') return overviewPose(camera, session);
   // Tactical looks down on the whole table, tipped a few degrees toward the player so the view keeps a

@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Square camera views to the table",
+  "task": "Closer Street camera",
   "status": "released",
   "paths": [
     "src/fx/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T17:19:39.599Z",
-  "head": "7a79d5f322ec493f2f170081baab80b3f483d3ff"
+  "updatedAt": "2026-09-23T17:25:51.351Z",
+  "head": "d522aad3c50ce948d1545b10e5000c97d2b1ab77"
 }
