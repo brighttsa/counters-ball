@@ -2,28 +2,13 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Ink and Impact Roadside playable slice",
+  "task": "Guard zero-size viewport rendering",
   "status": "released",
   "paths": [
-    "index.html",
-    "styles/ink-impact-home.css",
-    "styles/ink-impact-match.css",
-    "src/main.js",
-    "src/ui/ui-menu-screens-title-levels-intro.js",
-    "src/ui/ui-match-hud-pause-and-results.js",
-    "src/ui/ink-impact-cap-poster.js",
-    "src/scene/roadside-ink-treatment.js",
-    "src/scene/roadside-ink-street-architecture.js",
-    "src/gameplay/match-session-runtime.js",
-    "src/gameplay/match-session-feedback-hooks.js",
-    "src/fx/ink-impact-contact-bursts.js",
-    "src/fx/camera-director-attract-intro-play-goal.js",
-    "docs/ink-impact-art-direction.md",
-    "plans/agent-handoff-board.md",
-    "tests/ink-impact-regression.test.mjs",
-    "tests/ink-impact-visual-check.html",
-    "tests/ink-impact-visual-check.js"
+    "src/core/game-render-loop-and-viewport.js",
+    "tests/viewport-render-loop.test.mjs",
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-22T18:38:24.242Z",
-  "head": "16fb493fd0d96257d04ded2d7e548fa1b4581604"
+  "updatedAt": "2026-09-23T00:38:30.094Z",
+  "head": "9b3c14708cf4634bb83a3d5006bd3ca87ee70bb6"
 }

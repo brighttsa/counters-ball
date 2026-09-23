@@ -10,7 +10,14 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
   };
   motion.addEventListener('change', syncMotion);
   syncMotion();
+  const hasViewport = () => Number.isFinite(window.innerWidth) && window.innerWidth > 0
+    && Number.isFinite(window.innerHeight) && window.innerHeight > 0;
+  let suspended = !hasViewport();
   window.addEventListener('resize', () => {
+    if (!hasViewport()) {
+      suspended = true;
+      return;
+    }
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -21,8 +28,13 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
   let lastFrame = performance.now(), time = 0;
   function frame(now) {
     requestAnimationFrame(frame);
-    const dt = Math.max(0, Math.min((now - lastFrame) / 1000, 0.05));
+    const dt = suspended ? 0 : Math.max(0, Math.min((now - lastFrame) / 1000, 0.05));
     lastFrame = now;
+    if (!hasViewport()) {
+      suspended = true;
+      return;
+    }
+    suspended = false;
     if (!app.paused) time += dt;
     app.session?.update(dt, time);
     if (!app.paused) cameraDirector.update(dt, time);
