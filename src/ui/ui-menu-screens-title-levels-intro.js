@@ -52,7 +52,11 @@ export class MenuScreens {
     document.body.dataset.screen = name ?? 'match';
     for (const [key, el] of Object.entries(this.screens)) el.classList.toggle('is-active', key === name);
     this.current = name;
-    const focusable = name && this.screens[name]?.querySelector('.btn-primary:not([hidden]):not([disabled]), .level-card:not([disabled]), .btn:not([disabled])');
+    // One selector list would match in document order and land on a Back button placed before
+    // the primary action (Enter on the intro would leave the match), so try each in priority order.
+    const screen = name && this.screens[name];
+    const focusable = screen && ['.btn-primary:not([hidden]):not([disabled])', '.level-card:not([disabled])', '.btn:not([hidden]):not([disabled])']
+      .map((selector) => screen.querySelector(selector)).find(Boolean);
     focusable?.focus({ preventScroll: true });
   }
 

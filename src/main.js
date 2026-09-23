@@ -118,9 +118,7 @@ function prepareMatch(index) {
   hud.reset(level, HOME_TEAM, level.opponent.team, versus);
   cameraDirector.playIntro(2.8);
   menus.fillIntro(level, index, track.length, app.mode, HOME_TEAM);
-  menus.show('intro');
-  const session = app.session;
-  session.schedule(3, () => { if (app.session === session && menus.current === 'intro') kickOff(); });
+  menus.show('intro'); // the match waits for Kick Off: the rules card stays until the player has read it
 }
 
 function kickOff() {
