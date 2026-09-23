@@ -2,23 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Player-controlled match cameras",
+  "task": "Match camera usability and touch clarity",
   "status": "released",
   "paths": [
-    "src/fx/camera-director-attract-intro-play-goal.js",
-    "src/fx/player-camera-controller.js",
-    "src/fx/player-camera-view-poses.js",
-    "src/fx/player-camera-occlusion.js",
     "src/ui/player-camera-controls.js",
     "styles/player-camera-controls.css",
-    "src/main.js",
-    "index.html",
-    "tests/player-camera-system.test.mjs",
-    "tests/ink-impact-visual-check.js",
-    "tests/ink-impact-visual-check.html",
-    "docs/player-camera-system.md",
+    "tests/player-camera-controls.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T01:09:15.022Z",
-  "head": "40e64801e042ab30293a2b6412fbcfd11a0763af"
+  "updatedAt": "2026-09-23T01:19:07.771Z",
+  "head": "8b1ea97b71d9733d2bcb52e38d1daf2380f18fae"
 }
