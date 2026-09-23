@@ -1,4 +1,4 @@
-/* Counters Ball — screen shell, headings and the intro, pause and results cards. */
+/* KONK! — screen shell, headings and the intro, pause and results cards. */
 .screen {
   position: fixed; inset: 0; z-index: 20; display: none; place-items: center; overflow-y: auto;
   padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(84px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));

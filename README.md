@@ -1,12 +1,17 @@
-# Counters Ball 3D
+# KONK! — Bottle-Cap Football
+
+(Working title and repository name: Counters Ball 3D.)
 
 A browser game of Ghanaian tabletop football. Flattened bottle caps are the
 players, a crumpled paper wad is the ball, the pitch is chalk on cardboard and
 the goals are matchsticks — flicked across six street venues, from a schoolyard
 at midday to a Jamestown table under a single bulb.
 
-No build step, no binary assets: every texture, sound and sprite is generated in
-the browser.
+No build step. Every texture, sound and sprite in play is generated in the
+browser. The only images are the brand files in `assets/` (logo, favicon,
+home-screen icon, link preview), exported from the SVG source in
+`plans/visuals/konk-brand-identity.html` by
+`node plans/visuals/konk-brand/build-konk-brand-assets.mjs`.
 
 ## Run
 

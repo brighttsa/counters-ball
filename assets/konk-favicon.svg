@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- KONK! favicon: the yellow crown cap striking a small ball, simplified to read at 16px. -->
+  <rect width="64" height="64" rx="14" fill="#141312"/>
+  <path d="M27.0,17.0L29.8,19.6L33.2,17.9L35.1,21.2L38.8,20.6L39.7,24.4L43.4,24.9L43.1,28.7L46.5,30.3L45.1,33.9L47.9,36.4L45.5,39.4L47.5,42.7L44.3,44.8L45.2,48.5L41.5,49.6L41.3,53.4L37.5,53.4L36.1,56.9L32.5,55.8L30.1,58.8L27.0,56.6L23.9,58.8L21.5,55.8L17.9,56.9L16.5,53.4L12.7,53.4L12.5,49.6L8.8,48.5L9.7,44.8L6.5,42.7L8.5,39.4L6.1,36.4L8.9,33.9L7.5,30.3L10.9,28.7L10.6,24.9L14.3,24.4L15.2,20.6L18.9,21.2L20.8,17.9L24.2,19.6Z" fill="#bdb7aa" stroke="#141312" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="27" cy="38" r="15.5" fill="#f2bd2c" stroke="#141312" stroke-width="1.5"/>
+  <circle cx="27" cy="38" r="10" fill="none" stroke="#141312" stroke-width="3"/>
+  <path d="M27,32.5 l1.6,3.6 3.9,0.3 -3,2.5 0.9,3.8 -3.4,-2.1 -3.4,2.1 0.9,-3.8 -3,-2.5 3.9,-0.3 Z" fill="#141312"/>
+  <path d="M45,19 L55,9" stroke="#19d6f2" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="45" cy="19" r="7" fill="#f2ead6" stroke="#141312" stroke-width="2"/>
+  <path d="M45,16 l2.6,1.9 -1,3 h-3.2 l-1,-3 Z" fill="#141312"/>
+</svg>

@@ -2,13 +2,25 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Vercel deploy config",
+  "task": "Apply KONK! branding",
   "status": "released",
   "paths": [
-    ".vercelignore",
-    ".gitignore",
+    "index.html",
+    "assets/",
+    "styles/ink-impact-home.css",
+    "styles/game-ui-base-and-hud.css",
+    "styles/game-ui-menus-and-results.css",
+    "src/main.js",
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "src/ui/match-orientation-prompt.js",
+    "src/ui/share-results-and-challenge-link.js",
+    "tests/hot-seat-rivalry-and-challenge-links.test.mjs",
+    "plans/visuals/",
+    "README.md",
+    "docs/codebase-summary.md",
+    "docs/project-changelog.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T11:08:51.395Z",
-  "head": "76d0c69543d20976fd641c9952f405962764ca80"
+  "updatedAt": "2026-09-23T11:53:41.964Z",
+  "head": "16b011401134b2ea8d9120375bd0496ee84f46de"
 }

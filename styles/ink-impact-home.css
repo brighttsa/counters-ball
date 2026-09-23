@@ -8,12 +8,13 @@
   content: ''; position: absolute; inset: 0; z-index: -1; background: var(--ink);
   clip-path: polygon(0 0, 41% 0, 52% 100%, 0 100%); opacity: .86;
 }
-.title-logo { display: none; }
 .home-cap-print { position: absolute; right: 1%; bottom: 4%; width: min(54%, 850px); aspect-ratio: 4 / 3; pointer-events: none; z-index: -1; }
 .home-edition { margin: 0; font: 800 var(--text-sm)/1.4 var(--font-body); color: var(--yellow); }
-.home-headline { margin: 0; font: 900 var(--text-hero)/.86 var(--font-display); color: var(--paper); transform: rotate(-3deg); text-shadow: 5px 5px 0 var(--ink); }
-.home-headline span { color: var(--yellow); }
-.tagline { max-width: 34ch; margin: 12px 0 0; font: 700 var(--text-lg)/1.4 var(--font-body); color: var(--paper); text-shadow: var(--shadow-text); }
+/* The KONK! logo carries its own slant, outline and descriptor; it only needs a size and a grounding shadow. */
+.home-logo { margin: 0 0 0 -8px; width: min(560px, 44vw); line-height: 0; filter: drop-shadow(0 8px 14px rgb(var(--ink-rgb) / .55)); }
+.home-logo img { display: block; width: 100%; height: auto; }
+.tagline { max-width: 34ch; margin: 0; font: var(--text-xl)/1.1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--paper); text-shadow: var(--shadow-text); }
+.home-edition { margin-top: 8px; text-transform: uppercase; letter-spacing: .06em; }
 .home-location { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--paper); font: var(--text-sm)/1.4 var(--font-body); }
 .home-location b { font: var(--text-xl)/1 var(--font-display); color: var(--yellow); border-right: 3px solid; padding-right: 12px; }
 .screen-title .menu-stack { display: grid; gap: 8px; width: 340px; max-width: 100%; }
@@ -28,16 +29,16 @@
   .home-cap-print { top: 0; bottom: auto; right: -5%; width: 75%; }
   .screen-title.is-active { justify-content: flex-end; padding: 24px 20px 72px; gap: 8px; }
   .screen-title::before { clip-path: polygon(0 20%, 100% 38%, 100% 100%, 0 100%); opacity: .9; }
-  .home-headline { font-size: var(--text-5xl); }
+  .home-logo { width: min(420px, 88vw); }
   .home-edition { font-size: var(--text-xs); }
   .home-location { margin: 4px 0; font-size: var(--text-xs); }
-  .tagline { font-size: var(--text-md); margin: 4px 0; }
+  .tagline { font-size: var(--text-md); }
   .screen-title .menu-stack { width: 100%; gap: 4px; }
   .screen-title .home-play { min-height: 56px; font-size: var(--text-xl); }
 }
-@media (max-width: 350px) { .home-headline { font-size: var(--text-4xl); } .screen-title.is-active { padding-inline: 16px; } }
+@media (max-width: 350px) { .screen-title.is-active { padding-inline: 16px; } }
 @media (max-height: 620px) {
-  .home-headline { font-size: var(--text-4xl); } .home-location { display: none; }
+  .home-logo { width: min(250px, 32vw); } .home-location { display: none; }
   .screen-title.is-active { gap: 4px; padding-top: 16px; padding-bottom: 60px; }
   .tagline, .title-stars { display: none; }
   .screen-title .home-play { min-height: 48px; font-size: var(--text-xl); }

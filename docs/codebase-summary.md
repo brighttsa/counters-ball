@@ -1,5 +1,8 @@
 # Codebase Summary
 
+The game is branded **KONK!** (bottle-cap football); code, folders and save keys
+keep the working name Counters Ball so existing saves survive.
+
 No build step. ES modules + import map, Three.js r160 from CDN, served statically.
 Default assets remain runtime-generated. Licensed, same-origin distant photographs
 are optional and disabled by default; missing images leave procedural scenery intact.

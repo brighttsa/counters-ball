@@ -3,10 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Counters Ball 3D — Ghanaian Tabletop Football</title>
-<meta name="description" content="Flick bottle caps on a chalk-drawn cardboard pitch. Six Ghanaian street venues, one flick at a time." />
+<title>KONK! — Bottle-Cap Football</title>
+<meta name="description" content="Flick bottle caps across tiny street pitches in Ghana. Thread the gap, bank it off a rival, score the goal the whole street talks about." />
+<!-- Link previews: a shared result or challenge link shows the key art in chat apps. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="KONK!" />
+<meta property="og:title" content="KONK! — Bottle-Cap Football" />
+<meta property="og:description" content="Tiny pitch. Big moments. Flick bottle caps across Ghanaian street tables." />
+<meta property="og:image" content="https://counters-ball-3d.vercel.app/assets/konk-share-preview.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="675" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="theme-color" content="#191b1b" />
-<link rel="icon" type="image/svg+xml" href="assets/counters-ball-favicon.svg" />
+<link rel="icon" type="image/svg+xml" href="assets/konk-favicon.svg" />
+<link rel="apple-touch-icon" href="assets/konk-app-icon-180.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin+Sketch:wght@700&family=Lilita+One&family=Patrick+Hand&display=swap" />
@@ -32,10 +42,9 @@
 
   <section class="screen screen-title" data-screen="title">
     <canvas id="home-cap-print" class="home-cap-print" role="img" aria-label="An Accra red bottle cap flicked toward a paper ball"></canvas>
-    <div class="title-logo" id="title-logo" role="img" aria-label="Counters Ball 3D"></div>
-    <p class="home-edition">STREET LEGENDS / GHANA</p>
-    <h1 class="home-headline">COUNTERS<br><span>BALL</span></h1>
-    <p class="tagline">Small caps. Big reputation.</p>
+    <h1 class="home-logo"><img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK! Bottle-cap football" /></h1>
+    <p class="tagline">Tiny pitch. Big moments.</p>
+    <p class="home-edition">Street Legends · featured mode</p>
     <div class="home-location"><b id="home-feature-act">ACT 1 / 3</b><span><span id="home-feature-venue">Roadside Showdown</span><br><span id="home-feature-title"></span></span></div>
     <nav class="menu-stack">
       <button class="btn btn-primary home-play" data-action="play-featured"><span id="home-feature-button">Play Roadside</span> <span aria-hidden="true">↗</span></button>
@@ -163,7 +172,7 @@
   </section>
 
   <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true">♪</button>
-  <noscript><p class="noscript">Counters Ball 3D needs JavaScript and WebGL.</p></noscript>
+  <noscript><p class="noscript">KONK! needs JavaScript and WebGL.</p></noscript>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

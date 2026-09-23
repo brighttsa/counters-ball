@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KONK! Brand Identity</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
+<style>
+  /* Brand concept only: KONK! wordmark, key art, home-screen title and app icon.
+     Everything is drawn in SVG — no raster or third-party artwork. The game is unchanged. */
+  :root { --ink: #141312; --chalk: #f2ead6; --gold: #f2bd2c; --cyan: #19d6f2; --muted: #b9b2a2; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 24px 72px; background: #0d0c0b; color: var(--chalk); font: 16px/1.5 'Avenir Next', 'Segoe UI', Arial, sans-serif; }
+  h1 { margin: 0 0 4px; font: 40px/1 Anton, Impact, sans-serif; letter-spacing: .02em; }
+  h2 { margin: 40px 0 12px; font: 24px/1 Anton, Impact, sans-serif; letter-spacing: .04em; color: var(--gold); }
+  p.note { max-width: 72ch; margin: 0 0 16px; color: var(--muted); }
+  .frame { width: 100%; max-width: 1200px; display: block; height: auto; box-shadow: 0 12px 40px rgb(0 0 0 / .5); }
+  .row { display: flex; flex-wrap: wrap; gap: 28px; align-items: end; }
+  figure { margin: 0; display: grid; gap: 8px; justify-items: center; font-size: 12px; color: var(--muted); }
+  .phone { width: 100%; max-width: 844px; aspect-ratio: 844 / 390; }
+  .appgrid { display: grid; grid-template-columns: repeat(4, 60px); gap: 18px; padding: 20px; border-radius: 16px; background: linear-gradient(160deg, #3b556b, #1f2b36); }
+  .appgrid div { width: 60px; height: 60px; border-radius: 14px; background: rgb(255 255 255 / .18); }
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- Shared artwork: gradients, filters and the drawn parts, reused by every application below. -->
+<svg class="defs" aria-hidden="true">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6f3ea"/><stop offset=".32" stop-color="#bdb7aa"/><stop offset=".68" stop-color="#7c766b"/><stop offset="1" stop-color="#4a453d"/>
+    </linearGradient>
+    <linearGradient id="metal-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdf6"/><stop offset=".45" stop-color="#cbc5b7"/><stop offset="1" stop-color="#857f73"/>
+    </linearGradient>
+    <radialGradient id="enamel" cx=".36" cy=".3" r=".78">
+      <stop offset="0" stop-color="#ffe27c"/><stop offset=".55" stop-color="#f2bd2c"/><stop offset="1" stop-color="#cf9412"/>
+    </radialGradient>
+    <radialGradient id="ball-shade" cx=".34" cy=".3" r=".8">
+      <stop offset="0" stop-color="#fffbf1"/><stop offset=".6" stop-color="#ece2cc"/><stop offset="1" stop-color="#b3a78e"/>
+    </radialGradient>
+    <linearGradient id="concrete" x1="0" y1="0" x2="1" y2=".6">
+      <stop offset="0" stop-color="#dcc8a5"/><stop offset=".55" stop-color="#c3ad8b"/><stop offset="1" stop-color="#9f8a71"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".12" cy=".05" r=".9">
+      <stop offset="0" stop-color="#ffd48e" stop-opacity=".45"/><stop offset=".6" stop-color="#ffd48e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx=".45" cy=".45" r=".75">
+      <stop offset=".6" stop-color="#2a1c10" stop-opacity="0"/><stop offset="1" stop-color="#2a1c10" stop-opacity=".45"/>
+    </radialGradient>
+
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="7" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <filter id="blotch" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".006" numOctaves="4" seed="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <!-- Chalk and paint: roughen edges so lines look drawn on concrete, not vector-perfect. -->
+    <filter id="chalky" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+    </filter>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="5" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="10"/>
+    </filter>
+    <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+    <!-- Print wear: sparse specks knocked out of the letter fill. -->
+    <filter id="specks" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".32" numOctaves="2" seed="19"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  24 0 0 0 -17.6"/>
+    </filter>
+    <mask id="wear" maskUnits="userSpaceOnUse" x="-100" y="-500" width="1600" height="700">
+      <rect x="-100" y="-500" width="1600" height="700" fill="#fff"/>
+      <rect x="-100" y="-500" width="1600" height="700" filter="url(#specks)"/>
+    </mask>
+
+    <!-- Hand-shaped letters (baseline 0, cap height ~300). Every vertex is a little off-true. -->
+    <g id="letters">
+      <path d="M4,-298 L100,-304 L96,-2 L0,4 Z M74,-146 L186,-302 L292,-294 L148,-116 Z M92,-176 L158,-188 L290,2 L178,8 Z"/>
+      <path transform="translate(620 0)" d="M0,2 L8,-300 L100,-296 L94,4 Z M22,-298 L112,-304 L240,-10 L152,2 Z M162,-300 L256,-304 L250,0 L156,-4 Z"/>
+      <path transform="translate(906 0)" d="M2,-302 L98,-298 L94,2 L-2,-2 Z M72,-150 L180,-306 L288,-298 L146,-120 Z M94,-172 L160,-186 L286,6 L174,2 Z"/>
+      <path transform="translate(1226 0)" d="M6,-304 L100,-300 L84,-94 L22,-90 Z M20,-44 L50,-66 L86,-54 L94,-18 L70,8 L30,6 L14,-18 Z"/>
+    </g>
+    <!-- Scuffs on the letter faces: short worn strokes, as if the title were painted and played on. -->
+    <g id="scuffs" fill="none" stroke="#c9bfa6" stroke-linecap="round" stroke-width="3" opacity=".7">
+      <path d="M22,-250 l30,-6 M40,-60 l24,4 M160,-270 l22,-12 M232,-40 l18,10"/>
+      <path transform="translate(620 0)" d="M30,-240 l20,-2 M120,-180 l16,20 M200,-90 l28,-4"/>
+      <path transform="translate(906 0)" d="M24,-120 l26,-4 M150,-250 l20,-10 M210,-60 l22,12"/>
+    </g>
+
+    <!-- The bottle cap: crown cork, 3/4 tilt, 21 crimped ridges, enamel top with wear. Filled by script. -->
+    <g id="cap">
+      <ellipse cx="30" cy="44" rx="152" ry="126" fill="#1c140b" opacity=".45" filter="url(#soft-shadow)"/>
+      <g transform="rotate(-10)">
+        <path id="cap-skirt" fill="url(#metal)" stroke="#141312" stroke-width="12" stroke-linejoin="round"/>
+        <g id="cap-flutes" stroke="#3d3931" stroke-width="3.5" stroke-linecap="round" opacity=".55"></g>
+        <ellipse rx="134" ry="120" fill="url(#metal-rim)" stroke="#141312" stroke-width="5"/>
+        <ellipse rx="121" ry="107" fill="url(#enamel)" stroke="#7a5a0c" stroke-width="2"/>
+        <ellipse rx="88" ry="78" fill="none" stroke="#141312" stroke-width="11"/>
+        <path id="cap-star" fill="#141312"/>
+        <!-- Chipped enamel shows the metal underneath. -->
+        <g fill="#d8d2c4" stroke="#141312" stroke-width="1.6">
+          <path d="M96,-52 l14,-4 l6,12 l-10,10 l-12,-4 Z"/>
+          <path d="M-70,74 l12,-6 l10,8 l-6,10 l-14,-2 Z"/>
+          <path d="M42,94 l9,-4 l6,7 l-8,6 Z"/>
+          <path d="M-112,-6 l8,-8 l7,6 l-6,9 Z"/>
+        </g>
+        <!-- Fine scratches and small dents from repeated play. -->
+        <g stroke="#fff8e0" stroke-width="1.6" stroke-linecap="round" opacity=".55" fill="none">
+          <path d="M-60,-70 l58,22 M-20,40 l70,-30 M10,-90 l40,18 M-96,30 l30,-4 M30,60 l34,10"/>
+        </g>
+        <g stroke="#8a650e" stroke-width="2.4" fill="none" opacity=".6">
+          <path d="M58,26 q10,-8 20,0 M-40,-30 q8,-6 16,0"/>
+        </g>
+        <!-- Late-afternoon sun catching the pressed-metal edge, and a soft enamel sheen. -->
+        <path d="M-126,20 A134,120 0 0 1 20,-119" fill="none" stroke="#fffdf4" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+        <ellipse cx="-46" cy="-50" rx="46" ry="16" transform="rotate(-28 -46 -50)" fill="#fff" opacity=".3" filter="url(#soft)"/>
+      </g>
+    </g>
+
+    <!-- A small match ball: pentagon panels, sunlit from the left, clearly smaller than the cap. -->
+    <clipPath id="ball-clip"><circle r="47"/></clipPath>
+    <g id="ball">
+      <circle r="50" fill="url(#ball-shade)" stroke="#141312" stroke-width="7"/>
+      <g clip-path="url(#ball-clip)" id="ball-panels" fill="#141312" stroke="#141312" stroke-width="3" stroke-linejoin="round"></g>
+      <ellipse cx="-18" cy="-22" rx="12" ry="6" transform="rotate(-35 -18 -22)" fill="#fff" opacity=".7"/>
+    </g>
+
+    <!-- The moment of contact: cap strikes up and to the right; the ball leaves on a short cyan line. -->
+    <g id="impact">
+      <path d="M566,-246 l-14,-34 l20,22 l10,-36 l6,38 l26,-18 l-16,30 Z" fill="#f2ead6" stroke="#141312" stroke-width="4" stroke-linejoin="round"/>
+      <g stroke="#141312" stroke-width="7" stroke-linecap="round">
+        <path d="M534,-292 l-12,-26 M600,-222 l26,8 M586,-196 l22,20"/>
+      </g>
+    </g>
+    <g id="trajectory" fill="none" stroke="#19d6f2" stroke-linecap="round">
+      <path d="M646,-338 Q 704,-380 792,-398" stroke-width="10"/>
+      <path d="M806,-401 l30,-4" stroke-width="8"/>
+      <path d="M852,-407 l14,-2" stroke-width="7"/>
+      <path d="M560,-322 l38,-26 M548,-292 l24,-16" stroke-width="5" opacity=".9"/>
+    </g>
+
+    <!-- Complete wordmark: outlined letters with a golden block shadow, the cap as the O, the ball in flight. -->
+    <g id="wordmark">
+      <g fill="#141312" stroke="#141312" stroke-width="26" stroke-linejoin="round" transform="translate(18 16)"><use href="#letters"/></g>
+      <g fill="#f2bd2c" transform="translate(18 16)"><use href="#letters"/></g>
+      <g fill="#141312" stroke="#141312" stroke-width="26" stroke-linejoin="round"><use href="#letters"/></g>
+      <g fill="#f2ead6" mask="url(#wear)"><use href="#letters"/></g>
+      <use href="#scuffs"/>
+      <use href="#cap" transform="translate(452 -150)"/>
+      <use href="#trajectory"/>
+      <use href="#impact"/>
+      <use href="#ball" transform="translate(608 -300)"/>
+    </g>
+
+    <!-- Descriptor lockup under the wordmark: a torn ink tape carrying BOTTLE-CAP FOOTBALL. -->
+    <g id="descriptor">
+      <path d="M0,6 L14,-2 L420,-6 L840,0 L846,10 L842,78 L830,86 L420,90 L10,84 L-2,74 Z" fill="#141312" filter="url(#rough)"/>
+      <text x="421" y="62" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="54" letter-spacing="7" fill="#f2ead6">BOTTLE-CAP FOOTBALL</text>
+    </g>
+  </defs>
+</svg>
+
+<h1>KONK! — brand identity concept</h1>
+<p class="note">Wordmark, key art, home-screen title and app icon for a Ghanaian bottle-cap football game. Custom hand-shaped letters; the O is a crown cap caught at the moment it strikes the ball. Palette: near-black ink, warm chalk-white, golden yellow, and electric cyan used only for the ball's path.</p>
+
+<h2>1 · KEY ART</h2>
+<svg class="frame" viewBox="0 0 1600 900" role="img" aria-label="KONK! Bottle-cap football. Tiny pitch. Big moments.">
+  <rect width="1600" height="900" fill="url(#concrete)"/>
+  <rect width="1600" height="900" filter="url(#blotch)" opacity=".28" style="mix-blend-mode:multiply"/>
+  <rect width="1600" height="900" filter="url(#grain)" opacity=".3" style="mix-blend-mode:multiply"/>
+  <!-- Faded hand-painted kerb colour and old chalk pitch lines -->
+  <path d="M-20,760 L520,742 L560,800 L-20,830 Z" fill="#e0b534" opacity=".32" filter="url(#rough)"/>
+  <path d="M-20,812 L540,796" stroke="#f2ead6" stroke-width="6" opacity=".25" filter="url(#chalky)"/>
+  <g fill="none" stroke="#f7f0dc" stroke-linecap="round" filter="url(#chalky)" opacity=".26">
+    <circle cx="820" cy="470" r="360" stroke-width="12" stroke-dasharray="620 40 380 60 900 30"/>
+    <path d="M820,20 L826,880" stroke-width="10" stroke-dasharray="260 30 400 50"/>
+    <path d="M1460,900 A240,240 0 0 1 1600,640" stroke-width="10"/>
+    <circle cx="820" cy="470" r="10" fill="#f7f0dc" stroke="none"/>
+  </g>
+  <path d="M1180,90 l60,40 l20,70 l50,30 M300,160 l-40,60 l10,50" fill="none" stroke="#6d5c47" stroke-width="2" opacity=".45"/>
+  <g id="dust-key"></g>
+  <rect width="1600" height="900" fill="url(#sun)"/>
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+  <g transform="translate(150 530) rotate(-4) scale(.98)"><use href="#wordmark"/></g>
+  <g transform="translate(376 632) rotate(-2)"><use href="#descriptor"/></g>
+  <text x="800" y="786" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="32" letter-spacing="10" fill="#141312">TINY PITCH. <tspan fill="#8f5e00">BIG MOMENTS.</tspan></text>
+</svg>
+
+<h2>2 · HOME-SCREEN TITLE (STREET LEGENDS STAYS A SEPARATE MODE)</h2>
+<svg class="phone frame" viewBox="0 0 844 390" role="img" aria-label="Home screen mock">
+  <defs>
+    <radialGradient id="scene" cx=".7" cy=".6" r=".8"><stop offset="0" stop-color="#5b4630"/><stop offset=".6" stop-color="#2a221a"/><stop offset="1" stop-color="#141312"/></radialGradient>
+  </defs>
+  <rect width="844" height="390" fill="url(#scene)"/>
+  <g opacity=".5"><path d="M470,300 L800,250 L844,330 L520,390 Z" fill="#b8946a"/><circle cx="660" cy="300" r="28" fill="none" stroke="#f2ead6" stroke-width="3"/></g>
+  <rect width="844" height="390" fill="#141312" opacity=".25"/>
+  <g transform="translate(36 138) rotate(-4) scale(.25)"><use href="#wordmark"/></g>
+  <g transform="translate(42 160) scale(.36)"><use href="#descriptor"/></g>
+  <!-- Featured mode card: its own panel, never part of the title -->
+  <g transform="translate(34 210)">
+    <rect width="380" height="116" fill="#141312" opacity=".92"/>
+    <rect width="6" height="116" fill="#f2bd2c"/>
+    <text x="22" y="30" font-family="'Avenir Next',Arial,sans-serif" font-weight="800" font-size="12" letter-spacing="2" fill="#f2bd2c">FEATURED MODE · ACT 2 OF 3</text>
+    <text x="22" y="68" font-family="Anton,Impact,sans-serif" font-size="34" letter-spacing="1" fill="#f2ead6">STREET LEGENDS</text>
+    <text x="22" y="94" font-family="'Avenir Next',Arial,sans-serif" font-size="14" fill="#c9c1ad">Kiosk Corner · Rush at the Hatch</text>
+    <g transform="translate(264 66)"><rect width="100" height="34" fill="#f2bd2c"/><text x="50" y="23" text-anchor="middle" font-family="'Avenir Next',Arial,sans-serif" font-weight="800" font-size="15" fill="#141312">PLAY ↗</text></g>
+  </g>
+  <g font-family="'Avenir Next',Arial,sans-serif" font-weight="800" font-size="12" letter-spacing="1" fill="#f2ead6">
+    <rect x="34" y="340" width="150" height="34" fill="#2a2724"/><text x="109" y="362" text-anchor="middle">CLASSIC MATCH</text>
+    <rect x="194" y="340" width="150" height="34" fill="#2a2724"/><text x="269" y="362" text-anchor="middle">2-PLAYER TABLE</text>
+  </g>
+</svg>
+
+<h2>3 · APP ICON</h2>
+<div class="row" id="icons"></div>
+
+<h2>4 · THUMBNAIL TEST — THE WORDMARK SMALL</h2>
+<div class="row" id="thumbs"></div>
+
+<script>
+  // Deterministic generator so the page draws identically every time.
+  function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (name, attrs) => { const n = document.createElementNS(NS, name); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+
+  // Crimped skirt: 21 ridges around an ellipse, dropped slightly below the face for the 3/4 view.
+  const TEETH = 21, RX = 152, RY = 136, DROP = 16;
+  const pts = [];
+  for (let i = 0; i < TEETH * 2; i++) {
+    const a = (i * Math.PI) / TEETH, k = i % 2 ? 0.925 : 1;
+    pts.push(`${(Math.cos(a) * RX * k).toFixed(1)},${(Math.sin(a) * RY * k + DROP).toFixed(1)}`);
+  }
+  document.getElementById('cap-skirt').setAttribute('d', `M${pts.join('L')}Z`);
+  // Flute shading on the visible (lower) side of the skirt.
+  const flutes = document.getElementById('cap-flutes');
+  for (let i = 1; i < TEETH * 2; i += 2) {
+    const a = (i * Math.PI) / TEETH;
+    if (Math.sin(a) < 0.15) continue;
+    flutes.append(el('path', { d: `M${(Math.cos(a) * 136).toFixed(1)},${(Math.sin(a) * 122 + 4).toFixed(1)} L${(Math.cos(a) * RX * 0.93).toFixed(1)},${(Math.sin(a) * RY * 0.93 + DROP).toFixed(1)}` }));
+  }
+  // The enamel print: a bold star, echoing the game's own cap print.
+  const star = [];
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, r = i % 2 ? 20 : 46; star.push(`${(Math.cos(a) * r).toFixed(1)},${(Math.sin(a) * r * 0.9).toFixed(1)}`); }
+  document.getElementById('cap-star').setAttribute('d', `M${star.join('L')}Z`);
+
+  // Ball panels: one centre pentagon and five cut by the edge, joined by seams.
+  const pent = (cx, cy, r, rot) => { const p = []; for (let i = 0; i < 5; i++) { const a = rot + (i * 2 * Math.PI) / 5; p.push(`${(cx + Math.cos(a) * r).toFixed(1)},${(cy + Math.sin(a) * r).toFixed(1)}`); } return `M${p.join('L')}Z`; };
+  const panels = document.getElementById('ball-panels');
+  panels.append(el('path', { d: pent(4, 3, 16, -Math.PI / 2) }));
+  for (let i = 0; i < 5; i++) {
+    const a = -Math.PI / 2 + Math.PI / 5 + (i * 2 * Math.PI) / 5;
+    panels.append(el('path', { d: pent(4 + Math.cos(a) * 46, 3 + Math.sin(a) * 46, 15, a + Math.PI) }));
+    const b = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
+    panels.append(el('path', { d: `M${(4 + Math.cos(b) * 16).toFixed(1)},${(3 + Math.sin(b) * 16).toFixed(1)} L${(4 + Math.cos(b) * 34).toFixed(1)},${(3 + Math.sin(b) * 34).toFixed(1)}`, fill: 'none', 'stroke-width': 3 }));
+  }
+
+  // Dust on the concrete.
+  const rng = mulberry32(2026), dust = document.getElementById('dust-key');
+  for (let i = 0; i < 260; i++) dust.append(el('circle', { cx: (rng() * 1600).toFixed(1), cy: (rng() * 900).toFixed(1), r: (0.6 + rng() * 2.2).toFixed(2), fill: rng() < 0.6 ? '#f6ecd4' : '#5d4a36', opacity: (0.18 + rng() * 0.35).toFixed(2) }));
+
+  // App icon: the cap strikes the ball, nothing else. Shown at store, home-screen and settings sizes.
+  const iconSvg = (size) => `<svg width="${size}" height="${size}" viewBox="0 0 1024 1024" role="img" aria-label="KONK! app icon">
+      <clipPath id="icon-clip-${size}"><rect width="1024" height="1024" rx="228"/></clipPath>
+      <g clip-path="url(#icon-clip-${size})">
+      <rect width="1024" height="1024" fill="#141312"/>
+      <circle cx="500" cy="560" r="400" fill="none" stroke="#f2ead6" stroke-width="16" opacity=".12"/>
+      <g transform="translate(-467 868) scale(1.78)">
+        <use href="#cap" transform="translate(452 -150)"/>
+        <g stroke-width="1.2"><use href="#trajectory"/></g>
+        <use href="#impact"/>
+        <!-- On the dark icon the ball's black outline would vanish: a chalk rim keeps it round. -->
+        <circle cx="608" cy="-300" r="57" fill="#f2ead6"/>
+        <use href="#ball" transform="translate(608 -300)"/>
+      </g>
+      </g>
+    </svg>`;
+  document.getElementById('icons').innerHTML = [256, 120, 60, 29].map((s) => `<figure>${iconSvg(s)}<figcaption>${s}px</figcaption></figure>`).join('')
+    + `<figure><div class="appgrid"><div></div><div></div>${iconSvg(60)}<div></div><div></div><div></div><div></div><div></div></div><figcaption>on a phone home screen</figcaption></figure>`;
+
+  const thumb = (w, bg) => `<svg width="${w}" height="${Math.round(w * 0.394)}" viewBox="-40 -450 1420 560" style="background:${bg}"><g transform="rotate(-4 660 -150)"><use href="#wordmark"/></g></svg>`;
+  document.getElementById('thumbs').innerHTML = [[320, '#141312'], [160, '#141312'], [96, '#141312'], [160, '#c9b28f']]
+    .map(([w, bg]) => `<figure>${thumb(w, bg)}<figcaption>${w}px wide</figcaption></figure>`).join('');
+</script>
+</body>
+</html>

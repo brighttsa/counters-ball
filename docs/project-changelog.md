@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-09-23 — KONK! branding
+
+### Changed
+- The game is now **KONK!**: the home screen shows the KONK! logo (the O is a crown cap striking
+  the ball) with *Tiny pitch. Big moments.*; Street Legends is labelled as the featured mode,
+  separate from the title. Tab title, description, favicon, phone home-screen icon, rotate prompt,
+  share-card header and share messages all use the new name.
+- Shared result and challenge links now show the key art as a link preview (Open Graph tags).
+- Save keys, folder names and `window.__countersBall` are unchanged so existing progress is kept.
+
+### Removed
+- The old Counters Ball logo and favicon (`assets/counters-ball-*.svg`) and the hidden logo loader.
+
 ## 2026-09-23 — Rivalry, share cards and challenge links
 
 ### Added

@@ -1,4 +1,4 @@
-// Counters Ball 3D — bootstrap and app flow:
+// KONK! (bottle-cap football) — bootstrap and app flow:
 // title (live AI-vs-AI match behind the menu) → pitch select → intro flyover
 // → match → full-time results → next pitch. Persistent renderer, post stack,
 // camera director and audio; one MatchSession per venue.

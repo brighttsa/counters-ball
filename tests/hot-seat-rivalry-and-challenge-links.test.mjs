@@ -129,7 +129,7 @@ test('sharing a 2-Player result names the players and carries no challenge', () 
   const share = buildResultShare(result(1, 2), level, 'versus',
     { baseUrl: 'http://x.test/', title: 'Kofi wins!', homeColour: '#d6503a', names, versusNotes: notes });
   assert.equal(share.url, 'http://x.test/');
-  assert.equal(share.text, `Kofi beat Ama 2–1 at ${level.name} on Counters Ball. ${notes.join('. ')}.`);
+  assert.equal(share.text, `Kofi beat Ama 2–1 at ${level.name} in KONK! ${notes.join('. ')}.`);
   assert.equal(share.card.stars, null);
   assert.equal(fullTimeTitle(result(1, 2), level, 'versus', names), 'Kofi wins!');
   assert.equal(fullTimeTitle(result(1, 1), level, 'versus', names), 'Draw!');

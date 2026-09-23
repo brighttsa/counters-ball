@@ -23,7 +23,7 @@ export function createMatchOrientationPrompt() {
   dialog.className = 'match-orientation-prompt';
   dialog.setAttribute('aria-labelledby', 'orientation-heading');
   dialog.setAttribute('aria-describedby', 'orientation-description');
-  dialog.innerHTML = `<p class="orientation-kicker">COUNTERS BALL</p>
+  dialog.innerHTML = `<p class="orientation-kicker">KONK!</p>
     <h2 id="orientation-heading">A wider view of the game.</h2>
     <p id="orientation-description">Turn your phone or tablet sideways for landscape play.</p>
     <div class="orientation-actions"><button type="button" id="portrait-play" autofocus>Play in portrait</button>

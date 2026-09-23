@@ -16,7 +16,7 @@ export function buildResultShare(result, level, mode, ctx) {
   const { scores, winner } = result;
   const venue = venueOf(level);
   const card = {
-    kicker: 'COUNTERS BALL · FULL TIME', title: ctx.title, scores,
+    kicker: 'KONK! · FULL TIME', title: ctx.title, scores,
     homeColour: ctx.homeColour, awayColour: level.opponent.team.hudColor,
     place: level.place, stars: null, notes: [], footer: '',
   };
@@ -27,7 +27,7 @@ export function buildResultShare(result, level, mode, ctx) {
     const notes = ctx.versusNotes ?? [];
     return {
       url: ctx.baseUrl,
-      text: `${line} at ${venue} on Counters Ball.${notes.length ? ` ${notes.join('. ')}.` : ''}`,
+      text: `${line} at ${venue} in KONK!${notes.length ? ` ${notes.join('. ')}.` : ''}`,
       card: { ...card, matchup: `${home} vs ${away} · ${venue}`, notes, footer: 'One table. Two players. Loser sets up the caps.' },
     };
   }
@@ -35,8 +35,8 @@ export function buildResultShare(result, level, mode, ctx) {
   const mark = { scores, flicks: result.flicksUsed[SIDE_HOME] };
   const url = `${ctx.baseUrl}${encodeChallenge({ levelId: level.id, mode, ...mark })}`;
   const flicks = `${mark.flicks} flick${mark.flicks === 1 ? '' : 's'}`;
-  const brag = winner === SIDE_HOME ? `I beat ${kid} ${scores.home}–${scores.away} in ${flicks} at ${venue} on Counters Ball. Beat that:`
-    : `I ${markText(mark)} against ${kid} at ${venue} on Counters Ball. Can you do better?`;
+  const brag = winner === SIDE_HOME ? `I beat ${kid} ${scores.home}–${scores.away} in ${flicks} at ${venue} in KONK! Beat that:`
+    : `I ${markText(mark)} against ${kid} at ${venue} in KONK! Can you do better?`;
   return {
     url,
     text: brag,
@@ -59,7 +59,7 @@ export class ResultsShare {
     loadShareCardFonts().then(() => new Promise((resolve) => {
       drawResultsShareCard(document.createElement('canvas'), share.card).toBlob(resolve, 'image/png');
     })).then((blob) => {
-      if (blob && this.pending === pending) pending.file = new File([blob], 'counters-ball-result.png', { type: 'image/png' });
+      if (blob && this.pending === pending) pending.file = new File([blob], 'konk-result.png', { type: 'image/png' });
     }).catch(() => { /* no card: the link and message still share */ });
   }
 

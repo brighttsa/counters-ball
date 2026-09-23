@@ -1,4 +1,4 @@
-// Menu screens: title (animated inline logo), level select (cardboard venue
+// Menu screens: title (KONK! logo over the live table), level select (cardboard venue
 // tickets with stars and locks) and the pre-match intro card. One delegated
 // click handler routes every [data-action] button to the app.
 import { totalStars } from '../core/save-progress-local-storage.js';
@@ -26,7 +26,6 @@ export class MenuScreens {
       const el = e.target.closest('[data-action]');
       if (el && !el.disabled) onAction(el.dataset.action, el);
     });
-    this.loadLogo();
     paintInkCapPoster($('home-cap-print'));
     // The act strip scrolls sideways; a mouse wheel only scrolls vertically, so translate it.
     $('level-grid').addEventListener('wheel', (e) => {
@@ -56,16 +55,6 @@ export class MenuScreens {
     $('challenge-mark').textContent = inviteLine;
   }
 
-  async loadLogo() {
-    const holder = $('title-logo');
-    try {
-      const response = await fetch('assets/counters-ball-logo.svg');
-      if (!response.ok) throw new Error(`logo ${response.status}`);
-      holder.innerHTML = await response.text(); // our own bundled asset, inlined so page fonts apply
-    } catch {
-      holder.innerHTML = '<h1 class="logo-fallback">Counters Ball 3D</h1>';
-    }
-  }
 
   show(name) {
     document.body.dataset.screen = name ?? 'match';
