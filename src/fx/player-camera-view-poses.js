@@ -16,14 +16,19 @@ export function fitCameraPose(camera, target, direction, points = corners, minim
   const probe = camera.clone();
   probe.fov = 42; probe.updateProjectionMatrix();
   const dir = direction.clone().normalize();
-  let distance = minimum;
-  for (let i = 0; i < 90; i++, distance *= 1.045) {
+  const fits = distance => {
     probe.position.copy(target).addScaledVector(dir, distance);
     probe.lookAt(target); probe.updateMatrixWorld(true);
-    if (points.every(point => {
+    return points.every(point => {
       const p = point.clone().project(probe);
       return Math.abs(p.x) < bounds.x && p.y < bounds.top && p.y > bounds.bottom && p.z < 1;
-    })) break;
+    });
+  };
+  let distance = minimum, lower = minimum;
+  while (!fits(distance) && distance < 100) { lower = distance; distance *= 1.2; }
+  for (let i = 0; i < 16 && distance > minimum; i++) {
+    const middle = (lower + distance) / 2;
+    if (fits(middle)) distance = middle; else lower = middle;
   }
   return { position: target.clone().addScaledVector(dir, distance), target: target.clone() };
 }
@@ -32,16 +37,22 @@ export function playerCameraPose(camera, mode, session, selected) {
   const portrait = camera.aspect < .95;
   if (mode === 'street') {
     const side = session.rules.turn === 'away' ? -1 : 1;
-    const cap = selected?.body.pos ?? session.entries.find(e => e.side === session.rules.turn)?.body.pos;
+    const candidates = session.entries.filter(e => e.side === session.rules.turn);
+    const nearest = candidates.reduce((best, e) => !best || e.body.pos.distanceTo(session.ballBody.pos)
+      < best.body.pos.distanceTo(session.ballBody.pos) ? e : best, null);
+    const cap = (selected?.side === session.rules.turn ? selected : nearest)?.body.pos;
     const ball = new THREE.Vector3(session.ballBody.pos.x, 0, session.ballBody.pos.y);
     const goal = new THREE.Vector3(side * 1.7, 0, session.physics.goalCenters?.[side] ?? 0);
     const origin = new THREE.Vector3(cap?.x ?? -side, 0, cap?.y ?? 0);
     const target = ball.clone().lerp(goal, .25).lerp(origin, .25);
-    return fitCameraPose(camera, target, new THREE.Vector3(-side, .3, .4), [origin, ball, goal], 3.1);
+    return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? .65 : .4, .25), [origin, ball, goal], 1.6);
   }
   const direction = mode === 'tactical' ? new THREE.Vector3(.01, 1, .09)
     : new THREE.Vector3(.35, 2.62, 2.8);
-  if (portrait) direction.set(-direction.z, direction.y, direction.x);
+  if (portrait) {
+    direction.set(-direction.z, direction.y, direction.x);
+    if (mode !== 'tactical') direction.set(-1.4, 3.8, .08);
+  }
   const viewport = typeof window !== 'undefined' ? window : null;
   if (viewport?.innerWidth <= 1100 || viewport?.matchMedia?.('(pointer: coarse)').matches) {
     // Fit the rails and complete goal structures, not the decorative tabletop apron.
@@ -49,9 +60,8 @@ export function playerCameraPose(camera, mode, session, selected) {
     const play = [-end, end].flatMap(x => [-1.24, 1.24].flatMap(z =>
       [0, .28].map(y => new THREE.Vector3(x, y, z))));
     const height = viewport.innerHeight;
-    if (!portrait && height <= 600 && mode !== 'tactical') direction.y = 1.85;
-    const top = portrait ? 136 : height <= 600 ? 80 : 136;
-    const bottom = portrait ? 144 : height <= 600 ? 72 : 144;
+    const top = portrait || height > 600 ? 136 : 80;
+    const bottom = portrait || height > 600 ? 144 : 72;
     return fitCameraPose(camera, new THREE.Vector3(), direction, play, 2.6,
       { x: .90, top: Math.max(.15, 1 - 2 * top / height), bottom: -Math.max(.15, 1 - 2 * bottom / height) });
   }

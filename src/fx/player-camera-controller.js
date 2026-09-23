@@ -22,7 +22,7 @@ export class PlayerCameraController {
 
   get active() {
     const s = this.app.session;
-    return s && !s.options.isAttract && !s.options.isPreview && this.director.mode === 'play';
+    return s && !s.options.isAttract && !s.options.isPreview && !this.director.replay && this.director.mode === 'play';
   }
   owner() {
     const s = this.app.session;
@@ -106,6 +106,16 @@ export class PlayerCameraController {
       this.pose = playerCameraPose(this.camera, this.peeking ? 'tactical' : this.mode, s, this.selected);
     }
     if (this.director.aimLocked) return true;
+    // Follow the new resting arrangement, never move the view under a held flick.
+    if (this.mode === 'street' && !this.peeking && s.rules.phase === 'aiming') {
+      const key = [s.rules.turn, s.ballBody.pos.x, s.ballBody.pos.y,
+        ...s.entries.flatMap(e => [e.body.pos.x, e.body.pos.y]),
+        s.physics.goalCenters?.[1], s.physics.goalCenters?.[-1]].join(',');
+      if (key !== this.streetArrangement) {
+        this.streetArrangement = key;
+        this.pose = playerCameraPose(this.camera, 'street', s, this.selected);
+      }
+    }
     if (this.mode === 'free' && !this.peeking) {
       this.controls.update();
       this.pose = { position: this.orbitCamera.position, target: this.controls.target };

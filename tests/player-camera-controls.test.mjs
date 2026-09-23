@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { THREE } from './helpers/real-three-session-fixture.mjs';
+const { playerCameraPose } = await import('../src/fx/player-camera-view-poses.js');
+
+test('phone and tablet framing fills usable space without cropping goal structures', () => {
+  const previous = globalThis.window;
+  try {
+    for (const [width, height] of [[320,844],[375,844],[390,844],[430,844],[568,320],[844,390],[768,1024],[1024,768]]) {
+      globalThis.window = { innerWidth: width, innerHeight: height };
+      for (const type of ['ruler-seesaw', 'departing-lorry']) for (const mode of ['tactical', 'broadcast']) {
+        const session = { level: { mechanic: { type } } };
+        const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
+        const pose = playerCameraPose(camera, mode, session);
+        camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+        const end = type === 'departing-lorry' ? 2.08 : 1.94;
+        const points = [-end,end].flatMap(x => [-1.24,1.24].flatMap(z => [0,.28].map(y =>
+          new THREE.Vector3(x,y,z).project(camera))));
+        for (const p of points) assert.ok(Math.abs(p.x) <= .901 && Math.abs(p.y) < 1, `${width}/${mode}`);
+        const extent = Math.max(...points.map(p => p.x)) - Math.min(...points.map(p => p.x));
+        const vertical = Math.max(...points.map(p => p.y)) - Math.min(...points.map(p => p.y));
+        const portrait = width / height < .95;
+        const reserved = portrait || height > 600 ? 280 : 152;
+        assert.ok(extent / 1.8 > .8 || vertical / (2 - 2 * reserved / height) > .8,
+          `pitch too small at ${width}/${mode}`);
+      }
+    }
+  } finally { globalThis.window = previous; }
+});
+
+test('Street Level reframes moved pieces and ignores a selected cap from the other side', () => {
+  const camera = new THREE.PerspectiveCamera(42, 844/390, .1, 100);
+  const home = { side: 'home', body: { pos: new THREE.Vector2(-.4,.2) } };
+  const away = { side: 'away', body: { pos: new THREE.Vector2(1,0) } };
+  const session = { rules: { turn: 'home' }, entries: [away,home], physics: {}, ballBody: { pos: new THREE.Vector2() } };
+  const pose = playerCameraPose(camera, 'street', session);
+  assert.deepEqual(playerCameraPose(camera, 'street', session, away), pose);
+  session.ballBody.pos.set(.7,.4);
+  assert.ok(playerCameraPose(camera, 'street', session).target.distanceTo(pose.target) > .1);
+});

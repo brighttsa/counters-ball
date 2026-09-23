@@ -2,15 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Responsive and interruptible UI motion",
+  "task": "Closer mobile pitch and reliable match cameras",
   "status": "released",
   "paths": [
-    "styles/game-ui-menus-and-results.css",
-    "src/ui/ui-kinetic-event-callout.js",
-    "src/ui/ui-match-hud-scoreboard-callouts-and-tutorial.js",
-    "tests/ui-motion.test.mjs",
+    "src/fx/player-camera-view-poses.js",
+    "src/fx/player-camera-controller.js",
+    "tests/player-camera-controls.test.mjs",
+    "plans/reports/mobile-camera-framing.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T12:58:23.899Z",
-  "head": "6baff901fc55add7497febc182038244a6d57651"
+  "updatedAt": "2026-09-23T13:20:59.701Z",
+  "head": "208e3e0d7b470719f6285bf2772af9340cdb6e9b"
 }
