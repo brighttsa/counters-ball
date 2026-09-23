@@ -119,7 +119,7 @@ export function wireMatchFeedback(session) {
     session.input.cancel();
     hud.setTurn(null, 'Full time!');
     sound.whistle();
-    if (result.winner) sound.event?.(versus || result.winner === SIDE_HOME ? 'win' : 'loss');
+    if (result.winner && (versus || result.winner === SIDE_HOME)) sound.event?.('win');
     hud.event(result.winner ? 'WINNER' : 'FULL TIME', { priority: 12, duration: 1.2 });
     session.schedule(1.5, () => options.onEnd?.(result));
   });
