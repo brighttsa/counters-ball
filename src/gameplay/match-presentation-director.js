@@ -19,7 +19,6 @@ export class MatchPresentationDirector {
   }
   syncHeat() {
     const { home, away } = this.skills.heat;
-    this.session.hud.setHeat(home / 5, away / 5);
     this.session.sound.setHeat?.(Math.max(home, away) / 5);
   }
   begin(entry, velocity, gesture) {

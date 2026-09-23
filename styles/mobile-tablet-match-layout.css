@@ -16,7 +16,6 @@
   .ink-game .hud-layer .pause-btn { top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); bottom: auto; left: auto; width: 48px; height: 48px; }
   .ink-game .sound-btn { bottom: max(12px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); width: 48px; height: 48px; }
   .ink-game .hud-layer .turn-banner { top: auto; bottom: max(12px, env(safe-area-inset-bottom)); left: max(12px, env(safe-area-inset-left)); right: auto; width: fit-content; max-width: calc(100% - 84px); min-height: 48px; display: flex; align-items: center; padding: 8px 12px; transform: none; }
-  .ink-game .heat-meter { display: none; }
   body:has(canvas.aiming) .legend-objective,
   body:has(canvas.aiming) #tutorial-hand { visibility: hidden; }
   .ink-game .hud-layer .turn-banner { font-size: 14px; line-height: 1.2; }

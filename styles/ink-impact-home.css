@@ -23,7 +23,7 @@
   clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
 }
 .screen-title .home-play { background: var(--poster-yellow); color: #101514; display: flex; justify-content: space-between; align-items: center; min-height: 66px; font: 30px/1 var(--font-display); }
-.home-play span { font-family: Arial, sans-serif; font-size: 34px; }
+.home-play span[aria-hidden] { font-family: Arial, sans-serif; font-size: 34px; }
 .screen-title .btn:hover { background: #f5f1df; color: #101514; }
 .screen-title .home-venues { text-align: left; padding: 14px 20px; }
 .home-secondary { display: flex; gap: 8px; }

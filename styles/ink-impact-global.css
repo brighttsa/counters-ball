@@ -19,14 +19,11 @@
 .ink-game .intro-place, .ink-game .results-opponent { color: #f5f1df; }
 .ink-game .intro-card, .ink-game .results-card, .ink-game .menu-card { max-height: calc(100dvh - 48px); overflow-y: auto; }
 .ink-game .intro-card .card-title, .ink-game .results-title { overflow-wrap: anywhere; }
-.ink-game .heat-meter { display: flex; top: auto; bottom: 91px; background: #101514; border: 0; font-size: 10px; }
 .ink-game .replay-controls { bottom: 130px; background: #101514; }
 @media (max-width: 560px) {
-  .ink-game .heat-meter { left: 16px; transform: none; width: 220px; }
   .ink-game .circuit-venue-copy { padding-left: 12px; }
   .ink-game .card-actions { flex-wrap: wrap; }
 }
 @media (max-height: 500px) {
-  .ink-game .heat-meter { display: none; }
   .ink-game .replay-controls { bottom: 110px; }
 }

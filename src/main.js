@@ -14,6 +14,8 @@ import { MatchHud } from './ui/ui-match-hud-pause-and-results.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
 import { STREET_LEGENDS_ACTS, isLegendActUnlocked } from './levels/street-legends-acts-and-unlocks.js';
+import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js';
+import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import {
   loadProgress, saveProgress, recordLevelStars, isLevelUnlocked, totalStars,
 } from './core/save-progress-local-storage.js';
@@ -33,7 +35,7 @@ new PlayerCameraController(app, cameraDirector);
 const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : CAMPAIGN_LEVELS);
 const unlockedIn = (mode, i) => mode === 'versus'
   || (mode === 'legends' ? isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, i) : isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
-const featuredIndex = STREET_LEGENDS_ACTS.findIndex(level => level.id === 'legends-roadside-act-1');
+const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress);
 
 function replaceSession(options, sessionHud) {
   hud.cancelResultReveal(); // leaving results early must not ding stars into the next screen
@@ -50,7 +52,7 @@ function replaceSession(options, sessionHud) {
 
 function ensureAttractMode() {
   if (app.session?.options.isAttract) return;
-  const level = { ...STREET_LEGENDS_ACTS[featuredIndex],
+  const level = { ...STREET_LEGENDS_ACTS[featuredIndex()],
     rules: { goalsToWin: 99, flickLimit: 999, threeStarFlicks: 3 }, awaySlots: null, homeDifficulty: 'easy' };
   replaceSession({
     level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, isAttract: true,
@@ -71,6 +73,7 @@ function ensureAttractMode() {
 
 function showTitle() {
   ensureAttractMode();
+  menus.setHomeFeature(STREET_LEGENDS_ACTS[featuredIndex()]);
   menus.setTitleStars(totalStars(progress, CAMPAIGN_LEVELS), CAMPAIGN_LEVELS.length * 3);
   menus.show('title');
 }
@@ -101,6 +104,7 @@ function prepareMatch(index) {
   if (orientation.offer(() => prepareMatch(index))) return;
   const versus = app.mode === 'versus';
   app.levelIndex = index;
+  if (app.mode === 'legends') { progress.lastLegendAct = level.id; saveProgress(progress); }
   replaceSession({
     level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team,
     controllers: { home: 'human', away: versus ? 'human' : 'ai' },
@@ -108,6 +112,7 @@ function prepareMatch(index) {
   }, hud);
   sound.setSfxLevel(1);
   sound.setAmbience(level.backdrop);
+  hud.attachTableChalk(createChalkTableScoreboard(app.session.stage.group, HOME_TEAM.hudColor, level.opponent.team.hudColor));
   hud.reset(level, HOME_TEAM, level.opponent.team, versus);
   cameraDirector.playIntro(2.8);
   menus.fillIntro(level, index, track.length, app.mode, HOME_TEAM);
@@ -148,7 +153,7 @@ function setPaused(paused) {
 }
 
 const actions = {
-  'play-featured': () => { app.mode = 'legends'; prepareMatch(featuredIndex); },
+  'play-featured': () => { app.mode = 'legends'; prepareMatch(featuredIndex()); },
   'play-campaign': () => showLevels('campaign'),
   'play-versus': () => showLevels('versus'),
   'play-legends': () => showLevels('legends'),
@@ -170,6 +175,11 @@ const actions = {
   'results-levels': () => showLevels(),
   replay: () => prepareMatch(app.levelIndex),
   'next-level': () => prepareMatch(app.levelIndex + 1),
+  'toggle-hud-style': () => {
+    progress.hudStyle = hud.style === 'chalk' ? 'broadcast' : 'chalk';
+    hud.setStyle(progress.hudStyle);
+    saveProgress(progress);
+  },
   'toggle-sound': () => {
     progress.muted = !progress.muted;
     sound.setMuted(progress.muted);
@@ -192,6 +202,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 menus.setSoundIcon(progress.muted);
+hud.setStyle(progress.hudStyle);
 showTitle();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post });
 

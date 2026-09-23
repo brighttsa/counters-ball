@@ -21,12 +21,6 @@
   border-top: 2px solid var(--turn-color); background: var(--glass); opacity: 1;
   transform: translateX(-50%); animation: none;
 }
-.heat-meter {
-  position: absolute; bottom: max(22px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-  display: flex; gap: 10px; align-items: center; font: 10px var(--font-body); background: var(--glass); padding: 8px;
-}
-.heat-meter > span:not(:nth-child(2)) { position: relative; padding-bottom: 5px; min-width: 52px; }
-.heat-meter > span:not(:nth-child(2))::after { content: ''; position: absolute; left: 0; bottom: 0; width: var(--heat, 0%); height: 2px; background: var(--gold); }
 .goal-banner, .goal-banner.show {
   top: 38%; left: max(16px, env(safe-area-inset-left)); right: max(16px, env(safe-area-inset-right));
   display: grid; justify-items: center; gap: 8px; animation: none; transform: none;
@@ -51,7 +45,6 @@
 @media (max-width: 560px) {
   .goal-word { font-size: 40px; }
   .goal-sub { font-size: 13px; }
-  .heat-meter { gap: 5px; }
 }
 @media (max-height: 500px) { .goal-word { font-size: 36px; } .goal-banner { top: 44%; } }
 @media (prefers-reduced-motion: reduce) {

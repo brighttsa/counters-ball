@@ -6,6 +6,7 @@ import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 import { paintInkCapPoster } from './ink-impact-cap-poster.js';
+import { featuredActCopy } from '../levels/featured-home-legends-act.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -46,6 +47,14 @@ export class MenuScreens {
     this.current = name;
     const focusable = name && this.screens[name]?.querySelector('.btn-primary:not([hidden]):not([disabled]), .level-card:not([disabled]), .btn:not([disabled])');
     focusable?.focus({ preventScroll: true });
+  }
+
+  setHomeFeature(level) {
+    const copy = featuredActCopy(level);
+    $('home-feature-act').textContent = copy.kicker;
+    $('home-feature-venue').textContent = copy.venue;
+    $('home-feature-title').textContent = copy.actTitle;
+    $('home-feature-button').textContent = copy.button;
   }
 
   setTitleStars(earned, max) {

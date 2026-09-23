@@ -17,6 +17,22 @@ export class MatchHud {
     this.callout = new KineticEventCallout($('goal-banner'));
     this.lowAttention = new Set();
     this.resultTimers = [];
+    this.table = null;
+    this.style = 'broadcast';
+  }
+
+  /** A per-match scoreboard chalked on the table; mirrors score and flicks while attached. */
+  attachTableChalk(board) {
+    this.table = board;
+    board?.setVisible(this.style === 'chalk');
+  }
+
+  /** 'broadcast' keeps the screen scoreboard; 'chalk' moves score and flicks onto the table. */
+  setStyle(style) {
+    this.style = style === 'chalk' ? 'chalk' : 'broadcast';
+    document.body.classList.toggle('hud-chalk', this.style === 'chalk');
+    $('hud-style-toggle').textContent = `Scoreboard: ${this.style === 'chalk' ? 'Chalk' : 'Broadcast'}`;
+    this.table?.setVisible(this.style === 'chalk');
   }
 
   show(visible) {
@@ -31,9 +47,9 @@ export class MatchHud {
     this.root.style.setProperty('--away-color', awayTeam.hudColor);
     $('score-home').textContent = '0';
     $('score-away').textContent = '0';
+    this.table?.setScore({ home: 0, away: 0 });
     this.clearEvents();
     this.lowAttention.clear();
-    this.setHeat(0, 0);
     $('turn-banner').textContent = '';
     this.setFlicks(level.rules.flickLimit, level.rules.awayFlickLimit ?? level.rules.flickLimit);
     this.setObjective(level.objective ?? null);
@@ -53,6 +69,7 @@ export class MatchHud {
       el.textContent = scores[side];
       if (side === poppedSide) restartAnimation(el, 'pop');
     }
+    this.table?.setScore(scores);
   }
 
   setTurn(side, text) {
@@ -66,6 +83,7 @@ export class MatchHud {
   }
 
   setFlicks(home, away) {
+    this.table?.setFlicks(home, away);
     for (const [side, left] of [[SIDE_HOME, home], [SIDE_AWAY, away]]) {
       const el = $(`flicks-${side}`);
       el.textContent = left;
@@ -85,16 +103,6 @@ export class MatchHud {
   event(label, options = {}) { return this.callout.event(label, options); }
   update(dt) { this.callout.update(dt); }
   clearEvents() { this.callout.clear(); this.replay(false); }
-
-  setHeat(home, away) {
-    for (const [side, value] of [[SIDE_HOME, home], [SIDE_AWAY, away]]) {
-      const heat = Math.round(Math.max(0, Math.min(1, Number(value) || 0)) * 100);
-      const el = $(`heat-${side}`);
-      el.textContent = `${side === SIDE_HOME ? 'Home' : 'Away'} ${heat}`;
-      el.style.setProperty('--heat', `${heat}%`);
-      el.setAttribute('aria-label', `${side} heat: ${heat} percent`);
-    }
-  }
 
   replay(active, label = 'Replay') {
     $('replay-controls').hidden = !active;
