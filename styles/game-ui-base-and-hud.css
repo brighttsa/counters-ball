@@ -1,19 +1,43 @@
-/* Counters Ball 3D — tokens, base, buttons and in-match HUD.
-   Everything is sun-warmed: chalk off-whites, cardboard, enamel red, ink brown. */
+/* Counters Ball — design tokens, base elements, buttons and the in-match HUD.
+   One printed ink identity: ink-black surfaces, paper text, a single yellow accent. */
 :root {
-  --ink: #2b1a0c;
-  --ink-soft: rgba(43, 26, 12, 0.72);
-  --chalk: #fdf6e6;
-  --chalk-dim: #ece1c6;
-  --enamel: #a83b2a;
-  --enamel-hi: #d4563f;
+  /* Colour */
+  --ink: #101514;
+  --ink-raised: #27302d;
+  --ink-selected: #25322d;
+  --ink-pressed: #343a35;
+  --ink-disabled: #343a36;
+  --ink-soft-bg: #191b1b;
+  --paper: #f5f1df;
+  --paper-warm: #fdf6e6;
+  --paper-dim: #ece1c6;
+  --chalk-white: #f4efdf;
+  --yellow: #f0cf45;
   --gold: #dfb94f;
-  --glass: rgba(33, 20, 10, 0.58);
+  --text-muted: #c0c8c0;
+  --text-muted-2: #d3d7ca;
+  --text-locked: #b9bfb8;
+  --text-disabled: #c0c6bd;
+  --line: #4d5653;
+  --line-locked: #8a9189;
+  --star-off: #777b72;
+  --star-off-2: #8c9487;
+  --star-off-border: #7b8479;
+  --warning: #ffbc83;
+  --warning-flash: #744426;
+  --glass: rgba(25, 27, 27, 0.94);
+  --shadow-card: 8px 8px 0 #10151466;
   --home-color: #d6503a;
   --away-color: #4f86c6;
-  --font-display: 'Lilita One', Impact, 'Arial Black', sans-serif;
+  /* Legacy names still read by a few rules */
+  --chalk: var(--paper);
+  --chalk-dim: var(--paper-dim);
+  /* Type */
+  --font-display: 'Anton', Impact, 'Arial Narrow', sans-serif; /* webfont: phones ship no Impact */
+  --font-body: 'Avenir Next', 'Segoe UI', Arial, sans-serif;
   --font-chalk: 'Cabin Sketch', 'Chalkboard SE', 'Comic Sans MS', cursive;
   --font-hand: 'Patrick Hand', 'Chalkboard SE', 'Comic Sans MS', cursive;
+  /* Motion */
   --spring: cubic-bezier(0.2, 1.6, 0.4, 1);
   --ease-out: cubic-bezier(0.2, 0.9, 0.3, 1);
   color-scheme: dark;
@@ -22,12 +46,14 @@
 * { box-sizing: border-box; }
 html, body {
   margin: 0; height: 100%; overflow: hidden;
-  background: var(--ink); color: var(--chalk);
-  font-family: var(--font-hand); -webkit-font-smoothing: antialiased;
+  background: var(--ink); color: var(--paper);
+  font-family: var(--font-body); -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
+body { background: var(--ink-soft-bg); }
 [hidden] { display: none !important; }
 button { font: inherit; }
+button, h1, h2, p, span { letter-spacing: 0; }
 
 #game-canvas { position: fixed; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; }
 #game-canvas.can-grab { cursor: grab; }
@@ -35,29 +61,36 @@ button { font: inherit; }
 #film-frame { position: fixed; inset: 0; z-index: 5; pointer-events: none; box-shadow: inset 0 0 140px 30px rgba(30, 14, 2, 0.55); }
 .noscript { position: fixed; inset: auto 0 40% 0; text-align: center; font-size: 22px; }
 
-/* ---- Buttons: painted sign boards that press into the table ---- */
+/* ---- Buttons: slanted ink tags ---- */
 .btn {
-  font-family: var(--font-display); font-size: clamp(17px, 2.1vw, 21px); letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--ink); background: linear-gradient(#f5e6c2, #e0c998);
-  border: 3px solid var(--ink); border-radius: 10px 14px 9px 13px; padding: 12px 26px; cursor: pointer;
-  box-shadow: 0 5px 0 var(--ink), 0 10px 18px rgba(20, 10, 2, 0.35);
-  transform: rotate(var(--tilt, -0.6deg));
-  transition: transform 0.2s var(--spring), box-shadow 0.2s var(--ease-out), filter 0.2s;
+  min-height: 48px; max-width: 100%; padding: 12px 20px; cursor: pointer;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px; letter-spacing: 0; text-transform: uppercase;
+  color: var(--paper); background: var(--ink); border: 0; border-radius: 0;
+  clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
+  box-shadow: none; transform: none; text-shadow: none; overflow-wrap: anywhere;
+  transition: background 160ms ease, border-color 160ms ease;
 }
-.btn:hover { transform: translateY(-3px) rotate(0.3deg) scale(1.03); box-shadow: 0 8px 0 var(--ink), 0 16px 26px rgba(20, 10, 2, 0.4); }
-.btn:active { transform: translateY(4px) rotate(0deg); box-shadow: 0 1px 0 var(--ink), 0 4px 8px rgba(20, 10, 2, 0.3); transition-duration: 0.06s; }
-.btn:focus-visible, .icon-btn:focus-visible, .level-card:focus-visible { outline: 3px dashed var(--gold); outline-offset: 5px; }
-.btn-primary { color: var(--chalk); background: linear-gradient(var(--enamel-hi), var(--enamel)); text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25); }
-.btn-small { font-size: 15px; padding: 8px 16px; box-shadow: 0 4px 0 var(--ink), 0 8px 14px rgba(20, 10, 2, 0.3); }
+.btn-primary { background: var(--yellow); color: var(--ink); }
+.btn-small { font-size: 13px; padding: 10px 14px; }
+.btn:hover { background: var(--paper); color: var(--ink); }
+.btn:disabled { opacity: .45; }
+/* The slanted clip-path cuts off anything drawn outside the button, including the focus
+   ring, so a keyboard-focused button squares up and shows its ring. */
+.btn:focus-visible { clip-path: none; outline: 3px solid var(--yellow); outline-offset: 4px; }
+/* Pressed feedback that also works on touch, where :hover never fires reliably. */
+.btn:not(:disabled):active { filter: brightness(0.85); transform: translateY(1px); }
+/* Secondary buttons need their own fill: on an ink card, ink-on-ink text reads as a label, not a button. */
+.paper-card .btn:not(.btn-primary), .screen-title .btn:not(.btn-primary), .screen-header .btn:not(.btn-primary) { background: var(--ink-raised); color: var(--paper); }
+.paper-card .btn:not(.btn-primary):hover, .screen-title .btn:not(.btn-primary):hover, .screen-header .btn:not(.btn-primary):hover { background: var(--paper); color: var(--ink); }
 
 .icon-btn {
   pointer-events: auto; width: 46px; height: 46px; display: grid; place-items: center; cursor: pointer;
-  border-radius: 50%; border: 2px solid rgba(253, 246, 230, 0.45); background: var(--glass); color: var(--chalk);
+  border-radius: 0; border: 2px solid var(--paper); background: var(--ink); color: var(--paper); box-shadow: none;
   font-family: var(--font-display); font-size: 16px; backdrop-filter: blur(6px);
   transition: transform 0.2s var(--spring), background 0.2s;
 }
-.icon-btn:hover { transform: scale(1.1) rotate(-6deg); background: rgba(33, 20, 10, 0.78); }
 .icon-btn:active { transform: scale(0.92); }
+.icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
 .sound-btn { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); font-size: 20px; }
 .sound-btn.muted { opacity: 0.55; text-decoration: line-through; }
 
@@ -65,71 +98,66 @@ button { font: inherit; }
 .hud-layer { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
 .scoreboard {
   position: absolute; top: max(14px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 14px; padding: 8px 22px; white-space: nowrap;
-  background: var(--glass); border: 2px solid rgba(253, 246, 230, 0.18); border-radius: 999px; backdrop-filter: blur(6px);
-  box-shadow: 0 10px 24px rgba(20, 10, 2, 0.35); animation: hud-drop 0.6s var(--spring) both;
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px; white-space: nowrap;
+  width: min(440px, calc(100% - 32px)); height: 60px;
+  background: var(--ink); border: 0; border-bottom: 4px solid var(--yellow); border-radius: 2px; backdrop-filter: blur(6px);
 }
-.team-name { font-family: var(--font-chalk); font-size: 16px; letter-spacing: 2px; color: var(--chalk-dim); }
-.score-digits { font-family: var(--font-display); font-size: 34px; line-height: 1; color: var(--chalk); display: flex; gap: 8px; }
+.team-name {
+  flex: 1; min-width: 0; font: 700 12px/1.2 var(--font-body); letter-spacing: 0; color: var(--paper-dim);
+  white-space: normal; overflow-wrap: anywhere; text-align: center;
+}
+.score-digits { display: flex; gap: 8px; flex-shrink: 0; min-width: 74px; justify-content: center; font: 38px/1 var(--font-display); color: var(--paper); }
 .score-digits .dash { opacity: 0.5; }
-.score-digits .pop { display: inline-block; animation: score-pop 0.7s var(--spring); color: var(--gold); }
-.turn-dot { width: 12px; height: 12px; border-radius: 50%; transition: opacity 0.3s, transform 0.35s var(--spring); }
-.turn-dot.home { background: var(--home-color); box-shadow: 0 0 0 3px rgba(253, 246, 230, 0.25), 0 0 16px var(--home-color); }
-.turn-dot.away { background: var(--away-color); box-shadow: 0 0 0 3px rgba(253, 246, 230, 0.25), 0 0 16px var(--away-color); }
-.turn-dot.inactive { opacity: 0.2; transform: scale(0.65); box-shadow: none; }
+.score-digits .pop { display: inline-block; color: var(--gold); animation: score-confirm 300ms ease-out; }
+.turn-dot { width: 4px; height: 24px; flex-shrink: 0; transition: opacity 0.3s, transform 0.35s var(--spring); }
+.turn-dot.home { background: var(--home-color); }
+.turn-dot.away { background: var(--away-color); }
+.turn-dot.inactive { opacity: 0.2; transform: scale(0.65); }
 
 .flick-meter {
-  position: absolute; top: calc(max(14px, env(safe-area-inset-top)) + 62px); left: 50%; transform: translateX(-50%);
-  display: flex; align-items: baseline; gap: 12px; font-size: 15px; color: var(--chalk-dim); text-shadow: 0 1px 4px rgba(20, 10, 2, 0.8);
+  position: absolute; top: calc(max(14px, env(safe-area-inset-top)) + 60px); left: 50%; transform: translateX(-50%);
+  display: flex; align-items: baseline; justify-content: center; gap: 12px;
+  width: min(440px, calc(100% - 32px)); height: 28px; padding: 4px 12px;
+  background: var(--ink); font: 12px var(--font-body); color: var(--paper-dim);
 }
-.flick-meter b { font-family: var(--font-display); font-weight: 400; font-size: 19px; color: var(--chalk); min-width: 2ch; text-align: center; }
-.flick-meter b.low { color: #ffb08a; animation: low-pulse 1.1s ease-in-out infinite; }
+.flick-meter b { font: 700 14px var(--font-body); color: var(--paper); min-width: 2ch; text-align: center; }
+.flick-meter b.low { color: var(--warning); }
+.flick-meter b.low-attention { animation: low-attention 600ms ease-out; }
 .pause-btn { position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); }
 
 .turn-banner {
-  position: absolute; top: calc(max(14px, env(safe-area-inset-top)) + 96px); left: 50%;
-  font-family: var(--font-chalk); font-size: clamp(22px, 3vw, 30px); color: var(--chalk); white-space: nowrap;
-  text-shadow: 0 0 18px var(--turn-color, var(--home-color)), 0 2px 6px rgba(20, 10, 2, 0.9);
-  opacity: 0; transform: translate(-50%, -8px);
+  position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); left: 16px;
+  width: auto; max-width: calc(100% - 88px); min-height: 28px; padding: 12px 16px;
+  font: 700 12px/1.4 var(--font-body); color: var(--paper); text-align: left; white-space: normal; overflow-wrap: anywhere;
+  background: var(--ink); border-left: 5px solid var(--turn-color);
 }
-.turn-banner.show { animation: banner-in-out 2.4s var(--ease-out) forwards; }
 
 .goal-banner {
-  position: absolute; top: 30%; left: 50%; display: grid; justify-items: center; gap: 4px;
-  opacity: 0; transform: translate(-50%, 0) scale(0.6) rotate(-4deg);
+  position: absolute; bottom: 105px; left: 18px; max-width: calc(100% - 36px); width: fit-content;
+  display: grid; justify-items: start; gap: 8px; padding: 14px 20px; overflow: hidden; text-align: left;
+  background: var(--ink); border-left: 6px solid var(--yellow);
 }
-.goal-banner.show { animation: goal-slam 2.3s var(--ease-out) forwards; }
-.goal-word {
-  font-family: var(--font-display); font-size: clamp(56px, 11vw, 120px); letter-spacing: 6px; color: #ffe9b8;
-  -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill;
-  text-shadow: 0 6px 0 var(--ink), 0 0 36px rgba(255, 176, 64, 0.9);
+.goal-word { max-width: 100%; font: 48px/.95 var(--font-display); letter-spacing: 0; overflow-wrap: anywhere; color: var(--yellow); paint-order: stroke fill; }
+.goal-sub { max-width: 36ch; font: 700 13px/1.4 var(--font-body); letter-spacing: 0; color: var(--paper); }
+.replay-controls {
+  position: absolute; left: 50%; transform: translateX(-50%); bottom: 130px;
+  display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px); padding: 6px 8px;
+  background: var(--ink); border-left: 3px solid var(--gold); pointer-events: auto;
 }
-.goal-sub { font-family: var(--font-chalk); font-size: clamp(20px, 2.6vw, 28px); letter-spacing: 3px; color: var(--chalk); text-shadow: 0 2px 8px rgba(20, 10, 2, 0.9); }
+#replay-label { font: 700 12px var(--font-body); text-transform: uppercase; overflow-wrap: anywhere; }
+.replay-controls .btn { flex-shrink: 0; }
 
 .tutorial-hand { position: absolute; left: 0; top: 0; transform: translate(var(--x, -999px), var(--y, -999px)); }
 .tutorial-ring { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--gold); animation: tutorial-ring 1.8s ease-out infinite; }
 .tutorial-finger { position: absolute; left: -20px; top: -4px; width: 40px; filter: drop-shadow(0 6px 6px rgba(20, 10, 2, 0.55)); animation: tutorial-drag 1.8s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
 .tutorial-tip {
-  position: absolute; left: -150px; top: 74px; white-space: nowrap; padding: 6px 14px; border-radius: 10px;
-  font-family: var(--font-chalk); font-size: 19px; color: var(--chalk); background: var(--glass); backdrop-filter: blur(4px);
+  position: absolute; left: -150px; top: 74px; max-width: min(280px, calc(100vw - 32px)); padding: 6px 14px; border-radius: 2px;
+  white-space: normal; font-family: var(--font-chalk); font-size: 16px; color: var(--paper); background: var(--glass); backdrop-filter: blur(4px);
 }
 
-@keyframes hud-drop { from { transform: translate(-50%, -30px); opacity: 0; } }
-@keyframes score-pop { 0% { transform: scale(1); } 30% { transform: scale(1.8) rotate(-8deg); } 100% { transform: scale(1); } }
-@keyframes low-pulse { 50% { transform: scale(1.18); } }
-@keyframes banner-in-out {
-  0% { opacity: 0; transform: translate(-50%, -12px) scale(0.92); }
-  14% { opacity: 1; transform: translate(-50%, 0) scale(1.04); }
-  22%, 80% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-  100% { opacity: 0.0; transform: translate(-50%, -6px); }
-}
-@keyframes goal-slam {
-  0% { opacity: 0; transform: translate(-50%, 0) scale(2.4) rotate(-10deg); }
-  12% { opacity: 1; transform: translate(-50%, 0) scale(0.92) rotate(-3deg); }
-  20% { transform: translate(-50%, 0) scale(1.05) rotate(-4deg); }
-  80% { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(-4deg); }
-  100% { opacity: 0; transform: translate(-50%, -30px) scale(0.96) rotate(-4deg); }
-}
+/* Chalk scoreboard: score and flicks live on the table, only the controls stay on screen. */
+body.hud-chalk .scoreboard, body.hud-chalk .flick-meter { display: none; }
+
 @keyframes tutorial-ring { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
 @keyframes tutorial-drag {
   0% { transform: translate(0, 0) scale(1.2); opacity: 0; }
@@ -137,20 +165,26 @@ button { font: inherit; }
   65% { transform: translate(-84px, 34px); opacity: 1; }
   80%, 100% { transform: translate(-84px, 34px); opacity: 0; }
 }
+@keyframes low-attention { 40% { background: var(--warning-flash); } }
+@keyframes score-confirm { 40% { color: var(--gold); } }
 
 @media (max-width: 640px), (pointer: coarse) and (max-height: 500px) {
-  .scoreboard { width: min(420px, calc(100% - 32px)); gap: 8px; padding: 8px 12px; }
-  .score-digits { font-size: 26px; }
-  .team-name { flex: 1; min-width: 0; font-size: 12px; letter-spacing: 0; white-space: normal; overflow-wrap: anywhere; text-align: center; }
-  .turn-dot, .score-digits { flex-shrink: 0; }
   .scoreboard { min-height: 52px; }
-  .flick-meter { top: calc(max(14px, env(safe-area-inset-top)) + 58px); font-size: 14px; white-space: nowrap; }
-  .turn-banner { width: calc(100% - 32px); font-size: 22px; text-align: center; white-space: normal; }
+  .flick-meter { white-space: nowrap; }
   .icon-btn { width: 48px; height: 48px; touch-action: manipulation; }
-  .pause-btn { top: auto; bottom: max(16px, env(safe-area-inset-bottom)); right: auto; left: max(16px, env(safe-area-inset-left)); }
 }
-
+@media (max-width: 560px) {
+  .scoreboard, .flick-meter { left: 12px; transform: none; width: calc(100% - 78px); }
+  .scoreboard { gap: 5px; padding-inline: 8px; }
+  .team-name { font-size: 11px; }
+  .goal-word { font-size: 34px; }
+}
+@media (max-height: 500px) {
+  .scoreboard, .flick-meter { width: 230px; left: 12px; transform: none; }
+  .goal-banner { bottom: 70px; }
+  .replay-controls { bottom: 110px; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-  .goal-banner.show, .turn-banner.show { animation: none; opacity: 1; transform: translate(-50%, 0); }
+  .tutorial-finger, .tutorial-ring { animation: none; }
 }

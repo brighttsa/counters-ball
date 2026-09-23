@@ -1,34 +1,29 @@
-/* Original street-sports poster: the live Tema table is the full-bleed artwork. */
-:root { --poster-ink: #101514; --poster-paper: #f5f1df; --poster-yellow: #f0cf45; }
+/* Title: an original street-sports poster over the live table. */
 .screen-title.is-active {
   display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
   padding: 32px 6%; gap: 12px; text-align: left; background: transparent;
   overflow: hidden; isolation: isolate;
 }
 .screen-title::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; background: #101514;
+  content: ''; position: absolute; inset: 0; z-index: -1; background: var(--ink);
   clip-path: polygon(0 0, 41% 0, 52% 100%, 0 100%); opacity: .86;
 }
-.screen-title .title-logo { display: none; }
+.title-logo { display: none; }
 .home-cap-print { position: absolute; right: 1%; bottom: 4%; width: min(54%, 850px); aspect-ratio: 4 / 3; pointer-events: none; z-index: -1; }
-.home-edition { margin: 0; font: 800 14px/1.4 var(--font-body); color: var(--poster-yellow); }
-.home-headline { margin: 0; font: 900 112px/.86 var(--font-display); color: var(--poster-paper); transform: rotate(-3deg); text-shadow: 5px 5px 0 #101514; }
-.home-headline span { color: var(--poster-yellow); }
-.screen-title .tagline { margin: 12px 0 0; font: 700 18px/1.4 var(--font-body); animation: none; color: var(--poster-paper); }
-.home-location { display: flex; align-items: center; gap: 12px; margin: 10px 0; color: var(--poster-paper); font: 14px/1.4 var(--font-body); }
-.home-location b { font: 28px/1 var(--font-display); color: var(--poster-yellow); border-right: 3px solid; padding-right: 12px; }
-.screen-title .menu-stack { display: grid; gap: 10px; width: 340px; max-width: 100%; animation: none; }
-.screen-title .btn, .ink-menus .btn, .ink-game .btn {
-  border-radius: 0; border: 0; background: var(--poster-ink); color: var(--poster-paper);
-  clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
-}
-.screen-title .home-play { background: var(--poster-yellow); color: #101514; display: flex; justify-content: space-between; align-items: center; min-height: 66px; font: 30px/1 var(--font-display); }
+.home-edition { margin: 0; font: 800 14px/1.4 var(--font-body); color: var(--yellow); }
+.home-headline { margin: 0; font: 900 112px/.86 var(--font-display); color: var(--paper); transform: rotate(-3deg); text-shadow: 5px 5px 0 var(--ink); }
+.home-headline span { color: var(--yellow); }
+.tagline { max-width: 34ch; margin: 12px 0 0; font: 700 18px/1.4 var(--font-body); color: var(--paper); text-shadow: 0 2px 8px rgba(20, 10, 2, 0.9); }
+.home-location { display: flex; align-items: center; gap: 12px; margin: 10px 0; color: var(--paper); font: 14px/1.4 var(--font-body); }
+.home-location b { font: 28px/1 var(--font-display); color: var(--yellow); border-right: 3px solid; padding-right: 12px; }
+.screen-title .menu-stack { display: grid; gap: 10px; width: 340px; max-width: 100%; }
+.screen-title .home-play { background: var(--yellow); color: var(--ink); display: flex; justify-content: space-between; align-items: center; min-height: 66px; font: 30px/1 var(--font-display); }
 .home-play span[aria-hidden] { font-family: var(--font-body); font-size: 34px; }
-.screen-title .btn:hover { background: #f5f1df; color: #101514; }
+.screen-title .btn:hover { background: var(--paper); color: var(--ink); }
 .screen-title .home-venues { text-align: left; padding: 14px 20px; }
 .home-secondary { display: flex; gap: 8px; }
 .home-secondary .btn { flex: 1; font-size: 12px; padding: 10px; }
-.screen-title .title-stars { margin: 4px 0; font: 12px/1.4 var(--font-body); animation: none; text-shadow: none; color: var(--poster-paper); }
+.title-stars { align-self: start; margin: 4px 0; font: 12px/1.4 var(--font-body); color: var(--paper); }
 @media (max-width: 700px) {
   .home-cap-print { top: 0; bottom: auto; right: -5%; width: 75%; }
   .screen-title.is-active { justify-content: flex-end; padding: 24px 20px 72px; gap: 8px; }
@@ -36,7 +31,7 @@
   .home-headline { font-size: 72px; }
   .home-edition { font-size: 12px; }
   .home-location { margin: 2px 0; font-size: 12px; }
-  .screen-title .tagline { font-size: 16px; margin: 4px 0; }
+  .tagline { font-size: 16px; margin: 4px 0; }
   .screen-title .menu-stack { width: 100%; gap: 6px; }
   .screen-title .home-play { min-height: 56px; font-size: 26px; }
 }
@@ -44,6 +39,6 @@
 @media (max-height: 620px) {
   .home-headline { font-size: 54px; } .home-location { display: none; }
   .screen-title.is-active { gap: 6px; padding-top: 16px; padding-bottom: 60px; }
-  .screen-title .tagline, .screen-title .title-stars { display: none; }
+  .tagline, .title-stars { display: none; }
   .screen-title .home-play { min-height: 48px; font-size: 24px; }
 }
