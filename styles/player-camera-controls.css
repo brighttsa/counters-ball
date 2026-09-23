@@ -1,8 +1,8 @@
-.player-camera { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(78px, env(safe-area-inset-bottom)); z-index: 24; width: 268px; max-width: calc(100% - 28px); color: var(--paper); font: 13px/1.3 var(--font-body); }
+.player-camera { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(78px, env(safe-area-inset-bottom)); z-index: 24; width: 268px; max-width: calc(100% - 28px); color: var(--paper); font: var(--text-sm)/1.3 var(--font-body); }
 .player-camera[hidden], .player-camera [hidden] { display: none; }
 body:not([data-screen="match"]) .player-camera { display: none; }
 .camera-toolbar { display: flex; gap: 8px; justify-content: flex-end; }
-.player-camera button { min-height: 48px; padding: 8px 10px; background: var(--ink); color: var(--paper); border: 1px solid var(--line-strong); border-radius: 0; cursor: pointer; font: inherit; touch-action: manipulation; }
+.player-camera button { min-height: 48px; padding: 8px 8px; background: var(--ink); color: var(--paper); border: 1px solid var(--line-strong); border-radius: 0; cursor: pointer; font: inherit; touch-action: manipulation; }
 .player-camera button:active { background: var(--yellow); color: var(--ink); }
 @media (hover: hover) { .player-camera button:hover { border-color: var(--yellow); background: var(--ink-raised); } }
 .player-camera button:focus-visible, .player-camera input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
@@ -20,7 +20,7 @@ body:not([data-screen="match"]) .player-camera { display: none; }
 .camera-orbit-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
 .camera-zoom { display: flex; align-items: center; gap: 8px; min-height: 48px; }
 .camera-zoom input { width: 100%; min-width: 0; height: 48px; accent-color: var(--yellow); }
-#camera-status:not(:empty) { display: block; background: var(--ink); padding: 6px; border-left: 3px solid var(--yellow); }
+#camera-status:not(:empty) { display: block; background: var(--ink); padding: 4px; border-left: 3px solid var(--yellow); }
 @media (max-width: 560px) {
   .player-camera { bottom: max(132px, env(safe-area-inset-bottom)); width: 280px; }
 }

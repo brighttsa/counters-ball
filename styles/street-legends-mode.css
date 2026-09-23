@@ -2,9 +2,9 @@
 .legend-objective {
   position: absolute; left: 50%; transform: translateX(-50%);
   top: calc(max(14px, env(safe-area-inset-top)) + 92px);
-  width: min(440px, calc(100% - 32px)); padding: 6px 10px;
+  width: min(440px, calc(100% - 32px)); padding: 4px 8px;
   background: var(--ink); border-left: 3px solid var(--yellow);
-  font: 700 12px/1.4 var(--font-body); color: var(--paper); text-align: center;
+  font: 700 var(--text-xs)/1.4 var(--font-body); color: var(--paper); text-align: center;
   overflow-wrap: anywhere; pointer-events: none;
 }
 .legend-objective[hidden] { display: none; }

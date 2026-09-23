@@ -3,89 +3,91 @@
    whole screen fits one viewport, including a landscape phone. */
 .screen-levels.is-active {
   display: grid; grid-template-rows: auto minmax(0, 1fr) auto; align-items: stretch; justify-items: stretch;
-  height: 100dvh; overflow: hidden; gap: 14px;
-  padding: max(16px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  height: 100dvh; overflow: hidden; gap: 12px;
+  padding: max(16px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
   background: linear-gradient(90deg, rgb(var(--ink-rgb) / .85), rgb(var(--ink-rgb) / .4) 42%, transparent 70%);
 }
 .screen-header {
-  display: grid; align-items: center; gap: 12px; width: 100%; padding-bottom: 10px; border-bottom: 4px solid var(--yellow);
+  display: grid; align-items: center; gap: 12px; width: 100%; padding-bottom: 8px; border-bottom: 4px solid var(--yellow);
   grid-template-columns: auto minmax(0, 1fr) auto; /* back, title, stars on one row even on a phone */
 }
 .screen-header .btn { justify-self: start; }
-.star-total { justify-self: end; font: 15px var(--font-body); color: var(--yellow); text-shadow: var(--shadow-text); }
-.screen-levels .chalk-heading { font: 34px/1 var(--font-display); text-transform: uppercase; }
+.star-total { justify-self: end; font: var(--text-md) var(--font-body); color: var(--yellow); text-shadow: var(--shadow-text); }
+.screen-levels .chalk-heading { font: var(--text-2xl)/1 var(--font-display); text-transform: uppercase; }
 
 .circuit-hero {
-  align-self: center; width: min(460px, 100%); max-height: 100%; overflow-y: auto; padding: 18px 22px;
+  align-self: center; width: min(460px, 100%); max-height: 100%; overflow-y: auto; padding: 16px 20px;
   background: rgb(var(--ink-rgb) / .92); border-left: 6px solid var(--yellow); display: grid; gap: 4px; justify-items: start;
 }
 .circuit-venue-copy { max-width: none; text-shadow: none; }
-.circuit-venue-copy p { margin: 3px 0; line-height: 1.45; }
-.circuit-venue-copy h3 { margin: 6px 0 8px; font: 52px/1 var(--font-display); text-transform: uppercase; overflow-wrap: anywhere; }
-#circuit-venue-place { font-size: 18px; }
-#circuit-venue-opponent { font-size: 14px; font-weight: 700; }
-#circuit-venue-conditions, #circuit-venue-rules { font-size: 13px; color: var(--paper-muted); }
-#circuit-venue-note { font: 20px/1.3 var(--font-hand); max-width: 36ch; margin: 10px 0 4px; }
-#circuit-venue-stars { color: var(--yellow); font-size: 13px; }
-#circuit-enter { margin-top: 10px; }
+.circuit-venue-copy p { margin: 4px 0; line-height: 1.45; }
+.circuit-venue-copy h3 { margin: 4px 0 8px; font: var(--text-4xl)/1 var(--font-display); text-transform: uppercase; overflow-wrap: anywhere; }
+#circuit-venue-place { font-size: var(--text-lg); }
+#circuit-venue-opponent { font-size: var(--text-sm); font-weight: 700; }
+#circuit-venue-conditions, #circuit-venue-rules { font-size: var(--text-sm); color: var(--paper-muted); }
+#circuit-venue-note { font: var(--text-lg)/1.3 var(--font-hand); max-width: 36ch; margin: 8px 0 4px; }
+#circuit-venue-stars { color: var(--yellow); font-size: var(--text-sm); }
+#circuit-enter { margin-top: 8px; }
 #circuit-enter:disabled { background: var(--ink-pressed); color: var(--paper-muted); cursor: not-allowed; }
-#circuit-lock-note { font-size: 13px; margin: 6px 0 0; }
+#circuit-lock-note { font-size: var(--text-sm); margin: 4px 0 0; }
 #circuit-lock-note:empty { display: none; }
 
 /* The act strip: scrolls sideways and snaps to cards. */
 .screen-levels .level-grid {
-  display: flex; align-content: start; gap: 8px; padding: 2px 0 4px; overflow-x: auto; overflow-y: hidden;
+  display: flex; align-content: start; gap: 8px; padding: 4px 0 4px; overflow-x: auto; overflow-y: hidden;
   overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: var(--yellow) transparent;
-  scroll-padding-inline: 38px; /* a selected Act 1 scrolls in with its venue label still showing */
+  scroll-padding-inline: 40px; /* a selected Act 1 scrolls in with its venue label still showing */
   width: auto; margin-right: 60px; /* the sound button owns the bottom-right corner */
 }
 /* Size containment keeps a long venue name from setting the strip's height: it wraps to a second column instead. */
 .screen-levels .level-group {
-  flex: 0 0 30px; contain: size; display: grid; place-items: center; padding: 0 2px; writing-mode: vertical-rl; transform: rotate(180deg);
+  flex: 0 0 30px; contain: size; display: grid; place-items: center; padding: 0 4px; writing-mode: vertical-rl; transform: rotate(180deg);
   text-align: center;
-  font: 700 12px/1.15 var(--font-body); text-transform: uppercase; color: var(--yellow); border-right: 2px solid var(--yellow);
+  font: 700 var(--text-xs)/1.15 var(--font-body); text-transform: uppercase; color: var(--yellow); border-right: 2px solid var(--yellow);
 }
 .level-card {
-  position: relative; display: grid; flex: 0 0 176px; min-width: 0; height: 96px; padding: 10px 12px 10px 52px; gap: 2px; align-content: center;
+  position: relative; display: grid; flex: 0 0 176px; min-width: 0; min-height: 96px; /* grows to fit a two-line name and place */ padding: 8px 12px 8px 52px; gap: 4px; align-content: center;
   scroll-snap-align: start; text-align: left; cursor: pointer; color: var(--paper);
   background: rgb(var(--ink-rgb) / .9); border: 0; border-top: 3px solid var(--line); border-radius: 0;
   transition: transform 0.25s var(--spring), box-shadow 0.25s var(--ease-out);
 }
 .level-card:not([disabled]):active { background: var(--ink-pressed); }
-.screen-levels .level-card:not([disabled]):hover { background: var(--ink-raised); }
+@media (hover: hover) { .screen-levels .level-card:not([disabled]):hover { background: var(--ink-raised); } }
 .screen-levels .level-card[aria-pressed='true'] { border-top-color: var(--yellow); background: var(--ink-raised); }
 .level-card:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 .level-number {
   position: absolute; top: 50%; left: 12px; width: 30px; height: 30px; transform: translateY(-50%);
-  display: grid; place-items: center; font: 16px var(--font-display); color: var(--paper);
+  display: grid; place-items: center; font: var(--text-md) var(--font-display); color: var(--paper);
   background: var(--ink); border: 2px solid var(--accent);
 }
-.level-name { font: 18px/1.05 var(--font-display); letter-spacing: 0; text-transform: uppercase; overflow-wrap: anywhere; }
-.level-place { font-size: 12px; line-height: 1.4; color: var(--paper-muted); }
+.level-name { font: var(--text-md)/1.05 var(--font-display); letter-spacing: 0; text-transform: uppercase; overflow-wrap: anywhere; }
+.level-place { font-size: var(--text-xs); line-height: 1.4; color: var(--paper-muted); }
 .level-stars { min-height: 0; }
-.level-stars i { font-style: normal; font-size: 14px; margin-right: 2px; color: var(--line-strong); }
+.level-stars i { font-style: normal; font-size: var(--text-sm); margin-right: 4px; color: var(--line-strong); }
 .level-stars i.on { color: var(--yellow); }
 .level-card.locked { color: var(--paper-muted); cursor: not-allowed; }
+.level-card.locked .level-stars { display: none; } /* a locked act has no stars yet; its lock label says so */
 .level-card.locked .level-number { border-style: dashed; border-color: var(--line-strong); }
-.level-lock { display: block; width: fit-content; place-items: center; text-align: center; font: 700 12px/1.3 var(--font-body); text-transform: uppercase; color: var(--paper-muted); }
+.level-lock { display: block; width: fit-content; place-items: center; text-align: center; font: 700 var(--text-xs)/1.3 var(--font-body); text-transform: uppercase; color: var(--paper-muted); }
 
 @media (max-width: 560px) {
-  .screen-levels.is-active { gap: 10px; padding-inline: 16px; }
-  .screen-levels .chalk-heading { font-size: 24px; }
-  .circuit-hero { align-self: end; width: 100%; padding: 14px 16px; }
-  .circuit-venue-copy h3 { font-size: 34px; }
-  #circuit-venue-note { font-size: 18px; }
+  .screen-levels.is-active { gap: 8px; padding-inline: 16px; }
+  .screen-levels .chalk-heading { font-size: var(--text-xl); }
+  .circuit-hero { align-self: end; width: 100%; padding: 12px 16px; }
+  .circuit-venue-copy h3 { font-size: var(--text-2xl); }
+  #circuit-venue-note { font-size: var(--text-lg); }
 }
 /* Landscape phones: the table and the strip matter most, so the panel keeps only what decides the match. */
 @media (max-height: 520px) {
-  .screen-levels.is-active { gap: 8px; padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
-  .screen-levels .screen-header { padding-bottom: 6px; }
-  .screen-levels .chalk-heading { font-size: 24px; }
+  .screen-levels.is-active { gap: 8px; padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .screen-levels .screen-header { padding-bottom: 4px; }
+  .screen-levels .chalk-heading { font-size: var(--text-xl); }
   .screen-levels .screen-header .btn { min-height: 44px; padding-block: 8px; }
-  .circuit-hero { width: min(400px, 60%); padding: 10px 16px; gap: 2px; }
-  .circuit-venue-copy h3 { font-size: 30px; margin: 2px 0 4px; }
-  #circuit-venue-place, #circuit-venue-conditions, #circuit-venue-note { display: none; }
-  #circuit-enter { margin-top: 6px; min-height: 44px; }
-  .screen-levels .level-card { height: 80px; flex-basis: 170px; padding-block: 6px; }
-  .screen-levels .level-name { font-size: 15px; }
+  .circuit-hero { width: min(400px, 60%); padding: 8px 16px; gap: 4px; }
+  .circuit-venue-copy h3 { font-size: var(--text-2xl); margin: 4px 0 4px; }
+  #circuit-venue-place, #circuit-venue-conditions, #circuit-venue-note, #circuit-venue-stars { display: none; } /* the selected card shows its stars */
+  #circuit-enter { margin-top: 4px; min-height: 44px; }
+  .screen-levels .level-card { height: 80px; flex-basis: 170px; padding-block: 4px; }
+  /* A short card keeps the act name and its stars or lock; the badge and venue label carry the rest. */
+  .screen-levels .level-place { display: none; }
 }

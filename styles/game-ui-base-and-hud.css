@@ -21,6 +21,9 @@
   --home-color: #d6503a;
   --away-color: #4f86c6;
   /* Type */
+  /* Type scale: every font size in the UI is one of these steps. */
+  --text-xs: 12px; --text-sm: 14px; --text-md: 16px; --text-lg: 20px; --text-xl: 24px;
+  --text-2xl: 32px; --text-3xl: 44px; --text-4xl: 56px; --text-5xl: 72px; --text-hero: 112px;
   --font-display: 'Anton', Impact, 'Arial Narrow', sans-serif; /* webfont: phones ship no Impact */
   --font-body: 'Avenir Next', 'Segoe UI', Arial, sans-serif;
   --font-chalk: 'Cabin Sketch', 'Chalkboard SE', 'Comic Sans MS', cursive;
@@ -46,20 +49,19 @@ button, h1, h2, p, span { letter-spacing: 0; }
 #game-canvas.can-grab { cursor: grab; }
 #game-canvas.aiming { cursor: grabbing; }
 #film-frame { position: fixed; inset: 0; z-index: 5; pointer-events: none; box-shadow: inset 0 0 140px 30px rgb(var(--vignette-rgb) / .55); }
-.noscript { position: fixed; inset: auto 0 40% 0; text-align: center; font-size: 22px; }
+.noscript { position: fixed; inset: auto 0 40% 0; text-align: center; font-size: var(--text-xl); }
 
 /* ---- Buttons: slanted ink tags ---- */
 .btn {
   min-height: 48px; max-width: 100%; padding: 12px 20px; cursor: pointer;
-  font-family: var(--font-body); font-weight: 700; font-size: 15px; letter-spacing: 0; text-transform: uppercase;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--text-md); letter-spacing: 0; text-transform: uppercase;
   color: var(--paper); background: var(--ink); border: 0; border-radius: 0;
   clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
   box-shadow: none; transform: none; text-shadow: none; overflow-wrap: anywhere;
   transition: background 160ms ease, border-color 160ms ease;
 }
 .btn-primary { background: var(--yellow); color: var(--ink); }
-.btn-small { font-size: 13px; padding: 10px 14px; }
-.btn:hover { background: var(--paper); color: var(--ink); }
+.btn-small { font-size: var(--text-sm); padding: 8px 12px; }
 .btn:disabled { opacity: .45; }
 /* The slanted clip-path cuts off anything drawn outside the button, including the focus
    ring, so a keyboard-focused button squares up and shows its ring. */
@@ -68,17 +70,21 @@ button, h1, h2, p, span { letter-spacing: 0; }
 .btn:not(:disabled):active { filter: brightness(0.85); transform: translateY(1px); }
 /* Secondary buttons need their own fill: on an ink card, ink-on-ink text reads as a label, not a button. */
 .paper-card .btn:not(.btn-primary), .screen-title .btn:not(.btn-primary), .screen-header .btn:not(.btn-primary) { background: var(--ink-raised); color: var(--paper); }
-.paper-card .btn:not(.btn-primary):hover, .screen-title .btn:not(.btn-primary):hover, .screen-header .btn:not(.btn-primary):hover { background: var(--paper); color: var(--ink); }
+/* Hover only where a pointer really hovers: on touch screens a tapped button would stay lit. */
+@media (hover: hover) {
+  .btn:hover, .paper-card .btn:not(.btn-primary):hover, .screen-title .btn:not(.btn-primary):hover,
+  .screen-header .btn:not(.btn-primary):hover { background: var(--paper); color: var(--ink); }
+}
 
 .icon-btn {
   pointer-events: auto; width: 46px; height: 46px; display: grid; place-items: center; cursor: pointer;
   border-radius: 0; border: 2px solid var(--paper); background: var(--ink); color: var(--paper); box-shadow: none;
-  font-family: var(--font-display); font-size: 16px; backdrop-filter: blur(6px);
+  font-family: var(--font-display); font-size: var(--text-md); backdrop-filter: blur(6px);
   transition: transform 0.2s var(--spring), background 0.2s;
 }
 .icon-btn:active { transform: scale(0.92); }
 .icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
-.sound-btn { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); font-size: 20px; }
+.sound-btn { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); font-size: var(--text-lg); }
 .sound-btn.muted { opacity: 0.55; text-decoration: line-through; }
 
 /* ---- HUD ---- */
@@ -90,10 +96,10 @@ button, h1, h2, p, span { letter-spacing: 0; }
   background: var(--ink); border: 0; border-bottom: 4px solid var(--yellow); border-radius: 2px; backdrop-filter: blur(6px);
 }
 .team-name {
-  flex: 1; min-width: 0; font: 700 12px/1.2 var(--font-body); letter-spacing: 0; color: var(--paper-muted);
+  flex: 1; min-width: 0; font: 700 var(--text-xs)/1.2 var(--font-body); letter-spacing: 0; color: var(--paper-muted);
   white-space: normal; overflow-wrap: anywhere; text-align: center;
 }
-.score-digits { display: flex; gap: 8px; flex-shrink: 0; min-width: 74px; justify-content: center; font: 38px/1 var(--font-display); color: var(--paper); }
+.score-digits { display: flex; gap: 8px; flex-shrink: 0; min-width: 74px; justify-content: center; font: var(--text-2xl)/1 var(--font-display); color: var(--paper); }
 .score-digits .dash { opacity: 0.5; }
 .score-digits .pop { display: inline-block; color: var(--yellow); animation: score-confirm 300ms ease-out; }
 .turn-dot { width: 4px; height: 24px; flex-shrink: 0; transition: opacity 0.3s, transform 0.35s var(--spring); }
@@ -105,9 +111,9 @@ button, h1, h2, p, span { letter-spacing: 0; }
   position: absolute; top: calc(max(14px, env(safe-area-inset-top)) + 60px); left: 50%; transform: translateX(-50%);
   display: flex; align-items: baseline; justify-content: center; gap: 12px;
   width: min(440px, calc(100% - 32px)); height: 28px; padding: 4px 12px;
-  background: var(--ink); font: 12px var(--font-body); color: var(--paper-muted);
+  background: var(--ink); font: var(--text-xs) var(--font-body); color: var(--paper-muted);
 }
-.flick-meter b { font: 700 14px var(--font-body); color: var(--paper); min-width: 2ch; text-align: center; }
+.flick-meter b { font: 700 var(--text-sm) var(--font-body); color: var(--paper); min-width: 2ch; text-align: center; }
 .flick-meter b.low { color: var(--warning); }
 .flick-meter b.low-attention { animation: low-attention 600ms ease-out; }
 .pause-btn { position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); }
@@ -115,31 +121,31 @@ button, h1, h2, p, span { letter-spacing: 0; }
 .turn-banner {
   position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); left: 16px;
   width: auto; max-width: calc(100% - 88px); min-height: 28px; padding: 12px 16px;
-  font: 700 12px/1.4 var(--font-body); color: var(--paper); text-align: left; white-space: normal; overflow-wrap: anywhere;
+  font: 700 var(--text-xs)/1.4 var(--font-body); color: var(--paper); text-align: left; white-space: normal; overflow-wrap: anywhere;
   background: var(--ink); border-left: 5px solid var(--turn-color);
 }
 
 .goal-banner {
   position: absolute; bottom: 105px; left: 18px; max-width: calc(100% - 36px); width: fit-content;
-  display: grid; justify-items: start; gap: 8px; padding: 14px 20px; overflow: hidden; text-align: left;
+  display: grid; justify-items: start; gap: 8px; padding: 12px 20px; overflow: hidden; text-align: left;
   background: var(--ink); border-left: 6px solid var(--yellow);
 }
-.goal-word { max-width: 100%; font: 48px/.95 var(--font-display); letter-spacing: 0; overflow-wrap: anywhere; color: var(--yellow); paint-order: stroke fill; }
-.goal-sub { max-width: 36ch; font: 700 13px/1.4 var(--font-body); letter-spacing: 0; color: var(--paper); }
+.goal-word { max-width: 100%; font: var(--text-3xl)/.95 var(--font-display); letter-spacing: 0; overflow-wrap: anywhere; color: var(--yellow); paint-order: stroke fill; }
+.goal-sub { max-width: 36ch; font: 700 var(--text-sm)/1.4 var(--font-body); letter-spacing: 0; color: var(--paper); }
 .replay-controls {
   position: absolute; left: 50%; transform: translateX(-50%); bottom: 130px;
-  display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px); padding: 6px 8px;
+  display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px); padding: 4px 8px;
   background: var(--ink); border-left: 3px solid var(--yellow); pointer-events: auto;
 }
-#replay-label { font: 700 12px var(--font-body); text-transform: uppercase; overflow-wrap: anywhere; }
+#replay-label { font: 700 var(--text-xs) var(--font-body); text-transform: uppercase; overflow-wrap: anywhere; }
 .replay-controls .btn { flex-shrink: 0; }
 
 .tutorial-hand { position: absolute; left: 0; top: 0; transform: translate(var(--x, -999px), var(--y, -999px)); }
 .tutorial-ring { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--yellow); animation: tutorial-ring 1.8s ease-out infinite; }
 .tutorial-finger { position: absolute; left: -20px; top: -4px; width: 40px; filter: drop-shadow(0 6px 6px rgb(var(--ink-rgb) / .55)); animation: tutorial-drag 1.8s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
 .tutorial-tip {
-  position: absolute; left: -150px; top: 74px; max-width: min(280px, calc(100vw - 32px)); padding: 6px 14px; border-radius: 2px;
-  white-space: normal; font-family: var(--font-chalk); font-size: 16px; color: var(--paper); background: rgb(var(--ink-rgb) / .94); backdrop-filter: blur(4px);
+  position: absolute; left: -150px; top: 74px; max-width: min(280px, calc(100vw - 32px)); padding: 4px 12px; border-radius: 2px;
+  white-space: normal; font-family: var(--font-chalk); font-size: var(--text-md); color: var(--paper); background: rgb(var(--ink-rgb) / .94); backdrop-filter: blur(4px);
 }
 
 /* Chalk scoreboard: score and flicks live on the table, only the controls stay on screen. */
@@ -162,9 +168,9 @@ body.hud-chalk .scoreboard, body.hud-chalk .flick-meter { display: none; }
 }
 @media (max-width: 560px) {
   .scoreboard, .flick-meter { left: 12px; transform: none; width: calc(100% - 78px); }
-  .scoreboard { gap: 5px; padding-inline: 8px; }
-  .team-name { font-size: 11px; }
-  .goal-word { font-size: 34px; }
+  .scoreboard { gap: 4px; padding-inline: 8px; }
+  .team-name { font-size: var(--text-xs); }
+  .goal-word { font-size: var(--text-2xl); }
 }
 @media (max-height: 500px) {
   .scoreboard, .flick-meter { width: 230px; left: 12px; transform: none; }
