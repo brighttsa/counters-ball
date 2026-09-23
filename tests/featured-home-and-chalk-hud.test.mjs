@@ -51,9 +51,10 @@ test('saved progress keeps only a valid last act and scoreboard style', (t) => {
       value: { localStorage: { getItem: () => JSON.stringify(value) } } });
     return loadProgress();
   };
-  assert.deepEqual(load({ stars: {}, lastLegendAct: 'legends-kiosk-act-2', hudStyle: 'chalk' }),
-    { stars: {}, muted: false, lastLegendAct: 'legends-kiosk-act-2', hudStyle: 'chalk' });
-  assert.deepEqual(load({ stars: {}, lastLegendAct: 7, hudStyle: 'neon' }), { stars: {}, muted: false });
+  assert.deepEqual(load({ stars: {}, lastLegendAct: 'legends-kiosk-act-2', hudStyle: 'broadcast' }),
+    { stars: {}, muted: false, lastLegendAct: 'legends-kiosk-act-2', hudStyle: 'broadcast' });
+  assert.deepEqual(load({ stars: {}, lastLegendAct: 7, hudStyle: 'neon' }), { stars: {}, muted: false },
+    'unknown styles fall back to the chalk default');
 });
 
 test('remaining flicks chalk as gates of five, a number past twenty-five', () => {

@@ -18,7 +18,7 @@ export class MatchHud {
     this.lowAttention = new Set();
     this.resultTimers = [];
     this.table = null;
-    this.style = 'broadcast';
+    this.style = 'chalk';
   }
 
   /** A per-match scoreboard chalked on the table; mirrors score and flicks while attached. */
@@ -27,9 +27,9 @@ export class MatchHud {
     board?.setVisible(this.style === 'chalk');
   }
 
-  /** 'broadcast' keeps the screen scoreboard; 'chalk' moves score and flicks onto the table. */
+  /** 'chalk' (default) puts score and flicks on the table; 'broadcast' keeps the screen scoreboard. */
   setStyle(style) {
-    this.style = style === 'chalk' ? 'chalk' : 'broadcast';
+    this.style = style === 'broadcast' ? 'broadcast' : 'chalk';
     document.body.classList.toggle('hud-chalk', this.style === 'chalk');
     $('hud-style-toggle').textContent = `Scoreboard: ${this.style === 'chalk' ? 'Chalk' : 'Broadcast'}`;
     this.table?.setVisible(this.style === 'chalk');

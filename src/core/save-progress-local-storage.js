@@ -14,7 +14,7 @@ export function loadProgress() {
         ? Object.fromEntries(Object.entries(parsed.stars).filter(([, value]) => Number.isInteger(value) && value >= 0 && value <= 3)) : {},
       muted: Boolean(parsed?.muted),
       ...(typeof parsed?.lastLegendAct === 'string' && { lastLegendAct: parsed.lastLegendAct }),
-      ...(parsed?.hudStyle === 'chalk' && { hudStyle: 'chalk' }),
+      ...(parsed?.hudStyle === 'broadcast' && { hudStyle: 'broadcast' }), // chalk is the default
     };
   } catch {
     return fresh;
