@@ -4,6 +4,7 @@
 import * as THREE from 'three';
 import { MAX_PULL, MAX_FLICK_SPEED } from '../core/pitch-dimensions-and-constants.js';
 import { FlickGestureSampler } from './flick-gesture-sampler.js';
+import { chooseTouchCap } from './touch-cap-selection.js';
 
 const MIN_FLICK_POWER = 0.06;
 
@@ -25,6 +26,12 @@ export class HumanDragAimInput {
     this.projected = new THREE.Vector3();
     this.dragCamera = this.camera.clone();
     this.gesture = new FlickGestureSampler();
+    if (typeof document !== 'undefined') {
+      this.selectionNotice = document.createElement('output');
+      this.selectionNotice.className = 'touch-selection-status';
+      this.selectionNotice.setAttribute('aria-live', 'polite');
+      document.body.append(this.selectionNotice);
+    }
 
     this.listeners = {
       pointerdown: (e) => this.onDown(e),
@@ -53,24 +60,28 @@ export class HumanDragAimInput {
     this.aimRay(e);
     const meshes = this.entries.map((entry) => entry.mesh);
     const hits = this.raycaster.intersectObjects(meshes, false);
-    if (hits.length) return this.entries[meshes.indexOf(hits[0].object)];
-    if (e.pointerType !== 'touch') return null;
+    const direct = hits.length ? this.entries[meshes.indexOf(hits[0].object)] : null;
+    if (e.pointerType !== 'touch') return direct;
+    if (direct && !this.canControl(direct.side)) return null;
     const rect = this.domElement.getBoundingClientRect();
-    let nearest = null;
-    let distance = 24;
+    const candidates = [];
     for (const entry of this.entries) {
       if (!this.canControl(entry.side)) continue;
       entry.mesh.getWorldPosition(this.projected).project(this.camera);
+      if (this.projected.z < -1 || this.projected.z > 1) continue;
       const x = rect.left + (this.projected.x + 1) * rect.width / 2;
       const y = rect.top + (1 - this.projected.y) * rect.height / 2;
       const d = Math.hypot(x - e.clientX, y - e.clientY);
-      if (d < distance) { nearest = entry; distance = d; }
+      candidates.push({ entry, distance: d });
     }
-    return nearest;
+    const choice = chooseTouchCap(candidates);
+    if (this.selectionNotice) this.selectionNotice.textContent = choice.ambiguous ? 'Selection unclear' : '';
+    return choice.entry;
   }
 
   onDown(e) {
     if (this.selected || e.button !== 0) return; // a second finger must not hijack the drag
+    if (this.selectionNotice) this.selectionNotice.textContent = '';
     const entry = this.pickEntry(e);
     if (!entry || !this.canControl(entry.side)) return;
     this.dragCamera.copy(this.camera);
@@ -84,6 +95,7 @@ export class HumanDragAimInput {
     this.pull.set(0, 0);
     this.domElement.classList.add('aiming');
     this.visuals.show(entry.body, this.pull);
+    if (this.selectionNotice && e.pointerType === 'touch') this.selectionNotice.textContent = 'Cap selected';
     this.onAimStart?.(entry);
   }
 
@@ -141,6 +153,7 @@ export class HumanDragAimInput {
       this.domElement.releasePointerCapture(pointerId);
     }
     this.visuals.hide();
+    if (this.selectionNotice) this.selectionNotice.textContent = '';
     this.domElement.classList.remove('aiming');
     if (wasAiming) this.onAimEnd?.();
   }
@@ -151,5 +164,6 @@ export class HumanDragAimInput {
     for (const [type, fn] of Object.entries(this.listeners)) this.domElement.removeEventListener(type, fn);
     window.removeEventListener('blur', this.cancelGesture);
     window.removeEventListener('resize', this.cancelGesture);
+    this.selectionNotice?.remove();
   }
 }

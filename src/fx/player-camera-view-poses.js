@@ -12,7 +12,7 @@ export function loadCameraPreferences(storage) {
 
 const corners = [-2.25, 2.25].flatMap(x => [-1.45, 1.45].map(z => new THREE.Vector3(x, 0, z)));
 
-export function fitCameraPose(camera, target, direction, points = corners, minimum = 3.2) {
+export function fitCameraPose(camera, target, direction, points = corners, minimum = 3.2, bounds = { x: .88, top: .62, bottom: -.76 }) {
   const probe = camera.clone();
   probe.fov = 42; probe.updateProjectionMatrix();
   const dir = direction.clone().normalize();
@@ -22,7 +22,7 @@ export function fitCameraPose(camera, target, direction, points = corners, minim
     probe.lookAt(target); probe.updateMatrixWorld(true);
     if (points.every(point => {
       const p = point.clone().project(probe);
-      return Math.abs(p.x) < .88 && p.y < .62 && p.y > -.76 && p.z < 1;
+      return Math.abs(p.x) < bounds.x && p.y < bounds.top && p.y > bounds.bottom && p.z < 1;
     })) break;
   }
   return { position: target.clone().addScaledVector(dir, distance), target: target.clone() };
@@ -42,5 +42,18 @@ export function playerCameraPose(camera, mode, session, selected) {
   const direction = mode === 'tactical' ? new THREE.Vector3(.01, 1, .09)
     : new THREE.Vector3(.35, 2.62, 2.8);
   if (portrait) direction.set(-direction.z, direction.y, direction.x);
+  const viewport = typeof window !== 'undefined' ? window : null;
+  if (viewport?.innerWidth <= 1100 || viewport?.matchMedia?.('(pointer: coarse)').matches) {
+    // Fit the rails and complete goal structures, not the decorative tabletop apron.
+    const end = session.level?.mechanic?.type === 'departing-lorry' ? 2.08 : 1.94;
+    const play = [-end, end].flatMap(x => [-1.24, 1.24].flatMap(z =>
+      [0, .28].map(y => new THREE.Vector3(x, y, z))));
+    const height = viewport.innerHeight;
+    if (!portrait && height <= 600 && mode !== 'tactical') direction.y = 1.85;
+    const top = portrait ? 136 : height <= 600 ? 80 : 136;
+    const bottom = portrait ? 144 : height <= 600 ? 72 : 144;
+    return fitCameraPose(camera, new THREE.Vector3(), direction, play, 2.6,
+      { x: .90, top: Math.max(.15, 1 - 2 * top / height), bottom: -Math.max(.15, 1 - 2 * bottom / height) });
+  }
   return fitCameraPose(camera, new THREE.Vector3(0, 0, 0), direction);
 }

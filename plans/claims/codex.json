@@ -2,15 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Remember Schoolyard winning ruler banks",
+  "task": "Pitch-first mobile framing and touch clarity",
   "status": "released",
   "paths": [
-    "src/core/schoolyard-shot-memory.js",
-    "src/gameplay/match-session-feedback-hooks.js",
-    "src/ui/ui-menu-screens-title-levels-intro.js",
-    "tests/schoolyard-shot-memory.test.mjs",
+    "src/fx/player-camera-view-poses.js",
+    "src/gameplay/human-drag-aim-input.js",
+    "src/gameplay/touch-cap-selection.js",
+    "styles/mobile-tablet-match-layout.css",
+    "tests/mobile-shot-confidence.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T06:20:51.560Z",
-  "head": "dcbf060fcc3d79d3184d0ab5b4c4428710ba2cbd"
+  "updatedAt": "2026-09-23T06:39:33.499Z",
+  "head": "53e830acdd947a0085c63441caaf831d827dd04d"
 }
