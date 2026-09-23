@@ -2,14 +2,19 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Match camera usability and touch clarity",
+  "task": "Landscape-first mobile and tablet play",
   "status": "released",
   "paths": [
-    "src/ui/player-camera-controls.js",
-    "styles/player-camera-controls.css",
-    "tests/player-camera-controls.test.mjs",
-    "plans/agent-handoff-board.md"
+    "src/main.js",
+    "src/ui/match-orientation-prompt.js",
+    "styles/mobile-tablet-match-layout.css",
+    "index.html",
+    "tests/match-orientation-prompt.test.mjs",
+    "tests/ink-impact-visual-check.html",
+    "tests/ink-impact-visual-check.js",
+    "plans/agent-handoff-board.md",
+    "plans/reports/mobile-tablet-landscape-play.md"
   ],
-  "updatedAt": "2026-09-23T01:19:07.771Z",
-  "head": "8b1ea97b71d9733d2bcb52e38d1daf2380f18fae"
+  "updatedAt": "2026-09-23T06:13:15.837Z",
+  "head": "fe34aefbccf565b286e76fe3f59e0a73eec591c1"
 }

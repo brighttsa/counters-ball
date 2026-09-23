@@ -6,6 +6,7 @@ import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js';
+import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
@@ -27,8 +28,8 @@ const hud = new MatchHud();
 const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false };
+const orientation = createMatchOrientationPrompt();
 new PlayerCameraController(app, cameraDirector);
-// Street Legends is its own track of acts; campaign and 2-player share the classic circuit.
 const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : CAMPAIGN_LEVELS);
 const unlockedIn = (mode, i) => mode === 'versus'
   || (mode === 'legends' ? isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, i) : isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
@@ -97,6 +98,7 @@ function prepareMatch(index) {
   const track = trackFor(app.mode);
   const level = track[index];
   if (!level || !unlockedIn(app.mode, index)) return showLevels();
+  if (orientation.offer(() => prepareMatch(index))) return;
   const versus = app.mode === 'versus';
   app.levelIndex = index;
   replaceSession({
@@ -193,5 +195,4 @@ menus.setSoundIcon(progress.muted);
 showTitle();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post });
 
-// Inspection handle for automated verification.
 window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions };

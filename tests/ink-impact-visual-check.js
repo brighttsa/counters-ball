@@ -27,14 +27,24 @@ document.getElementById('camera-drag').onclick = () => {
 document.getElementById('camera-release').onclick = () => { if (releaseEvent) session().input.onUp(releaseEvent); };
 frame.onload = () => { handle = frame.contentWindow.__countersBall; status.textContent = handle ? 'Ready' : 'Boot failed'; };
 document.getElementById('width').onchange = e => {
-  frame.style.width = `${e.target.value}px`; frame.style.height = e.target.value === '1280' ? '720px' : '844px';
+  frame.style.width = `${e.target.value}px`;
+  frame.style.height = `${({ 568: 320, 844: 390, 768: 1024, 1024: 768, 1280: 720 })[e.target.value] ?? 844}px`;
+};
+document.getElementById('layout-check').onclick = () => {
+  const doc = frame.contentDocument;
+  const names = ['.scoreboard', '.flick-meter', '.legend-objective', '.pause-btn', '.turn-banner', '.camera-toolbar', '.sound-btn'];
+  const boxes = names.map(name => [name, doc.querySelector(name)?.getBoundingClientRect()]).filter(([, r]) => r?.width && r?.height);
+  const overlaps = boxes.flatMap(([a, x], i) => boxes.slice(i + 1).filter(([, y]) =>
+    x.left < y.right && x.right > y.left && x.top < y.bottom && x.bottom > y.top).map(([b]) => `${a}/${b}`));
+  status.textContent = JSON.stringify({ width: frame.clientWidth, height: frame.clientHeight, overlaps,
+    clipped: boxes.filter(([, r]) => r.left < 0 || r.top < 0 || r.right > frame.clientWidth || r.bottom > frame.clientHeight).map(([n]) => n) });
 };
 document.getElementById('home').onclick = () => handle.actions['back-to-title']();
 document.getElementById('start').onclick = () => {
   handle.app.mode = document.getElementById('mode').value;
   const track = handle.app.mode === 'legends' ? handle.legends : handle.levels;
   handle.actions['select-level']({ dataset: { index: String(track.findIndex(l => l.backdrop === document.getElementById('venue').value)) } });
-  handle.actions['kick-off']();
+  if (!frame.contentDocument.querySelector('.match-orientation-prompt[open]')) handle.actions['kick-off']();
 };
 document.getElementById('advance').onclick = () => {
   const s = session();
