@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-09-23 — Street Level checked on every Street Legends table
+
+### Fixed
+- Harmattan Haze: Street Level always keeps the goal lorry in view (it moves between stops, and it is what you
+  aim at); before, the lorry sat under the scoreboard's objective line.
+- Every camera now keeps the table clear of where the scoreboard and its objective line really end on screen.
+  On acts whose objective runs to three lines, the fixed reserve used to let it cover the far goal.
+
 ## 2026-09-23 — Closer Street Level camera
 
 ### Changed

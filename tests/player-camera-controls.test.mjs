@@ -37,6 +37,28 @@ test('camera moves the game makes on its own glide instead of whipping round', (
   assert.equal(cameraTransitionBlend(1 / 60, false, CAMERA_GLIDE_RATE), 1, 'reduced motion still cuts');
 });
 
+test('Street keeps the goal lorry in view on lorry acts, wherever it has stopped', () => {
+  const previous = globalThis.window;
+  try {
+    for (const [width, height] of [[1048, 751], [1280, 720], [844, 390], [390, 844]]) {
+      globalThis.window = { innerWidth: width, innerHeight: height };
+      const { top } = hudReservePixels(width, height);
+      for (const stop of [-.6, 0, .6]) {
+        const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
+        const session = { rules: { turn: 'home' }, level: { mechanic: { type: 'departing-lorry' } },
+          entries: [{ side: 'home', body: { pos: new THREE.Vector2(-.4, .2) } }],
+          physics: { goalCenters: { 1: stop } }, ballBody: { pos: new THREE.Vector2(0, 0) } };
+        const pose = playerCameraPose(camera, 'street', session);
+        camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+        for (const dz of [-.3, .3]) {
+          const p = new THREE.Vector3(1.785, .21, stop + dz).project(camera);
+          assert.ok(Math.abs(p.x) < .96 && (1 - p.y) / 2 * height > top - 1, `lorry clear of the scoreboard at ${width}x${height}, stop ${stop}`);
+        }
+      }
+    }
+  } finally { globalThis.window = previous; }
+});
+
 test('Street stays behind the viewer\'s caps while the computer takes its turn', () => {
   const camera = new THREE.PerspectiveCamera(42, 844 / 390, .1, 100);
   const home = { side: 'home', body: { pos: new THREE.Vector2(-.4, .2) } };

@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Closer Street camera",
+  "task": "Street keeps the lorry goal in view",
   "status": "released",
   "paths": [
     "src/fx/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T17:25:51.351Z",
-  "head": "d522aad3c50ce948d1545b10e5000c97d2b1ab77"
+  "updatedAt": "2026-09-23T17:33:18.267Z",
+  "head": "8d3f1ad6a2b6122fe17898bbb51b025f65c88084"
 }

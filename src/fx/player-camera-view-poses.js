@@ -77,12 +77,22 @@ function centredPitchPose(camera, direction, points, bounds, minimum = 2.6) {
   return pose;
 }
 
+// How far down the screen the scoreboard and its objective line really reach. The objective runs to
+// two or three lines on some Street Legends acts, deeper than the fixed reserve.
+function measuredHudBottom() {
+  if (typeof document === 'undefined') return 0;
+  return Math.max(0, ...['.scoreboard', '#hud-objective'].map(selector => {
+    const box = document.querySelector(selector)?.getBoundingClientRect();
+    return box?.height ? box.bottom : 0;
+  }));
+}
+
 function viewBounds(top, bottom) {
   const viewport = typeof window !== 'undefined' ? window : null;
   if (!viewport?.innerHeight) return { x: .95, top: .62, bottom: -.76 };
   const { innerWidth: width, innerHeight: height } = viewport;
   const reserve = hudReservePixels(width, height);
-  const topPx = top ?? reserve.top, bottomPx = bottom?.(reserve) ?? reserve.bottom;
+  const topPx = top ?? Math.max(reserve.top, measuredHudBottom() + 8), bottomPx = bottom?.(reserve) ?? reserve.bottom;
   return { x: .95, top: Math.max(.15, 1 - 2 * topPx / height), bottom: -Math.max(.15, 1 - 2 * bottomPx / height) };
 }
 
@@ -153,6 +163,11 @@ export function playerCameraPose(camera, mode, session, selected, viewer = sessi
     const rim = [[-1, 0], [1, 0], [0, -1], [0, 1]].map(([dx, dz]) => origin.clone().add(new THREE.Vector3(dx * .1, 0, dz * .1)));
     const mouth = [-.26, .26].flatMap(dz => [0, .24].map(y => goal.clone().setX(side * 1.5).add(new THREE.Vector3(0, y, dz))))
       .map(post => (post.distanceTo(ball) > STREET_LOOK_AHEAD ? ball.clone().add(post.sub(ball).setLength(STREET_LOOK_AHEAD)) : post));
+    // On lorry acts the goal rides a lorry that changes stop between turns, so the lorry's side boards
+    // (the scoring mouth) are always framed, however far away, or the player can't see what to aim at.
+    if (session.level?.mechanic?.type === 'departing-lorry') {
+      mouth.push(...[-.3, .3].flatMap(dz => [0, .26].map(y => goal.clone().setX(side * 1.785).add(new THREE.Vector3(0, y, dz)))));
+    }
     return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? .8 : .55, .28),
       [...rim, ball, ...mouth], 1.2, viewBounds(undefined, r => Math.min(r.bottom, 60)));
   }
