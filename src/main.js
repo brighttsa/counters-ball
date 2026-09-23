@@ -10,7 +10,8 @@ import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
-import { MatchHud } from './ui/ui-match-hud-pause-and-results.js';
+import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js';
+import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
 import { STREET_LEGENDS_ACTS, isLegendActUnlocked } from './levels/street-legends-acts-and-unlocks.js';
@@ -27,6 +28,7 @@ const cameraDirector = new CameraDirector(camera, scene);
 const progress = loadProgress();
 const sound = new ProceduralSoundBoard({ muted: progress.muted });
 const hud = new MatchHud();
+const resultsCard = new FullTimeResultsCard();
 const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false };
@@ -38,7 +40,7 @@ const unlockedIn = (mode, i) => mode === 'versus'
 const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress);
 
 function replaceSession(options, sessionHud) {
-  hud.cancelResultReveal(); // leaving results early must not ding stars into the next screen
+  resultsCard.cancelReveal();
   app.session?.dispose();
   app.paused = false;
   sound.setPaused?.(false);
@@ -136,11 +138,12 @@ function showResults(result) {
   const campaign = app.mode !== 'versus';
   const improved = campaign && recordLevelStars(progress, level.id, result.stars);
   hud.show(false);
-  hud.fillResults(result, level, app.mode, {
+  resultsCard.fill(result, level, app.mode, {
     hasNext: campaign && result.stars > 0 && app.levelIndex < track.length - 1,
     isFinalVenue: app.levelIndex === track.length - 1,
     improved,
     onStar: (i) => sound.starDing(i),
+    homeColour: HOME_TEAM.hudColor,
   });
   menus.show('results');
 }

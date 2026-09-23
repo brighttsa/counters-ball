@@ -25,31 +25,41 @@ globalThis.document = {
 };
 globalThis.window = { matchMedia: () => ({ matches: false }) };
 
-const { MatchHud } = await import('../src/ui/ui-match-hud-pause-and-results.js');
+const { FullTimeResultsCard, fullTimeNote } = await import('../src/ui/ui-full-time-results-card.js');
 const { fillVenuePreview } = await import('../src/ui/ui-circuit-venue-preview.js');
 const act = (backdrop, number) => STREET_LEGENDS_ACTS.find((a) => a.backdrop === backdrop && a.legend.act === number);
 
 test('a Street Legends win away from Roadside never mentions the toll booms', () => {
-  const hud = new MatchHud();
+  const card = new FullTimeResultsCard();
   const level = act('veranda', 1);
-  hud.fillResults({ winner: 'home', scores: { home: 1, away: 0 }, starFlags: [true, true, false] }, level, 'legends',
-    { hasNext: true, improved: true, isFinalVenue: false, onStar() {} });
-  hud.cancelResultReveal();
+  card.fill({ winner: 'home', scores: { home: 1, away: 0 }, starFlags: [true, true, false] }, level, 'legends',
+    { hasNext: true, improved: true, isFinalVenue: false, onStar() {}, homeColour: '#d6503a' });
+  card.cancelReveal();
   const note = document.getElementById('results-note').textContent;
   assert.doesNotMatch(note, /boom/i);
   assert.equal(note, `${level.opponent.kid} gives you the table. Next act unlocked.`);
 });
 
 test('the full-time score is chalked per side in team colours', () => {
-  const hud = new MatchHud();
+  const card = new FullTimeResultsCard();
   const level = act('kiosk', 2);
-  hud.fillResults({ winner: 'away', scores: { home: 0, away: 2 }, starFlags: [false, false, false] }, level, 'legends',
-    { hasNext: false, improved: false, isFinalVenue: false, onStar() {} });
+  card.fill({ winner: 'away', scores: { home: 0, away: 2 }, starFlags: [false, false, false] }, level, 'legends',
+    { hasNext: false, improved: false, isFinalVenue: false, onStar() {}, homeColour: '#d6503a' });
   const score = document.getElementById('results-score');
   assert.equal(score.textContent, '0 — 2');
   const [home, , away] = score.children;
   assert.equal(home.className, 'chalk-side');
+  assert.equal(home.style.getPropertyValue('--chalk-team'), '#d6503a');
   assert.equal(away.style.getPropertyValue('--chalk-team'), level.opponent.team.hudColor);
+});
+
+test('running out of flicks in a solo challenge never names the Roadside lanes', () => {
+  const solo = STREET_LEGENDS_ACTS.filter((a) => a.rules.awayFlickLimit === 0);
+  assert.ok(solo.length > 0);
+  for (const level of solo) {
+    const note = fullTimeNote({ winner: null }, level, 'legends', {});
+    assert.doesNotMatch(note, /amber|lane|boom/i, level.id);
+  }
 });
 
 test('the venue panel names the opponent in one consistent style', () => {

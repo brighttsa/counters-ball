@@ -1,5 +1,5 @@
-// In-match HUD (scoreboard, flick counts, turn banner, goal banner, tutorial
-// hand) and the full-time results card with stars revealed one by one.
+// In-match HUD: scoreboard (on screen or chalked on the table), flick counts,
+// turn banner, event callouts, replay label and the tutorial hand.
 import { SIDE_HOME, SIDE_AWAY } from '../core/pitch-dimensions-and-constants.js';
 import { KineticEventCallout } from './ui-kinetic-event-callout.js';
 
@@ -16,7 +16,6 @@ export class MatchHud {
     this.root = $('hud');
     this.callout = new KineticEventCallout($('goal-banner'));
     this.lowAttention = new Set();
-    this.resultTimers = [];
     this.table = null;
     this.style = 'chalk';
   }
@@ -132,69 +131,5 @@ export class MatchHud {
 
   hideTutorial() {
     $('tutorial-hand').hidden = true;
-  }
-
-  /** Full-time score written in the same team-tinted chalk as the table. */
-  chalkResultsScore(scores, awayColour) {
-    const side = (value, colour) => {
-      const span = document.createElement('span');
-      span.className = 'chalk-side';
-      span.style.setProperty('--chalk-team', colour);
-      span.textContent = value;
-      return span;
-    };
-    $('results-score').replaceChildren(side(scores.home, this.root.style.getPropertyValue('--home-color') || '#d6503a'),
-      ' — ', side(scores.away, awayColour));
-  }
-
-  cancelResultReveal() {
-    this.resultTimers.forEach(clearTimeout);
-    this.resultTimers = [];
-  }
-
-  fillResults(result, level, mode, { hasNext, improved, isFinalVenue, onStar }) {
-    this.cancelResultReveal();
-    const versus = mode === 'versus';
-    const { winner, scores, starFlags } = result;
-    const kid = level.opponent.kid;
-    const title = $('results-title');
-
-    title.textContent = winner === null ? 'Draw!'
-      : versus ? `${winner === SIDE_HOME ? 'Accra Reds' : level.opponent.team.name} win!`
-        : winner === SIDE_HOME ? 'You win!' : `${kid} wins`;
-    title.dataset.outcome = winner === null ? 'draw' : versus || winner === SIDE_HOME ? 'win' : 'loss';
-    this.chalkResultsScore(scores, level.opponent.team.hudColor);
-    $('results-opponent').textContent = level.legend ? `Street Legends · ${level.name} · Act ${level.legend.act}: ${level.actTitle}`
-      : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
-
-    const labels = ['Win the match', 'Keep a clean sheet', `Win within ${level.rules.threeStarFlicks} flicks`];
-    const list = $('results-stars');
-    list.hidden = versus;
-    list.replaceChildren(...labels.map((label) => {
-      const li = document.createElement('li');
-      li.innerHTML = '<span class="result-star" aria-hidden="true">★</span><span class="result-star-label"></span>';
-      li.lastChild.textContent = label;
-      return li;
-    }));
-    if (!versus) {
-      starFlags.forEach((earned, i) => {
-        if (!earned) return;
-        this.resultTimers.push(setTimeout(() => {
-          list.children[i].classList.add('earned');
-          list.children[i].setAttribute('aria-label', `${labels[i]}: earned`);
-          onStar(i);
-        }, 650 + i * 450));
-      });
-    }
-
-    let note = '';
-    const legend = level.legend;
-    if (!versus && winner === SIDE_HOME) note = legend ? (legend.act === legend.acts ? `Street Legend of ${level.place}!` : `${kid} gives you the table. Next act unlocked.`)
-      : isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
-    else if (legend && level.rules.awayFlickLimit === 0) note = 'Out of flicks. Watch the amber lane and set the ball up for it.';
-    else if (!versus) note = winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;
-    $('results-note').textContent = note;
-    $('btn-next').hidden = !hasNext;
-    $('btn-next').textContent = legend ? 'Next Act' : 'Next Pitch';
   }
 }
