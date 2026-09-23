@@ -2,15 +2,11 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Remove home cap print",
+  "task": "Codex handoff queue",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/ui/ui-menu-screens-title-levels-intro.js",
-    "styles/ink-impact-home.css",
-    "plans/agent-handoff-board.md",
-    "docs/project-changelog.md"
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T12:05:13.123Z",
-  "head": "e7f1a0ef47d5141338661b3c8574124c14d4bd11"
+  "updatedAt": "2026-09-23T12:06:15.733Z",
+  "head": "20f696753837df6991a68e733b99a31fe2e5f1e5"
 }

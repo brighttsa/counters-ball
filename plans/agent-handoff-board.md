@@ -27,6 +27,9 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 ## Up next (unclaimed — pick one, move it to In progress)
 | Task | Suggested owner | Notes |
 |---|---|---|
+| Deploy the KONK! rebrand | either (owner must say "push live") | Live site is still the Counters Ball build (`76d0c69` era). From Claude's clone: `npx vercel deploy --prod` (CLI signed in, folder linked via git-ignored `.vercel/project.json`; `.vercelignore` publishes only index.html/assets/src/styles). After deploy, check `og:image` preview of a challenge link in WhatsApp. |
+| Share card corner art | either | `results-share-card-canvas.js` still paints the old red cap print (`paintInkCapPoster`) faintly in a corner; owner removed it from the home screen as competing with the KONK! cap. Ask whether to drop it or use the KONK! cap/paper ball. |
+| KONK! brand re-exports | either | Art source is `plans/visuals/konk-brand-identity.html`; `node plans/visuals/konk-brand/build-konk-brand-assets.mjs` (needs Google Chrome) re-exports SVG/PNG and the game copies in `assets/`. Don't hand-edit `assets/konk-logo.svg`. |
 | Measure frame rate on a phone-sized viewport with the pane visible; tune shadow map size / bokeh if under 50 fps | either | 4096² sun shadow + BokehPass are the likely costs |
 | Physical-phone pass (iOS Safari + Android Chrome) | user + either | Landscape-first, portrait available. Verify intended cap selection (28px halo, 6px separation), aiming comfort, shot outcomes, camera modes, replay skip, audio, sustained fps/heat. Reduce ambiguity band if clear intended touches are refused; enlarge if wrong selections persist. |
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Bot proxy draws 53–62%; decide golden-flick sudden death vs +2 flicks after real play |
