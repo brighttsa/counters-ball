@@ -2,16 +2,17 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Pitch-first mobile framing and touch clarity",
+  "task": "First-shot guidance and readable match information",
   "status": "released",
   "paths": [
-    "src/fx/player-camera-view-poses.js",
-    "src/gameplay/human-drag-aim-input.js",
-    "src/gameplay/touch-cap-selection.js",
-    "styles/mobile-tablet-match-layout.css",
-    "tests/mobile-shot-confidence.test.mjs",
+    "src/core/first-shot-guidance.js",
+    "src/gameplay/match-session-feedback-hooks.js",
+    "src/gameplay/match-session-runtime.js",
+    "styles/game-ui-base-and-hud.css",
+    "styles/street-legends-mode.css",
+    "tests/first-shot-guidance.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T06:39:33.499Z",
-  "head": "53e830acdd947a0085c63441caaf831d827dd04d"
+  "updatedAt": "2026-09-23T12:49:27.226Z",
+  "head": "3db9a0affaf9849ad89d1f3709e8233742a03242"
 }

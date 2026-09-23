@@ -148,8 +148,7 @@ button, h1, h2, p, span { letter-spacing: 0; }
   white-space: normal; font-family: var(--font-chalk); font-size: var(--text-md); color: var(--paper); background: rgb(var(--ink-rgb) / .94); backdrop-filter: blur(4px);
 }
 
-/* Chalk scoreboard: score and flicks live on the table, only the controls stay on screen. */
-body.hud-chalk .scoreboard, body.hud-chalk .flick-meter { display: none; }
+/* Table chalk remains decorative; screen-space counters stay readable in every camera. */
 
 @keyframes tutorial-ring { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.6); opacity: 0; } }
 @keyframes tutorial-drag {

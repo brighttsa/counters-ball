@@ -61,7 +61,7 @@ export class MatchSession {
       camera: ctx.camera, domElement: ctx.canvas, visuals: this.visuals, juice: this.juice,
       canControl: (side) => !this.paused && !this.rules.isAi(side) && this.rules.canFlick(side) && !this.mechanic?.busy,
       onFlick: (entry, velocity, gesture) => this.flick(entry, velocity, gesture),
-      onAimStart: () => { this.cameraDirector.setAimLocked(true); this.hideTutorial(); this.sound.event?.('aimStart'); },
+      onAimStart: () => { this.cameraDirector.setAimLocked(true); this.hud.hideTutorial(); this.sound.event?.('aimStart'); },
       onAimEnd: () => this.cameraDirector.setAimLocked(false),
     });
     this.input.setEntries(this.entries);
@@ -146,7 +146,7 @@ export class MatchSession {
     this.stage.backdrop.update(t, realDt);
     this.mechanic?.update(realDt);
     this.cameraDirector.setFocus(this.ballBody.pos.x, this.ballBody.pos.y, this.ballBody.vel);
-    if (this.tutorialActive) this.positionTutorial();
+    if (this.tutorialActive && !this.input.selected) this.positionTutorial();
   }
 
   runTimers(dt) {
@@ -180,7 +180,7 @@ export class MatchSession {
 
   positionTutorial() {
     const ball = this.ballBody.pos;
-    const striker = this.entriesForSide(SIDE_HOME)
+    const striker = this.entriesForSide(this.rules.turn)
       .reduce((best, e) => (e.body.pos.distanceTo(ball) < best.body.pos.distanceTo(ball) ? e : best));
     projected.set(striker.body.pos.x, 0.02, striker.body.pos.y).project(this.camera);
     this.hud.showTutorial(((projected.x + 1) / 2) * window.innerWidth, ((1 - projected.y) / 2) * window.innerHeight);

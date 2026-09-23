@@ -14,8 +14,3 @@
 @media (max-height: 500px) {
   .legend-objective { top: 14px; bottom: max(70px, calc(env(safe-area-inset-bottom) + 56px)); left: auto; right: 74px; transform: none; width: 220px; }
 }
-/* With the scoreboard chalked on the table, the objective takes its top-left slot. */
-body.hud-chalk .legend-objective {
-  top: max(12px, env(safe-area-inset-top)); bottom: auto; left: max(12px, env(safe-area-inset-left)); right: auto;
-  transform: none; width: auto; max-width: min(600px, calc(100% - 84px)); text-align: left;
-}

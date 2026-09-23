@@ -5,6 +5,7 @@ import {
 } from '../core/pitch-dimensions-and-constants.js';
 import { createSchoolyardShotMemory } from '../core/schoolyard-shot-memory.js';
 import { screenPan } from '../audio/screen-space-stereo-pan.js';
+import { needsFirstShotGuidance, completeFirstShotGuidance } from '../core/first-shot-guidance.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
   boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
@@ -88,12 +89,13 @@ export function wireMatchFeedback(session) {
         hud.event(`${nameOf(side).toUpperCase()}'S FLICK`, { priority: 2, duration: 1.1, detail: 'Pass it over' });
       }
       lastHumanSide = side;
-      if (level.tutorial) session.showTutorial();
+      if (!options.isAttract && (level.tutorial || needsFirstShotGuidance())) session.showTutorial();
     }
   });
 
-  rules.on('flick', () => {
+  rules.on('flick', ({ side }) => {
     syncFlicks();
+    if (!options.isAttract && !rules.isAi(side)) completeFirstShotGuidance();
     session.hideTutorial();
   });
 
