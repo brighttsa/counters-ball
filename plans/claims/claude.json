@@ -2,12 +2,11 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Add .gitignore for local tool debris (unblocks Codex sync)",
+  "task": "Integrate Codex mobile/ink/camera commits (9b3c147..f1ff113)",
   "status": "released",
   "paths": [
-    ".gitignore",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-22T18:08:23.458Z",
-  "head": "f766c91be5460138ccfc6d4d8c18792438066f7e"
+  "updatedAt": "2026-09-23T07:12:39.760Z",
+  "head": "f1ff11373b57fa9c87a7de7da4d6b64d40abdebc"
 }
