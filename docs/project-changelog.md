@@ -1,5 +1,19 @@
 # Project Changelog
 
+## 2026-09-23 — Keyboard shots, safer Restart/Quit, clearer table conditions
+
+### Added
+- **Keyboard shot:** arrows (or WASD) aim and set power, Q/E switch caps, Space/Enter flicks, Esc puts
+  the cap down. A key guide appears while aiming; the first-shot tip mentions it on keyboard devices.
+
+### Changed
+- Restart and Quit need a second press once a flick has been played, so a mis-tap can't throw a match away.
+- Street Legends conditions name the table's moving feature (ruler, dish, pots, booms, lorry, coin stacks)
+  instead of "No fixed obstacles"; "1 fixed obstacle" is now singular.
+
+### Fixed
+- The chalk scoreboard no longer throws when the browser's font API returns nothing during a refresh.
+
 ## 2026-09-23 — KONK! branding
 
 ### Changed

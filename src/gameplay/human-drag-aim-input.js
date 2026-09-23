@@ -1,16 +1,18 @@
 // Slingshot drag input for human players: hover highlights a flickable cap,
 // press grabs it, pulling back aims (trajectory + power ring + cap lean),
 // release flicks. One pointer drives a drag; extra touches are ignored.
+// The keyboard alternative (KeyboardFlickAim) drives this same selection and pull.
 import * as THREE from 'three';
 import { MAX_PULL, MAX_FLICK_SPEED } from '../core/pitch-dimensions-and-constants.js';
 import { FlickGestureSampler } from './flick-gesture-sampler.js';
 import { chooseTouchCap } from './touch-cap-selection.js';
+import { KeyboardFlickAim } from './keyboard-flick-aim.js';
 
 const MIN_FLICK_POWER = 0.06;
 
 export class HumanDragAimInput {
   /**
-   * @param deps { camera, domElement, visuals, juice, canControl(side), onFlick(entry, velocity), onAimStart?(entry) }
+   * @param deps { camera, domElement, visuals, juice, ballBody, canControl(side), onFlick(entry, velocity), onAimStart?(entry) }
    */
   constructor(deps) {
     Object.assign(this, deps);
@@ -44,6 +46,7 @@ export class HumanDragAimInput {
     this.cancelGesture = () => this.cancel();
     window.addEventListener('blur', this.cancelGesture);
     window.addEventListener('resize', this.cancelGesture);
+    this.keyboard = new KeyboardFlickAim(this);
   }
 
   setEntries(entries) {
@@ -80,6 +83,7 @@ export class HumanDragAimInput {
   }
 
   onDown(e) {
+    if (this.keyboard.aiming && e.button === 0) this.cancel(); // a click takes over from the keyboard
     if (this.selected || e.button !== 0) return; // a second finger must not hijack the drag
     if (this.selectionNotice) this.selectionNotice.textContent = '';
     const entry = this.pickEntry(e);
@@ -146,6 +150,7 @@ export class HumanDragAimInput {
 
   clearSelection() {
     const wasAiming = Boolean(this.selected);
+    this.keyboard.stop();
     const pointerId = this.pointerId;
     this.selected = null;
     this.pointerId = null;
@@ -165,5 +170,6 @@ export class HumanDragAimInput {
     window.removeEventListener('blur', this.cancelGesture);
     window.removeEventListener('resize', this.cancelGesture);
     this.selectionNotice?.remove();
+    this.keyboard.dispose();
   }
 }

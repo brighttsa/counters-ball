@@ -170,8 +170,10 @@ export function createChalkTableScoreboard(parent, homeColour, awayColour) {
       tallies[s].texture.needsUpdate = true;
     }
   };
-  // Canvas text falls back to a system font until the chalk face has loaded.
-  document.fonts?.load("700 64px 'Cabin Sketch'").then(redraw, () => {});
+  // Canvas text falls back to a system font until the chalk face has loaded, then redraws. A font API
+  // that returns nothing (a page being torn down on refresh) or a redraw after the board is gone must
+  // neither throw here nor leave an unhandled rejection behind.
+  Promise.resolve(document.fonts?.load?.("700 64px 'Cabin Sketch'")).then(redraw).catch(() => {});
 
   return {
     root,

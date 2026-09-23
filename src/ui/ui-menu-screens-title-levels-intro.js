@@ -6,7 +6,7 @@ import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 import { featuredActCopy } from '../levels/featured-home-legends-act.js';
-import { MENU_COPY, starRules, conditionObstacleCopy, titleStarsCopy } from './konk-interface-copy.js';
+import { MENU_COPY, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -15,7 +15,7 @@ const LIGHT = { midday: 'Midday sun', 'late-afternoon': 'Late afternoon',
   'golden-hour': 'Golden hour', harmattan: 'Harmattan dust', 'night-bulb': 'Under the bulb' };
 const conditions = (level) => `${LIGHT[level.lighting] ?? level.lighting} · ${
   getVenueVisualProfile(level.backdrop).surfaceLabel} · ${
-  conditionObstacleCopy(level.obstacles.length)}`;
+  tableConditionCopy(level)}`;
 
 export class MenuScreens {
   /** @param onAction (action: string, element: HTMLElement) => void */

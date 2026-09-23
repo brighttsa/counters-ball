@@ -191,7 +191,7 @@ window.addEventListener('pointerdown', () => sound.unlock());
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (menus.current === 'pause') setPaused(false);
-  else if (menus.current === null && app.session && !app.session.options.isAttract) setPaused(true);
+  else if (menus.current === null && app.session && !app.session.options.isAttract) actions.pause();
 });
 
 menus.setSoundIcon(progress.muted);

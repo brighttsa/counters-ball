@@ -42,3 +42,17 @@ test('all existing venues and acts retain concise, distinct story copy', () => {
   }
   assert.equal(new Set(STREET_LEGENDS_ACTS.map((level) => level.blurb)).size, 18);
 });
+
+test('conditions name each Street Legends table by its moving feature, and count obstacles in good English', async () => {
+  const { tableConditionCopy, TABLE_FEATURE_COPY } = await import('../src/ui/konk-interface-copy.js');
+  const { STREET_LEGENDS_ACTS } = await import('../src/levels/street-legends-acts-and-unlocks.js');
+  assert.equal(conditionObstacleCopy(1), '1 fixed obstacle');
+  for (const act of STREET_LEGENDS_ACTS) {
+    const line = tableConditionCopy(act);
+    assert.ok(line.startsWith(TABLE_FEATURE_COPY[act.mechanic.type]), `${act.id}: ${line}`);
+    assert.doesNotMatch(line, /No fixed obstacles/, act.id);
+  }
+  const roadsideFinal = STREET_LEGENDS_ACTS.find((act) => act.id === 'legends-roadside-act-3');
+  assert.equal(tableConditionCopy(roadsideFinal), 'Toll booms open and close · 1 fixed obstacle');
+  assert.equal(tableConditionCopy({ obstacles: [] }), MENU_COPY.noObstacles);
+});

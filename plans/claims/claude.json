@@ -2,11 +2,23 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Codex handoff queue",
+  "task": "Remaining UX audit actions",
   "status": "released",
   "paths": [
-    "plans/agent-handoff-board.md"
+    "src/scene/chalk-table-score-and-flick-tallies.js",
+    "src/ui/menu-button-action-routes.js",
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "src/ui/konk-interface-copy.js",
+    "src/gameplay/human-drag-aim-input.js",
+    "src/gameplay/keyboard-flick-aim.js",
+    "src/gameplay/match-session-runtime.js",
+    "src/main.js",
+    "index.html",
+    "styles/",
+    "tests/",
+    "plans/agent-handoff-board.md",
+    "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-23T12:06:15.733Z",
-  "head": "20f696753837df6991a68e733b99a31fe2e5f1e5"
+  "updatedAt": "2026-09-23T16:32:16.637Z",
+  "head": "69382fa99c30eb799d01b3d14197781fd69bcfb8"
 }

@@ -71,3 +71,33 @@ test('chalk sits on the near touchline and does not flicker near the pitch axis'
   assert.equal(nearTouchlineSign(0.1, -1), -1, 'portrait camera near the axis keeps the previous side');
   assert.equal(nearTouchlineSign(-0.1, 1), 1);
 });
+
+test('the chalk board survives a missing font API and a redraw that fails after the font loads', async () => {
+  const { THREE } = await import('../tests/helpers/real-three-session-fixture.mjs');
+  const { createChalkTableScoreboard } = await import('../src/scene/chalk-table-score-and-flick-tallies.js');
+  // The smallest 2D canvas the chalk drawing needs: every method is a no-op, measureText has a width.
+  const ctx = new Proxy({}, {
+    get: (target, key) => (key in target ? target[key] : () => ({ width: 10 })),
+    set: (target, key, value) => { target[key] = value; return true; },
+  });
+  const canvas = { width: 0, height: 0, getContext: () => { ctx.canvas = canvas; return ctx; } };
+  const previous = globalThis.document;
+  const unhandled = [];
+  const onUnhandled = (reason) => unhandled.push(reason);
+  process.on('unhandledRejection', onUnhandled);
+  try {
+    globalThis.document = { createElement: () => canvas, fonts: { load: () => undefined } };
+    assert.doesNotThrow(() => createChalkTableScoreboard(new THREE.Group(), '#d6503a', '#4f86c6'));
+
+    let fontLoaded;
+    globalThis.document.fonts.load = () => new Promise((resolve) => { fontLoaded = resolve; });
+    createChalkTableScoreboard(new THREE.Group(), '#d6503a', '#4f86c6');
+    ctx.clearRect = () => { throw new Error('context lost'); };
+    fontLoaded();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.deepEqual(unhandled, []);
+  } finally {
+    process.off('unhandledRejection', onUnhandled);
+    globalThis.document = previous;
+  }
+});
