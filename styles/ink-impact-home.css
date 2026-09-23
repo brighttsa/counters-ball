@@ -29,11 +29,6 @@
 .home-secondary { display: flex; gap: 8px; }
 .home-secondary .btn { flex: 1; font-size: 12px; padding: 10px; }
 .screen-title .title-stars { margin: 4px 0; font: 12px/1.4 var(--font-body); animation: none; text-shadow: none; color: var(--poster-paper); }
-.ink-menus .level-card { border-top: 3px solid #4d5653; background: #171e1d; }
-.ink-menus .level-card[aria-pressed='true'] { border-color: var(--poster-yellow); background: #25322d; }
-.ink-menus .level-number { border-radius: 0; background: #101514; }
-.ink-menus .level-name { color: var(--poster-paper); }
-.ink-menus .screen-header { border-bottom: 4px solid var(--poster-yellow); padding-bottom: 12px; }
 @media (max-width: 700px) {
   .home-cap-print { top: 0; bottom: auto; right: -5%; width: 75%; }
   .screen-title.is-active { justify-content: flex-end; padding: 24px 20px 72px; gap: 8px; }

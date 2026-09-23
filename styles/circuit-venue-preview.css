@@ -1,56 +1,89 @@
-/* The generated venue occupies the open right half; the route stays in flow. */
-.screen-levels {
-  grid-template-rows: auto minmax(min-content, 1fr) auto; align-items: start;
-  background: linear-gradient(90deg, rgba(18,21,20,.88), rgba(18,21,20,.45) 45%, rgba(18,21,20,.08) 78%);
-  gap: 24px;
+/* Level select: the venue's copy on an ink panel at left, the live table open at
+   right, and every act in one strip along the bottom, grouped by venue. The
+   whole screen fits one viewport, including a landscape phone. */
+.screen-levels.is-active {
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; align-items: stretch; justify-items: stretch;
+  height: 100dvh; overflow: hidden; gap: 14px;
+  padding: max(16px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  background: linear-gradient(90deg, #101514d9, #10151466 42%, transparent 70%);
 }
-.screen-levels .screen-header { text-shadow: 0 2px 8px #101411; }
-.circuit-hero { width: min(1120px, 100%); padding: 18px 0; align-self: center; }
-.circuit-venue-copy { max-width: 470px; text-shadow: 0 2px 8px #101411; }
-.circuit-venue-copy h3 {
-  margin: 10px 0 12px; font: 64px/1.02 var(--font-display); text-transform: uppercase;
-  overflow-wrap: anywhere;
+.screen-levels .screen-header {
+  width: 100%; padding-bottom: 10px; border-bottom: 4px solid #f0cf45; text-shadow: none;
+  grid-template-columns: auto minmax(0, 1fr) auto; /* back, title, stars on one row even on a phone */
 }
-.circuit-venue-copy p { margin: 8px 0; line-height: 1.5; }
-#circuit-venue-place { font-size: 20px; }
-#circuit-venue-opponent { font-size: 14px; }
-#circuit-venue-conditions, #circuit-venue-rules { font-size: 13px; }
-#circuit-venue-note { font: 22px/1.3 var(--font-hand); max-width: 36ch; margin: 16px 0; }
-#circuit-venue-stars { color: var(--gold); font-size: 13px; }
+.screen-levels .chalk-heading { font: 34px/1 var(--font-display); text-transform: uppercase; }
+
+.circuit-hero {
+  align-self: center; width: min(460px, 100%); max-height: 100%; overflow-y: auto; padding: 18px 22px;
+  background: #101514eb; border-left: 6px solid #f0cf45; display: grid; gap: 4px; justify-items: start;
+}
+.circuit-venue-copy { max-width: none; text-shadow: none; }
+.circuit-venue-copy p { margin: 3px 0; line-height: 1.45; }
+.circuit-venue-copy h3 { margin: 6px 0 8px; font: 52px/1 var(--font-display); text-transform: uppercase; overflow-wrap: anywhere; }
+#circuit-venue-place { font-size: 18px; }
+#circuit-venue-opponent { font-size: 14px; font-weight: 700; }
+#circuit-venue-conditions, #circuit-venue-rules { font-size: 13px; color: #d3d7ca; }
+#circuit-venue-note { font: 20px/1.3 var(--font-hand); max-width: 36ch; margin: 10px 0 4px; }
+#circuit-venue-stars { color: #f0cf45; font-size: 13px; }
 #circuit-enter { margin-top: 10px; }
-#circuit-enter:disabled { background: #343a36; color: #c0c6bd; cursor: not-allowed; border-color: #737a70; }
-#circuit-lock-note { font-size: 13px; margin: 8px 0 0; min-height: 20px; }
-.screen-levels .level-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); padding: 0; }
+#circuit-enter:disabled { background: #343a36; color: #c0c6bd; cursor: not-allowed; }
+#circuit-lock-note { font-size: 13px; margin: 6px 0 0; }
+#circuit-lock-note:empty { display: none; }
+
+/* The act strip: scrolls sideways and snaps to cards. */
+.screen-levels .level-grid {
+  display: flex; gap: 8px; padding: 2px 0 4px; overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: #f0cf45 transparent;
+  scroll-padding-inline: 38px; /* a selected Act 1 scrolls in with its venue label still showing */
+  width: auto; margin-right: 60px; /* the sound button owns the bottom-right corner */
+}
+/* Size containment keeps a long venue name from setting the strip's height: it wraps to a second column instead. */
+.screen-levels .level-group {
+  flex: 0 0 30px; contain: size; display: grid; place-items: center; padding: 0 2px; writing-mode: vertical-rl; transform: rotate(180deg);
+  text-align: center;
+  font: 700 11px/1.15 var(--font-body); text-transform: uppercase; color: #f0cf45; border-right: 2px solid #f0cf45;
+}
 .screen-levels .level-card {
-  min-height: 172px; padding: 48px 12px 12px; gap: 6px; background: rgba(18,21,20,.8);
-  border-top: 2px solid #69736a; cursor: pointer;
+  flex: 0 0 176px; min-height: 0; height: 96px; padding: 10px 12px 10px 52px; gap: 2px; align-content: center;
+  scroll-snap-align: start; background: #101514e6; border: 0; border-top: 3px solid #4d5653; border-radius: 0;
+  box-shadow: none; transform: none; animation: none; color: #f5f1df;
 }
-.screen-levels .level-card::before { top: 24px; left: 0; width: 100%; height: 1px; }
-.screen-levels .level-number { top: 8px; left: 12px; }
-.screen-levels .level-name { font-size: 21px; }
-.screen-levels .level-place { font-size: 11px; }
-.screen-levels .level-stars { min-height: 20px; }
-.screen-levels .level-stars i { font-size: 16px; }
-.screen-levels .level-lock { font-size: 12px; }
-.screen-levels .level-card[aria-pressed='true'] { border-top-color: var(--gold); background: rgba(43,52,43,.95); }
-.screen-levels .level-card:hover { background: #343b35; }
-@media (max-width: 900px) {
-  .screen-levels .level-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .circuit-venue-copy { max-width: 400px; }
-  .circuit-venue-copy h3 { font-size: 48px; }
+.screen-levels .level-card::before { display: none; }
+.screen-levels .level-card:not([disabled]):hover { background: #25322d; transform: none; box-shadow: none; }
+.screen-levels .level-card[aria-pressed='true'] { border-top-color: #f0cf45; background: #25322d; }
+.screen-levels .level-number {
+  top: 50%; left: 12px; width: 30px; height: 30px; transform: translateY(-50%); font-size: 16px;
+  background: #101514; border: 2px solid var(--accent); border-radius: 0; outline: 0;
 }
+.screen-levels .level-name { font: 18px/1.05 var(--font-display); text-transform: uppercase; overflow-wrap: anywhere; }
+.screen-levels .level-place { font-size: 11px; color: #c0c8c0; }
+.screen-levels .level-stars { min-height: 0; }
+.screen-levels .level-stars i { font-size: 14px; }
+.screen-levels .level-card.locked { color: #b9bfb8; filter: none; }
+.screen-levels .level-card.locked .level-number { border-style: dashed; border-color: #8a9189; }
+.screen-levels .level-lock {
+  position: static; inset: auto; display: block; width: fit-content; padding: 0; background: none; transform: none;
+  font: 700 10px/1.3 var(--font-body); text-transform: uppercase; color: #c0c8c0;
+}
+
 @media (max-width: 560px) {
-  .screen-levels { grid-template-rows: auto auto auto; gap: 16px;
-    background: linear-gradient(90deg, rgba(18,21,20,.8), rgba(18,21,20,.25)); }
-  .circuit-hero { padding: 96px 0 8px; }
-  .circuit-venue-copy { max-width: 100%; }
-  .circuit-venue-copy h3 { font-size: 36px; }
-  #circuit-venue-place { font-size: 17px; }
-  #circuit-venue-note { font-size: 20px; }
-  .screen-levels .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .screen-levels .level-card { min-height: 164px; }
+  .screen-levels.is-active { gap: 10px; padding-inline: 16px; }
+  .screen-levels .chalk-heading { font-size: 24px; }
+  .circuit-hero { align-self: end; width: 100%; padding: 14px 16px; }
+  .circuit-venue-copy h3 { font-size: 34px; }
+  #circuit-venue-note { font-size: 18px; }
 }
+/* Landscape phones: the table and the strip matter most, so the panel keeps only what decides the match. */
 @media (max-height: 520px) {
-  .circuit-hero { padding-top: 8px; }
-  .circuit-venue-copy h3 { font-size: 36px; }
+  .screen-levels.is-active { gap: 8px; padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .screen-levels .screen-header { padding-bottom: 6px; }
+  .screen-levels .chalk-heading { font-size: 24px; }
+  .screen-levels .screen-header .btn { min-height: 40px; padding-block: 8px; }
+  .circuit-hero { width: min(400px, 60%); padding: 10px 16px; gap: 2px; }
+  .circuit-venue-copy h3 { font-size: 30px; margin: 2px 0 4px; }
+  #circuit-venue-place, #circuit-venue-conditions, #circuit-venue-note { display: none; }
+  #circuit-enter { margin-top: 6px; min-height: 44px; }
+  .screen-levels .level-card { height: 80px; flex-basis: 170px; padding-block: 6px; }
+  .screen-levels .level-name { font-size: 15px; }
+  .screen-levels .level-place { font-size: 10px; }
 }

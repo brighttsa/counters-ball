@@ -12,18 +12,21 @@
 .ink-game .btn:hover { background: #f5f1df; color: #101514; }
 .ink-game .btn:focus-visible, .ink-game .icon-btn:focus-visible { outline: 3px solid #f0cf45; outline-offset: 4px; }
 .ink-game .btn:disabled { opacity: .45; }
-.ink-game .screen-levels { background: #10151488; }
-.ink-game .circuit-venue-copy { border-left: 6px solid #f0cf45; padding-left: 18px; }
-.ink-game .level-card { border-radius: 0; box-shadow: none; }
-.ink-game .level-card[aria-pressed='true'] { border-left: 5px solid var(--accent); }
 .ink-game .intro-place, .ink-game .results-opponent { color: #f5f1df; }
 .ink-game .intro-card, .ink-game .results-card, .ink-game .menu-card { max-height: calc(100dvh - 48px); overflow-y: auto; }
 .ink-game .intro-card .card-title, .ink-game .results-title { overflow-wrap: anywhere; }
 .ink-game .replay-controls { bottom: 130px; background: #101514; }
 @media (max-width: 560px) {
-  .ink-game .circuit-venue-copy { padding-left: 12px; }
   .ink-game .card-actions { flex-wrap: wrap; }
 }
 @media (max-height: 500px) {
   .ink-game .replay-controls { bottom: 110px; }
 }
+/* Secondary buttons need their own fill: on an ink card, ink-on-ink text reads as a label, not a button. */
+.paper-card .btn:not(.btn-primary), .screen-title .btn:not(.btn-primary), .screen-header .btn:not(.btn-primary) { background: #27302d; color: #f5f1df; }
+.paper-card .btn:not(.btn-primary):hover, .screen-title .btn:not(.btn-primary):hover, .screen-header .btn:not(.btn-primary):hover { background: #f5f1df; color: #101514; }
+#hud-style-toggle::after { content: ' · ' attr(data-value); color: var(--gold); }
+/* Full-time score in the same team-tinted chalk as the table. */
+.ink-game .results-score { font: 700 84px/1 var(--font-chalk); color: #f4efdf; margin: 14px 0 18px; }
+.ink-game .results-score .chalk-side { color: color-mix(in srgb, var(--chalk-team) 55%, #f4efdf); }
+@media (max-height: 500px) { .ink-game .results-score { font-size: 60px; margin: 6px 0 10px; } }

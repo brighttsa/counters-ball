@@ -28,6 +28,13 @@ export class MenuScreens {
     });
     this.loadLogo();
     paintInkCapPoster($('home-cap-print'));
+    // The act strip scrolls sideways; a mouse wheel only scrolls vertically, so translate it.
+    $('level-grid').addEventListener('wheel', (e) => {
+      const grid = e.currentTarget;
+      if (grid.scrollWidth <= grid.clientWidth || Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+      grid.scrollLeft += e.deltaY;
+      e.preventDefault();
+    }, { passive: false });
   }
 
   async loadLogo() {
@@ -81,13 +88,14 @@ export class MenuScreens {
       const stars = progress.stars[level.id] ?? 0;
       const starRow = versus ? '' : `<span class="level-stars" aria-label="${stars} of 3 stars">${
         [0, 1, 2].map((n) => `<i class="${n < stars ? 'on' : ''}">★</i>`).join('')}</span>`;
-      return `<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
+      const group = level.legend?.act === 1 ? `<span class="level-group">${escapeHtml(level.name)}</span>` : '';
+      return `${group}<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
         aria-pressed="false" style="--accent:${level.opponent.team.hudColor}">
         <span class="level-number">${level.legend?.act ?? i + 1}</span>
         <span class="level-name">${escapeHtml(level.actTitle ?? level.name)}</span>
-        <span class="level-place">${escapeHtml(level.legend ? `${level.name} · Act ${level.legend.act}` : level.place)}</span>
+        <span class="level-place">${escapeHtml(level.legend ? `Act ${level.legend.act} of ${level.legend.acts}` : level.place)}</span>
         ${starRow}
-        ${unlocked ? '' : '<span class="level-lock">Locked · Preview</span>'}
+        ${unlocked ? '' : '<span class="level-lock">Locked</span>'}
       </button>`;
     }).join('');
   }
@@ -98,6 +106,9 @@ export class MenuScreens {
 
   fillIntro(level, index, total, mode, homeTeam) {
     const versus = mode === 'versus';
+    // Back buttons on the intro, pause and results name the track they return to.
+    const track = mode === 'legends' ? 'Acts' : 'Pitches';
+    for (const el of document.querySelectorAll('[data-track-label]')) el.textContent = el.dataset.trackLabel.replace('{track}', track);
     const { rules, opponent } = level;
     const legend = level.legend;
     $('intro-number').textContent = legend ? `Street Legends / ${level.name} / Act ${legend.act} of ${legend.acts}`

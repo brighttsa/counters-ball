@@ -31,7 +31,7 @@ export class MatchHud {
   setStyle(style) {
     this.style = style === 'broadcast' ? 'broadcast' : 'chalk';
     document.body.classList.toggle('hud-chalk', this.style === 'chalk');
-    $('hud-style-toggle').textContent = `Scoreboard: ${this.style === 'chalk' ? 'Chalk' : 'Broadcast'}`;
+    $('hud-style-toggle').dataset.value = this.style === 'chalk' ? 'Chalk' : 'Broadcast';
     this.table?.setVisible(this.style === 'chalk');
   }
 
@@ -134,6 +134,19 @@ export class MatchHud {
     $('tutorial-hand').hidden = true;
   }
 
+  /** Full-time score written in the same team-tinted chalk as the table. */
+  chalkResultsScore(scores, awayColour) {
+    const side = (value, colour) => {
+      const span = document.createElement('span');
+      span.className = 'chalk-side';
+      span.style.setProperty('--chalk-team', colour);
+      span.textContent = value;
+      return span;
+    };
+    $('results-score').replaceChildren(side(scores.home, this.root.style.getPropertyValue('--home-color') || '#d6503a'),
+      ' — ', side(scores.away, awayColour));
+  }
+
   cancelResultReveal() {
     this.resultTimers.forEach(clearTimeout);
     this.resultTimers = [];
@@ -150,7 +163,7 @@ export class MatchHud {
       : versus ? `${winner === SIDE_HOME ? 'Accra Reds' : level.opponent.team.name} win!`
         : winner === SIDE_HOME ? 'You win!' : `${kid} wins`;
     title.dataset.outcome = winner === null ? 'draw' : versus || winner === SIDE_HOME ? 'win' : 'loss';
-    $('results-score').textContent = `${scores.home} – ${scores.away}`;
+    this.chalkResultsScore(scores, level.opponent.team.hudColor);
     $('results-opponent').textContent = level.legend ? `Street Legends · ${level.name} · Act ${level.legend.act}: ${level.actTitle}`
       : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
 
@@ -176,7 +189,7 @@ export class MatchHud {
 
     let note = '';
     const legend = level.legend;
-    if (!versus && winner === SIDE_HOME) note = legend ? (legend.act === legend.acts ? `Street Legend of ${level.place}!` : 'The booms bow to you. Next act unlocked.')
+    if (!versus && winner === SIDE_HOME) note = legend ? (legend.act === legend.acts ? `Street Legend of ${level.place}!` : `${kid} gives you the table. Next act unlocked.`)
       : isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
     else if (legend && level.rules.awayFlickLimit === 0) note = 'Out of flicks. Watch the amber lane and set the ball up for it.';
     else if (!versus) note = winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;

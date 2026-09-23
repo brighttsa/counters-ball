@@ -85,7 +85,7 @@
       </div>
       <ul class="intro-rules" id="intro-rules"></ul>
       <div class="card-actions">
-        <button class="btn btn-small" data-action="intro-back">Pitches</button>
+        <button class="btn btn-small" data-action="intro-back" data-track-label="{track}">Pitches</button>
         <button class="btn btn-primary" data-action="kick-off">Kick Off</button>
       </div>
     </article>
@@ -120,8 +120,8 @@
         <button class="btn btn-primary" data-action="resume">Resume</button>
         <button class="btn" data-action="restart">Restart Match</button>
         <button class="btn" id="camera-motion-toggle" data-action="toggle-camera-motion" aria-pressed="true">Camera motion</button>
-        <button class="btn" id="hud-style-toggle" data-action="toggle-hud-style">Scoreboard: Broadcast</button>
-        <button class="btn" data-action="quit">Quit to Pitches</button>
+        <button class="btn" id="hud-style-toggle" data-action="toggle-hud-style" data-value="Chalk">Scoreboard</button>
+        <button class="btn" data-action="quit" data-track-label="Quit to {track}">Quit to Pitches</button>
       </nav>
     </article>
   </section>
@@ -136,7 +136,7 @@
       <ul class="results-stars" id="results-stars"></ul>
       <p class="results-note" id="results-note"></p>
       <div class="card-actions">
-        <button class="btn btn-small" data-action="results-levels">Pitches</button>
+        <button class="btn btn-small" data-action="results-levels" data-track-label="{track}">Pitches</button>
         <button class="btn" data-action="replay">Replay</button>
         <button class="btn btn-primary" data-action="next-level" id="btn-next">Next Pitch</button>
       </div>

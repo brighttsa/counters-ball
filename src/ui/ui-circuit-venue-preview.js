@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+const capitalize = (text) => String(text).charAt(0).toUpperCase() + String(text).slice(1);
 
 export function fillVenuePreview(level, index, unlocked, mode, stars, conditions) {
   const versus = mode === 'versus';
@@ -9,10 +10,10 @@ export function fillVenuePreview(level, index, unlocked, mode, stars, conditions
   $('circuit-venue-name').textContent = legend ? level.actTitle : level.name;
   $('circuit-venue-place').textContent = level.place;
   $('circuit-venue-opponent').textContent = versus ? `Accra Reds vs ${level.opponent.team.name}`
-    : `${level.opponent.kid} / ${level.opponent.team.name} / ${level.opponent.difficulty}`;
+    : `${level.opponent.kid} · ${level.opponent.team.name} · ${capitalize(level.opponent.difficulty)}`;
   $('circuit-venue-conditions').textContent = conditions;
   $('circuit-venue-rules').textContent = legend ? level.introLines[0]
-    : `First to ${level.rules.goalsToWin} / ${level.rules.flickLimit} flicks each`;
+    : `First to ${level.rules.goalsToWin} · ${level.rules.flickLimit} flicks each`;
   $('circuit-venue-note').textContent = level.blurb;
   $('circuit-venue-stars').textContent = versus ? '2-player table' : `${stars} / 3 stars earned`;
   const enter = $('circuit-enter');
@@ -22,6 +23,8 @@ export function fillVenuePreview(level, index, unlocked, mode, stars, conditions
   $('circuit-lock-note').textContent = canEnter ? ''
     : legend ? `Win Act ${legend.act - 1} to enter this act.` : `Win match ${index} to enter this venue.`;
   for (const button of $('level-grid').querySelectorAll('[data-index]')) {
-    button.setAttribute('aria-pressed', String(Number(button.dataset.index) === index));
+    const selected = Number(button.dataset.index) === index;
+    button.setAttribute('aria-pressed', String(selected));
+    if (selected) button.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
