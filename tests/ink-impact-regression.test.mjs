@@ -1,15 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-test('ink rendering is scoped to the toll mechanic, not classic Roadside', {
+test('ink rendering covers every venue without changing geometry or local lighting', {
   skip: !process.env.COUNTERS_TEST_THREE,
 }, async () => {
-  await import('./helpers/real-three-session-fixture.mjs');
-  const { isInkRoadside, applyRoadsideInkTreatment } = await import('../src/scene/roadside-ink-treatment.js');
-  assert.equal(isInkRoadside({ backdrop: 'roadside' }), false);
-  assert.equal(isInkRoadside({ mechanic: { type: 'departing-lorry' } }), false);
-  assert.equal(isInkRoadside({ mechanic: { type: 'toll-gates' } }), true);
-  assert.equal(applyRoadsideInkTreatment({}, { backdrop: 'roadside' }), false);
+  const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
+  const { applyVenueInkTreatment } = await import('../src/scene/venue-ink-treatment.js');
+  for (const backdrop of ['schoolyard', 'kiosk', 'veranda', 'harmattan', 'night']) {
+    const group = new THREE.Group(), mat = new THREE.MeshStandardMaterial({ color: 0x327655 });
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), mat);
+    const light = new THREE.DirectionalLight(0xff9933, 2);
+    const ballMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(.04), mat);
+    group.add(mesh, ballMesh, light);
+    const stage = { group, caps: [], ballMesh }, geometry = mesh.geometry;
+    assert.equal(applyVenueInkTreatment(stage, { backdrop }), true);
+    assert.equal(light.color.getHex(), 0xff9933);
+    assert.equal(light.intensity, 2);
+    assert.equal(mesh.geometry, geometry);
+    assert.equal(mat.color.getHex(), 0x327655);
+    assert.equal(mat.customProgramCacheKey(), 'venue-ink-v2');
+    const shader = { fragmentShader: '#include <opaque_fragment>' };
+    mat.onBeforeCompile(shader);
+    assert.match(shader.fragmentShader, /inkBand/);
+    assert.match(shader.fragmentShader, /inkRim/);
+    assert.ok(mesh.getObjectByName('selective-ink-contour'));
+    applyVenueInkTreatment(stage, { backdrop });
+    assert.equal(mesh.children.length, 1, 'reapplying must not duplicate contours');
+  }
 });
 
 test('contact strokes are bounded, strength-gated, pausable and reduced-motion safe', {

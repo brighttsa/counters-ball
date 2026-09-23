@@ -7,9 +7,19 @@ document.getElementById('width').onchange = e => {
 };
 document.getElementById('home').onclick = () => handle.actions['back-to-title']();
 document.getElementById('start').onclick = () => {
-  handle.app.mode = 'legends';
-  handle.actions['select-level']({ dataset: { index: String(handle.legends.findIndex(l => l.id === 'legends-roadside-act-1')) } });
+  handle.app.mode = document.getElementById('mode').value;
+  const track = handle.app.mode === 'legends' ? handle.legends : handle.levels;
+  handle.actions['select-level']({ dataset: { index: String(track.findIndex(l => l.backdrop === document.getElementById('venue').value)) } });
   handle.actions['kick-off']();
+};
+document.getElementById('advance').onclick = () => {
+  const s = session();
+  for (let i = 0; i < 120; i++) { s.update(1 / 60, i / 60); s.cameraDirector.update(1 / 60, i / 60); }
+  s.post.render();
+  status.textContent = `${s.level.name} / ${s.rules.phase} / ${s.rules.scores.home}-${s.rules.scores.away}`;
+};
+document.getElementById('ui').onclick = () => {
+  const hud = frame.contentDocument.getElementById('hud'); hud.hidden = !hud.hidden;
 };
 document.getElementById('aim').onclick = () => {
   const s = session(), entry = s.entries.find(e => e.side === 'home' && e.home[0] === -.42);

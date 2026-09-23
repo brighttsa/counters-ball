@@ -2,13 +2,24 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Guard zero-size viewport rendering",
+  "task": "Whole-game Ink and Impact art direction",
   "status": "released",
   "paths": [
-    "src/core/game-render-loop-and-viewport.js",
-    "tests/viewport-render-loop.test.mjs",
+    "src/scene/roadside-ink-treatment.js",
+    "src/scene/venue-ink-treatment.js",
+    "src/main.js",
+    "src/gameplay/match-session-runtime.js",
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "styles/ink-impact-match.css",
+    "styles/ink-impact-home.css",
+    "styles/ink-impact-global.css",
+    "index.html",
+    "tests/ink-impact-regression.test.mjs",
+    "tests/ink-impact-visual-check.js",
+    "tests/ink-impact-visual-check.html",
+    "docs/ink-impact-art-direction.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T00:38:30.094Z",
-  "head": "9b3c14708cf4634bb83a3d5006bd3ca87ee70bb6"
+  "updatedAt": "2026-09-23T00:54:24.704Z",
+  "head": "d79ae625a6158e43400d067d30e617b87ddfc88e"
 }

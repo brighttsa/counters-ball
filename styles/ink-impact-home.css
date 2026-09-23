@@ -18,7 +18,7 @@
 .home-location { display: flex; align-items: center; gap: 12px; margin: 10px 0; color: var(--poster-paper); font: 14px/1.4 var(--font-body); }
 .home-location b { font: 28px/1 var(--font-display); color: var(--poster-yellow); border-right: 3px solid; padding-right: 12px; }
 .screen-title .menu-stack { display: grid; gap: 10px; width: 340px; max-width: 100%; animation: none; }
-.screen-title .btn, .ink-menus .btn, .ink-roadside .btn {
+.screen-title .btn, .ink-menus .btn, .ink-game .btn {
   border-radius: 0; border: 0; background: var(--poster-ink); color: var(--poster-paper);
   clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
 }

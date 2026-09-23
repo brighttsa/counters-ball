@@ -41,7 +41,7 @@ function replaceSession(options, sessionHud) {
   sound.setTension?.(false);
   cameraDirector.setVenue(options.level.backdrop);
   cameraDirector.poster = Boolean(options.isAttract && options.level.mechanic?.type === 'toll-gates');
-  document.body.classList.toggle('ink-roadside', options.level.mechanic?.type === 'toll-gates');
+  document.body.classList.add('ink-game');
   app.session = new MatchSession({ renderer, scene, camera, canvas, cameraDirector, post, sound, hud: sessionHud }, options);
 }
 

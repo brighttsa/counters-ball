@@ -1,12 +1,11 @@
-# Ink and Impact: Roadside Slice
+# Ink and Impact: Whole Game
 
 ## Scope
-Playable Street Legends Roadside Showdown, with a new Street Legends home.
-The treatment follows the toll-gates mechanic, so all three Roadside acts inherit
-it. Classic Roadside and the other five venues retain their original rendering.
+The owner approved the whole-game rollout on September 23. Every venue and
+mode now uses the shared treatment, including all 18 Street Legends acts,
+Classic Campaign, two-player and attract/preview sessions.
 No physics, difficulty, collision geometry, save identifiers or unlock rules changed.
-No deployment. This is a reviewable first visual slice, not approval to roll out
-the renderer across the entire campaign.
+No deployment. Roadside remains the featured home composition, not the only ink venue.
 
 ## Art Direction
 - Ink #101514, paper #f5f1df, signal yellow #f0cf45. Red caps and ivory rivals
@@ -16,10 +15,11 @@ the renderer across the entire campaign.
 - Home uses the implemented Tema table and toll canopy in a dedicated attract
   composition. Play Roadside enters the real first act; all 18 acts, Classic and
   local two-player remain accessible. No online mode is implied.
-- Selective contours on the toll architecture and ball; one ground silhouette
-  around each cap. No global edge-detection pass and no distant-brick outlines.
-- Gentle five-band light quantization mixed at 25%, preserving surface textures
-  and venue color. Cooler sky bounce offsets the existing warm roadside ground.
+- Selective contours on up to 96 opaque scene meshes, prioritized by size, plus
+  the ball and one ground silhouette per cap. No full-screen edge-detection pass.
+- Five-band luminance quantization mixed at 65%, normal-based ink rims and sparse
+  shadow halftone dots preserve texture hues. Each venue keeps its existing
+  lighting temperature, fog and local practical lights, including Jamestown's bulb.
 - Paired service booths, window ledges, lamps, repaired kerbs and drainage strips
   reinforce the junction in depth. Static meshes are merged by material.
 - Compact ink scoreboard and objective at the top; turn ownership at the bottom.
@@ -29,6 +29,17 @@ the renderer across the entire campaign.
   the session clock freezes them on pause. Existing broad Flick Vector is retained.
 
 ## Verification
+- Whole-game rollout: 132 tests pass with real Three r160. All six Street Legends
+  Act 1 scenes captured without HUD at 1280px; all six checked with aim at each
+  of 320/375/390/430px. Nonblank GPU samples in every check. All six Classic
+  two-player scenes also render; real planned Schoolyard flick enters moving.
+- Shared pause screen verified. The prior MutationObserver diagnostic remains;
+  no shader compilation or missing-module errors observed. Physical devices,
+  sustained performance and a full win/replay in every venue remain unverified.
+- Rollout captures: `ink-all-<venue>-desktop.png` and `ink-all-<venue>-<width>.png`
+  in the evidence directory below. These are iframe harness captures, not device emulation.
+
+### Original Roadside Slice Evidence
 - 129 tests passed, zero failures or skips with real Three.js r160.
 - Desktop home, opening and gameplay rendered on port 4181.
 - Real planner-driven flicks, without teleporting or awarding goals: first shot
@@ -59,18 +70,19 @@ Reproduce with `/tests/ink-impact-visual-check.html`. Its planned-flick button
 uses the real planner and session, not a mock result. It can earn real local
 progress, like playing the game. Use an isolated browser profile for clean saves.
 
-## Comparison and Next Venues
+## Venue Identity
 The reference contributes hierarchy, ink silhouette and graphic force, not its
 characters, industrial setting or layouts. This slice is lighter and less densely
 outlined to keep a tiny ball readable. The backdrop still carries considerable
 warm ground color; further grading needs art review rather than a universal filter.
 
-Apply the system one venue at a time only after this slice is reviewed:
+The shared ink language preserves these existing constructions:
 1. Schoolyard: classroom desks, blue ink and chalk; contour the ruler and eraser.
 2. Kiosk: layered hatch and awning, market greens; emphasize the enamel dish rim.
 3. Veranda: red oxide and balustrade shadows; readable pot silhouettes and bank marks.
 4. Harmattan: pale dust and lorry boards; reserve strong edges for moving goal mouths.
 5. Jamestown: controlled bulb pools and deep sea-blue shadows; coin-chain lights lead.
 
-Each needs its own UI-hidden identity capture, phone aim/goal test and cost check.
-Do not automatically apply the Roadside palette or contour every environment mesh.
+UI-hidden identity and phone aim captures now exist for all six. Goal/replay
+stress and sustained performance still need device checks. Roadside architecture
+is added only at Tema; no other venue inherits its booths or palette.

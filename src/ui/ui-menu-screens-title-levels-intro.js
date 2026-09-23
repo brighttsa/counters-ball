@@ -61,7 +61,7 @@ export class MenuScreens {
   }
 
   renderLevels(levels, progress, mode, isUnlocked) {
-    document.body.classList.toggle('ink-menus', mode === 'legends');
+    document.body.classList.add('ink-menus');
     this.circuitProgress = progress;
     const versus = mode === 'versus';
     $('levels-heading').textContent = mode === 'legends' ? 'Street Legends' : versus ? 'The Circuit · 2 Players' : 'The Circuit';

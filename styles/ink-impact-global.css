@@ -1,0 +1,32 @@
+/* One printed identity across campaign, hot-seat and Street Legends. */
+.ink-game { --chalk: #f5f1df; --ink: #101514; }
+.ink-game .paper-card { color: #f5f1df; border-radius: 0; box-shadow: 8px 8px 0 #10151466; }
+.ink-game .tape { display: none; }
+.ink-game .screen-pause { background: #101514b8; }
+.ink-game .menu-card { background: #101514; border-top: 6px solid #f0cf45; }
+.ink-game .card-title, .ink-game .chalk-heading { text-shadow: none; }
+.ink-game .card-kicker { color: #f0cf45; }
+.ink-game .team-chip { border-radius: 0; border-bottom: 3px solid var(--chip); }
+.ink-game .icon-btn { border-radius: 0; background: #101514; border: 2px solid #f5f1df; color: #f5f1df; }
+.ink-game .btn-primary { background: #f0cf45; color: #101514; }
+.ink-game .btn:hover { background: #f5f1df; color: #101514; }
+.ink-game .btn:focus-visible, .ink-game .icon-btn:focus-visible { outline: 3px solid #f0cf45; outline-offset: 4px; }
+.ink-game .btn:disabled { opacity: .45; }
+.ink-game .screen-levels { background: #10151488; }
+.ink-game .circuit-venue-copy { border-left: 6px solid #f0cf45; padding-left: 18px; }
+.ink-game .level-card { border-radius: 0; box-shadow: none; }
+.ink-game .level-card[aria-pressed='true'] { border-left: 5px solid var(--accent); }
+.ink-game .intro-place, .ink-game .results-opponent { color: #f5f1df; }
+.ink-game .intro-card, .ink-game .results-card, .ink-game .menu-card { max-height: calc(100dvh - 48px); overflow-y: auto; }
+.ink-game .intro-card .card-title, .ink-game .results-title { overflow-wrap: anywhere; }
+.ink-game .heat-meter { display: flex; top: auto; bottom: 91px; background: #101514; border: 0; font-size: 10px; }
+.ink-game .replay-controls { bottom: 130px; background: #101514; }
+@media (max-width: 560px) {
+  .ink-game .heat-meter { left: 16px; transform: none; width: 220px; }
+  .ink-game .circuit-venue-copy { padding-left: 12px; }
+  .ink-game .card-actions { flex-wrap: wrap; }
+}
+@media (max-height: 500px) {
+  .ink-game .heat-meter { display: none; }
+  .ink-game .replay-controls { bottom: 110px; }
+}
