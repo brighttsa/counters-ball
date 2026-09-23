@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Calm camera at turn changes",
+  "task": "Square camera views to the table",
   "status": "released",
   "paths": [
     "src/fx/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T17:12:31.105Z",
-  "head": "cf4c7efa5736026eed1ba390e24b5252ff384f89"
+  "updatedAt": "2026-09-23T17:19:39.599Z",
+  "head": "7a79d5f322ec493f2f170081baab80b3f483d3ff"
 }

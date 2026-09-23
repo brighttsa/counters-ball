@@ -9,6 +9,26 @@ test('camera transitions settle after a throttled preview frame', () => {
   assert.equal(cameraTransitionBlend(0, false), 1);
 });
 
+test('Tactical, Broadcast and the Free overview keep the table square to the screen', () => {
+  const previous = globalThis.window;
+  try {
+    for (const [width, height] of [[847, 751], [1280, 720], [1920, 1080], [844, 390], [390, 844], [768, 1024]]) {
+      globalThis.window = { innerWidth: width, innerHeight: height };
+      for (const mode of ['tactical', 'broadcast', 'free']) {
+        const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
+        const pose = playerCameraPose(camera, mode, { ballBody: { pos: new THREE.Vector2() } });
+        camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+        // Screen pixels of the centre line's two ends: it must run straight up the screen in landscape
+        // and straight across it in portrait, i.e. the table is neither rolled nor skewed.
+        const px = (z) => { const p = new THREE.Vector3(pose.target.x, 0, z).project(camera); return [p.x * width / 2, p.y * height / 2]; };
+        const [[ax, ay], [bx, by]] = [px(-1), px(1)];
+        const lean = width / height < .95 ? Math.abs(by - ay) : Math.abs(bx - ax);
+        assert.ok(lean < .5, `${mode} at ${width}x${height} leans ${lean.toFixed(1)}px`);
+      }
+    }
+  } finally { globalThis.window = previous; }
+});
+
 test('camera moves the game makes on its own glide instead of whipping round', () => {
   const glide = (seconds) => cameraTransitionBlend(seconds, true, CAMERA_GLIDE_RATE);
   assert.ok(glide(1 / 60) < .06, 'one frame covers only a small step');

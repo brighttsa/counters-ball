@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-23 — Table square to the screen
+
+### Fixed
+- Tactical, Broadcast and the Free starting view no longer show the table slanted. Their camera directions
+  had small sideways offsets that rolled or skewed the table 3–11° on screen; the rails now run parallel to the
+  screen edges. Street keeps its deliberate three-quarter angle.
+
 ## 2026-09-23 — Preview server that never serves stale code
 
 ### Changed

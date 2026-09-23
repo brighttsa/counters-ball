@@ -93,7 +93,7 @@ function viewBounds(top, bottom) {
 // length the same way. Tactical and Free keep the whole-table view.
 export function broadcastFrame(camera, session) {
   const portrait = camera.aspect < .95;
-  const direction = portrait ? new THREE.Vector3(-1.4, 3.8, .08) : new THREE.Vector3(.15, 1.45, 2.8);
+  const direction = portrait ? new THREE.Vector3(-1.4, 3.8, 0) : new THREE.Vector3(0, 1.45, 2.8);
   const lorry = session?.level?.mechanic?.type === 'departing-lorry';
   // The bottom chips sit in the corners, so the near rail may run much closer to the bottom edge.
   const bounds = viewBounds(undefined, r => Math.min(r.bottom, 60));
@@ -126,7 +126,7 @@ export function followBallPose(frame, x) {
 
 /** The whole pitch at once, from the Broadcast side; Free camera orbits at this distance. */
 export function overviewPose(camera, session) {
-  const direction = camera.aspect < .95 ? new THREE.Vector3(-1.4, 3.8, .08) : new THREE.Vector3(.3, 2, 2.8);
+  const direction = camera.aspect < .95 ? new THREE.Vector3(-1.4, 3.8, 0) : new THREE.Vector3(0, 2, 2.8);
   return centredPitchPose(camera, direction, pitchFramePoints(session), viewBounds());
 }
 
@@ -149,7 +149,9 @@ export function playerCameraPose(camera, mode, session, selected, viewer = sessi
       [...near, origin, ball, goal], 2.8, { x: .9, top: .8, bottom: -.82 });
   }
   if (mode !== 'tactical') return overviewPose(camera, session);
-  // Tactical looks straight down on the whole pitch.
-  const direction = portrait ? new THREE.Vector3(-.09, 1, .01) : new THREE.Vector3(.01, 1, .09);
+  // Tactical looks down on the whole table, tipped a few degrees toward the player so the view keeps a
+  // screen "up". Every view keeps its sideways offset at zero: any small sideways component rolls or
+  // skews the table on screen, and the rails stop running square to the screen edges.
+  const direction = portrait ? new THREE.Vector3(-.09, 1, 0) : new THREE.Vector3(0, 1, .09);
   return centredPitchPose(camera, direction, pitchFramePoints(session), viewBounds());
 }
