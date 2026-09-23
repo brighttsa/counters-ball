@@ -130,6 +130,7 @@ export class CameraDirector {
   setReplayFocus(position) { this.replayFocus.copy(position); }
 
   update(dt, t) {
+    if (this.playerControl?.update(dt)) return;
     if (this.aimLocked) return;
     const { pos, look, tmp, viewDirection } = this;
     const motion = this.motionEnabled ? 1 : 0;

@@ -1,6 +1,30 @@
 const frame = document.getElementById('game'), status = document.getElementById('status');
 let handle;
 const session = () => handle.app.session;
+let releaseEvent;
+document.getElementById('camera-settle').onclick = () => {
+  for (let i = 0; i < 120; i++) session().cameraDirector.update(1 / 60, i / 60);
+  session().post.render();
+};
+document.getElementById('camera-state').onclick = () => {
+  const s = session(), c = s.cameraDirector.playerControl;
+  status.textContent = JSON.stringify({ mode: c.mode, peeking: c.peeking, side: c.side,
+    selected: Boolean(s.input.selected), phase: s.rules.phase, used: s.rules.flicksUsed,
+    position: s.camera.position.toArray(), bodies: s.physics.bodies.map(b => [b.pos.x, b.pos.y, b.vel.x, b.vel.y]) });
+};
+document.getElementById('camera-drag').onclick = () => {
+  const s = session(), e = s.entries.find(e => s.rules.canFlick(e.side));
+  if (!e) return;
+  const rect = s.canvas.getBoundingClientRect();
+  const point = e.mesh.getWorldPosition(s.input.projected).project(s.camera);
+  const event = { clientX: rect.left + (point.x + 1) * rect.width / 2,
+    clientY: rect.top + (1 - point.y) * rect.height / 2, pointerId: 901, button: 0, pointerType: 'touch', timeStamp: 0 };
+  s.input.onDown(event);
+  releaseEvent = { ...event, clientY: event.clientY + 45, timeStamp: 300 };
+  s.input.onMove(releaseEvent);
+  status.textContent = `Test drag: ${Boolean(s.input.selected)} / ${s.input.pull.length()}`;
+};
+document.getElementById('camera-release').onclick = () => { if (releaseEvent) session().input.onUp(releaseEvent); };
 frame.onload = () => { handle = frame.contentWindow.__countersBall; status.textContent = handle ? 'Ready' : 'Boot failed'; };
 document.getElementById('width').onchange = e => {
   frame.style.width = `${e.target.value}px`; frame.style.height = e.target.value === '1280' ? '720px' : '844px';

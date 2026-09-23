@@ -5,6 +5,7 @@
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
+import { PlayerCameraController } from './fx/player-camera-controller.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
@@ -26,6 +27,7 @@ const hud = new MatchHud();
 const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false };
+new PlayerCameraController(app, cameraDirector);
 // Street Legends is its own track of acts; campaign and 2-player share the classic circuit.
 const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : CAMPAIGN_LEVELS);
 const unlockedIn = (mode, i) => mode === 'versus'
