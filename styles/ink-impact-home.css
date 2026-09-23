@@ -8,7 +8,6 @@
   content: ''; position: absolute; inset: 0; z-index: -1; background: var(--ink);
   clip-path: polygon(0 0, 41% 0, 52% 100%, 0 100%); opacity: .86;
 }
-.home-cap-print { position: absolute; right: 1%; bottom: 4%; width: min(54%, 850px); aspect-ratio: 4 / 3; pointer-events: none; z-index: -1; }
 .home-edition { margin: 0; font: 800 var(--text-sm)/1.4 var(--font-body); color: var(--yellow); }
 /* The KONK! logo carries its own slant, outline and descriptor; it only needs a size and a grounding shadow. */
 .home-logo { margin: 0 0 0 -8px; width: min(560px, 44vw); line-height: 0; filter: drop-shadow(0 8px 14px rgb(var(--ink-rgb) / .55)); }
@@ -26,7 +25,6 @@
 .home-secondary .btn { flex: 1; font-size: var(--text-xs); padding: 8px; }
 .title-stars { align-self: start; margin: 4px 0; font: var(--text-xs)/1.4 var(--font-body); color: var(--paper); }
 @media (max-width: 700px) {
-  .home-cap-print { top: 0; bottom: auto; right: -5%; width: 75%; }
   .screen-title.is-active { justify-content: flex-end; padding: 24px 20px 72px; gap: 8px; }
   .screen-title::before { clip-path: polygon(0 20%, 100% 38%, 100% 100%, 0 100%); opacity: .9; }
   .home-logo { width: min(420px, 88vw); }

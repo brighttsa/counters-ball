@@ -5,7 +5,6 @@ import { totalStars } from '../core/save-progress-local-storage.js';
 import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
-import { paintInkCapPoster } from './ink-impact-cap-poster.js';
 import { featuredActCopy } from '../levels/featured-home-legends-act.js';
 
 const $ = (id) => document.getElementById(id);
@@ -26,7 +25,6 @@ export class MenuScreens {
       const el = e.target.closest('[data-action]');
       if (el && !el.disabled) onAction(el.dataset.action, el);
     });
-    paintInkCapPoster($('home-cap-print'));
     // The act strip scrolls sideways; a mouse wheel only scrolls vertically, so translate it.
     $('level-grid').addEventListener('wheel', (e) => {
       const grid = e.currentTarget;

@@ -13,6 +13,7 @@
 
 ### Removed
 - The old Counters Ball logo and favicon (`assets/counters-ball-*.svg`) and the hidden logo loader.
+- The large red cap print on the home screen: it competed with the cap in the KONK! logo. (The share card still uses it faintly in a corner.)
 
 ## 2026-09-23 — Rivalry, share cards and challenge links
 

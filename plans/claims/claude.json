@@ -2,14 +2,15 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "KONK! paper ball",
+  "task": "Remove home cap print",
   "status": "released",
   "paths": [
-    "plans/visuals/konk-brand-identity.html",
-    "plans/visuals/konk-brand/",
-    "assets/",
-    "plans/agent-handoff-board.md"
+    "index.html",
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "styles/ink-impact-home.css",
+    "plans/agent-handoff-board.md",
+    "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-23T11:59:52.309Z",
-  "head": "ff901890f8d2644f8362313e9094b86aa47fa841"
+  "updatedAt": "2026-09-23T12:05:13.123Z",
+  "head": "e7f1a0ef47d5141338661b3c8574124c14d4bd11"
 }
