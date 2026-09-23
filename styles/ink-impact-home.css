@@ -13,7 +13,7 @@
 .home-edition { margin: 0; font: 800 14px/1.4 var(--font-body); color: var(--yellow); }
 .home-headline { margin: 0; font: 900 112px/.86 var(--font-display); color: var(--paper); transform: rotate(-3deg); text-shadow: 5px 5px 0 var(--ink); }
 .home-headline span { color: var(--yellow); }
-.tagline { max-width: 34ch; margin: 12px 0 0; font: 700 18px/1.4 var(--font-body); color: var(--paper); text-shadow: 0 2px 8px rgba(20, 10, 2, 0.9); }
+.tagline { max-width: 34ch; margin: 12px 0 0; font: 700 18px/1.4 var(--font-body); color: var(--paper); text-shadow: var(--shadow-text); }
 .home-location { display: flex; align-items: center; gap: 12px; margin: 10px 0; color: var(--paper); font: 14px/1.4 var(--font-body); }
 .home-location b { font: 28px/1 var(--font-display); color: var(--yellow); border-right: 3px solid; padding-right: 12px; }
 .screen-title .menu-stack { display: grid; gap: 10px; width: 340px; max-width: 100%; }
