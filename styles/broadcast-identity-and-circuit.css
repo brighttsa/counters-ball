@@ -1,7 +1,7 @@
 /* Broadcast structure; chalk and tape remain small, human annotations. */
 :root {
   --broadcast: #191b1b; --broadcast-soft: #292c2b; --rule: #5e625e;
-  --font-display: Impact, 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  --font-display: 'Anton', Impact, 'Arial Narrow', sans-serif; /* webfont: phones ship no Impact */
   --font-body: 'Avenir Next', 'Segoe UI', Arial, sans-serif;
   --glass: rgba(25, 27, 27, 0.94);
 }

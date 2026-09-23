@@ -41,7 +41,7 @@
 .screen-levels .level-group {
   flex: 0 0 30px; contain: size; display: grid; place-items: center; padding: 0 2px; writing-mode: vertical-rl; transform: rotate(180deg);
   text-align: center;
-  font: 700 11px/1.15 var(--font-body); text-transform: uppercase; color: #f0cf45; border-right: 2px solid #f0cf45;
+  font: 700 12px/1.15 var(--font-body); text-transform: uppercase; color: #f0cf45; border-right: 2px solid #f0cf45;
 }
 .screen-levels .level-card {
   flex: 0 0 176px; min-height: 0; height: 96px; padding: 10px 12px 10px 52px; gap: 2px; align-content: center;
@@ -56,14 +56,14 @@
   background: #101514; border: 2px solid var(--accent); border-radius: 0; outline: 0;
 }
 .screen-levels .level-name { font: 18px/1.05 var(--font-display); text-transform: uppercase; overflow-wrap: anywhere; }
-.screen-levels .level-place { font-size: 11px; color: #c0c8c0; }
+.screen-levels .level-place { font-size: 12px; color: #c0c8c0; }
 .screen-levels .level-stars { min-height: 0; }
 .screen-levels .level-stars i { font-size: 14px; }
 .screen-levels .level-card.locked { color: #b9bfb8; filter: none; }
 .screen-levels .level-card.locked .level-number { border-style: dashed; border-color: #8a9189; }
 .screen-levels .level-lock {
   position: static; inset: auto; display: block; width: fit-content; padding: 0; background: none; transform: none;
-  font: 700 10px/1.3 var(--font-body); text-transform: uppercase; color: #c0c8c0;
+  font: 700 12px/1.3 var(--font-body); text-transform: uppercase; color: #c0c8c0;
 }
 
 @media (max-width: 560px) {
@@ -78,12 +78,11 @@
   .screen-levels.is-active { gap: 8px; padding-top: max(10px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
   .screen-levels .screen-header { padding-bottom: 6px; }
   .screen-levels .chalk-heading { font-size: 24px; }
-  .screen-levels .screen-header .btn { min-height: 40px; padding-block: 8px; }
+  .screen-levels .screen-header .btn { min-height: 44px; padding-block: 8px; }
   .circuit-hero { width: min(400px, 60%); padding: 10px 16px; gap: 2px; }
   .circuit-venue-copy h3 { font-size: 30px; margin: 2px 0 4px; }
   #circuit-venue-place, #circuit-venue-conditions, #circuit-venue-note { display: none; }
   #circuit-enter { margin-top: 6px; min-height: 44px; }
   .screen-levels .level-card { height: 80px; flex-basis: 170px; padding-block: 6px; }
   .screen-levels .level-name { font-size: 15px; }
-  .screen-levels .level-place { font-size: 10px; }
 }

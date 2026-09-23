@@ -30,3 +30,8 @@
 .ink-game .results-score { font: 700 84px/1 var(--font-chalk); color: #f4efdf; margin: 14px 0 18px; }
 .ink-game .results-score .chalk-side { color: color-mix(in srgb, var(--chalk-team) 55%, #f4efdf); }
 @media (max-height: 500px) { .ink-game .results-score { font-size: 60px; margin: 6px 0 10px; } }
+/* The slanted clip-path cuts off anything drawn outside the button, including the focus
+   ring, so a keyboard-focused button squares up and shows its ring. */
+.btn:focus-visible { clip-path: none; outline: 3px solid #f0cf45; outline-offset: 4px; }
+/* Pressed feedback that also works on touch, where :hover never fires reliably. */
+.ink-game .btn:not(:disabled):active, .screen-title .btn:active { filter: brightness(0.85); transform: translateY(1px); }

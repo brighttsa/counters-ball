@@ -1,7 +1,7 @@
 .match-orientation-prompt {
   width: min(420px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow: auto;
   padding: 24px; color: #f5f1df; background: #101514; border: 0; border-top: 5px solid #f0cf45;
-  font: 16px/1.5 Arial, sans-serif;
+  font: 16px/1.5 var(--font-body);
 }
 .match-orientation-prompt::backdrop { background: #101514d9; }
 .orientation-kicker { color: #f0cf45; font-size: 12px; font-weight: 700; margin: 0 0 16px; }
@@ -27,7 +27,7 @@
   .ink-game .goal-banner { bottom: 136px; }
   .icon-btn:hover, .btn:hover { transform: none; }
 }
-.touch-selection-status { position: fixed; left: 50%; bottom: 76px; transform: translateX(-50%); z-index: 25; pointer-events: none; color: #f5f1df; background: #101514; border-left: 3px solid #f0cf45; padding: 6px 10px; font: 13px/1.3 Arial, sans-serif; }
+.touch-selection-status { position: fixed; left: 50%; bottom: 76px; transform: translateX(-50%); z-index: 25; pointer-events: none; color: #f5f1df; background: #101514; border-left: 3px solid #f0cf45; padding: 6px 10px; font: 13px/1.3 var(--font-body); }
 .touch-selection-status:empty, body:not([data-screen="match"]) .touch-selection-status { display: none; }
 @media (orientation: portrait) { .touch-selection-status { bottom: 136px; } }
 @media (orientation: portrait) and (max-width: 1100px) {

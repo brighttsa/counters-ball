@@ -1,4 +1,4 @@
-.player-camera { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(78px, env(safe-area-inset-bottom)); z-index: 24; width: 268px; max-width: calc(100% - 28px); color: #f5f1df; font: 13px/1.3 Arial, sans-serif; }
+.player-camera { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(78px, env(safe-area-inset-bottom)); z-index: 24; width: 268px; max-width: calc(100% - 28px); color: #f5f1df; font: 13px/1.3 var(--font-body); }
 .player-camera[hidden], .player-camera [hidden] { display: none; }
 body:not([data-screen="match"]) .player-camera { display: none; }
 .camera-toolbar { display: flex; gap: 8px; justify-content: flex-end; }
