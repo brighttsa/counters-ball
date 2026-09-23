@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { THREE } from './helpers/real-three-session-fixture.mjs';
-const { cameraTransitionBlend, playerCameraPose } = await import('../src/fx/player-camera-view-poses.js');
+const { cameraTransitionBlend, playerCameraPose, pitchFramePoints, hudReservePixels } = await import('../src/fx/player-camera-view-poses.js');
 
 test('camera transitions settle after a throttled preview frame', () => {
   assert.ok(cameraTransitionBlend(1 / 60, true) < .3);
@@ -19,15 +19,12 @@ test('phone and tablet framing fills usable space without cropping goal structur
         const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
         const pose = playerCameraPose(camera, mode, session);
         camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
-        const end = type === 'departing-lorry' ? 2.08 : 1.94;
-        const points = [-end,end].flatMap(x => [-1.24,1.24].flatMap(z => [0,.28].map(y =>
-          new THREE.Vector3(x,y,z).project(camera))));
-        for (const p of points) assert.ok(Math.abs(p.x) <= .901 && Math.abs(p.y) < 1, `${width}/${mode}`);
+        const points = pitchFramePoints(session).map(point => point.project(camera));
+        for (const p of points) assert.ok(Math.abs(p.x) <= .951 && Math.abs(p.y) < 1, `${width}/${mode}`);
         const extent = Math.max(...points.map(p => p.x)) - Math.min(...points.map(p => p.x));
         const vertical = Math.max(...points.map(p => p.y)) - Math.min(...points.map(p => p.y));
-        const portrait = width / height < .95;
-        const reserved = portrait || height > 600 ? 280 : 152;
-        assert.ok(extent / 1.8 > .8 || vertical / (2 - 2 * reserved / height) > .8,
+        const { top, bottom } = hudReservePixels(width, height);
+        assert.ok(extent / 1.9 > .9 || vertical / (2 - 2 * (top + bottom) / height) > .9,
           `pitch too small at ${width}/${mode}`);
       }
     }

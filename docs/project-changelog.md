@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-09-23 — Closer match camera
+
+### Changed
+- Broadcast and Tactical now frame the pitch (rail battens and goals), not the whole table and room: on
+  laptops and desktops the rails fill about 85% of the screen width, up from 53–65%. Broadcast sits a little
+  lower (about 35°) and the pitch is centred between the scoreboard and the bottom controls. Lorry acts still
+  keep the lorries in view; HUD clearances are unchanged.
+
 ## 2026-09-23 — Keyboard shots, safer Restart/Quit, clearer table conditions
 
 ### Added

@@ -13,9 +13,25 @@ export function loadCameraPreferences(storage) {
   } catch { return { home: 'broadcast', away: 'broadcast' }; }
 }
 
-const corners = [-2.25, 2.25].flatMap(x => [-1.45, 1.45].map(z => new THREE.Vector3(x, 0, z)));
+// The match is framed on the pitch, not the table or the room: the outer edge and top of the
+// rail battens plus the matchstick crossbars. Lorry acts add the toy lorries that carry each
+// goal along the table ends, behind the battens.
+export function pitchFramePoints(session) {
+  const lorry = session?.level?.mechanic?.type === 'departing-lorry';
+  const x = lorry ? 2.08 : 1.72, z = 1.2;
+  const rails = [-x, x].flatMap(px => [-z, z].flatMap(pz =>
+    [0, lorry ? .22 : .05].map(y => new THREE.Vector3(px, y, pz))));
+  const crossbars = [-1.5, 1.5].flatMap(px => [-.3, .3].map(pz => new THREE.Vector3(px, .26, pz)));
+  return [...rails, ...crossbars];
+}
 
-export function fitCameraPose(camera, target, direction, points = corners, minimum = 3.2, bounds = { x: .88, top: .62, bottom: -.76 }) {
+// Screen space kept clear for the scoreboard and its callout (top) and the flick/camera chips (bottom).
+export function hudReservePixels(width, height) {
+  const roomy = width / height < .95 || height > 600;
+  return { top: roomy ? 136 : 80, bottom: roomy ? 144 : 72 };
+}
+
+export function fitCameraPose(camera, target, direction, points = pitchFramePoints(), minimum = 3.2, bounds = { x: .95, top: .62, bottom: -.76 }) {
   const probe = camera.clone();
   probe.fov = 42; probe.updateProjectionMatrix();
   const dir = direction.clone().normalize();
@@ -36,6 +52,27 @@ export function fitCameraPose(camera, target, direction, points = corners, minim
   return { position: target.clone().addScaledVector(dir, distance), target: target.clone() };
 }
 
+// Fits the pitch, then slides the aim point along the table until the space left above and below
+// the pitch is equal, and refits: without this the far rail sits well below the scoreboard and
+// the whole view could come closer.
+function centredPitchPose(camera, direction, points, bounds) {
+  const target = new THREE.Vector3();
+  const up = new THREE.Vector3(-direction.x, 0, -direction.z).normalize(); // screen-up, on the table
+  const probe = camera.clone();
+  probe.fov = 42; probe.updateProjectionMatrix();
+  let pose;
+  for (let i = 0; i < 6; i++) {
+    pose = fitCameraPose(camera, target, direction, points, 2.6, bounds);
+    probe.position.copy(pose.position); probe.lookAt(pose.target); probe.updateMatrixWorld(true);
+    const ys = points.map(point => point.clone().project(probe).y);
+    const room = ((bounds.top - Math.max(...ys)) - (Math.min(...ys) - bounds.bottom)) / 2;
+    if (Math.abs(room) < .005) break;
+    const distance = pose.position.distanceTo(target);
+    target.addScaledVector(up, -room * distance * Math.tan(THREE.MathUtils.degToRad(21)));
+  }
+  return pose;
+}
+
 export function playerCameraPose(camera, mode, session, selected) {
   const portrait = camera.aspect < .95;
   if (mode === 'street') {
@@ -52,23 +89,18 @@ export function playerCameraPose(camera, mode, session, selected) {
     return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? 1.15 : .9, .28),
       [...near, origin, ball, goal], 2.8, { x: .9, top: .8, bottom: -.82 });
   }
+  // Broadcast sits pitch-side at about 35° so the table fills the screen; Tactical looks straight down.
   const direction = mode === 'tactical' ? new THREE.Vector3(.01, 1, .09)
-    : new THREE.Vector3(.35, 2.62, 2.8);
+    : new THREE.Vector3(.3, 2, 2.8);
   if (portrait) {
     direction.set(-direction.z, direction.y, direction.x);
     if (mode !== 'tactical') direction.set(-1.4, 3.8, .08);
   }
+  const points = pitchFramePoints(session);
   const viewport = typeof window !== 'undefined' ? window : null;
-  if (viewport?.innerWidth <= 1100 || viewport?.matchMedia?.('(pointer: coarse)').matches) {
-    // Fit the rails and complete goal structures, not the decorative tabletop apron.
-    const end = session.level?.mechanic?.type === 'departing-lorry' ? 2.08 : 1.94;
-    const play = [-end, end].flatMap(x => [-1.24, 1.24].flatMap(z =>
-      [0, .28].map(y => new THREE.Vector3(x, y, z))));
-    const height = viewport.innerHeight;
-    const top = portrait || height > 600 ? 136 : 80;
-    const bottom = portrait || height > 600 ? 144 : 72;
-    return fitCameraPose(camera, new THREE.Vector3(), direction, play, 2.6,
-      { x: .90, top: Math.max(.15, 1 - 2 * top / height), bottom: -Math.max(.15, 1 - 2 * bottom / height) });
-  }
-  return fitCameraPose(camera, new THREE.Vector3(0, 0, 0), direction);
+  if (!viewport?.innerHeight) return centredPitchPose(camera, direction, points, { x: .95, top: .62, bottom: -.76 });
+  const { innerWidth: width, innerHeight: height } = viewport;
+  const { top, bottom } = hudReservePixels(width, height);
+  return centredPitchPose(camera, direction, points,
+    { x: .95, top: Math.max(.15, 1 - 2 * top / height), bottom: -Math.max(.15, 1 - 2 * bottom / height) });
 }

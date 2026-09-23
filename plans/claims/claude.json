@@ -2,23 +2,15 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Remaining UX audit actions",
+  "task": "Closer default match camera",
   "status": "released",
   "paths": [
-    "src/scene/chalk-table-score-and-flick-tallies.js",
-    "src/ui/menu-button-action-routes.js",
-    "src/ui/ui-menu-screens-title-levels-intro.js",
-    "src/ui/konk-interface-copy.js",
-    "src/gameplay/human-drag-aim-input.js",
-    "src/gameplay/keyboard-flick-aim.js",
-    "src/gameplay/match-session-runtime.js",
-    "src/main.js",
-    "index.html",
-    "styles/",
+    "src/fx/",
+    "src/ui/player-camera-controls.js",
     "tests/",
-    "plans/agent-handoff-board.md",
-    "docs/project-changelog.md"
+    "docs/",
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T16:32:16.637Z",
-  "head": "69382fa99c30eb799d01b3d14197781fd69bcfb8"
+  "updatedAt": "2026-09-23T16:42:37.768Z",
+  "head": "f75a036d68d313ef86782c83ca07c59c7a59be05"
 }

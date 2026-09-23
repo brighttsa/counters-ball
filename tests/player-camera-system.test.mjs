@@ -5,7 +5,7 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
   skip: !process.env.COUNTERS_TEST_THREE,
 }, async t => {
   const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
-  const { playerCameraPose, loadCameraPreferences } = await import('../src/fx/player-camera-view-poses.js');
+  const { playerCameraPose, loadCameraPreferences, pitchFramePoints } = await import('../src/fx/player-camera-view-poses.js');
   const { HumanDragAimInput } = await import('../src/gameplay/human-drag-aim-input.js');
   const previous = globalThis.window;
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
@@ -20,16 +20,30 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
   });
   await t.test('Tactical and Broadcast frame both goals, lorries and outer lanes', () => {
     for (const aspect of [320 / 844, 375 / 844, 390 / 844, 430 / 844, 16 / 9]) {
-      for (const mode of ['tactical', 'broadcast']) {
+      for (const mode of ['tactical', 'broadcast']) for (const type of ['ruler-seesaw', 'departing-lorry']) {
+        const framed = { ...session, level: { mechanic: { type } } };
         const camera = new THREE.PerspectiveCamera(42, aspect, .1, 100);
-        const pose = playerCameraPose(camera, mode, session);
+        const pose = playerCameraPose(camera, mode, framed);
         camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
-        for (const x of [-2.25, 2.25]) for (const z of [-1.45, 1.45]) {
-          const p = new THREE.Vector3(x, 0, z).project(camera);
-          assert.ok(Math.abs(p.x) < .88 && p.y < .62 && p.y > -.76);
+        for (const point of pitchFramePoints(framed)) {
+          const p = point.clone().project(camera);
+          assert.ok(Math.abs(p.x) < .95 && p.y < .62 && p.y > -.76, `${aspect}/${mode}/${type}`);
         }
       }
     }
+  });
+  await t.test('Broadcast fills the screen with the pitch on laptops and desktops, not the table around it', () => {
+    const previousSize = globalThis.window;
+    try {
+      for (const [width, height] of [[1078, 751], [1280, 800], [1440, 900], [1920, 1080], [2560, 1440]]) {
+        globalThis.window = { ...previousSize, innerWidth: width, innerHeight: height };
+        const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
+        const pose = playerCameraPose(camera, 'broadcast', { ...session, level: { mechanic: { type: 'ruler-seesaw' } } });
+        camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+        const xs = [-1.62, 1.62].flatMap(x => [-1.12, 1.12].map(z => new THREE.Vector3(x, 0, z).project(camera).x));
+        assert.ok((Math.max(...xs) - Math.min(...xs)) / 2 > .8, `rails fill most of the width at ${width}x${height}`);
+      }
+    } finally { globalThis.window = previousSize; }
   });
   await t.test('same world drag yields the same physical velocity in every view', () => {
     let expected;
