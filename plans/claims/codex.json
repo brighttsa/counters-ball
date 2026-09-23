@@ -2,19 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Landscape-first mobile and tablet play",
+  "task": "Remember Schoolyard winning ruler banks",
   "status": "released",
   "paths": [
-    "src/main.js",
-    "src/ui/match-orientation-prompt.js",
-    "styles/mobile-tablet-match-layout.css",
-    "index.html",
-    "tests/match-orientation-prompt.test.mjs",
-    "tests/ink-impact-visual-check.html",
-    "tests/ink-impact-visual-check.js",
-    "plans/agent-handoff-board.md",
-    "plans/reports/mobile-tablet-landscape-play.md"
+    "src/core/schoolyard-shot-memory.js",
+    "src/gameplay/match-session-feedback-hooks.js",
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "tests/schoolyard-shot-memory.test.mjs",
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T06:13:15.837Z",
-  "head": "fe34aefbccf565b286e76fe3f59e0a73eec591c1"
+  "updatedAt": "2026-09-23T06:20:51.560Z",
+  "head": "dcbf060fcc3d79d3184d0ab5b4c4428710ba2cbd"
 }

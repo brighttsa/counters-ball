@@ -2,6 +2,7 @@
 // tickets with stars and locks) and the pre-match intro card. One delegated
 // click handler routes every [data-action] button to the app.
 import { totalStars } from '../core/save-progress-local-storage.js';
+import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 import { paintInkCapPoster } from './ink-impact-cap-poster.js';
@@ -107,6 +108,8 @@ export class MenuScreens {
     if (level.obstacles.length && !legend) lines.push('Obstacles on the table: play the rebounds');
     if ((level.frictionScale ?? 1) > 1) lines.push('Dusty surface: caps stop sooner');
     if (!versus) lines.push('★ Win', '★ Keep a clean sheet', `★ Win within ${rules.threeStarFlicks} flicks`);
+    const memory = schoolyardReturnMemory(level, mode);
+    if (memory) lines.unshift(memory);
     const list = $('intro-rules');
     list.replaceChildren(...lines.map((text) => {
       const li = document.createElement('li');

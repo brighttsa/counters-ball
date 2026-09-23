@@ -3,6 +3,7 @@
 import {
   SIDE_HOME, SIDE_AWAY, GOAL_LINE_X, MAX_FLICK_SPEED,
 } from '../core/pitch-dimensions-and-constants.js';
+import { createSchoolyardShotMemory } from '../core/schoolyard-shot-memory.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
   boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
@@ -12,6 +13,7 @@ const WALL_RESTITUTION_FACTOR = 1.55;
 export function wireMatchFeedback(session) {
   const { physics, rules, sound, particles, juice, time, cameraDirector, post, hud, options, level } = session;
   const versus = options.controllers.home === 'human' && options.controllers.away === 'human';
+  const shotMemory = createSchoolyardShotMemory(level, options);
   const entryByBody = new Map(session.entries.map((e) => [e.body, e]));
   const nameOf = (side) => (side === SIDE_HOME ? options.homeTeam.name : options.awayTeam.name);
   const kid = level.opponent.kid;
@@ -90,6 +92,7 @@ export function wireMatchFeedback(session) {
     // A venue's own hero moment outranks the generic skill label.
     const skillLabel = session.presentation.goal(scorer); // always: it also arms the replay
     const venueLabel = session.mechanic?.goalLabel(scorer);
+    shotMemory.goal({ scorer, scores }, venueLabel);
     if (venueLabel) session.presentation.highlight = { ...session.presentation.highlight, label: venueLabel,
       replay: true, direction: scorer === SIDE_HOME ? 1 : -1 };
     const highlight = venueLabel || skillLabel;
@@ -113,6 +116,7 @@ export function wireMatchFeedback(session) {
   rules.on('kickoff', () => { session.presentation.skills.kickoff(); session.resetToKickoff(); });
 
   rules.on('end', (result) => {
+    shotMemory.finish(result);
     session.ai.cancel();
     session.input.cancel();
     hud.setTurn(null, 'Full time!');
