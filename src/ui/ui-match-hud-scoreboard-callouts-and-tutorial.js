@@ -40,8 +40,7 @@ export class MatchHud {
   }
 
   reset(level, homeTeam, awayTeam, versus) {
-    $('hud-home-name').textContent = versus ? homeTeam.name : 'YOU';
-    $('hud-away-name').textContent = versus ? awayTeam.name : level.opponent.kid.toUpperCase();
+    this.setNames(versus ? homeTeam.name : 'YOU', versus ? awayTeam.name : level.opponent.kid);
     this.root.style.setProperty('--home-color', homeTeam.hudColor);
     this.root.style.setProperty('--away-color', awayTeam.hudColor);
     $('score-home').textContent = '0';
@@ -53,6 +52,12 @@ export class MatchHud {
     this.setFlicks(level.rules.flickLimit, level.rules.awayFlickLimit ?? level.rules.flickLimit);
     this.setObjective(level.objective ?? null);
     this.hideTutorial();
+  }
+
+  /** Scoreboard names; the 2-Player Table sets the typed seat names at kick-off. */
+  setNames(home, away) {
+    $('hud-home-name').textContent = home.toUpperCase();
+    $('hud-away-name').textContent = away.toUpperCase();
   }
 
   /** Street Legends objective + live signal reading; hidden on classic tables. */

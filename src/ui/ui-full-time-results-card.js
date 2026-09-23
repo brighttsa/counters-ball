@@ -29,6 +29,13 @@ export function fullTimeNote(result, level, mode, { improved, isFinalVenue }) {
   return winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;
 }
 
+/** "You win!", "Kwame wins", or on the 2-Player Table the winning seat's name. */
+export function fullTimeTitle({ winner }, level, mode, names) {
+  if (winner === null) return 'Draw!';
+  if (mode === 'versus') return `${names[winner]} wins!`;
+  return winner === SIDE_HOME ? 'You win!' : `${level.opponent.kid} wins`;
+}
+
 export class FullTimeResultsCard {
   constructor() {
     this.timers = [];
@@ -40,19 +47,21 @@ export class FullTimeResultsCard {
     this.timers = [];
   }
 
-  fill(result, level, mode, { hasNext, improved, isFinalVenue, onStar, homeColour }) {
+  /**
+   * @param names 2-Player Table seat names ({home, away}); ignored against the AI
+   * @param lines extra full-time lines: the series and head-to-head record, or a friend's challenge verdict
+   * @param rematchLabel 2-Player only: 'Rematch' mid-series, 'New series' once it is decided
+   */
+  fill(result, level, mode, { hasNext, improved, isFinalVenue, onStar, homeColour, names, lines = [], rematchLabel = 'Rematch' }) {
     this.cancelReveal();
     const versus = mode === 'versus';
     const { winner, scores, starFlags } = result;
-    const kid = level.opponent.kid;
     const title = $('results-title');
-    title.textContent = winner === null ? 'Draw!'
-      : versus ? `${winner === SIDE_HOME ? 'Accra Reds' : level.opponent.team.name} win!`
-        : winner === SIDE_HOME ? 'You win!' : `${kid} wins`;
+    title.textContent = fullTimeTitle(result, level, mode, names);
     title.dataset.outcome = winner === null ? 'draw' : versus || winner === SIDE_HOME ? 'win' : 'loss';
     $('results-score').replaceChildren(chalkSide(scores.home, homeColour), ' — ', chalkSide(scores.away, level.opponent.team.hudColor));
     $('results-opponent').textContent = level.legend ? `Street Legends · ${level.name} · Act ${level.legend.act}: ${level.actTitle}`
-      : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
+      : versus ? `${level.name} · ${names.home} vs ${names.away}` : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
 
     const labels = ['Win the match', 'Keep a clean sheet', `Win within ${level.rules.threeStarFlicks} flicks`];
     const list = $('results-stars');
@@ -75,6 +84,15 @@ export class FullTimeResultsCard {
     }
 
     $('results-note').textContent = fullTimeNote(result, level, mode, { improved, isFinalVenue });
+    $('results-lines').replaceChildren(...lines.map((text) => {
+      const li = document.createElement('li');
+      li.textContent = text;
+      return li;
+    }));
+    // Two players want the same table again at once: Rematch leads, and it's one tap.
+    const replay = $('btn-replay');
+    replay.textContent = versus ? rematchLabel : 'Replay';
+    replay.classList.toggle('btn-primary', versus);
     $('btn-next').hidden = !hasNext;
     $('btn-next').textContent = level.legend ? 'Next Act' : 'Next Pitch';
   }

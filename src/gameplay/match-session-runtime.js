@@ -27,7 +27,7 @@ const projected = new THREE.Vector3();
 export class MatchSession {
   /**
    * @param ctx { renderer, scene, camera, canvas, cameraDirector, post, sound, hud }
-   * @param options { level, homeTeam, awayTeam, controllers, homeDifficulty?, isAttract?, onEnd? }
+   * @param options { level, homeTeam, awayTeam, controllers, playerNames?, homeDifficulty?, isAttract?, onEnd? }
    */
   constructor(ctx, options) {
     Object.assign(this, ctx);
@@ -74,7 +74,8 @@ export class MatchSession {
     wireMatchFeedback(this);
   }
 
-  start() { this.rules.start(SIDE_HOME); }
+  /** A 2-Player series alternates who kicks off; everything else starts with home. */
+  start(side = SIDE_HOME) { this.rules.start(side); }
 
   schedule(seconds, fn) { this.timers.push({ left: seconds, fn }); }
 

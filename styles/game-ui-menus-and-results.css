@@ -38,6 +38,19 @@
 .intro-rules { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 4px; font: var(--text-sm)/1.5 var(--font-body); }
 .intro-rules li::before { content: '— '; opacity: 0.5; }
 .intro-rules .star-goal { display: none; }
+.intro-rules .rivalry-line { color: var(--yellow); font-weight: 700; }
+
+/* 2-Player seats: each name field sits under its team's colour, like the chips it replaces. */
+.intro-names { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin-bottom: 12px; }
+.name-field { display: grid; gap: 4px; flex: 1 1 140px; min-width: 0; font: 700 var(--text-xs) var(--font-body); text-transform: uppercase; color: var(--paper-muted); }
+.name-field input {
+  width: 100%; min-height: 44px; padding: 8px 12px; font: 700 var(--text-md) var(--font-body); color: var(--paper);
+  background: var(--ink-raised); border: 0; border-left: 3px solid var(--chip); border-bottom: 3px solid var(--chip); border-radius: 0;
+}
+.name-field input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.intro-names .vs { padding-bottom: 8px; }
+
+.screen-challenge { background: var(--scrim); }
 
 .menu-card { max-width: 400px; text-align: center; background: var(--ink); border-top: 6px solid var(--yellow); }
 .menu-card .card-title { margin-bottom: 16px; }
@@ -61,6 +74,13 @@
 }
 .results-stars li.earned .result-star { color: var(--yellow); border-style: solid; border-color: var(--yellow); animation: rise-in 250ms ease both; }
 .results-note { min-height: 1.4em; margin: 0 0 16px; font: 700 var(--text-md)/1.4 var(--font-body); color: var(--yellow); }
+.results-note:empty { display: none; }
+/* Series, head-to-head record, or a friend's challenge verdict. */
+.results-lines { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 4px; font: var(--text-sm)/1.5 var(--font-body); color: var(--paper); }
+.results-lines:empty { display: none; }
+.results-lines li:first-child { font-weight: 700; color: var(--yellow); }
+.results-share-status { margin: 8px 0 0; font-size: var(--text-sm); color: var(--paper-muted); overflow-wrap: anywhere; }
+.results-share-status:empty { display: none; }
 
 @keyframes screen-in { from { opacity: 0; } }
 @keyframes rise-in { from { opacity: 0; transform: translateY(16px); } }
@@ -78,6 +98,7 @@
   .intro-card .card-title { font-size: var(--text-2xl); }
   .intro-versus { margin-bottom: 8px; }
   .intro-rules { gap: 4px; margin-bottom: 8px; font-size: var(--text-xs); }
+  .intro-names { margin-bottom: 8px; }
   .results-card .card-actions { justify-content: center; }
   .results-card { max-width: 520px; }
 }
@@ -89,6 +110,9 @@
 @media (max-height: 500px) {
   .intro-card { padding: 12px 20px; }
   .intro-blurb, .intro-versus { display: none; }
+  .challenge-card .intro-blurb { display: block; } /* the friend's mark is the whole point of that card */
+  .intro-names { flex-wrap: nowrap; margin-bottom: 8px; }
+  .results-lines { margin-bottom: 8px; }
   .results-score { font-size: var(--text-4xl); margin: 4px 0 8px; }
   /* Landscape phones are wide and short: spread the cards sideways instead of scrolling them. */
   .menu-card { max-width: 520px; }

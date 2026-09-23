@@ -1,7 +1,19 @@
-// Campaign progress (best stars per venue) + sound preference, persisted in
-// localStorage. Every access is guarded: private windows and blocked storage
+// Campaign progress (best stars per venue), preferences, and the 2-Player Table's
+// names and head-to-head records, persisted in localStorage. Every access is guarded: private windows and blocked storage
 // must never break the game — it simply starts fresh.
 const STORAGE_KEY = 'counters-ball-3d/progress-v1';
+
+const isCount = (value) => Number.isInteger(value) && value >= 0;
+const isPlainObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+const validNames = (names) => isPlainObject(names) && [names.home, names.away].every((n) => typeof n === 'string' && n.length > 0 && n.length <= 12);
+
+/** 2-Player Table head-to-head records: { "ama|kofi": { wins: { ama: 3, kofi: 2 }, draws: 1 } }. */
+function rivalriesField(raw) {
+  if (!isPlainObject(raw)) return {};
+  const rivalries = Object.fromEntries(Object.entries(raw).filter(([, entry]) => isPlainObject(entry) && isCount(entry.draws)
+    && isPlainObject(entry.wins) && Object.values(entry.wins).every(isCount)));
+  return Object.keys(rivalries).length ? { rivalries } : {};
+}
 
 export function loadProgress() {
   const fresh = { stars: {}, muted: false };
@@ -15,6 +27,8 @@ export function loadProgress() {
       muted: Boolean(parsed?.muted),
       ...(typeof parsed?.lastLegendAct === 'string' && { lastLegendAct: parsed.lastLegendAct }),
       ...(parsed?.hudStyle === 'broadcast' && { hudStyle: 'broadcast' }), // chalk is the default
+      ...(validNames(parsed?.versusNames) && { versusNames: { home: parsed.versusNames.home, away: parsed.versusNames.away } }),
+      ...rivalriesField(parsed?.rivalries),
     };
   } catch {
     return fresh;

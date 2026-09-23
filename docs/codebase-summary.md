@@ -18,9 +18,20 @@ main.js
 ```
 
 App states: title (live AI-vs-AI attract match) → Circuit venue preview →
-skippable, automatically advancing intro → match → results. Progress lives in
+intro (waits for Kick Off) → match → results. Progress lives in
 localStorage. Circuit previews replace the venue without starting a match;
 locked venues can be previewed but cannot be entered in campaign mode.
+
+Social layer, all client-side (no server): the 2-Player Table seats two typed
+names, plays first-to-two-wins series with alternating kick-off, and keeps an
+all-time head-to-head record per pair in the save
+(`core/hot-seat-series-and-rivalry-record.js`). Results can be shared as a PNG
+card plus message (`ui/share-results-and-challenge-link.js`,
+`ui/results-share-card-canvas.js`); against the AI the message carries a
+"beat me" link (`?beat=<level>&m=<mode>&s=2-0&f=5`,
+`core/challenge-link-codec-and-comparison.js`). Opening one shows the
+challenge card first, lets that table be played even if locked, and compares
+the result on full time. Honour system: links are not signed.
 `core/game-render-loop-and-viewport.js` owns rendering, resize and motion preferences.
 
 ## MatchSession (`src/gameplay/match-session-runtime.js`)

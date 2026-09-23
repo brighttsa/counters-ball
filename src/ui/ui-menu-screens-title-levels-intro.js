@@ -35,6 +35,25 @@ export class MenuScreens {
       grid.scrollLeft += e.deltaY;
       e.preventDefault();
     }, { passive: false });
+    // 2-Player names: the head-to-head line follows what's typed; Enter just closes the keyboard.
+    for (const id of ['intro-name-home', 'intro-name-away']) {
+      $(id).addEventListener('input', () => {
+        if (this.rivalryItem && this.rivalryFor) this.rivalryItem.textContent = this.rivalryFor(this.readPlayerNames());
+      });
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') e.currentTarget.blur(); });
+    }
+  }
+
+  /** What's typed in the two seat fields, uncleaned. */
+  readPlayerNames() {
+    return { home: $('intro-name-home').value, away: $('intro-name-away').value };
+  }
+
+  /** A friend's "beat me" link, shown before the table it names. */
+  fillChallenge(level, inviteLine) {
+    $('challenge-title').textContent = 'Beat this mark';
+    $('challenge-venue').textContent = `${level.legend ? `${level.name} · Act ${level.legend.act}: ${level.actTitle}` : level.name} · ${level.place}`;
+    $('challenge-mark').textContent = inviteLine;
   }
 
   async loadLogo() {
@@ -108,7 +127,11 @@ export class MenuScreens {
     fillVenuePreview(level, index, unlocked, mode, this.circuitProgress?.stars[level.id] ?? 0, conditions(level));
   }
 
-  fillIntro(level, index, total, mode, homeTeam) {
+  /**
+   * @param extras.names 2-Player seat names to prefill; extras.rivalryFor(rawNames) gives their head-to-head line
+   * @param extras.lines extra rules-list lines shown first, e.g. a friend's challenge mark
+   */
+  fillIntro(level, index, total, mode, homeTeam, { names, rivalryFor, lines: extraLines = [] } = {}) {
     const versus = mode === 'versus';
     // Back buttons on the intro, pause and results name the track they return to.
     const track = mode === 'legends' ? 'Acts' : 'Pitches';
@@ -126,6 +149,16 @@ export class MenuScreens {
     away.textContent = versus ? opponent.team.name : opponent.kid;
     home.style.setProperty('--chip', homeTeam.hudColor);
     away.style.setProperty('--chip', opponent.team.hudColor);
+    $('intro-versus').hidden = versus;
+    $('intro-names').hidden = !versus;
+    this.rivalryFor = versus ? rivalryFor : null;
+    if (versus) {
+      for (const [side, team] of [['home', homeTeam], ['away', opponent.team]]) {
+        $(`intro-name-${side}`).value = names?.[side] ?? '';
+        $(`intro-name-${side}-team`).textContent = team.name;
+        $(`intro-name-${side}-field`).style.setProperty('--chip', team.hudColor);
+      }
+    }
 
     const lines = level.introLines ? [...level.introLines]
       : [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
@@ -134,12 +167,17 @@ export class MenuScreens {
     if (!versus) lines.push('★ Win', '★ Keep a clean sheet', `★ Win within ${rules.threeStarFlicks} flicks`);
     const memory = schoolyardReturnMemory(level, mode);
     if (memory) lines.unshift(memory);
+    lines.unshift(...extraLines);
+    const rivalry = this.rivalryFor?.(this.readPlayerNames());
+    if (rivalry) lines.push(rivalry);
     const list = $('intro-rules');
     list.replaceChildren(...lines.map((text) => {
       const li = document.createElement('li');
       li.textContent = text;
       if (text.startsWith('★')) li.className = 'star-goal';
+      if (text === rivalry) li.className = 'rivalry-line';
       return li;
     }));
+    this.rivalryItem = rivalry ? list.querySelector('.rivalry-line') : null;
   }
 }

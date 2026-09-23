@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-09-23 — Rivalry, share cards and challenge links
+
+### Added
+- **2-Player Table names and series:** type both players' names on the intro card; the
+  scoreboard, turn banner and results use them. Games form a first-to-two-wins series
+  (drawn games don't count), kick-off alternates, and a "PASS IT OVER" callout marks each
+  hand-over. Results offer one-tap **Rematch** (straight to kick-off), then **New series**.
+- **Head-to-head record** per pair of names, saved locally, shown on the intro and results.
+- **Share** on every results card: a 1080² PNG card (score in team chalk, stars or series
+  lines, cap print) through the phone's share sheet; desktop downloads it and copies the text.
+- **"Beat me" links** from matches against the AI: the friend gets a challenge card, the same
+  table (even if locked), their mark on the intro, and a verdict at full time.
+
 ## 2026-09-22 — Street Legends: Lights Out Final coin-stack chain
 
 ### Added

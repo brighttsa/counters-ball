@@ -76,13 +76,33 @@
       <h2 class="card-title" id="intro-title"></h2>
       <p class="intro-place" id="intro-place"></p>
       <p class="intro-blurb" id="intro-blurb"></p>
-      <div class="intro-versus">
+      <div class="intro-versus" id="intro-versus">
         <span class="team-chip" id="intro-home"></span><span class="vs">vs</span><span class="team-chip" id="intro-away"></span>
+      </div>
+      <div class="intro-names" id="intro-names" hidden>
+        <label class="name-field" id="intro-name-home-field"><span id="intro-name-home-team"></span>
+          <input id="intro-name-home" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done"></label>
+        <span class="vs">vs</span>
+        <label class="name-field" id="intro-name-away-field"><span id="intro-name-away-team"></span>
+          <input id="intro-name-away" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done"></label>
       </div>
       <ul class="intro-rules" id="intro-rules"></ul>
       <div class="card-actions">
         <button class="btn btn-small" data-action="intro-back" data-track-label="{track}">Pitches</button>
         <button class="btn btn-primary" data-action="kick-off">Kick Off</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="screen screen-challenge" data-screen="challenge">
+    <article class="paper-card intro-card challenge-card" aria-labelledby="challenge-title">
+      <p class="card-kicker">A friend sent you a challenge</p>
+      <h2 class="card-title" id="challenge-title"></h2>
+      <p class="intro-place" id="challenge-venue"></p>
+      <p class="intro-blurb" id="challenge-mark"></p>
+      <div class="card-actions">
+        <button class="btn btn-small" data-action="challenge-decline">Not now</button>
+        <button class="btn btn-primary" data-action="challenge-accept">Take it on</button>
       </div>
     </article>
   </section>
@@ -131,11 +151,14 @@
       <p class="results-opponent" id="results-opponent"></p>
       <ul class="results-stars" id="results-stars"></ul>
       <p class="results-note" id="results-note"></p>
+      <ul class="results-lines" id="results-lines"></ul>
       <div class="card-actions">
         <button class="btn btn-small" data-action="results-levels" data-track-label="{track}">Pitches</button>
-        <button class="btn" data-action="replay">Replay</button>
+        <button class="btn" data-action="share-result" id="btn-share">Share</button>
+        <button class="btn" data-action="replay" id="btn-replay">Replay</button>
         <button class="btn btn-primary" data-action="next-level" id="btn-next">Next Pitch</button>
       </div>
+      <p class="results-share-status" id="results-share-status" aria-live="polite"></p>
     </article>
   </section>
 

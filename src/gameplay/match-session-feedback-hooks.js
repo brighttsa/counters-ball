@@ -16,7 +16,9 @@ export function wireMatchFeedback(session) {
   const versus = options.controllers.home === 'human' && options.controllers.away === 'human';
   const shotMemory = createSchoolyardShotMemory(level, options);
   const entryByBody = new Map(session.entries.map((e) => [e.body, e]));
-  const nameOf = (side) => (side === SIDE_HOME ? options.homeTeam.name : options.awayTeam.name);
+  // 2-Player seats go by the names typed on the intro card; the object is read live, so kick-off can fill it.
+  const nameOf = (side) => options.playerNames?.[side] ?? (side === SIDE_HOME ? options.homeTeam.name : options.awayTeam.name);
+  let lastHumanSide = null;
   const kid = level.opponent.kid;
   const syncFlicks = () => hud.setFlicks(rules.flicksLeft(SIDE_HOME), rules.flicksLeft(SIDE_AWAY));
 
@@ -81,6 +83,11 @@ export function wireMatchFeedback(session) {
       session.ai.takeTurn(side, session.entriesForSide(side), session.ballBody, difficulty);
     } else {
       hud.setTurn(side, versus ? `${nameOf(side)} to flick` : 'Your flick');
+      // One phone, two players: say out loud whose hands it belongs in now.
+      if (versus && lastHumanSide && lastHumanSide !== side) {
+        hud.event(`${nameOf(side).toUpperCase()}'S FLICK`, { priority: 2, duration: 1.1, detail: 'Pass it over' });
+      }
+      lastHumanSide = side;
       if (level.tutorial) session.showTutorial();
     }
   });

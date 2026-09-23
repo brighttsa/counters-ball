@@ -2,11 +2,27 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Integrate Codex mobile/ink/camera commits (9b3c147..f1ff113)",
+  "task": "Hot-seat rivalry, share cards, challenge links",
   "status": "released",
   "paths": [
+    "src/main.js",
+    "index.html",
+    "src/gameplay/match-session-runtime.js",
+    "src/gameplay/match-session-feedback-hooks.js",
+    "src/ui/ui-full-time-results-card.js",
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "src/ui/ui-match-hud-scoreboard-callouts-and-tutorial.js",
+    "src/core/save-progress-local-storage.js",
+    "src/core/hot-seat-series-and-rivalry-record.js",
+    "src/core/challenge-link-codec-and-comparison.js",
+    "src/ui/results-share-card-canvas.js",
+    "src/ui/share-results-and-challenge-link.js",
+    "styles/game-ui-menus-and-results.css",
+    "tests/hot-seat-rivalry-and-challenge-links.test.mjs",
+    "docs/codebase-summary.md",
+    "docs/project-changelog.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T07:12:39.760Z",
-  "head": "f1ff11373b57fa9c87a7de7da4d6b64d40abdebc"
+  "updatedAt": "2026-09-23T10:34:38.667Z",
+  "head": "3a3a8eea5725bb419f6ec5fea37e5ada47ca4793"
 }
