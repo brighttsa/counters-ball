@@ -14,42 +14,50 @@ export class BoundedAudioVoiceSynthesis {
 
   available() { return this.ctx && !this.muted && !this.paused && this.voices.size < 32; }
 
-  envelope(level, start, attack, duration) {
+  /** Gain envelope into the master bus; a non-zero pan places the voice left/right of centre. */
+  envelope(level, start, attack, duration, pan = 0) {
     const g = this.ctx.createGain();
     g.gain.setValueAtTime(0.0001, start);
     g.gain.exponentialRampToValueAtTime(Math.max(0.0002, level * this.sfxLevel), start + attack);
     g.gain.exponentialRampToValueAtTime(0.0001, start + attack + duration);
-    g.connect(this.master);
-    return g;
+    if (!pan) {
+      g.connect(this.master);
+      return { input: g, nodes: [g] };
+    }
+    const panner = this.ctx.createStereoPanner();
+    panner.pan.value = Math.max(-1, Math.min(1, pan));
+    g.connect(panner).connect(this.master);
+    return { input: g, nodes: [g, panner] };
   }
 
-  tone({ freq, to = freq, duration = 0.1, type = 'sine', gain = 0.2, attack = 0.003, delay = 0 }) {
+  tone({ freq, to = freq, duration = 0.1, type = 'sine', gain = 0.2, attack = 0.003, delay = 0, pan = 0 }) {
     if (!this.available()) return null;
     const t0 = this.ctx.currentTime + delay, osc = this.ctx.createOscillator();
-    const envelope = this.envelope(gain, t0, attack, duration);
+    const envelope = this.envelope(gain, t0, attack, duration, pan);
     osc.type = type;
     osc.frequency.setValueAtTime(freq, t0);
     if (to !== freq) osc.frequency.exponentialRampToValueAtTime(to, t0 + duration);
-    osc.connect(envelope);
-    this.track(osc, [osc, envelope]);
+    osc.connect(envelope.input);
+    this.track(osc, [osc, ...envelope.nodes]);
     osc.start(t0);
     osc.stop(t0 + attack + duration + 0.05);
     return { osc, t0 };
   }
 
-  noise({ duration = 0.1, filter = 'bandpass', freq = 1000, to = freq, q = 1, gain = 0.2, attack = 0.002, delay = 0 }) {
+  noise({ duration = 0.1, filter = 'bandpass', freq = 1000, to = freq, q = 1, gain = 0.2, attack = 0.002, delay = 0, pan = 0 }) {
     if (!this.available()) return;
     const t0 = this.ctx.currentTime + delay, src = this.ctx.createBufferSource();
-    const f = this.ctx.createBiquadFilter(), envelope = this.envelope(gain, t0, attack, duration);
+    const f = this.ctx.createBiquadFilter(), envelope = this.envelope(gain, t0, attack, duration, pan);
     src.buffer = this.noiseBuffer;
     src.loop = true;
     f.type = filter;
     f.Q.value = q;
     f.frequency.setValueAtTime(freq, t0);
     if (to !== freq) f.frequency.exponentialRampToValueAtTime(to, t0 + duration);
-    src.connect(f).connect(envelope);
-    this.track(src, [src, f, envelope]);
-    src.start(t0);
+    src.connect(f).connect(envelope.input);
+    this.track(src, [src, f, ...envelope.nodes]);
+    // A random read position gives every hit its own grain instead of one repeated texture.
+    src.start(t0, Math.random() * (src.buffer.duration || 0));
     src.stop(t0 + attack + duration + 0.05);
   }
 

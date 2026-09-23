@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ProceduralSoundBoard } from '../src/audio/procedural-sound-effects-web-audio.js';
 import { StreetAmbienceBeds, AMBIENCE_PROFILES } from '../src/audio/street-ambience-beds-web-audio.js';
+import { SOUND_EVENT_NAMES } from '../src/audio/semantic-sound-event-mapping.js';
 
 // Web Audio boundary doubles record scheduling and resource ownership, not sound quality.
 function audioContext() {
@@ -9,7 +10,7 @@ function audioContext() {
   const parameter = () => ({ value: 0, targets: [], setValueAtTime() {},
     exponentialRampToValueAtTime() {}, setTargetAtTime(value) { this.targets.push(value); } });
   const node = () => {
-    const result = { gain: parameter(), frequency: parameter(), Q: parameter(),
+    const result = { gain: parameter(), frequency: parameter(), Q: parameter(), pan: parameter(), type: 'sine',
       disconnects: 0, stops: 0, starts: 0,
       connect(target) { return target; }, disconnect() { this.disconnects++; },
       start() { this.starts++; }, stop() { this.stops++; },
@@ -18,7 +19,7 @@ function audioContext() {
     return result;
   };
   return { nodes, currentTime: 1, createGain: node, createOscillator: node,
-    createBufferSource: node, createBiquadFilter: node,
+    createBufferSource: node, createBiquadFilter: node, createStereoPanner: node,
     suspends: 0, resumes: 0, closes: 0,
     suspend() { this.suspends++; return Promise.resolve(); },
     resume() { this.resumes++; return Promise.resolve(); },
@@ -109,4 +110,34 @@ test('ambience tension ducks heat-adjusted level and survives venue changes', ()
   ambience.stop();
   assert.deepEqual(ambience.nodes, []);
   assert.deepEqual(ambience.sources, []);
+});
+
+test('a panned voice routes through a stereo panner that is freed with the voice', () => {
+  const { sound } = board();
+  sound.noise({ pan: 0.4 });
+  const voice = [...sound.voices].at(-1);
+  assert.equal(voice.nodes.length, 4, 'source, filter, envelope and panner');
+  assert.equal(voice.nodes.at(-1).pan.value, 0.4);
+  voice.source.onended();
+  assert.ok(voice.nodes.every(node => node.disconnects === 1));
+  sound.tone({ freq: 440, pan: -3 });
+  assert.equal([...sound.voices].at(-1).nodes.at(-1).pan.value, -1, 'pan is clamped to the stereo field');
+});
+
+test('every named cue sounds, and none is a synthetic triangle beep', () => {
+  for (const name of SOUND_EVENT_NAMES) {
+    const { sound, ctx } = board();
+    sound.event(name, 0.8);
+    assert.ok(sound.voices.size > 0, `${name} made no sound`);
+    assert.ok(ctx.nodes.every(node => node.type !== 'triangle'), `${name} still uses a triangle beep`);
+  }
+});
+
+test('menu ticks, stars and the flick no longer beep either', () => {
+  for (const play of [(s) => s.uiTick(), (s) => s.starDing(1), (s) => s.flick(0.7), (s) => s.netCatch(0.2)]) {
+    const { sound, ctx } = board();
+    play(sound);
+    assert.ok(sound.voices.size > 0);
+    assert.ok(ctx.nodes.every(node => node.type !== 'triangle'));
+  }
 });

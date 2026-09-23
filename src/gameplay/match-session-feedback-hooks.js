@@ -4,6 +4,7 @@ import {
   SIDE_HOME, SIDE_AWAY, GOAL_LINE_X, MAX_FLICK_SPEED,
 } from '../core/pitch-dimensions-and-constants.js';
 import { createSchoolyardShotMemory } from '../core/schoolyard-shot-memory.js';
+import { screenPan } from '../audio/screen-space-stereo-pan.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
   boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
@@ -25,25 +26,26 @@ export function wireMatchFeedback(session) {
     if (rules.phase === 'moving') session.presentation.skills.impact(a, b, strength);
     session.mechanic?.noteImpact(a, b, strength);
     if (strength > 0.6) sound.event?.('hardContact', strength);
+    const pan = screenPan(session.camera, x, z);
     const ball = a.kind === 'ball' ? a : b.kind === 'ball' ? b : null;
     if (ball) {
       const other = ball === a ? b : a;
       if (other.kind === 'cap') {
-        sound.ballTap(strength);
+        sound.ballTap(strength, pan);
         juice.hopBall(strength);
         if (strength > 0.2) { // the strike: freeze a beat, then let it fly
           time.hitStop(0.02 + strength * 0.065);
           cameraDirector.addTrauma(strength * 0.3);
         }
       } else {
-        sound[SURFACE_SOUND[other.kind]]?.(strength);
+        sound[SURFACE_SOUND[other.kind]]?.(strength, pan);
       }
       if (other.kind === 'post') {
         juice.wobbleGoal(Math.sign(other.pos.x), strength);
         cameraDirector.addTrauma(0.12);
       }
     } else {
-      sound[SURFACE_SOUND[a.kind === 'cap' ? b.kind : a.kind]]?.(strength);
+      sound[SURFACE_SOUND[a.kind === 'cap' ? b.kind : a.kind]]?.(strength, pan);
       if (strength > 0.35) cameraDirector.addTrauma(strength * 0.18);
     }
     for (const body of [a, b]) {
@@ -59,7 +61,7 @@ export function wireMatchFeedback(session) {
   physics.onWallHit = (body, impulse, x, z) => {
     const strength = Math.min(1, impulse / (WALL_RESTITUTION_FACTOR * body.mass * MAX_FLICK_SPEED));
     if (rules.phase === 'moving') session.presentation.skills.wall(body, strength);
-    sound.woodKnock(strength * 0.8);
+    sound.woodKnock(strength * 0.8, screenPan(session.camera, x, z));
     if (strength > 0.25) particles.dustPuff(x, z, strength * 0.6);
   };
 
@@ -97,6 +99,7 @@ export function wireMatchFeedback(session) {
       replay: true, direction: scorer === SIDE_HOME ? 1 : -1 };
     const highlight = venueLabel || skillLabel;
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
+    sound.netCatch?.(screenPan(session.camera, goalX, 0)); // the ball settling in the net, under the whistle
     sound.whistle();
     session.stage.backdrop.startle(); // the neighbourhood reacts too
     particles.confettiBurst(goalX);
