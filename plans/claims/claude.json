@@ -2,15 +2,14 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "FC-style broadcast camera that follows the ball",
+  "task": "Calm camera at turn changes",
   "status": "released",
   "paths": [
     "src/fx/",
-    "src/ui/player-camera-controls.js",
     "tests/",
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T17:06:41.820Z",
-  "head": "af76c3fa6ce50b4b3b8903c211b63f9c53421ae7"
+  "updatedAt": "2026-09-23T17:12:31.105Z",
+  "head": "cf4c7efa5736026eed1ba390e24b5252ff384f89"
 }

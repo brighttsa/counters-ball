@@ -1,5 +1,14 @@
 # Project Changelog
 
+## 2026-09-23 — Calm camera at turn changes
+
+### Fixed
+- Street camera no longer swings round to the computer's end on its turn and back again on yours: it stays
+  behind your caps, holds still through the opponent's turn, and reframes only when your turn begins.
+- Camera moves the game makes on its own (a new turn, the 2-Player hand-over, returning from a replay or the
+  kick-off intro) glide over about a second instead of snapping in a quarter second. Buttons and Tactical
+  peek still respond at once; reduced motion still cuts.
+
 ## 2026-09-23 — Broadcast camera that follows the ball
 
 ### Changed

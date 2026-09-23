@@ -2,8 +2,12 @@ import * as THREE from 'three';
 
 export const CAMERA_MODES = ['tactical', 'broadcast', 'street', 'free'];
 export const CAMERA_PREFERENCE_KEY = 'counters-ball-camera-v1';
-export function cameraTransitionBlend(elapsed, motionEnabled) {
-  return motionEnabled ? 1 - Math.exp(-Math.max(0, elapsed) * 16) : 1;
+// Camera moves the player asks for (a mode button, a peek) land almost at once; moves the game makes on
+// its own (a new turn, the end of a replay) glide over about a second so the view never whips around.
+export const CAMERA_SNAP_RATE = 16;
+export const CAMERA_GLIDE_RATE = 3;
+export function cameraTransitionBlend(elapsed, motionEnabled, rate = CAMERA_SNAP_RATE) {
+  return motionEnabled ? 1 - Math.exp(-Math.max(0, elapsed) * rate) : 1;
 }
 export function loadCameraPreferences(storage) {
   try {
@@ -126,15 +130,16 @@ export function overviewPose(camera, session) {
   return centredPitchPose(camera, direction, pitchFramePoints(session), viewBounds());
 }
 
-export function playerCameraPose(camera, mode, session, selected) {
+/** @param viewer the side the view belongs to: the human in a match against the computer, the side to play in 2-Player */
+export function playerCameraPose(camera, mode, session, selected, viewer = session?.rules?.turn) {
   const portrait = camera.aspect < .95;
   if (mode === 'broadcast') return followBallPose(broadcastFrame(camera, session), session?.ballBody?.pos.x ?? 0);
   if (mode === 'street') {
-    const side = session.rules.turn === 'away' ? -1 : 1;
-    const candidates = session.entries.filter(e => e.side === session.rules.turn);
+    const side = viewer === 'away' ? -1 : 1;
+    const candidates = session.entries.filter(e => e.side === viewer);
     const nearest = candidates.reduce((best, e) => !best || e.body.pos.distanceTo(session.ballBody.pos)
       < best.body.pos.distanceTo(session.ballBody.pos) ? e : best, null);
-    const cap = (selected?.side === session.rules.turn ? selected : nearest)?.body.pos;
+    const cap = (selected?.side === viewer ? selected : nearest)?.body.pos;
     const ball = new THREE.Vector3(session.ballBody.pos.x, 0, session.ballBody.pos.y);
     const goal = new THREE.Vector3(side * 1.7, 0, session.physics.goalCenters?.[side] ?? 0);
     const origin = new THREE.Vector3(cap?.x ?? -side, 0, cap?.y ?? 0);

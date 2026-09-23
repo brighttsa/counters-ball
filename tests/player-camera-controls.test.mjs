@@ -1,12 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { THREE } from './helpers/real-three-session-fixture.mjs';
-const { cameraTransitionBlend, playerCameraPose, pitchFramePoints, hudReservePixels } = await import('../src/fx/player-camera-view-poses.js');
+const { cameraTransitionBlend, playerCameraPose, pitchFramePoints, hudReservePixels, CAMERA_GLIDE_RATE } = await import('../src/fx/player-camera-view-poses.js');
 
 test('camera transitions settle after a throttled preview frame', () => {
   assert.ok(cameraTransitionBlend(1 / 60, true) < .3);
   assert.ok(cameraTransitionBlend(1, true) > .999);
   assert.equal(cameraTransitionBlend(0, false), 1);
+});
+
+test('camera moves the game makes on its own glide instead of whipping round', () => {
+  const glide = (seconds) => cameraTransitionBlend(seconds, true, CAMERA_GLIDE_RATE);
+  assert.ok(glide(1 / 60) < .06, 'one frame covers only a small step');
+  assert.ok(glide(.25) < .6, 'still travelling after a quarter second');
+  assert.ok(glide(1.2) > .97, 'settled after about a second');
+  assert.equal(cameraTransitionBlend(1 / 60, false, CAMERA_GLIDE_RATE), 1, 'reduced motion still cuts');
+});
+
+test('Street stays behind the viewer\'s caps while the computer takes its turn', () => {
+  const camera = new THREE.PerspectiveCamera(42, 844 / 390, .1, 100);
+  const home = { side: 'home', body: { pos: new THREE.Vector2(-.4, .2) } };
+  const away = { side: 'away', body: { pos: new THREE.Vector2(.6, -.1) } };
+  const session = { rules: { turn: 'away' }, entries: [home, away], physics: {}, ballBody: { pos: new THREE.Vector2(.1, 0) } };
+  const theirTurn = playerCameraPose(camera, 'street', session, null, 'home');
+  const yourTurn = playerCameraPose(camera, 'street', { ...session, rules: { turn: 'home' } }, null, 'home');
+  assert.ok(theirTurn.position.distanceTo(yourTurn.position) < 1e-9, 'same view on both turns');
+  assert.ok(theirTurn.position.x < 0, 'camera stays at the home end');
+  assert.ok(playerCameraPose(camera, 'street', session).position.x > 0, '2-Player still turns to the side to play');
 });
 
 test('phone and tablet framing fills usable space without cropping goal structures', () => {
