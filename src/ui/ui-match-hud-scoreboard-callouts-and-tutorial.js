@@ -18,6 +18,9 @@ export class MatchHud {
     this.lowAttention = new Set();
     this.table = null;
     this.style = 'chalk';
+    this.tutorialSize = null;
+    this.tutorialResize = new ResizeObserver(() => { this.tutorialSize = null; });
+    this.tutorialResize.observe($('tutorial-hand').querySelector('.tutorial-tip'));
   }
 
   /** A per-match scoreboard chalked on the table; mirrors score and flicks while attached. */
@@ -116,22 +119,26 @@ export class MatchHud {
   showTutorial(x, y) {
     const hand = $('tutorial-hand');
     hand.hidden = false;
-    hand.style.setProperty('--x', `${x.toFixed(1)}px`);
-    hand.style.setProperty('--y', `${y.toFixed(1)}px`);
+    hand.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
     const tip = hand.querySelector('.tutorial-tip');
     const viewport = window.visualViewport;
     const left = (viewport?.offsetLeft ?? 0) + 16;
     const top = (viewport?.offsetTop ?? 0) + 16;
     const width = viewport?.width ?? window.innerWidth;
     const height = viewport?.height ?? window.innerHeight;
-    tip.style.width = `${Math.max(0, Math.min(280, width - 32))}px`;
+    const captionWidth = Math.max(0, Math.min(280, width - 32));
+    if (!this.tutorialSize || this.tutorialSize.available !== captionWidth) {
+      tip.style.width = `${captionWidth}px`;
+      tip.style.left = '0'; tip.style.top = '0';
+      this.tutorialSize = { available: captionWidth, width: tip.offsetWidth, height: tip.offsetHeight };
+    }
+    const size = this.tutorialSize;
     // The cap stays world-anchored; its caption must remain inside the viewport.
-    const tipX = Math.max(left, Math.min(x - tip.offsetWidth / 2, left + width - 32 - tip.offsetWidth));
+    const tipX = Math.max(left, Math.min(x - size.width / 2, left + width - 32 - size.width));
     const below = y + 74;
-    const desiredY = below + tip.offsetHeight > top + height - 32 ? y - tip.offsetHeight - 32 : below;
-    const tipY = Math.max(top, Math.min(desiredY, top + height - 32 - tip.offsetHeight));
-    tip.style.left = `${tipX - x}px`;
-    tip.style.top = `${tipY - y}px`;
+    const desiredY = below + size.height > top + height - 32 ? y - size.height - 32 : below;
+    const tipY = Math.max(top, Math.min(desiredY, top + height - 32 - size.height));
+    tip.style.transform = `translate(${tipX - x}px, ${tipY - y}px)`;
   }
 
   hideTutorial() {

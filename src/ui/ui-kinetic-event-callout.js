@@ -11,6 +11,8 @@ export class KineticEventCallout {
   event(label, { direction = 1, priority = 1, duration = 0.9, detail = '' } = {}) {
     if (this.active && priority < this.active.priority) return false;
     this.active = { priority, direction: direction < 0 ? -1 : 1,
+      fromOpacity: this.active ? this.opacity : 0,
+      fromOffset: this.active ? this.offset : (direction < 0 ? 32 : -32),
       duration: Math.max(0.2, Number.isFinite(duration) ? duration : 0.9), elapsed: 0 };
     this.word.textContent = label;
     this.sub.textContent = detail;
@@ -27,17 +29,19 @@ export class KineticEventCallout {
   }
 
   paint() {
-    const { elapsed, duration, direction } = this.active;
+    const { elapsed, duration, direction, fromOpacity, fromOffset } = this.active;
     const enter = Math.min(1, elapsed / Math.min(0.14, duration / 3));
     const exit = Math.max(0, 1 - (duration - elapsed) / Math.min(0.16, duration / 3));
-    const offset = this.motion.matches ? 0 : direction * ((1 - enter) * -32 + exit * 32);
-    this.root.style.opacity = this.motion.matches ? '1' : String(Math.min(enter, 1 - exit));
-    this.root.style.transform = `translateX(${offset}px)`;
-    this.root.style.clipPath = this.motion.matches ? 'none' : `inset(0 ${exit * 100}% 0 0)`;
+    this.offset = this.motion.matches ? 0 : fromOffset * (1 - enter) + direction * exit * 32;
+    this.opacity = Math.min(fromOpacity + (1 - fromOpacity) * enter, 1 - exit);
+    this.root.style.opacity = String(this.opacity);
+    this.root.style.transform = `translateX(${this.offset}px)`;
   }
 
   clear() {
     this.active = null;
+    this.offset = 0;
+    this.opacity = 0;
     this.root.hidden = true;
     this.word.textContent = '';
     this.sub.textContent = '';
