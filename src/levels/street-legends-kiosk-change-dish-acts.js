@@ -28,7 +28,7 @@ export const KIOSK_CHANGE_DISH_ACTS = [
   act(1, {
     id: 'legends-kiosk-act-1',
     actTitle: 'Exact Change',
-    blurb: 'Kofi stood his change dish in front of the goal. Every flick it turns. Find the gap.',
+    blurb: 'Kofi\'s change dish guards the goal. It turns every flick. Find the gap.',
     objective: 'Score through the gap in the dish',
     introLines: [
       'Solo challenge · score 1 goal in 10 flicks',
@@ -44,11 +44,11 @@ export const KIOSK_CHANGE_DISH_ACTS = [
   act(2, {
     id: 'legends-kiosk-act-2',
     actTitle: 'Rush at the Hatch',
-    blurb: 'Customers queue at the hatch. Esi plays between sales, and she never rushes a shot.',
+    blurb: 'A queue at the hatch. Esi has time for one more shot, and she won\'t rush it.',
     objective: 'Beat Esi through the dish',
     introLines: [
       'First to 1 · 14 flicks each',
-      'Set the ball up for where the gap will be NEXT',
+      'Set the ball up for where the gap will be next',
       'Your dish turns too: watch which side it leaves open for her',
     ],
     rules: { goalsToWin: 1, flickLimit: 14, threeStarFlicks: 6 },
@@ -57,7 +57,7 @@ export const KIOSK_CHANGE_DISH_ACTS = [
   act(3, {
     id: 'legends-kiosk-act-3',
     actTitle: 'Closing Time',
-    blurb: 'Kofi is pulling the shutter down. One more game, first to two, for the last Fan Milk in the freezer.',
+    blurb: 'Shutter\'s coming down. First to two gets the last Fan Milk.',
     objective: 'First to 2 before the shutter comes down',
     introLines: [
       'First to 2 · 16 flicks each',

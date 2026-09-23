@@ -4,6 +4,7 @@
 // every Street Legends venue shares this card.
 import { SIDE_HOME } from '../core/pitch-dimensions-and-constants.js';
 import { streetLegendRetryCue } from '../levels/street-legends-flow-retry-cues.js';
+import { RESULTS_COPY, resultTitle, starGoals } from './konk-interface-copy.js';
 
 const $ = (id) => document.getElementById(id);
 const STAR_REVEAL_DELAY_MS = 650;
@@ -23,22 +24,19 @@ export function fullTimeNote(result, level, mode, { improved, isFinalVenue }) {
   const kid = level.opponent.kid;
   const legend = level.legend;
   if (winner === SIDE_HOME) {
-    if (legend) return legend.act === legend.acts ? `Street Legend of ${level.place}!` : `${kid} gives you the table. Next act unlocked.`;
-    return isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
+    if (legend) return legend.act === legend.acts ? `${level.place} knows your name now.` : `${kid} steps aside. Next act unlocked.`;
+    return isFinalVenue ? RESULTS_COPY.classicFinal : improved ? RESULTS_COPY.improved : RESULTS_COPY.ordinaryWin;
   }
-  if (legend && level.rules.awayFlickLimit === 0) return 'Out of flicks. Read the table and set the ball up for it.';
+  if (legend && level.rules.awayFlickLimit === 0) return RESULTS_COPY.soloOut;
   if (legend?.act === 2) {
     const cue = streetLegendRetryCue(level);
-    if (cue) return `Next try: ${cue}`;
+    if (cue) return `Next shot: ${cue}`;
   }
-  return winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;
+  return winner === null ? RESULTS_COPY.drawnStars : `${kid} keeps the table. Run it back.`;
 }
 
-/** "You win!", "Kwame wins", or on the 2-Player Table the winning seat's name. */
 export function fullTimeTitle({ winner }, level, mode, names) {
-  if (winner === null) return 'Draw!';
-  if (mode === 'versus') return `${names[winner]} wins!`;
-  return winner === SIDE_HOME ? 'You win!' : `${level.opponent.kid} wins`;
+  return resultTitle(winner, mode, names, level.opponent.kid);
 }
 
 export class FullTimeResultsCard {
@@ -68,7 +66,7 @@ export class FullTimeResultsCard {
     $('results-opponent').textContent = level.legend ? `Street Legends · ${level.name} · Act ${level.legend.act}: ${level.actTitle}`
       : versus ? `${level.name} · ${names.home} vs ${names.away}` : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
 
-    const labels = ['Win the match', 'Keep a clean sheet', `Win within ${level.rules.threeStarFlicks} flicks`];
+    const labels = starGoals(level.rules.threeStarFlicks);
     const list = $('results-stars');
     list.hidden = versus;
     list.replaceChildren(...labels.map((label) => {
@@ -96,9 +94,9 @@ export class FullTimeResultsCard {
     }));
     // Two players want the same table again at once: Rematch leads, and it's one tap.
     const replay = $('btn-replay');
-    replay.textContent = versus ? rematchLabel : 'Replay';
+    replay.textContent = versus ? rematchLabel : RESULTS_COPY.playAgain;
     replay.classList.toggle('btn-primary', versus);
     $('btn-next').hidden = !hasNext;
-    $('btn-next').textContent = level.legend ? 'Next Act' : 'Next Pitch';
+    $('btn-next').textContent = level.legend ? 'Next act' : 'Next pitch';
   }
 }

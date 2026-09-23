@@ -5,6 +5,7 @@
 import { SIDE_HOME } from '../core/pitch-dimensions-and-constants.js';
 import { encodeChallenge, markText } from '../core/challenge-link-codec-and-comparison.js';
 import { drawResultsShareCard, loadShareCardFonts } from './results-share-card-canvas.js';
+import { RESULTS_COPY } from './konk-interface-copy.js';
 
 const venueOf = (level) => (level.legend ? `${level.name}, Act ${level.legend.act}` : level.name);
 
@@ -22,26 +23,27 @@ export function buildResultShare(result, level, mode, ctx) {
   };
   if (mode === 'versus') {
     const { home, away } = ctx.names;
-    const line = winner === null ? `${home} and ${away} drew ${scores.home}–${scores.away}`
-      : winner === SIDE_HOME ? `${home} beat ${away} ${scores.home}–${scores.away}` : `${away} beat ${home} ${scores.away}–${scores.home}`;
+    const line = winner === null ? `${home} and ${away} couldn't split the table ${scores.home}–${scores.away}`
+      : winner === SIDE_HOME ? `${home} took the table from ${away} ${scores.home}–${scores.away}`
+        : `${away} took the table from ${home} ${scores.away}–${scores.home}`;
     const notes = ctx.versusNotes ?? [];
     return {
       url: ctx.baseUrl,
-      text: `${line} at ${venue} in KONK!${notes.length ? ` ${notes.join('. ')}.` : ''}`,
-      card: { ...card, matchup: `${home} vs ${away} · ${venue}`, notes, footer: 'One table. Two players. Loser sets up the caps.' },
+      text: `${line} at ${venue}. KONK!${notes.length ? ` ${notes.join('. ')}.` : ''}`,
+      card: { ...card, matchup: `${home} vs ${away} · ${venue}`, notes, footer: RESULTS_COPY.shareLocalFooter },
     };
   }
   const kid = level.opponent.kid;
   const mark = { scores, flicks: result.flicksUsed[SIDE_HOME] };
   const url = `${ctx.baseUrl}${encodeChallenge({ levelId: level.id, mode, ...mark })}`;
   const flicks = `${mark.flicks} flick${mark.flicks === 1 ? '' : 's'}`;
-  const brag = winner === SIDE_HOME ? `I beat ${kid} ${scores.home}–${scores.away} in ${flicks} at ${venue} in KONK! Beat that:`
+  const brag = winner === SIDE_HOME ? `${kid} gave me a game at ${venue}. I won ${scores.home}–${scores.away} in ${flicks}. Your turn:`
     : `I ${markText(mark)} against ${kid} at ${venue} in KONK! Can you do better?`;
   return {
     url,
     text: brag,
     card: { ...card, matchup: `You vs ${kid} · ${venue}`, stars: result.starFlags,
-      notes: ctx.challengeNote ? [ctx.challengeNote] : [], footer: 'Your move. Tap the link to take the same table.' },
+      notes: ctx.challengeNote ? [ctx.challengeNote] : [], footer: RESULTS_COPY.shareSoloFooter },
   };
 }
 

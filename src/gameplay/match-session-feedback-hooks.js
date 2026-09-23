@@ -6,6 +6,7 @@ import {
 import { createSchoolyardShotMemory } from '../core/schoolyard-shot-memory.js';
 import { screenPan } from '../audio/screen-space-stereo-pan.js';
 import { needsFirstShotGuidance, completeFirstShotGuidance } from '../core/first-shot-guidance.js';
+import { MATCH_COPY, ordinaryGoalDetail } from './konk-match-reaction-copy.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
   boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
@@ -20,6 +21,7 @@ export function wireMatchFeedback(session) {
   // 2-Player seats go by the names typed on the intro card; the object is read live, so kick-off can fill it.
   const nameOf = (side) => options.playerNames?.[side] ?? (side === SIDE_HOME ? options.homeTeam.name : options.awayTeam.name);
   let lastHumanSide = null;
+  const goalCounts = { [SIDE_HOME]: 0, [SIDE_AWAY]: 0 };
   const kid = level.opponent.kid;
   const syncFlicks = () => hud.setFlicks(rules.flicksLeft(SIDE_HOME), rules.flicksLeft(SIDE_AWAY));
 
@@ -79,14 +81,14 @@ export function wireMatchFeedback(session) {
     session.presentation.turn(side);
     syncFlicks();
     if (rules.isAi(side)) {
-      hud.setTurn(side, `${side === SIDE_AWAY ? kid : nameOf(side)} is lining up…`);
+      hud.setTurn(side, `${side === SIDE_AWAY ? kid : nameOf(side)} lines up`);
       const difficulty = side === SIDE_AWAY ? level.opponent.difficulty : options.homeDifficulty;
       session.ai.takeTurn(side, session.entriesForSide(side), session.ballBody, difficulty);
     } else {
-      hud.setTurn(side, versus ? `${nameOf(side)} to flick` : 'Your flick');
+      hud.setTurn(side, versus ? `${nameOf(side)}'s flick` : MATCH_COPY.soloTurn);
       // One phone, two players: say out loud whose hands it belongs in now.
       if (versus && lastHumanSide && lastHumanSide !== side) {
-        hud.event(`${nameOf(side).toUpperCase()}'S FLICK`, { priority: 2, duration: 1.1, detail: 'Pass it over' });
+        hud.event(`${nameOf(side).toUpperCase()}'S FLICK`, { priority: 2, duration: 1.1, detail: MATCH_COPY.handover });
       }
       lastHumanSide = side;
       if (!options.isAttract && (level.tutorial || needsFirstShotGuidance())) session.showTutorial();
@@ -100,6 +102,7 @@ export function wireMatchFeedback(session) {
   });
 
   rules.on('goal', ({ scorer, scores }) => {
+    goalCounts[scorer] += 1;
     // A venue's own hero moment outranks the generic skill label.
     const skillLabel = session.presentation.goal(scorer); // always: it also arms the replay
     const venueLabel = session.mechanic?.goalLabel(scorer);
@@ -118,8 +121,9 @@ export function wireMatchFeedback(session) {
     post.pulseBloom(highlight ? 0.38 : 0.18);
     time.slowMotion(0.35, 0.7);
     hud.setScore(scores, scorer);
-    const detail = highlight || (versus ? `${nameOf(scorer)}.` : scorer === SIDE_HOME ? 'Yours.' : `${kid} scores`);
-    hud.goal(session.inkBursts ? `${detail} / ${scores.home}-${scores.away} / ${level.place}` : detail);
+    const detail = highlight || ordinaryGoalDetail({ scorer, kid,
+      names: { home: nameOf(SIDE_HOME), away: nameOf(SIDE_AWAY) }, versus, goalNumber: goalCounts[scorer] });
+    hud.goal(session.inkBursts ? `${detail} / ${scores.home}-${scores.away}` : detail);
     session.schedule(2.6, () => session.presentation.afterGoal());
   });
 
@@ -129,7 +133,7 @@ export function wireMatchFeedback(session) {
     const golden = stage === 'golden';
     hud.event(golden ? 'GOLDEN FLICK' : 'TWO MORE EACH', {
       priority: 6, duration: golden ? 1.8 : 1.5,
-      detail: golden ? 'One flick each. Next goal wins.' : 'Still level. Two more flicks each.',
+      detail: golden ? MATCH_COPY.goldenDetail : MATCH_COPY.extraDetail,
     });
     sound.event?.('matchPoint');
   });
@@ -138,7 +142,7 @@ export function wireMatchFeedback(session) {
     shotMemory.finish(result);
     session.ai.cancel();
     session.input.cancel();
-    hud.setTurn(null, 'Full time!');
+    hud.setTurn(null, MATCH_COPY.fullTime);
     sound.whistle();
     if (result.winner && (versus || result.winner === SIDE_HOME)) sound.event?.('win');
     hud.event(result.winner ? 'WINNER' : 'FULL TIME', { priority: 12, duration: 1.2 });

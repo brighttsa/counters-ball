@@ -29,8 +29,8 @@ export const ROADSIDE_TOLL_GATE_ACTS = [
   act(1, {
     id: 'legends-roadside-act-1',
     actTitle: 'Green Means Go',
-    blurb: 'Rush hour at the toll plaza. Every flick one boom drops — green lanes are open, amber is about to shut.',
-    objective: 'Score through the toll',
+    blurb: 'Rush hour. One boom drops every flick. Green is open; amber is next to close.',
+    objective: 'Score through an open toll lane',
     introLines: [
       'Solo challenge · score 1 goal in 8 flicks',
       'GREEN lane = boom up, the ball can pass · RED = boom down',
@@ -45,7 +45,7 @@ export const ROADSIDE_TOLL_GATE_ACTS = [
   act(2, {
     id: 'legends-roadside-act-2',
     actTitle: 'Rush Hour',
-    blurb: 'Akosua collects tolls for her uncle. She knows which boom drops next — and parks a cap in the lane you need.',
+    blurb: 'Akosua knows which boom drops next. She has a cap waiting in your lane.',
     objective: 'Beat Akosua through the booms',
     introLines: [
       'First to 1 · 14 flicks each',
@@ -58,7 +58,7 @@ export const ROADSIDE_TOLL_GATE_ACTS = [
   act(3, {
     id: 'legends-roadside-act-3',
     actTitle: 'Last Toll Before the Motorway',
-    blurb: 'Somebody parked a bottle in the road. Akosua wants a rematch, and she is not collecting coins tonight.',
+    blurb: 'A bottle blocks the road. Akosua wants a rematch, not your loose change.',
     objective: 'First to 2 at the junction',
     introLines: [
       'First to 2 · 16 flicks each',

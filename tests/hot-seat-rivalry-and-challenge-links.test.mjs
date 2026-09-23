@@ -110,14 +110,14 @@ test('a result beats a mark by outcome, then goal difference, then fewer flicks'
   assert.equal(compareToChallenge(result(3, 2, 6), mark), 'matched');
   assert.equal(compareToChallenge(result(0, 0, 1), mark), 'short', 'a draw never beats a win');
   assert.equal(markText({ scores: { home: 1, away: 1 }, flicks: 1 }), 'drew 1–1 in 1 flick');
-  assert.equal(challengeVerdictLine(result(2, 0, 4), mark), 'You beat your friend\'s mark (won 2–1 in 6 flicks).');
+  assert.equal(challengeVerdictLine(result(2, 0, 4), mark), 'You beat their mark (won 2–1 in 6 flicks).');
 });
 
 test('sharing a win against the AI carries a link that opens the same table', () => {
   const level = STREET_LEGENDS_ACTS.find((act) => act.backdrop === 'kiosk' && act.legend.act === 2);
   const share = buildResultShare(result(2, 0, 5), level, 'legends',
-    { baseUrl: 'http://x.test/', title: 'You win!', homeColour: '#d6503a' });
-  assert.match(share.text, new RegExp(`^I beat ${level.opponent.kid} 2–0 in 5 flicks at ${level.name}, Act 2`));
+    { baseUrl: 'http://x.test/', title: "That's yours.", homeColour: '#d6503a' });
+  assert.match(share.text, new RegExp(`^${level.opponent.kid} gave me a game at ${level.name}, Act 2. I won 2–0 in 5 flicks`));
   const challenge = decodeChallenge(new URL(share.url).search);
   assert.deepEqual(challenge, { levelId: level.id, mode: 'legends', scores: { home: 2, away: 0 }, flicks: 5 });
   assert.deepEqual(share.card.stars, [true, true, false]);
@@ -127,12 +127,12 @@ test('sharing a 2-Player result names the players and carries no challenge', () 
   const level = CAMPAIGN_LEVELS[1];
   const notes = ['Kofi takes the series 2–1', 'All time: Ama 4 – 6 Kofi'];
   const share = buildResultShare(result(1, 2), level, 'versus',
-    { baseUrl: 'http://x.test/', title: 'Kofi wins!', homeColour: '#d6503a', names, versusNotes: notes });
+    { baseUrl: 'http://x.test/', title: 'Kofi takes it.', homeColour: '#d6503a', names, versusNotes: notes });
   assert.equal(share.url, 'http://x.test/');
-  assert.equal(share.text, `Kofi beat Ama 2–1 at ${level.name} in KONK! ${notes.join('. ')}.`);
+  assert.equal(share.text, `Kofi took the table from Ama 2–1 at ${level.name}. KONK! ${notes.join('. ')}.`);
   assert.equal(share.card.stars, null);
-  assert.equal(fullTimeTitle(result(1, 2), level, 'versus', names), 'Kofi wins!');
-  assert.equal(fullTimeTitle(result(1, 1), level, 'versus', names), 'Draw!');
+  assert.equal(fullTimeTitle(result(1, 2), level, 'versus', names), 'Kofi takes it.');
+  assert.equal(fullTimeTitle(result(1, 1), level, 'versus', names), 'Nothing between you.');
 });
 
 test('saved names and head-to-head records load back; malformed ones are dropped', async () => {

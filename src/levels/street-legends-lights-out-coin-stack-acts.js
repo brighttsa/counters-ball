@@ -29,7 +29,7 @@ export const LIGHTS_OUT_COIN_STACK_ACTS = [
   act(1, {
     id: 'legends-nightbulb-act-1',
     actTitle: 'Light the Bulb',
-    blurb: 'Magic padlocks his goal every night. Three coin stacks and the lighthouse beam hold the key.',
+    blurb: 'Magic padlocked his goal. Light three coin stacks in the beam to open it.',
     objective: 'Light all three stacks, then score',
     introLines: [
       'Solo challenge · light the chain and score in 14 flicks',
@@ -45,7 +45,7 @@ export const LIGHTS_OUT_COIN_STACK_ACTS = [
   act(2, {
     id: 'legends-nightbulb-act-2',
     actTitle: "Magic's Table",
-    blurb: 'Magic has never lost under this bulb. He is already lining up his stacks.',
+    blurb: 'Magic hasn\'t lost under this bulb. His first stack is already lined up.',
     objective: 'Light your chain before Magic lights his',
     introLines: [
       'First to 1 · 20 flicks each · both goals padlocked',
@@ -58,7 +58,7 @@ export const LIGHTS_OUT_COIN_STACK_ACTS = [
   act(3, {
     id: 'legends-nightbulb-act-3',
     actTitle: 'Lights Out',
-    blurb: 'The whole of Jamestown is at the kiosk. First to two, and the bulb goes out after every goal.',
+    blurb: 'Jamestown is at the kiosk. First to two; the bulb resets after every goal.',
     objective: 'First to 2 · relight the chain after every goal',
     introLines: [
       'First to 2 · 24 flicks each',

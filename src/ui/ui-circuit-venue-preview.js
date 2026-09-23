@@ -21,7 +21,7 @@ export function fillVenuePreview(level, index, unlocked, mode, stars, conditions
   enter.disabled = !canEnter;
   enter.setAttribute('aria-describedby', 'circuit-lock-note');
   $('circuit-lock-note').textContent = canEnter ? ''
-    : legend ? `Win Act ${legend.act - 1} to enter this act.` : `Win match ${index} to enter this venue.`;
+    : legend ? `Win Act ${legend.act - 1} to unlock.` : `Win match ${index} to unlock.`;
   for (const button of $('level-grid').querySelectorAll('[data-index]')) {
     const selected = Number(button.dataset.index) === index;
     button.setAttribute('aria-pressed', String(selected));

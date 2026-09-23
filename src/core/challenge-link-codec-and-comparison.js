@@ -67,7 +67,7 @@ export function challengeInviteLine(challenge, level) {
 export function challengeVerdictLine(result, challenge) {
   const theirs = markText(challenge);
   const verdict = compareToChallenge(result, challenge);
-  if (verdict === 'beat') return `You beat your friend's mark (${theirs}).`;
-  if (verdict === 'matched') return `Dead level with your friend: you both ${theirs}.`;
-  return `Your friend's mark stands: ${theirs}. Run it back.`;
+  if (verdict === 'beat') return `You beat their mark (${theirs}).`;
+  if (verdict === 'matched') return `Same mark. Different match: you both ${theirs}.`;
+  return `Their mark stands: ${theirs}. Run it back.`;
 }

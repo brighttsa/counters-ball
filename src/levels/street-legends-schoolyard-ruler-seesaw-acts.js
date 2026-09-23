@@ -28,13 +28,13 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
   act(1, {
     id: 'legends-schoolyard-act-1',
     actTitle: 'Before the Bell',
-    blurb: 'Somebody stood a ruler up in the eraser. Every flick it turns. Kwame says you can\'t bank off it.',
+    blurb: 'A ruler in an eraser. It turns every flick. Kwame reckons you can\'t use it.',
     objective: 'Score past the turning ruler',
     introLines: [
       'Solo challenge · score 1 goal in 10 flicks',
       'The ruler turns 45° every flick: open, slanted, across, slanted back',
       'The chalk line shows its next angle. Bank the ball off it',
-      'Anything in its way gets swept aside as it turns, so read where the ball will end up',
+      'The turn sweeps caps and ball aside. Watch where they settle',
     ],
     rules: { goalsToWin: 1, flickLimit: 10, awayFlickLimit: 0, threeStarFlicks: 3 },
     awaySlots: [0],
@@ -44,11 +44,11 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
   act(2, {
     id: 'legends-schoolyard-act-2',
     actTitle: 'Ruler Rules',
-    blurb: 'Kwame bets his toffee again. He shoots straight at the ruler every time.',
-    objective: 'Beat Kwame round the ruler',
+    blurb: 'Kwame\'s toffee is back on the line. He still shoots straight at the ruler.',
+    objective: 'Beat Kwame around the ruler',
     introLines: [
       'First to 1 · 14 flicks each',
-      'Line up for the ruler\'s NEXT angle, not the one it has now',
+      'Line up for the ruler\'s next angle, not the one it has now',
       'Your ruler turns too: across is a wall, open is a highway',
     ],
     rules: { goalsToWin: 1, flickLimit: 14, threeStarFlicks: 6 },
@@ -57,7 +57,7 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
   act(3, {
     id: 'legends-schoolyard-act-3',
     actTitle: 'Last Bell',
-    blurb: 'Break is nearly over. First to two keeps the toffee, and the whole class is watching.',
+    blurb: 'The bell is close. First to two keeps the toffee. The class is watching.',
     objective: 'First to 2 before the bell',
     introLines: [
       'First to 2 · 16 flicks each',

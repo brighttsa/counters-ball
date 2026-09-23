@@ -1,10 +1,10 @@
 const CUES = {
-  'ruler-seesaw': 'Check the ruler now; the chalk previews its next angle.',
-  'change-dish': 'Shoot through the dish gap that is open now.',
-  'clay-pot-maze': 'The ball must touch a pot or rail on the scoring flick.',
-  'toll-gates': 'Choose a green lane; amber closes on your next turn.',
-  'departing-lorry': 'Shoot at the lorry now; the ghost goal marks its next stop.',
-  'coin-stack-chain': 'Light the stack in the beam before aiming at the lock.',
+  'ruler-seesaw': 'Check the ruler. Chalk shows its next angle.',
+  'change-dish': 'Use the dish gap that is open now.',
+  'clay-pot-maze': 'A goal counts only after a pot or rail touch on that flick.',
+  'toll-gates': 'Green is open. Amber closes next turn.',
+  'departing-lorry': 'Aim at the lorry now. The ghost marks its next stop.',
+  'coin-stack-chain': 'Hit the stack in the beam before the locked goal.',
 };
 
 export function streetLegendRetryCue(level) {

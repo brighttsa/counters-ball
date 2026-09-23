@@ -37,7 +37,7 @@ test('a Street Legends win away from Roadside never mentions the toll booms', ()
   card.cancelReveal();
   const note = document.getElementById('results-note').textContent;
   assert.doesNotMatch(note, /boom/i);
-  assert.equal(note, `${level.opponent.kid} gives you the table. Next act unlocked.`);
+  assert.equal(note, `${level.opponent.kid} steps aside. Next act unlocked.`);
 });
 
 test('the full-time score is chalked per side in team colours', () => {
@@ -65,10 +65,10 @@ test('running out of flicks in a solo challenge never names the Roadside lanes',
 test('Act 2 loss and draw offer the venue-specific next decision without changing wins', () => {
   const school = act('schoolyard', 2);
   const kiosk = act('kiosk', 2);
-  assert.match(fullTimeNote({ winner: null }, school, 'legends', {}), /Next try:.*ruler/);
-  assert.match(fullTimeNote({ winner: 'away' }, kiosk, 'legends', {}), /Next try:.*dish gap/);
+  assert.match(fullTimeNote({ winner: null }, school, 'legends', {}), /Next shot:.*ruler/);
+  assert.match(fullTimeNote({ winner: 'away' }, kiosk, 'legends', {}), /Next shot:.*dish gap/);
   assert.match(fullTimeNote({ winner: 'home' }, school, 'legends', {}), /Next act unlocked/);
-  assert.doesNotMatch(fullTimeNote({ winner: null }, act('schoolyard', 3), 'legends', {}), /Next try/);
+  assert.doesNotMatch(fullTimeNote({ winner: null }, act('schoolyard', 3), 'legends', {}), /Next shot/);
 });
 
 test('the venue panel names the opponent in one consistent style', () => {

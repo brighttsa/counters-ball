@@ -2,12 +2,17 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "KONK in-game copy audit and proposed deck",
+  "task": "Implement approved KONK copy deck",
   "status": "released",
   "paths": [
-    "plans/reports/konk-in-game-copy-audit-and-deck.md",
+    "index.html",
+    "src/ui/",
+    "src/gameplay/",
+    "src/levels/",
+    "src/core/",
+    "tests/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T15:45:10.447Z",
-  "head": "ba7ada4137adc7db2c9ff95e7cb4d3622b717182"
+  "updatedAt": "2026-09-23T16:02:46.919Z",
+  "head": "53419ad55888d04a8d4132e9391daaec59b7bb65"
 }

@@ -27,7 +27,7 @@ const CARDBOARD = { kind: 'cardboard', base: '#bd9163' };
 export const CAMPAIGN_LEVELS = [
   {
     id: 'schoolyard', name: 'Schoolyard Break', place: 'Adabraka Primary, Accra',
-    blurb: 'Kwame bet his toffee you can\'t score before the bell.',
+    blurb: 'Kwame put his toffee on it. Score before the bell.',
     surface: CARDBOARD, lighting: 'midday', backdrop: 'schoolyard', frictionScale: 1,
     obstacles: [],
     rules: { goalsToWin: 1, flickLimit: 12, threeStarFlicks: 3 },
@@ -36,7 +36,7 @@ export const CAMPAIGN_LEVELS = [
   },
   {
     id: 'kiosk', name: 'Kiosk Corner', place: 'Nima Market Road',
-    blurb: 'Esi plays every evening by Kofi\'s kiosk. She knows the table.',
+    blurb: 'Esi knows every mark on Kofi\'s table. Can you find an angle she hasn\'t seen?',
     surface: CARDBOARD, lighting: 'late-afternoon', backdrop: 'kiosk', frictionScale: 1,
     obstacles: [],
     rules: { goalsToWin: 2, flickLimit: 14, threeStarFlicks: 6 },
@@ -44,7 +44,7 @@ export const CAMPAIGN_LEVELS = [
   },
   {
     id: 'veranda', name: 'Veranda Derby', place: 'Auntie Ama\'s Veranda, Kumasi',
-    blurb: 'Pebbles on the plywood. Yaw banks shots off them like a pro.',
+    blurb: 'Yaw calls the banks before they happen. The pebbles might have other ideas.',
     surface: { kind: 'wood', base: '#b98a55', grain: '#7a5230', dark: '#4e331c' },
     lighting: 'golden-hour', backdrop: 'veranda', frictionScale: 1,
     obstacles: [{ type: 'pebble', x: 0, z: 0.62 }, { type: 'pebble', x: 0, z: -0.62 }],
@@ -53,7 +53,7 @@ export const CAMPAIGN_LEVELS = [
   },
   {
     id: 'roadside', name: 'Roadside Showdown', place: 'Tema Motorway Junction',
-    blurb: 'Somebody left a bottle and their change on the table. Play around it.',
+    blurb: 'A bottle and loose change have claimed the middle. Akosua wants the rest.',
     surface: { kind: 'wood', base: '#a67a4c', grain: '#6c4726', dark: '#3f2a16' },
     lighting: 'late-afternoon', backdrop: 'roadside', frictionScale: 1,
     obstacles: [{ type: 'bottle', x: 0.18, z: 0.7 }, { type: 'coins', x: -0.62, z: -0.82 },
@@ -63,7 +63,7 @@ export const CAMPAIGN_LEVELS = [
   },
   {
     id: 'harmattan', name: 'Harmattan Haze', place: 'Tamale Lorry Station',
-    blurb: 'Dust on everything. The caps drag — flick harder than you think.',
+    blurb: 'Dust slows the caps. Abdul already knows how much.',
     surface: { kind: 'cardboard', base: '#c9a57a', dusty: true },
     lighting: 'harmattan', backdrop: 'harmattan', frictionScale: 1.35,
     obstacles: [{ type: 'pebble', x: 0, z: 0.58 }, { type: 'pebble', x: 0.7, z: -0.2 },
@@ -73,7 +73,7 @@ export const CAMPAIGN_LEVELS = [
   },
   {
     id: 'nightbulb', name: 'Lights Out Final', place: 'Jamestown, under the kiosk bulb',
-    blurb: 'Kofi "Magic" has never lost under this bulb. Tonight, somebody will.',
+    blurb: 'Magic owns the table under this bulb. The next match decides whether he keeps it.',
     surface: { kind: 'wood', base: '#5a3a22', grain: '#3a2414', dark: '#21140a', carvings: ['KOJO', 'BLACK STARS', 'E.A. + K.'] },
     lighting: 'night-bulb', backdrop: 'night', frictionScale: 1,
     obstacles: [{ type: 'bottle', x: 0, z: 0.72 }, { type: 'bottle', x: 0, z: -0.72 },

@@ -6,6 +6,7 @@ import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 import { featuredActCopy } from '../levels/featured-home-legends-act.js';
+import { MENU_COPY, starRules, conditionObstacleCopy, titleStarsCopy } from './konk-interface-copy.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -14,7 +15,7 @@ const LIGHT = { midday: 'Midday sun', 'late-afternoon': 'Late afternoon',
   'golden-hour': 'Golden hour', harmattan: 'Harmattan dust', 'night-bulb': 'Under the bulb' };
 const conditions = (level) => `${LIGHT[level.lighting] ?? level.lighting} · ${
   getVenueVisualProfile(level.backdrop).surfaceLabel} · ${
-  level.obstacles.length ? `${level.obstacles.length} obstacles` : 'Open table'}`;
+  conditionObstacleCopy(level.obstacles.length)}`;
 
 export class MenuScreens {
   /** @param onAction (action: string, element: HTMLElement) => void */
@@ -75,9 +76,7 @@ export class MenuScreens {
   }
 
   setTitleStars(earned, max) {
-    $('title-stars').textContent = earned > 0
-      ? `★ ${earned} of ${max} stars collected`
-      : 'Six pitches. Six neighbourhood legends.';
+    $('title-stars').textContent = titleStarsCopy(earned, max);
   }
 
   setSoundIcon(muted) {
@@ -129,7 +128,7 @@ export class MenuScreens {
       : `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
     $('intro-title').textContent = legend ? level.actTitle : level.name;
     $('intro-place').textContent = level.place;
-    $('intro-blurb').textContent = versus ? 'Two players, one table. Take turns on the same screen.' : level.blurb;
+    $('intro-blurb').textContent = versus ? MENU_COPY.localIntro : level.blurb;
 
     const home = $('intro-home'), away = $('intro-away');
     home.textContent = versus ? homeTeam.name : 'You';
@@ -149,9 +148,9 @@ export class MenuScreens {
 
     const lines = level.introLines ? [...level.introLines]
       : [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
-    if (level.obstacles.length && !legend) lines.push('Obstacles on the table: play the rebounds');
-    if ((level.frictionScale ?? 1) > 1) lines.push('Dusty surface: caps stop sooner');
-    if (!versus) lines.push('★ Win', '★ Keep a clean sheet', `★ Win within ${rules.threeStarFlicks} flicks`);
+    if (level.obstacles.length && !legend) lines.push(MENU_COPY.obstacles);
+    if ((level.frictionScale ?? 1) > 1) lines.push(MENU_COPY.dust);
+    if (!versus) lines.push(...starRules(rules.threeStarFlicks));
     const memory = schoolyardReturnMemory(level, mode);
     if (memory) lines.unshift(memory);
     lines.unshift(...extraLines);

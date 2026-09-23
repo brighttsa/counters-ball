@@ -28,7 +28,7 @@ export const HARMATTAN_DEPARTING_LORRY_ACTS = [
   act(1, {
     id: 'legends-harmattan-act-1',
     actTitle: 'Catch the Lorry',
-    blurb: 'The Bolga Express is pulling out, and the goal is strapped to its side. Read where it stops next.',
+    blurb: 'The Bolga Express is moving. A goal is strapped to it. Read the next stop.',
     objective: 'Score into the moving lorry',
     introLines: [
       'Solo challenge · score 1 goal in 8 flicks',
@@ -45,11 +45,11 @@ export const HARMATTAN_DEPARTING_LORRY_ACTS = [
   act(2, {
     id: 'legends-harmattan-act-2',
     actTitle: 'Loading Bay',
-    blurb: 'Abdul loads sacks for his father between games. He always knows where the lorry is going.',
+    blurb: 'Abdul loads sacks between matches. He knows where the lorry stops before you do.',
     objective: 'Beat Abdul to the lorry',
     introLines: [
       'First to 1 · 18 flicks each (dust eats short flicks)',
-      'Line the ball up with their goal\'s NEXT stop, not where it is now',
+      'Line the ball up with their goal\'s next stop, not where it is now',
       'Your own goal moves too: slide a cap across to where it is going',
     ],
     rules: { goalsToWin: 1, flickLimit: 18, threeStarFlicks: 7 },
@@ -58,7 +58,7 @@ export const HARMATTAN_DEPARTING_LORRY_ACTS = [
   act(3, {
     id: 'legends-harmattan-act-3',
     actTitle: 'Last Lorry to Bolgatanga',
-    blurb: 'Dust on everything, pebbles in the road and one lorry left tonight. Abdul wants the ride.',
+    blurb: 'Dust, pebbles, one lorry left tonight. Abdul wants that ride.',
     objective: 'First to 2 before the last lorry leaves',
     introLines: [
       'First to 2 · 20 flicks each',

@@ -29,7 +29,7 @@ export const VERANDA_CLAY_POT_ACTS = [
   act(1, {
     id: 'legends-veranda-act-1',
     actTitle: "Auntie Ama's Rule",
-    blurb: 'Her pots are on the table and she is watching from the doorway. Straight goals don\'t count here.',
+    blurb: 'Auntie Ama is watching from the doorway. Her pots are in play. Straight goals don\'t count.',
     objective: 'Score a bank goal: off a pot or the rail',
     introLines: [
       'Solo challenge · score 1 bank goal in 10 flicks',
@@ -45,7 +45,7 @@ export const VERANDA_CLAY_POT_ACTS = [
   act(2, {
     id: 'legends-veranda-act-2',
     actTitle: 'Mind the Pots',
-    blurb: 'Yaw learned banking on this veranda. He knows every pot by name.',
+    blurb: 'Yaw knows the name of every pot. He also knows where the ball lands next.',
     objective: 'Beat Yaw with bank goals',
     introLines: [
       'First to 1 · 16 flicks each · no straight goals',
@@ -58,7 +58,7 @@ export const VERANDA_CLAY_POT_ACTS = [
   act(3, {
     id: 'legends-veranda-act-3',
     actTitle: 'The Derby',
-    blurb: 'Golden hour, the whole compound watching. First to two before Auntie Ama calls everyone in to eat.',
+    blurb: 'The whole compound is watching. First to two before Auntie Ama calls everyone in.',
     objective: 'First to 2, bank goals only',
     introLines: [
       'First to 2 · 18 flicks each · no straight goals',
