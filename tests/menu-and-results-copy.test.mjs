@@ -62,6 +62,15 @@ test('running out of flicks in a solo challenge never names the Roadside lanes',
   }
 });
 
+test('Act 2 loss and draw offer the venue-specific next decision without changing wins', () => {
+  const school = act('schoolyard', 2);
+  const kiosk = act('kiosk', 2);
+  assert.match(fullTimeNote({ winner: null }, school, 'legends', {}), /Next try:.*ruler/);
+  assert.match(fullTimeNote({ winner: 'away' }, kiosk, 'legends', {}), /Next try:.*dish gap/);
+  assert.match(fullTimeNote({ winner: 'home' }, school, 'legends', {}), /Next act unlocked/);
+  assert.doesNotMatch(fullTimeNote({ winner: null }, act('schoolyard', 3), 'legends', {}), /Next try/);
+});
+
 test('the venue panel names the opponent in one consistent style', () => {
   const level = act('roadside', 2);
   document.getElementById('level-grid');

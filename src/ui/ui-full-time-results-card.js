@@ -3,6 +3,7 @@
 // neighbourhood's voice. Nothing here may name one venue's set piece, because
 // every Street Legends venue shares this card.
 import { SIDE_HOME } from '../core/pitch-dimensions-and-constants.js';
+import { streetLegendRetryCue } from '../levels/street-legends-flow-retry-cues.js';
 
 const $ = (id) => document.getElementById(id);
 const STAR_REVEAL_DELAY_MS = 650;
@@ -26,6 +27,10 @@ export function fullTimeNote(result, level, mode, { improved, isFinalVenue }) {
     return isFinalVenue ? 'Champion of the tables! Every pitch conquered.' : improved ? 'New best on this pitch!' : 'Nice flicking.';
   }
   if (legend && level.rules.awayFlickLimit === 0) return 'Out of flicks. Read the table and set the ball up for it.';
+  if (legend?.act === 2) {
+    const cue = streetLegendRetryCue(level);
+    if (cue) return `Next try: ${cue}`;
+  }
   return winner === null ? 'Level on goals: you need a win for stars.' : `${kid} keeps the bragging rights. Run it back.`;
 }
 

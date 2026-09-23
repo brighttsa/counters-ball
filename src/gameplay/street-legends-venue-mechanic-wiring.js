@@ -12,6 +12,7 @@
 // first, so the AI (started by the feedback 'turn' listener) always plans
 // against the table as it actually is for its turn.
 import { otherSide } from '../core/pitch-dimensions-and-constants.js';
+import { streetLegendRetryCue } from '../levels/street-legends-flow-retry-cues.js';
 import { createTollGateMechanic } from './toll-gate-venue-mechanic.js';
 import { createDepartingLorryMechanic } from './departing-lorry-venue-mechanic.js';
 import { createRulerSeesawMechanic } from './ruler-seesaw-venue-mechanic.js';
@@ -38,6 +39,8 @@ export function createVenueMechanic(session) {
   // Defending only matters when the other side will ever flick (not in solo acts).
   const defends = (side) => ({ defend: rules.flickLimitFor(otherSide(side)) > 0 });
   let turns = 0;
+  const soloDiscover = level.legend?.act === 1 && level.rules.awayFlickLimit === 0;
+  const retryCue = streetLegendRetryCue(level);
 
   rules.on('turn', (side) => {
     const callouts = m.onTurn(side, dynamicBodies());
@@ -46,6 +49,9 @@ export function createVenueMechanic(session) {
     sound.woodKnock?.(SIGNAL_SOUND_STRENGTH); // booms clack / tailboards knock as the venue changes
     for (const label of callouts) hud.event?.(label, { priority: 3, duration: 1.1 });
     if (turns === 1) hud.event?.(m.hint.label, { priority: 2, duration: 1.6, detail: m.hint.detail });
+    if (turns === 2 && soloDiscover && retryCue) {
+      hud.event?.('NEXT FLICK', { priority: 4, duration: 2.3, detail: retryCue });
+    }
   });
   rules.on('flick', ({ side }) => m.onFlick?.(side));
 

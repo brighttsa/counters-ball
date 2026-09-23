@@ -2,14 +2,17 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Fix visible camera preset selection",
+  "task": "Street Legends flow recovery cues",
   "status": "released",
   "paths": [
-    "src/ui/player-camera-controls.js",
-    "tests/player-camera-controls.test.mjs",
+    "src/levels/street-legends-flow-retry-cues.js",
+    "src/gameplay/street-legends-venue-mechanic-wiring.js",
+    "src/ui/ui-full-time-results-card.js",
+    "tests/menu-and-results-copy.test.mjs",
+    "tests/street-legends-flow-retry-cues.test.mjs",
     "plans/agent-handoff-board.md",
-    "plans/reports/mobile-camera-framing.md"
+    "plans/reports/"
   ],
-  "updatedAt": "2026-09-23T14:06:43.964Z",
-  "head": "434ef4c735ee3f68affc22c8517ddd9753b50d94"
+  "updatedAt": "2026-09-23T14:35:27.642Z",
+  "head": "f16b0dba17b28e5f9313843a2d4350bfc7e79336"
 }
