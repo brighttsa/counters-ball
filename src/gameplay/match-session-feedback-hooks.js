@@ -98,17 +98,15 @@ export function wireMatchFeedback(session) {
     const highlight = venueLabel || skillLabel;
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
     sound.whistle();
-    if (versus || !rules.isAi(scorer)) sound.goalCheer();
-    else sound.groan();
     session.stage.backdrop.startle(); // the neighbourhood reacts too
     particles.confettiBurst(goalX);
     juice.wobbleGoal(Math.sign(goalX), 0.6);
     cameraDirector.celebrateGoal(goalX);
-    cameraDirector.addTrauma(0.5);
-    post.pulseBloom(0.55);
+    cameraDirector.addTrauma(0.28);
+    post.pulseBloom(highlight ? 0.38 : 0.18);
     time.slowMotion(0.35, 0.7);
     hud.setScore(scores, scorer);
-    const detail = highlight || (versus ? `${nameOf(scorer)} score!` : scorer === SIDE_HOME ? 'What a flick!' : `${kid} scores`);
+    const detail = highlight || (versus ? `${nameOf(scorer)}.` : scorer === SIDE_HOME ? 'Yours.' : `${kid} scores`);
     hud.goal(session.inkBursts ? `${detail} / ${scores.home}-${scores.away} / ${level.place}` : detail);
     session.schedule(2.6, () => session.presentation.afterGoal());
   });
