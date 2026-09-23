@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Street keeps the lorry goal in view",
+  "task": "Fade props near the camera",
   "status": "released",
   "paths": [
     "src/fx/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T17:33:18.267Z",
-  "head": "8d3f1ad6a2b6122fe17898bbb51b025f65c88084"
+  "updatedAt": "2026-09-23T17:52:30.332Z",
+  "head": "b5f161a38883c4866d020f04dd22176805e8a098"
 }

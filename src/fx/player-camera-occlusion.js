@@ -1,7 +1,9 @@
 import * as THREE from 'three';
+import { NearCameraPropDitherFade } from './near-camera-prop-dither-fade.js';
 
 // Only scenery wholly outside the playable envelope can disappear. Mechanics,
-// rails, goals and pieces remain visible and keep their physical state.
+// rails, goals and pieces remain visible and keep their physical state; tall
+// props on the table only thin out where they come close to the camera.
 export class PlayerCameraOcclusion {
   constructor(stage) {
     this.hidden = new Set(); this.scenery = [];
@@ -13,11 +15,13 @@ export class PlayerCameraOcclusion {
       if (box.max.x < -2.3 || box.min.x > 2.3 || box.max.z < -1.5 || box.min.z > 1.5)
         this.scenery.push({ mesh, box });
     });
+    this.propFade = new NearCameraPropDitherFade(stage);
     this.ray = new THREE.Ray(); this.hit = new THREE.Vector3(); this.direction = new THREE.Vector3();
   }
-  restore() { for (const mesh of this.hidden) mesh.visible = true; this.hidden.clear(); }
+  restore() { for (const mesh of this.hidden) mesh.visible = true; this.hidden.clear(); this.propFade.restore(); }
   update(camera, targets) {
     this.restore();
+    this.propFade.update(camera, targets[0]);
     for (const { mesh, box } of this.scenery) {
       const blocked = box.containsPoint(camera.position) || targets.some(target => {
         const distance = this.direction.subVectors(target, camera.position).length();

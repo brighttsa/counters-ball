@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-09-23 — Props fade when close to the camera
+
+### Added
+- Tall props on the table (clay pots, toll booths and booms, coin stacks, goal frames, lorries) thin out where
+  they come close to the match camera, so a low Street or Broadcast view is never walled off by the nearest
+  prop. Props next to the action stay solid; caps, ball, rails and the table surface never fade. Replays and
+  goal cameras show everything solid.
+
 ## 2026-09-23 — Street Level checked on every Street Legends table
 
 ### Fixed
