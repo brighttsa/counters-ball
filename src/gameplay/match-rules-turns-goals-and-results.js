@@ -22,6 +22,8 @@ export class MatchRules {
     this.flicksUsed = { home: 0, away: 0 };
     this.lastScorer = null;
     this.result = null;
+    this.tiebreak = null; // null → 'golden' (next goal wins) → 'extra' (+2 flicks, normal rules)
+    this.tiebreakBonus = { home: 0, away: 0 }; // extra flicks on top of flickLimit, granted by a tiebreak stage
   }
 
   on(event, fn) {
@@ -38,7 +40,8 @@ export class MatchRules {
 
   /** Flick allowance for one side; `awayFlickLimit: 0` makes a solo challenge against still caps. */
   flickLimitFor(side) {
-    return side === SIDE_AWAY && Number.isInteger(this.rules.awayFlickLimit) ? this.rules.awayFlickLimit : this.rules.flickLimit;
+    const base = side === SIDE_AWAY && Number.isInteger(this.rules.awayFlickLimit) ? this.rules.awayFlickLimit : this.rules.flickLimit;
+    return base + this.tiebreakBonus[side];
   }
 
   flicksLeft(side) {
@@ -73,7 +76,8 @@ export class MatchRules {
 
   finishGoalCelebration() {
     if (this.phase !== 'goal') return;
-    if (this.scores[this.lastScorer] >= this.rules.goalsToWin) {
+    // A golden-flick goal ends it outright, even below goalsToWin: regulation already failed to decide it.
+    if (this.tiebreak === 'golden' || this.scores[this.lastScorer] >= this.rules.goalsToWin) {
       this.end();
       return;
     }
@@ -93,12 +97,30 @@ export class MatchRules {
     const side = this.flicksLeft(preferred) > 0 ? preferred
       : this.flicksLeft(fallback) > 0 ? fallback : null;
     if (!side) {
+      if (this.grantTiebreak()) { this.passTurnTo(preferred); return; }
       this.end();
       return;
     }
     this.phase = 'aiming';
     this.turn = side;
     this.emit('turn', side);
+  }
+
+  /**
+   * Both sides just ran dry level: one golden flick each (sudden death), then one round of
+   * two flicks each under normal rules if that's still level, then it's a genuine draw.
+   * Solo challenges (`awayFlickLimit: 0`) never tiebreak — the away side was never meant to flick back.
+   */
+  grantTiebreak() {
+    if (this.rules.awayFlickLimit === 0 || this.scores.home !== this.scores.away) return false;
+    if (this.tiebreak === null) this.tiebreak = 'golden';
+    else if (this.tiebreak === 'golden') this.tiebreak = 'extra';
+    else return false;
+    const granted = this.tiebreak === 'golden' ? 1 : 2;
+    this.tiebreakBonus.home += granted;
+    this.tiebreakBonus.away += granted;
+    this.emit('tiebreak', this.tiebreak);
+    return true;
   }
 
   end() {

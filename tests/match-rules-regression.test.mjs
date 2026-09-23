@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MatchRules } from '../src/gameplay/match-rules-turns-goals-and-results.js';
+import { otherSide } from '../src/core/pitch-dimensions-and-constants.js';
 
 const create = (overrides = {}, controllers = { home: 'human', away: 'ai' }) =>
   new MatchRules({ goalsToWin: 2, flickLimit: 3, threeStarFlicks: 2, ...overrides }, controllers);
@@ -48,7 +49,7 @@ test('own goal credits goal direction rather than flick owner', () => {
   assert.deepEqual(rules.result.starFlags, [false, false, false]);
 });
 
-test('exhausted side is skipped and both exhausted sides end in a draw', () => {
+test('exhausted side is skipped, and both sides exhausted level goes to a golden flick first', () => {
   const rules = create({ flickLimit: 1 });
   rules.start();
   rules.registerFlick('home');
@@ -58,10 +59,62 @@ test('exhausted side is skipped and both exhausted sides end in a draw', () => {
   rules.registerFlick('away');
   rules.registerGoal(1);
   rules.finishGoalCelebration();
+  // 1-1, both out of flicks: not a draw yet — one flick each, next goal wins.
+  assert.equal(rules.phase, 'aiming');
+  assert.equal(rules.tiebreak, 'golden');
+  assert.equal(rules.flicksLeft('home'), 1);
+  assert.equal(rules.flicksLeft('away'), 1);
+});
+
+test('a goal during the golden flick wins outright, even without reaching goalsToWin', () => {
+  const rules = create({ goalsToWin: 5, flickLimit: 1 });
+  rules.start();
+  rules.registerFlick('home');
+  rules.resolvePlayAtRest();
+  rules.registerFlick('away');
+  rules.resolvePlayAtRest();
+  assert.equal(rules.tiebreak, 'golden');
+  const scorer = rules.turn;
+  rules.registerFlick(scorer);
+  rules.registerGoal(scorer === 'home' ? 1 : -1);
+  rules.finishGoalCelebration();
+  assert.equal(rules.phase, 'ended');
+  assert.equal(rules.result.winner, scorer);
+  assert.equal(rules.result.scores.home + rules.result.scores.away, 1);
+});
+
+test('a level golden flick escalates to two more each, then a real draw if still level', () => {
+  const rules = create({ flickLimit: 1 });
+  rules.start();
+  rules.registerFlick('home');
+  rules.resolvePlayAtRest();
+  rules.registerFlick('away');
+  rules.resolvePlayAtRest();
+  assert.equal(rules.tiebreak, 'golden');
+  const first = rules.turn;
+  rules.registerFlick(first);
+  rules.resolvePlayAtRest();
+  rules.registerFlick(otherSide(first));
+  rules.resolvePlayAtRest();
+  assert.equal(rules.tiebreak, 'extra');
+  assert.equal(rules.flicksLeft('home'), 2);
+  assert.equal(rules.flicksLeft('away'), 2);
+  for (let i = 0; i < 2; i++) { rules.registerFlick(rules.turn); rules.resolvePlayAtRest(); }
+  for (let i = 0; i < 2; i++) { rules.registerFlick(rules.turn); rules.resolvePlayAtRest(); }
   assert.equal(rules.phase, 'ended');
   assert.equal(rules.result.winner, null);
   assert.equal(rules.result.stars, 0);
-  assert.equal(rules.flicksLeft('home'), 0);
+  assert.equal(rules.tiebreak, 'extra');
+});
+
+test('a solo challenge (awayFlickLimit: 0) never tiebreaks: exhausting home ends it flat', () => {
+  const rules = create({ goalsToWin: 1, flickLimit: 1, awayFlickLimit: 0 });
+  rules.start();
+  rules.registerFlick('home');
+  rules.resolvePlayAtRest();
+  assert.equal(rules.phase, 'ended');
+  assert.equal(rules.tiebreak, null);
+  assert.equal(rules.result.winner, null);
 });
 
 for (const [used, conceded, flags] of [
@@ -99,4 +152,19 @@ test('hot-seat controllers and reset preserve configuration without old results'
   assert.equal(rules.result, null);
   assert.deepEqual(rules.scores, { home: 0, away: 0 });
   assert.deepEqual(rules.flicksUsed, { home: 0, away: 0 });
+});
+
+test('reset clears a tiebreak in progress and its bonus flicks', () => {
+  const rules = create({ flickLimit: 1 });
+  rules.start();
+  rules.registerFlick('home');
+  rules.resolvePlayAtRest();
+  rules.registerFlick('away');
+  rules.resolvePlayAtRest();
+  assert.equal(rules.tiebreak, 'golden');
+  assert.equal(rules.flickLimitFor('home'), 2);
+  rules.reset();
+  assert.equal(rules.tiebreak, null);
+  assert.equal(rules.flickLimitFor('home'), 1);
+  assert.deepEqual(rules.tiebreakBonus, { home: 0, away: 0 });
 });

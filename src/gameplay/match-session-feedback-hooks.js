@@ -116,6 +116,15 @@ export function wireMatchFeedback(session) {
 
   rules.on('kickoff', () => { session.presentation.skills.kickoff(); session.resetToKickoff(); });
 
+  rules.on('tiebreak', (stage) => {
+    const golden = stage === 'golden';
+    hud.event(golden ? 'GOLDEN FLICK' : 'TWO MORE EACH', {
+      priority: 6, duration: golden ? 1.8 : 1.5,
+      detail: golden ? 'One flick each. Next goal wins.' : 'Still level. Two more flicks each.',
+    });
+    sound.event?.('matchPoint');
+  });
+
   rules.on('end', (result) => {
     shotMemory.finish(result);
     session.ai.cancel();
