@@ -147,3 +147,38 @@ test('saved names and head-to-head records load back; malformed ones are dropped
   store.set([...store.keys()][0], JSON.stringify({ stars: {}, versusNames: { home: '', away: 'x' }, rivalries: [] }));
   assert.deepEqual(loadProgress(), { stars: {}, muted: false });
 });
+
+test('a friend\'s link opens its own table and no other; 2-Player tables are always open', async () => {
+  const { isTrackLevelUnlocked, trackFor, challengeForLevel } = await import('../src/levels/level-tracks-and-challenge-unlocks.js');
+  const progress = { stars: {} };
+  const index = trackFor('legends').findIndex((act) => act.id === 'legends-kiosk-act-2');
+  const challenge = { levelId: 'legends-kiosk-act-2', mode: 'legends', index };
+  assert.equal(isTrackLevelUnlocked(progress, 'legends', index), false);
+  assert.equal(isTrackLevelUnlocked(progress, 'legends', index, challenge), true);
+  assert.equal(isTrackLevelUnlocked(progress, 'legends', index + 1, challenge), false);
+  assert.equal(isTrackLevelUnlocked(progress, 'versus', 5), true);
+  assert.equal(challengeForLevel(challenge, trackFor('legends')[index + 1]), null);
+  assert.equal(trackFor('versus'), CAMPAIGN_LEVELS);
+});
+
+test('reading a challenge from the URL strips it and resolves its table', async () => {
+  const { takeChallengeFromUrl } = await import('../src/levels/level-tracks-and-challenge-unlocks.js');
+  const replaced = [];
+  const hist = { replaceState: (_, __, url) => replaced.push(url) };
+  const at = (href) => ({ href, search: new URL(href).search });
+  const found = takeChallengeFromUrl(at('http://x.test/?beat=kiosk&m=campaign&s=2-0&f=5'), hist);
+  assert.deepEqual(found, { levelId: 'kiosk', mode: 'campaign', scores: { home: 2, away: 0 }, flicks: 5, index: 1 });
+  assert.equal(takeChallengeFromUrl(at('http://x.test/?beat=nowhere&m=campaign&s=2-0&f=5'), hist), null);
+  assert.equal(takeChallengeFromUrl(at('http://x.test/'), hist), null);
+  assert.deepEqual(replaced, ['http://x.test/', 'http://x.test/']);
+});
+
+test('every [data-action] button in index.html has a route', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { createMenuActions } = await import('../src/ui/menu-button-action-routes.js');
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const used = new Set([...html.matchAll(/data-action="([^"]+)"/g)].map((m) => m[1]));
+  const routes = createMenuActions({ app: {}, progress: {}, flow: {} });
+  assert.ok(used.size > 20);
+  for (const action of used) assert.equal(typeof routes[action], 'function', action);
+});

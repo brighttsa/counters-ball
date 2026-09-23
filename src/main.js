@@ -11,20 +11,21 @@ import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio
 import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js';
-import { FullTimeResultsCard, fullTimeTitle } from './ui/ui-full-time-results-card.js';
-import { ResultsShare, buildResultShare } from './ui/share-results-and-challenge-link.js';
+import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js';
+import { ResultsShare } from './ui/share-results-and-challenge-link.js';
+import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
+import { createMenuActions } from './ui/menu-button-action-routes.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
-import {
-  decodeChallenge, stripChallengeParams, challengeInviteLine, challengeVerdictLine, markText,
-} from './core/challenge-link-codec-and-comparison.js';
+import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
-import { STREET_LEGENDS_ACTS, isLegendActUnlocked } from './levels/street-legends-acts-and-unlocks.js';
+import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js';
+import {
+  trackFor, challengeForLevel, isTrackLevelUnlocked, takeChallengeFromUrl,
+} from './levels/level-tracks-and-challenge-unlocks.js';
 import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js';
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
-import {
-  loadProgress, saveProgress, recordLevelStars, isLevelUnlocked, totalStars,
-} from './core/save-progress-local-storage.js';
+import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 
 const canvas = document.getElementById('game-canvas');
 const { renderer, scene, camera } = createRendererSceneCamera(canvas);
@@ -41,10 +42,8 @@ const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match t
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null };
 const orientation = createMatchOrientationPrompt();
 new PlayerCameraController(app, cameraDirector);
-const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : CAMPAIGN_LEVELS);
-const challengeFor = (level) => (app.challenge?.levelId === level?.id ? app.challenge : null);
-const unlockedIn = (mode, i) => mode === 'versus' || Boolean(challengeFor(trackFor(mode)[i])) // a friend's link opens its table
-  || (mode === 'legends' ? isLegendActUnlocked(progress, STREET_LEGENDS_ACTS, i) : isLevelUnlocked(progress, CAMPAIGN_LEVELS, i));
+const challengeFor = (level) => challengeForLevel(app.challenge, level);
+const unlockedIn = (mode, i) => isTrackLevelUnlocked(progress, mode, i, app.challenge);
 const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress);
 
 function replaceSession(options, sessionHud) {
@@ -95,14 +94,6 @@ function showChallenge() {
   const level = trackFor(app.challenge.mode)[app.challenge.index];
   menus.fillChallenge(level, challengeInviteLine(app.challenge, level));
   menus.show('challenge');
-}
-
-function takeChallengeFromUrl() {
-  if (!location.search) return null;
-  const challenge = decodeChallenge(location.search);
-  history.replaceState(null, '', stripChallengeParams(location.href)); // a reload lands on the title, not the challenge again
-  const index = challenge ? trackFor(challenge.mode).findIndex((level) => level.id === challenge.levelId) : -1;
-  return index < 0 ? null : { ...challenge, index };
 }
 
 function showLevels(mode = app.mode) {
@@ -164,29 +155,17 @@ function kickOff() {
   const { side, label, detail } = hotSeat.seat(menus.readPlayerNames());
   hud.setNames(hotSeat.names.home, hotSeat.names.away);
   app.session.start(side);
-  hud.event(label, { priority: 3, duration: 1.6, detail });
+  hud.event(label, { priority: 5, duration: 1.6, detail }); // above MATCH POINT (4): a first-to-1 table is match point from flick one
 }
 
 function showResults(result) {
   const track = trackFor(app.mode);
   const level = track[app.levelIndex];
-  const campaign = app.mode !== 'versus';
-  const improved = campaign && recordLevelStars(progress, level.id, result.stars);
-  const names = campaign ? null : { ...hotSeat.names };
-  const challenge = challengeFor(level);
-  const lines = !campaign ? hotSeat.finish(result.winner) : challenge ? [challengeVerdictLine(result, challenge)] : [];
   hud.show(false);
-  resultsShare.prepare(buildResultShare(result, level, app.mode, {
-    baseUrl: `${location.origin}${location.pathname}`, title: fullTimeTitle(result, level, app.mode, names),
-    homeColour: HOME_TEAM.hudColor, names, versusNotes: lines, challengeNote: lines[0],
-  }));
-  resultsCard.fill(result, level, app.mode, {
-    names, lines, rematchLabel: hotSeat.seriesDecided ? 'New series' : 'Rematch',
-    hasNext: campaign && result.stars > 0 && app.levelIndex < track.length - 1,
-    isFinalVenue: app.levelIndex === track.length - 1,
-    improved,
-    onStar: (i) => sound.starDing(i),
-    homeColour: HOME_TEAM.hudColor,
+  presentFullTimeResults(result, {
+    level, mode: app.mode, levelIndex: app.levelIndex, trackLength: track.length, progress, hotSeat,
+    challenge: challengeFor(level), card: resultsCard, share: resultsShare, homeColour: HOME_TEAM.hudColor,
+    baseUrl: `${location.origin}${location.pathname}`, onStar: (i) => sound.starDing(i),
   });
   menus.show('results');
 }
@@ -198,53 +177,14 @@ function setPaused(paused) {
   menus.show(paused ? 'pause' : null);
 }
 
-const actions = {
-  'play-featured': () => { app.mode = 'legends'; prepareMatch(featuredIndex()); },
-  'play-campaign': () => showLevels('campaign'),
-  'play-versus': () => showLevels('versus'),
-  'play-legends': () => showLevels('legends'),
-  'back-to-title': () => showTitle(),
-  'select-level': (el) => prepareMatch(Number(el.dataset.index)),
-  'preview-level': (el) => previewLevel(Number(el.dataset.index)),
-  'intro-back': () => showLevels(),
-  'kick-off': () => kickOff(),
-  'skip-replay': () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); },
-  'toggle-camera-motion': (el) => {
-    cameraDirector.setMotion(!cameraDirector.motionEnabled);
-    el.setAttribute('aria-pressed', String(cameraDirector.motionEnabled));
-    if (!cameraDirector.motionEnabled && app.session?.presentation.replay.active) app.session.presentation.finishReplay();
-  },
-  pause: () => setPaused(true),
-  resume: () => setPaused(false),
-  restart: () => prepareMatch(app.levelIndex),
-  quit: () => showLevels(),
-  'results-levels': () => showLevels(),
-  replay: () => {
-    if (app.mode !== 'versus') return prepareMatch(app.levelIndex);
-    hotSeat.rematch();
-    prepareMatch(app.levelIndex, { rematch: true });
-  },
-  'share-result': () => resultsShare.share(),
-  'challenge-accept': () => { app.mode = app.challenge.mode; app.levelIndex = app.challenge.index; prepareMatch(app.challenge.index); },
-  'challenge-decline': () => showTitle(),
-  'next-level': () => prepareMatch(app.levelIndex + 1),
-  'toggle-hud-style': () => {
-    progress.hudStyle = hud.style === 'chalk' ? 'broadcast' : 'chalk';
-    hud.setStyle(progress.hudStyle);
-    saveProgress(progress);
-  },
-  'toggle-sound': () => {
-    progress.muted = !progress.muted;
-    sound.setMuted(progress.muted);
-    saveProgress(progress);
-    menus.setSoundIcon(progress.muted);
-  },
-};
-
 const menus = new MenuScreens((action, el) => {
   sound.unlock();
   if (action !== 'toggle-sound') sound.uiTick();
   actions[action]?.(el);
+});
+const actions = createMenuActions({
+  app, progress, save: saveProgress, hud, sound, cameraDirector, hotSeat, resultsShare, menus,
+  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex },
 });
 
 window.addEventListener('pointerdown', () => sound.unlock());

@@ -5,7 +5,11 @@ Default assets remain runtime-generated. Licensed, same-origin distant photograp
 are optional and disabled by default; missing images leave procedural scenery intact.
 
 ## Boot and flow
-`index.html` holds every screen as static markup; `src/main.js` wires it up.
+`index.html` holds every screen as static markup; `src/main.js` wires it up and
+owns the app flow. Every `[data-action]` button routes through
+`ui/menu-button-action-routes.js` (a test fails if a button has no route);
+`levels/level-tracks-and-challenge-unlocks.js` says which tables a mode plays and
+which can be entered; `ui/full-time-results-presentation.js` handles full time.
 
 ```
 main.js
