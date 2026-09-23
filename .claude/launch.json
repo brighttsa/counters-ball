@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "counters-ball-3d",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4180", "--directory", "/Users/bskt/Counters ball"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/dev-static-server-no-cache.mjs", "4180"],
       "port": 4180
     }
   ]

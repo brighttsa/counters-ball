@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-23 — Preview server that never serves stale code
+
+### Changed
+- Local preview now runs `node scripts/dev-static-server-no-cache.mjs 4180` instead of Python's
+  `http.server`. Every response is `Cache-Control: no-store`, so a normal browser refresh always loads the
+  latest game modules (Python's server let the browser keep old camera code after changes).
+
 ## 2026-09-23 — Calm camera at turn changes
 
 ### Fixed
