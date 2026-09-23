@@ -50,3 +50,16 @@ now in the regression test. Full suite: 192 pass. Browser errors still include
 the pre-existing refresh-time chalk font `.then` failure and an unattributed
 MutationObserver diagnostic; this pass did not resolve those issues. A physical
 phone/tablet touch and sustained-FPS check remains open. No deployment.
+
+## Preset response follow-up, 2026-09-23
+The live 4181 match shows Tactical, Broadcast and Street Level do select and
+produce distinct angles, but their eased transitions used simulation `dt`,
+which the render loop caps at 50 ms. A preview running near one frame per
+second could therefore take several seconds to show the selected pose even
+though the selector label changed immediately. The player-camera controller
+now uses real elapsed time for its visual blend only; gameplay update timing,
+physics and flick counts are untouched. A fresh 844px Schoolyard preview showed
+Tactical on the first captured frame after selection. The full 193-test suite
+passes, including a throttled-frame blend regression. Browser cache means an
+existing match tab needs a refresh to load this change. Physical-device
+response remains unverified; no deployment.

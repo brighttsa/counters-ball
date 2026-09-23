@@ -1,7 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { THREE } from './helpers/real-three-session-fixture.mjs';
-const { playerCameraPose } = await import('../src/fx/player-camera-view-poses.js');
+const { cameraTransitionBlend, playerCameraPose } = await import('../src/fx/player-camera-view-poses.js');
+
+test('camera transitions settle after a throttled preview frame', () => {
+  assert.ok(cameraTransitionBlend(1 / 60, true) < .3);
+  assert.ok(cameraTransitionBlend(1, true) > .999);
+  assert.equal(cameraTransitionBlend(0, false), 1);
+});
 
 test('phone and tablet framing fills usable space without cropping goal structures', () => {
   const previous = globalThis.window;

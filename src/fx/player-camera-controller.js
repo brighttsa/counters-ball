@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, loadCameraPreferences, playerCameraPose } from './player-camera-view-poses.js';
+import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, cameraTransitionBlend, loadCameraPreferences, playerCameraPose } from './player-camera-view-poses.js';
 import { PlayerCameraOcclusion } from './player-camera-occlusion.js';
 import { createPlayerCameraControls } from '../ui/player-camera-controls.js';
 
@@ -84,6 +84,10 @@ export class PlayerCameraController {
     this.controls.update();
   }
   update(dt) {
+    const now = performance.now();
+    // Simulation dt is capped; hidden previews need real elapsed time to finish a camera switch.
+    const cameraDt = this.lastCameraUpdateAt == null ? dt : Math.max(dt, (now - this.lastCameraUpdateAt) / 1000);
+    this.lastCameraUpdateAt = now;
     const s = this.app.session;
     if (s !== this.session) {
       this.occlusion?.restore(); this.session = s; this.selected = null; this.peeking = false;
@@ -120,7 +124,7 @@ export class PlayerCameraController {
       this.controls.update();
       this.pose = { position: this.orbitCamera.position, target: this.controls.target };
     }
-    const blend = this.director.motionEnabled ? 1 - Math.exp(-dt * 16) : 1;
+    const blend = cameraTransitionBlend(cameraDt, this.director.motionEnabled);
     this.camera.position.lerp(this.pose.position, blend);
     this.target.lerp(this.pose.target, blend);
     this.camera.fov = 42; this.camera.updateProjectionMatrix();

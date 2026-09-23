@@ -2,6 +2,9 @@ import * as THREE from 'three';
 
 export const CAMERA_MODES = ['tactical', 'broadcast', 'street', 'free'];
 export const CAMERA_PREFERENCE_KEY = 'counters-ball-camera-v1';
+export function cameraTransitionBlend(elapsed, motionEnabled) {
+  return motionEnabled ? 1 - Math.exp(-Math.max(0, elapsed) * 16) : 1;
+}
 export function loadCameraPreferences(storage) {
   try {
     const saved = JSON.parse(storage.getItem(CAMERA_PREFERENCE_KEY));

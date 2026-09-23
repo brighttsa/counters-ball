@@ -2,15 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Make camera modes usable in live matches",
+  "task": "Make preset camera switching immediate",
   "status": "released",
   "paths": [
-    "src/fx/player-camera-view-poses.js",
     "src/fx/player-camera-controller.js",
+    "src/fx/player-camera-view-poses.js",
     "tests/player-camera-controls.test.mjs",
     "plans/agent-handoff-board.md",
     "plans/reports/mobile-camera-framing.md"
   ],
-  "updatedAt": "2026-09-23T13:32:56.967Z",
-  "head": "c6d0af59d6ed8ae9893b39a90b7dc9ae7703f2ba"
+  "updatedAt": "2026-09-23T13:42:41.110Z",
+  "head": "b1f7b886c1e36e3e73110e82152e8f5c2be0e49c"
 }
