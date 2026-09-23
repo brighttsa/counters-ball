@@ -8,6 +8,7 @@
   separate from the title. Tab title, description, favicon, phone home-screen icon, rotate prompt,
   share-card header and share messages all use the new name.
 - Shared result and challenge links now show the key art as a link preview (Open Graph tags).
+- The logo's ball is the game's own folded-paper ball (fold planes, creases, exercise-book ruling), not a football.
 - Save keys, folder names and `window.__countersBall` are unchanged so existing progress is kept.
 
 ### Removed

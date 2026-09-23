@@ -37,9 +37,6 @@
     <radialGradient id="enamel" cx=".36" cy=".3" r=".78">
       <stop offset="0" stop-color="#ffe27c"/><stop offset=".55" stop-color="#f2bd2c"/><stop offset="1" stop-color="#cf9412"/>
     </radialGradient>
-    <radialGradient id="ball-shade" cx=".34" cy=".3" r=".8">
-      <stop offset="0" stop-color="#fffbf1"/><stop offset=".6" stop-color="#ece2cc"/><stop offset="1" stop-color="#b3a78e"/>
-    </radialGradient>
     <linearGradient id="concrete" x1="0" y1="0" x2="1" y2=".6">
       <stop offset="0" stop-color="#dcc8a5"/><stop offset=".55" stop-color="#c3ad8b"/><stop offset="1" stop-color="#9f8a71"/>
     </linearGradient>
@@ -123,12 +120,14 @@
       </g>
     </g>
 
-    <!-- A small match ball: pentagon panels, sunlit from the left, clearly smaller than the cap. -->
-    <clipPath id="ball-clip"><circle r="47"/></clipPath>
+    <!-- The match ball, as in the game: a wad of folded paper. Faceted planes catch the same
+         late-afternoon light as the cap; ink creases mark the folds. Built by script below. -->
+    <path id="ball-halo"/>
     <g id="ball">
-      <circle r="50" fill="url(#ball-shade)" stroke="#141312" stroke-width="7"/>
-      <g clip-path="url(#ball-clip)" id="ball-panels" fill="#141312" stroke="#141312" stroke-width="3" stroke-linejoin="round"></g>
-      <ellipse cx="-18" cy="-22" rx="12" ry="6" transform="rotate(-35 -18 -22)" fill="#fff" opacity=".7"/>
+      <path id="ball-body" fill="#e6dcc8"/>
+      <g id="ball-facets" stroke-linejoin="round"></g>
+      <g id="ball-creases" fill="none" stroke="#5c4a32" stroke-width="2.2" stroke-linecap="round" opacity=".7"></g>
+      <path id="ball-outline" fill="none" stroke="#141312" stroke-width="7" stroke-linejoin="round"/>
     </g>
 
     <!-- The moment of contact: cap strikes up and to the right; the ball leaves on a short cyan line. -->
@@ -167,7 +166,7 @@
 </svg>
 
 <h1>KONK! — brand identity concept</h1>
-<p class="note">Wordmark, key art, home-screen title and app icon for a Ghanaian bottle-cap football game. Custom hand-shaped letters; the O is a crown cap caught at the moment it strikes the ball. Palette: near-black ink, warm chalk-white, golden yellow, and electric cyan used only for the ball's path.</p>
+<p class="note">Wordmark, key art, home-screen title and app icon for a Ghanaian bottle-cap football game. Custom hand-shaped letters; the O is a crown cap caught at the moment it strikes the folded-paper ball. Palette: near-black ink, warm chalk-white, golden yellow, and electric cyan used only for the ball's path.</p>
 
 <h2>1 · KEY ART</h2>
 <svg class="frame" viewBox="0 0 1600 900" role="img" aria-label="KONK! Bottle-cap football. Tiny pitch. Big moments.">
@@ -249,16 +248,48 @@
   for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, r = i % 2 ? 20 : 46; star.push(`${(Math.cos(a) * r).toFixed(1)},${(Math.sin(a) * r * 0.9).toFixed(1)}`); }
   document.getElementById('cap-star').setAttribute('d', `M${star.join('L')}Z`);
 
-  // Ball panels: one centre pentagon and five cut by the edge, joined by seams.
-  const pent = (cx, cy, r, rot) => { const p = []; for (let i = 0; i < 5; i++) { const a = rot + (i * 2 * Math.PI) / 5; p.push(`${(cx + Math.cos(a) * r).toFixed(1)},${(cy + Math.sin(a) * r).toFixed(1)}`); } return `M${p.join('L')}Z`; };
-  const panels = document.getElementById('ball-panels');
-  panels.append(el('path', { d: pent(4, 3, 16, -Math.PI / 2) }));
-  for (let i = 0; i < 5; i++) {
-    const a = -Math.PI / 2 + Math.PI / 5 + (i * 2 * Math.PI) / 5;
-    panels.append(el('path', { d: pent(4 + Math.cos(a) * 46, 3 + Math.sin(a) * 46, 15, a + Math.PI) }));
-    const b = -Math.PI / 2 + (i * 2 * Math.PI) / 5;
-    panels.append(el('path', { d: `M${(4 + Math.cos(b) * 16).toFixed(1)},${(3 + Math.sin(b) * 16).toFixed(1)} L${(4 + Math.cos(b) * 34).toFixed(1)},${(3 + Math.sin(b) * 34).toFixed(1)}`, fill: 'none', 'stroke-width': 3 }));
-  }
+  // Folded paper ball: an irregular outline with two poking corners, tiled by nine hand-placed
+  // fold planes. Each plane has its own tone (sun from the upper left) and its own slice of
+  // exercise-book ruling, so the lines jump at every fold, which is what makes it read as paper.
+  const P = [[-8, -52], [22, -47], [44, -30], [58, -6], [47, 26], [24, 47], [-6, 52], [-34, 42], [-56, 20], [-49, -14], [-33, -40]];
+  const A = [-12, -10], B = [18, 8], C = [-4, 24], D = [26, -20];
+  const PLANES = [
+    { pts: [P[0], P[1], D, A], tone: '#fffaf0' },
+    { pts: [P[1], P[2], P[3], D], tone: '#ddd0b6' },
+    { pts: [D, P[3], P[4], B], tone: '#bfae8e' },
+    { pts: [A, D, B], tone: '#efe5d0' },
+    { pts: [B, P[4], P[5], P[6], C], tone: '#a8977a' },
+    { pts: [A, B, C], tone: '#d2c3a6' },
+    { pts: [C, P[6], P[7], P[8]], tone: '#c6b699' },
+    { pts: [A, C, P[8], P[9]], tone: '#e8dcc4' },
+    { pts: [P[0], A, P[9], P[10]], tone: '#f7efdd' },
+  ];
+  const pathOf = (pts) => `M${pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join('L')}Z`;
+  const prng = mulberry32(77);
+  const facets = document.getElementById('ball-facets'), creases = document.getElementById('ball-creases');
+  PLANES.forEach(({ pts, tone }, i) => {
+    const clip = el('clipPath', { id: `ball-plane-${i}` });
+    clip.append(el('path', { d: pathOf(pts) }));
+    facets.append(clip, el('path', { d: pathOf(pts), fill: tone, stroke: tone, 'stroke-width': 1 }));
+    // Ruling: faint blue-grey lines, each plane tilted and shifted a little differently.
+    const angle = -8 + (prng() - 0.5) * 22, shift = prng() * 13, rules = [];
+    for (let y = -70 + shift; y < 70; y += 13) rules.push(`M-80,${y.toFixed(1)}L80,${y.toFixed(1)}`);
+    facets.append(el('path', { d: rules.join(''), transform: `rotate(${angle.toFixed(1)})`, 'clip-path': `url(#ball-plane-${i})`,
+      fill: 'none', stroke: '#7f97aa', 'stroke-width': 1.8, opacity: 0.45 }));
+  });
+  // Creases: every inner fold edge once, plus two half-folds that fade out mid-plane.
+  const seen = new Set(), folds = [];
+  for (const { pts } of PLANES) pts.forEach((p, i) => {
+    const q = pts[(i + 1) % pts.length];
+    if (P.includes(p) && P.includes(q)) return; // outer edge: the ink outline covers it
+    const key = [p, q].map(String).sort().join('|');
+    if (!seen.has(key)) { seen.add(key); folds.push(`M${p[0]},${p[1]}L${q[0]},${q[1]}`); }
+  });
+  folds.push('M18,8L31,31', 'M-31,-31L-19,-21');
+  creases.append(el('path', { d: folds.join('') }));
+  const outline = pathOf(P);
+  for (const id of ['ball-body', 'ball-outline']) document.getElementById(id).setAttribute('d', outline);
+  document.getElementById('ball-halo').setAttribute('d', pathOf(P.map(([x, y]) => [x * 1.16, y * 1.16])));
 
   // Dust on the concrete.
   const rng = mulberry32(2026), dust = document.getElementById('dust-key');
@@ -274,8 +305,8 @@
         <use href="#cap" transform="translate(452 -150)"/>
         <g stroke-width="1.2"><use href="#trajectory"/></g>
         <use href="#impact"/>
-        <!-- On the dark icon the ball's black outline would vanish: a chalk rim keeps it round. -->
-        <circle cx="608" cy="-300" r="57" fill="#f2ead6"/>
+        <!-- On the dark icon the ball's black outline would vanish: a chalk rim keeps its paper shape readable. -->
+        <use href="#ball-halo" transform="translate(608 -300)" fill="#f2ead6"/>
         <use href="#ball" transform="translate(608 -300)"/>
       </g>
       </g>
