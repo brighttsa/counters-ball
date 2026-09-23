@@ -63,3 +63,15 @@ Tactical on the first captured frame after selection. The full 193-test suite
 passes, including a throttled-frame blend regression. Browser cache means an
 existing match tab needs a refresh to load this change. Physical-device
 response remains unverified; no deployment.
+
+## Visible selector follow-up, 2026-09-23
+The actual failure was in the menu, not the preset math. Earlier browser checks
+clicked the invisible radio inputs directly. Clicking their visible text
+instead reproduced the owner's report: a `focusout` handler closed the panel
+before the label activated its radio, leaving the camera on Free. Outside
+pointer-down, Escape and the Close button already dismiss the panel, so the
+premature focusout dismissal was removed. After a forced module refresh,
+visible-label clicks selected Tactical, Broadcast, Street Level and Free at
+844px, and Tactical at 390px. The current-tab cache still needs a refresh;
+this was a UI event bug affecting desktop and mobile. No camera physics or
+match state changed.

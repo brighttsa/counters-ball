@@ -43,7 +43,6 @@ export function createPlayerCameraControls(control) {
     if (root.contains(e.target)) return;
     close(); find('camera-status').textContent = '';
   }, true);
-  root.addEventListener('focusout', e => { if (!root.contains(e.relatedTarget)) close(); });
   new MutationObserver(() => {
     close(); find('camera-status').textContent = ''; control.peek(false);
   }).observe(document.body, { attributes: true, attributeFilter: ['data-screen'] });

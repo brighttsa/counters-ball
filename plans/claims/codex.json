@@ -2,15 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Make preset camera switching immediate",
+  "task": "Fix visible camera preset selection",
   "status": "released",
   "paths": [
-    "src/fx/player-camera-controller.js",
-    "src/fx/player-camera-view-poses.js",
+    "src/ui/player-camera-controls.js",
     "tests/player-camera-controls.test.mjs",
     "plans/agent-handoff-board.md",
     "plans/reports/mobile-camera-framing.md"
   ],
-  "updatedAt": "2026-09-23T13:42:41.110Z",
-  "head": "b1f7b886c1e36e3e73110e82152e8f5c2be0e49c"
+  "updatedAt": "2026-09-23T14:06:43.964Z",
+  "head": "434ef4c735ee3f68affc22c8517ddd9753b50d94"
 }
