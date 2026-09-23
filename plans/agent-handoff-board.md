@@ -13,8 +13,10 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 |---|---|---|---|---|
 
 ## Blocked
+(Public deployment below is resolved; kept for history.)
 
 ### Public deployment - 2026-09-17
+- **2026-09-23: LIVE.** `vercel deploy --prod` from `76d0c69` (CLI signed in by the owner via device login; folder linked through a git-ignored `.vercel/project.json` to `prj_Z0z3Jvo960l7DTZP1bYjLk6Z3dZa`). Deployment `dpl_9BTimEi8oFTAuJjH4emUczrJwGvA`, aliased to https://counters-ball-3d.vercel.app (public, no SSO). All 142 runtime files byte-identical to local; `.vercelignore` keeps plans/docs/tests/AGENTS.md off the site (404). Challenge URLs answer 200. Not yet checked in a real browser on the public URL (in-app browser was refused the site) — open it once on a phone. Redeploy: `npx vercel deploy --prod` from the repo root.
 - 2026-09-23 update: both alias URLs (`counters-ball-3d.vercel.app`, `counters-ball-3d-brighttsa-gmailcoms-projects.vercel.app`) now answer HTTP 200 unauthenticated — the SSO wall is gone — but they serve the 2026-09-17 build (no Counters Ball headline, no share/challenge markup). Redeploy blocked in this session: no Vercel CLI login and no Vercel connector; owner offered the connector. Deploy only runtime files (`index.html`, `assets/`, `src/`, `styles/`).
 - User subsequently said Yes to reconnecting/enabling public access. Main task is checking once; success is not yet confirmed.
 - User authorized a NEW PUBLIC DEPLOYMENT. Vercel created `dpl_8DuNJxffSAwaR1jr8juAGp8YgQkJ` from `e982a1b` (48 runtime files only), but the unauthenticated alias returned HTTP 302 to Vercel SSO: NOT publicly accessible.

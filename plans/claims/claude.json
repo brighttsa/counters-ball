@@ -2,11 +2,13 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Deployment status note",
+  "task": "Vercel deploy config",
   "status": "released",
   "paths": [
+    ".vercelignore",
+    ".gitignore",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T10:41:04.649Z",
-  "head": "f57cb6e1fc430c22980561ddc885b08408e3e2f6"
+  "updatedAt": "2026-09-23T11:08:51.395Z",
+  "head": "76d0c69543d20976fd641c9952f405962764ca80"
 }
