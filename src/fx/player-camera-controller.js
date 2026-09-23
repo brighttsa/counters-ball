@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, CAMERA_GLIDE_RATE, CAMERA_SNAP_RATE, cameraTransitionBlend,
-  loadCameraPreferences, playerCameraPose,
-  broadcastFrame, followBallPose, overviewPose } from './player-camera-view-poses.js';
+  loadCameraPreferences, playerCameraPose, overviewPose } from './player-camera-view-poses.js';
 import { PlayerCameraOcclusion } from './player-camera-occlusion.js';
 import { createPlayerCameraControls } from '../ui/player-camera-controls.js';
 
@@ -96,7 +95,7 @@ export class PlayerCameraController {
     const s = this.app.session;
     if (s !== this.session) {
       this.occlusion?.restore(); this.session = s; this.selected = null; this.peeking = false;
-      this.side = null; this.aspect = null; this.pose = null; this.freePositions = {}; this.broadcast = null; this.follow = null;
+      this.side = null; this.aspect = null; this.pose = null; this.freePositions = {};
       this.occlusion = s ? new PlayerCameraOcclusion(s.stage) : null;
       if (s) this.resetOrbit();
     }
@@ -114,7 +113,7 @@ export class PlayerCameraController {
       this.rate = CAMERA_GLIDE_RATE; // 2-Player hand-over: the view turns to the next player gently
     }
     if (this.aspect !== this.camera.aspect) {
-      this.aspect = this.camera.aspect; this.cancelAim(); this.resetOrbit(); this.broadcast = null;
+      this.aspect = this.camera.aspect; this.cancelAim(); this.resetOrbit();
       this.pose = this.poseFor(this.peeking ? 'tactical' : this.mode);
     }
     if (this.director.aimLocked) return true;
@@ -131,13 +130,6 @@ export class PlayerCameraController {
         this.pose = this.poseFor('street');
       }
     }
-    if (this.mode === 'broadcast' && !this.peeking) {
-      // Pan with the ball like a TV camera: eased, so a hard flick drifts the view rather than jerking it.
-      this.broadcast ??= broadcastFrame(this.camera, s);
-      const ballX = s.ballBody.pos.x;
-      this.follow = this.follow == null ? ballX : this.follow + (ballX - this.follow) * (1 - Math.exp(-cameraDt * 5));
-      this.pose = followBallPose(this.broadcast, this.follow);
-    }
     if (this.mode === 'free' && !this.peeking) {
       this.controls.update();
       this.pose = { position: this.orbitCamera.position, target: this.controls.target };
@@ -149,7 +141,7 @@ export class PlayerCameraController {
     this.poseRotation.copy(this.camera.quaternion);
     this.camera.lookAt(this.target); this.camera.quaternion.slerp(this.poseRotation, 1 - blend);
     this.camera.updateMatrixWorld(true);
-    // Once a glide has arrived, later moves (Broadcast following the ball) respond at full speed again.
+    // Once a glide has arrived, the next move responds at full speed again.
     if (this.camera.position.distanceTo(this.pose.position) < .005) this.rate = CAMERA_SNAP_RATE;
     this.director.focusDistance = this.camera.position.distanceTo(this.target);
     if (this.director.scene.fog) {

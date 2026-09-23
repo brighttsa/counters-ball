@@ -96,42 +96,38 @@ function viewBounds(top, bottom) {
   return { x: .95, top: Math.max(.15, 1 - 2 * topPx / height), bottom: -Math.max(.15, 1 - 2 * bottomPx / height) };
 }
 
-// Broadcast works like a TV football camera: side-on and low, zoomed in until the table's full width
-// fills the screen from just under the scoreboard to the bottom controls, then sliding along the table
-// to keep the ball centred and stopping at the goal ends. The table fills the frame; the room is only a
-// thin band behind the far rail. In portrait the width spans the screen and the view slides along the
-// length the same way. Tactical and Free keep the whole-table view.
-export function broadcastFrame(camera, session) {
+// Broadcast is a TV-style side-on view fitted as tight as the screen allows around both goals (the
+// lorries that carry them on lorry acts) and the table's full width, between the scoreboard and the
+// bottom controls. The table fills the frame; the rail ends behind the goals and the room around them
+// are left out. It uses the lowest angle (from about 27°) at which the table also fills the screen's
+// height: wide screens get the low TV angle, squarer ones a steeper view instead of empty room above and
+// below. In portrait the goals sit top and bottom. Tactical and Free keep the whole-table view.
+const BROADCAST_HEIGHTS = [1.45, 1.8, 2.2, 2.7]; // camera rise per 2.8 back: about 27°, 33°, 38°, 44°
+const BROADCAST_FILL = .8; // share of the screen height between the HUD bars the table should cover
+
+export function broadcastPose(camera, session) {
   const portrait = camera.aspect < .95;
-  const direction = portrait ? new THREE.Vector3(-1.4, 3.8, 0) : new THREE.Vector3(0, 1.45, 2.8);
   const lorry = session?.level?.mechanic?.type === 'departing-lorry';
+  const goalX = lorry ? 1.9 : 1.5, goalTop = .26;
+  const goals = [-goalX, goalX].flatMap(x => [-.3, .3].flatMap(z => [0, goalTop].map(y => new THREE.Vector3(x, y, z))));
+  // The table's full width, outer rail to outer rail, across the middle.
+  const width = [-.1, .1].flatMap(x => [-1.2, 1.2].flatMap(z => [0, .05].map(y => new THREE.Vector3(x, y, z))));
   // The bottom chips sit in the corners, so the near rail may run much closer to the bottom edge.
   const bounds = viewBounds(undefined, r => Math.min(r.bottom, 60));
-  // A thin slice across the table's full width (outer rail to outer rail), fitted and centred.
-  const slice = [-.1, .1].flatMap(x => [-1.2, 1.2].flatMap(z => [0, .05].map(y => new THREE.Vector3(x, y, z))));
-  const pose = centredPitchPose(camera, direction, slice, bounds, 1);
-  const target = pose.target.clone(), offset = pose.position.clone().sub(target);
-  // How far along the table the view reaches either side of the aim point, on the line through it.
+  const fit = direction => centredPitchPose(camera, direction, [...goals, ...width], bounds, 1);
+  if (portrait) return fit(new THREE.Vector3(-1.4, 3.8, 0));
   const probe = camera.clone();
   probe.fov = 42; probe.updateProjectionMatrix();
-  probe.position.copy(pose.position); probe.lookAt(target); probe.updateMatrixWorld(true);
-  const seen = [];
-  for (let x = -4; x <= 4; x += .02) {
-    const p = new THREE.Vector3(x, 0, target.z).project(probe);
-    if (Math.abs(p.x) <= 1 && p.y <= bounds.top && p.y >= bounds.bottom && p.z < 1) seen.push(x);
+  let best = null;
+  for (const rise of BROADCAST_HEIGHTS) {
+    const pose = fit(new THREE.Vector3(0, rise, 2.8));
+    probe.position.copy(pose.position); probe.lookAt(pose.target); probe.updateMatrixWorld(true);
+    const ys = width.map(point => point.clone().project(probe).y);
+    const fill = (Math.max(...ys) - Math.min(...ys)) / (bounds.top - bounds.bottom);
+    if (fill >= BROADCAST_FILL) return pose;
+    if (!best || fill > best.fill) best = { pose, fill };
   }
-  const ahead = Math.max(...seen) - target.x, behind = target.x - Math.min(...seen);
-  const end = lorry ? 2.2 : 1.8; // rail end plus a sliver of table, or the lorries behind the goals
-  return { offset, target, x: [-end + behind, end - ahead] };
-}
-
-/** The Broadcast pose slid along the table to follow the ball, stopping at the ends. */
-export function followBallPose(frame, x) {
-  const [min, max] = frame.x;
-  const target = frame.target.clone();
-  // When the view is longer than the table, centre the table instead of following.
-  target.x = min > max ? (min + max) / 2 : THREE.MathUtils.clamp(x, min, max);
-  return { position: target.clone().add(frame.offset), target };
+  return best.pose;
 }
 
 /** The whole pitch at once, from the Broadcast side; Free camera orbits at this distance. */
@@ -145,7 +141,7 @@ const STREET_LOOK_AHEAD = 1; // table units of the shot's path framed beyond the
 
 export function playerCameraPose(camera, mode, session, selected, viewer = session?.rules?.turn) {
   const portrait = camera.aspect < .95;
-  if (mode === 'broadcast') return followBallPose(broadcastFrame(camera, session), session?.ballBody?.pos.x ?? 0);
+  if (mode === 'broadcast') return broadcastPose(camera, session);
   if (mode === 'street') {
     const side = viewer === 'away' ? -1 : 1;
     const candidates = session.entries.filter(e => e.side === viewer);

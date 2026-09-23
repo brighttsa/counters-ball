@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Fade props near the camera",
+  "task": "Broadcast shows both goals",
   "status": "released",
   "paths": [
     "src/fx/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T17:52:30.332Z",
-  "head": "b5f161a38883c4866d020f04dd22176805e8a098"
+  "updatedAt": "2026-09-23T17:56:41.233Z",
+  "head": "efe9ee944f34349d7e52c30c56ec0601b8c7c101"
 }

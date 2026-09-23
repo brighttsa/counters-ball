@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-09-23 — Broadcast shows both goals
+
+### Changed
+- Broadcast no longer zooms past the goals and slides with the ball: it is a fixed side-on view fitted as
+  tight as the screen allows around both goals (the lorries on lorry acts) and the table's full width. It
+  uses the lowest angle, from about 27°, at which the table also fills the screen's height, so wide screens
+  get the low TV angle and squarer windows a steeper view instead of empty room.
+
 ## 2026-09-23 — Props fade when close to the camera
 
 ### Added
