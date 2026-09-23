@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Closer default match camera",
+  "task": "FC-style broadcast camera that follows the ball",
   "status": "released",
   "paths": [
     "src/fx/",
@@ -11,6 +11,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T16:42:37.768Z",
-  "head": "f75a036d68d313ef86782c83ca07c59c7a59be05"
+  "updatedAt": "2026-09-23T17:06:41.820Z",
+  "head": "af76c3fa6ce50b4b3b8903c211b63f9c53421ae7"
 }

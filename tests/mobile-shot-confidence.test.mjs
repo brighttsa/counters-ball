@@ -53,7 +53,7 @@ test('mobile framing keeps playable rails and goals clear of HUD reservations', 
   t.after(() => { globalThis.window = old; });
   for (const [width, height] of [[320,844],[375,844],[390,844],[430,844],[568,320],[844,390],[768,1024],[1024,768]]) {
     globalThis.window = { innerWidth: width, innerHeight: height };
-    for (const mode of ['broadcast', 'tactical']) for (const type of ['ruler-seesaw', 'departing-lorry']) {
+    for (const mode of ['free', 'tactical']) for (const type of ['ruler-seesaw', 'departing-lorry']) {
       const camera = new THREE.PerspectiveCamera(42, width / height, .1, 100);
       const session = { level: { mechanic: { type } } };
       const pose = playerCameraPose(camera, mode, session);

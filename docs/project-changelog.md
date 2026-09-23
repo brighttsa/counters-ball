@@ -1,5 +1,14 @@
 # Project Changelog
 
+## 2026-09-23 — Broadcast camera that follows the ball
+
+### Changed
+- Broadcast (the default match camera) now works like a TV football camera: low and side-on, zoomed in
+  until the table's full width fills the screen from just under the scoreboard to the bottom controls,
+  sliding along the table to keep the ball centred and stopping at each goal end. The table fills the frame;
+  the room is a thin band behind it. Portrait keeps the full width across the screen, from a steeper angle.
+- Tactical still shows the whole table from above, and Free orbits at the whole-table distance.
+
 ## 2026-09-23 — Closer match camera
 
 ### Changed

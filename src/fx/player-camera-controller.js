@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, cameraTransitionBlend, loadCameraPreferences, playerCameraPose } from './player-camera-view-poses.js';
+import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, cameraTransitionBlend, loadCameraPreferences, playerCameraPose,
+  broadcastFrame, followBallPose, overviewPose } from './player-camera-view-poses.js';
 import { PlayerCameraOcclusion } from './player-camera-occlusion.js';
 import { createPlayerCameraControls } from '../ui/player-camera-controls.js';
 
@@ -36,11 +37,11 @@ export class PlayerCameraController {
     this.ui.notice('Aim cancelled. No flick used.');
   }
   resetOrbit() {
-    const pose = playerCameraPose(this.camera, 'broadcast', this.session);
-    const distance = pose.position.length();
+    const pose = overviewPose(this.camera, this.session);
+    const distance = pose.position.distanceTo(pose.target);
     this.controls.minDistance = Math.max(3.2, distance * .72);
     this.controls.maxDistance = distance * 1.5;
-    this.orbitCamera.position.copy(pose.position);
+    this.orbitCamera.position.copy(pose.position).sub(pose.target);
     this.controls.target.set(0, 0, 0); this.controls.update();
     this.ui.root.querySelector('#camera-zoom').value = String(
       100 * (this.controls.maxDistance - distance) / (this.controls.maxDistance - this.controls.minDistance));
@@ -91,7 +92,7 @@ export class PlayerCameraController {
     const s = this.app.session;
     if (s !== this.session) {
       this.occlusion?.restore(); this.session = s; this.selected = null; this.peeking = false;
-      this.side = null; this.aspect = null; this.pose = null; this.freePositions = {};
+      this.side = null; this.aspect = null; this.pose = null; this.freePositions = {}; this.broadcast = null; this.follow = null;
       this.occlusion = s ? new PlayerCameraOcclusion(s.stage) : null;
       if (s) this.resetOrbit();
     }
@@ -106,7 +107,7 @@ export class PlayerCameraController {
       this.side = side; this.selected = null; this.select(this.preferences[side], false);
     }
     if (this.aspect !== this.camera.aspect) {
-      this.aspect = this.camera.aspect; this.cancelAim(); this.resetOrbit();
+      this.aspect = this.camera.aspect; this.cancelAim(); this.resetOrbit(); this.broadcast = null;
       this.pose = playerCameraPose(this.camera, this.peeking ? 'tactical' : this.mode, s, this.selected);
     }
     if (this.director.aimLocked) return true;
@@ -119,6 +120,13 @@ export class PlayerCameraController {
         this.streetArrangement = key;
         this.pose = playerCameraPose(this.camera, 'street', s, this.selected);
       }
+    }
+    if (this.mode === 'broadcast' && !this.peeking) {
+      // Pan with the ball like a TV camera: eased, so a hard flick drifts the view rather than jerking it.
+      this.broadcast ??= broadcastFrame(this.camera, s);
+      const ballX = s.ballBody.pos.x;
+      this.follow = this.follow == null ? ballX : this.follow + (ballX - this.follow) * (1 - Math.exp(-cameraDt * 5));
+      this.pose = followBallPose(this.broadcast, this.follow);
     }
     if (this.mode === 'free' && !this.peeking) {
       this.controls.update();
