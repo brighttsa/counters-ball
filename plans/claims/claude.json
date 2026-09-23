@@ -2,17 +2,11 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Split main.js",
+  "task": "Deployment status note",
   "status": "released",
   "paths": [
-    "src/main.js",
-    "src/levels/level-tracks-and-challenge-unlocks.js",
-    "src/ui/full-time-results-presentation.js",
-    "src/ui/menu-button-action-routes.js",
-    "tests/hot-seat-rivalry-and-challenge-links.test.mjs",
-    "docs/codebase-summary.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T10:39:52.898Z",
-  "head": "42b784bcadc684437d5a04cef53b9ec542ac16af"
+  "updatedAt": "2026-09-23T10:41:04.649Z",
+  "head": "f57cb6e1fc430c22980561ddc885b08408e3e2f6"
 }

@@ -15,6 +15,7 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 ## Blocked
 
 ### Public deployment - 2026-09-17
+- 2026-09-23 update: both alias URLs (`counters-ball-3d.vercel.app`, `counters-ball-3d-brighttsa-gmailcoms-projects.vercel.app`) now answer HTTP 200 unauthenticated — the SSO wall is gone — but they serve the 2026-09-17 build (no Counters Ball headline, no share/challenge markup). Redeploy blocked in this session: no Vercel CLI login and no Vercel connector; owner offered the connector. Deploy only runtime files (`index.html`, `assets/`, `src/`, `styles/`).
 - User subsequently said Yes to reconnecting/enabling public access. Main task is checking once; success is not yet confirmed.
 - User authorized a NEW PUBLIC DEPLOYMENT. Vercel created `dpl_8DuNJxffSAwaR1jr8juAGp8YgQkJ` from `e982a1b` (48 runtime files only), but the unauthenticated alias returned HTTP 302 to Vercel SSO: NOT publicly accessible.
 - `get_deployment` returned HTTP 403 scope authorization for `team_aBn8fiH2WyGceG4B0GFLAWzi`; `list_teams` was empty. Pending action: enable public access using the proper Vercel account/project, then verify unauthenticated availability. Main deployment task owns connector verification.
