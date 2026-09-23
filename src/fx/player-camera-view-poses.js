@@ -44,8 +44,10 @@ export function playerCameraPose(camera, mode, session, selected) {
     const ball = new THREE.Vector3(session.ballBody.pos.x, 0, session.ballBody.pos.y);
     const goal = new THREE.Vector3(side * 1.7, 0, session.physics.goalCenters?.[side] ?? 0);
     const origin = new THREE.Vector3(cap?.x ?? -side, 0, cap?.y ?? 0);
-    const target = ball.clone().lerp(goal, .25).lerp(origin, .25);
-    return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? .65 : .4, .25), [origin, ball, goal], 1.6);
+    const target = ball.clone().lerp(origin, .46);
+    const near = [-1.05, 1.05].map(z => new THREE.Vector3(-side * 1.5, 0, z));
+    return fitCameraPose(camera, target, new THREE.Vector3(-side, portrait ? 1.15 : .9, .28),
+      [...near, origin, ball, goal], 2.8, { x: .9, top: .8, bottom: -.82 });
   }
   const direction = mode === 'tactical' ? new THREE.Vector3(.01, 1, .09)
     : new THREE.Vector3(.35, 2.62, 2.8);

@@ -2,15 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Closer mobile pitch and reliable match cameras",
+  "task": "Make camera modes usable in live matches",
   "status": "released",
   "paths": [
     "src/fx/player-camera-view-poses.js",
     "src/fx/player-camera-controller.js",
     "tests/player-camera-controls.test.mjs",
-    "plans/reports/mobile-camera-framing.md",
-    "plans/agent-handoff-board.md"
+    "plans/agent-handoff-board.md",
+    "plans/reports/mobile-camera-framing.md"
   ],
-  "updatedAt": "2026-09-23T13:20:59.701Z",
-  "head": "208e3e0d7b470719f6285bf2772af9340cdb6e9b"
+  "updatedAt": "2026-09-23T13:32:56.967Z",
+  "head": "c6d0af59d6ed8ae9893b39a90b7dc9ae7703f2ba"
 }

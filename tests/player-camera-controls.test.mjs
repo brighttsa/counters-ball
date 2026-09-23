@@ -38,3 +38,18 @@ test('Street Level reframes moved pieces and ignores a selected cap from the oth
   session.ballBody.pos.set(.7,.4);
   assert.ok(playerCameraPose(camera, 'street', session).target.distanceTo(pose.target) > .1);
 });
+
+test('Street Level keeps cap, ball, and goal readable without extreme foreground scale', () => {
+  for (const aspect of [320/844, 390/844, 844/390, 1024/768]) {
+    const camera = new THREE.PerspectiveCamera(42, aspect, .1, 100);
+    const session = { rules: { turn: 'home' }, entries: [{ side: 'home', body: { pos: new THREE.Vector2(-.4,.2) } }],
+      physics: { goalCenters: { 1: 0 } }, ballBody: { pos: new THREE.Vector2(0,0) } };
+    const pose = playerCameraPose(camera, 'street', session);
+    camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+    assert.ok(camera.position.distanceTo(pose.target) >= 2.8);
+    for (const [x,z] of [[-.4,.2],[0,0],[1.7,0],[-1.5,-1.05],[-1.5,1.05]]) {
+      const p = new THREE.Vector3(x,0,z).project(camera);
+      assert.ok(Math.abs(p.x) < .9 && p.y < .8 && p.y > -.82, `${aspect}: ${x},${z}`);
+    }
+  }
+});

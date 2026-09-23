@@ -38,3 +38,15 @@ After the final margin correction, the full 191-test suite passed. The in-app
 browser connection refused a fresh visual capture in this continuation, so
 the final framing needs a visible phone/tablet check. Sustained FPS, touch
 comfort and replay presentation also need physical-device testing.
+
+## Street Level follow-up, 2026-09-23
+Live 844px Schoolyard inspection showed that the first Street Level pose hid
+the near pitch beneath the viewport. Fitting the entire table pushed the
+camera too far away. The revised pose instead fits the near playable edge,
+current cap, ball and far goal, with a bounded minimum distance. Fresh harness
+captures at 844x390 and 390x844 show both goals and active caps; Tactical,
+Broadcast and Free also respond to the selector. The near-edge projection is
+now in the regression test. Full suite: 192 pass. Browser errors still include
+the pre-existing refresh-time chalk font `.then` failure and an unattributed
+MutationObserver diagnostic; this pass did not resolve those issues. A physical
+phone/tablet touch and sustained-FPS check remains open. No deployment.
