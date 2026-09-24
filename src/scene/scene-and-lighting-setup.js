@@ -1,6 +1,7 @@
 // Persistent renderer, scene and camera, plus the per-venue light rig
 // (low sun + sky bounce + fill, and a warm bulb for night venues).
 import * as THREE from 'three';
+import { preferredShadowSize } from '../fx/adaptive-render-quality.js';
 
 export function createRendererSceneCamera(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -39,7 +40,7 @@ export function buildLightRig(preset) {
   const sun = new THREE.DirectionalLight(preset.sun.color, preset.sun.intensity);
   // Pushed out along its direction so the shadow box covers the street around the table too.
   sun.position.set(...preset.sun.position).multiplyScalar(2.5);
-  configureSoftShadow(sun, window.matchMedia('(pointer: coarse)').matches ? 2048 : 4096, 7.5);
+  configureSoftShadow(sun, preferredShadowSize(), 7.5);
   rig.add(sun, sun.target);
 
   rig.add(new THREE.HemisphereLight(preset.hemi.sky, preset.hemi.ground, preset.hemi.intensity));

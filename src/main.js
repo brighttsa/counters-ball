@@ -4,6 +4,7 @@
 // camera director and audio; one MatchSession per venue.
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
+import { createAdaptiveQuality } from './fx/adaptive-render-quality.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
@@ -34,6 +35,7 @@ import { loadProgress, saveProgress, totalStars } from './core/save-progress-loc
 const canvas = document.getElementById('game-canvas');
 const { renderer, scene, camera } = createRendererSceneCamera(canvas);
 const post = createPostProcessing(renderer, scene, camera);
+const adaptiveQuality = createAdaptiveQuality(renderer, post, scene);
 const cameraDirector = new CameraDirector(camera, scene);
 const progress = loadProgress();
 const sound = new ProceduralSoundBoard({ muted: progress.muted });
@@ -216,7 +218,7 @@ wireSoundtrack({ app, sound, music, menus, progress });
 hud.setStyle(progress.hudStyle);
 app.challenge = takeChallengeFromUrl();
 if (app.challenge) showChallenge(); else showTitle();
-startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
+startGameRenderLoop({ app, camera, cameraDirector, renderer, post, adaptiveQuality,
   onFrame: (dt) => {
     chalkHints.update(app.session, camera, cameraDirector.playerControl, dt);
     app.practice?.update(camera, cameraDirector.playerControl, dt);

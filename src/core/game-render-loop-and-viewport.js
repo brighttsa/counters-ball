@@ -1,6 +1,6 @@
 // One presentation clock freezes with pause; simulation retains its fixed-step clock.
 /** @param onFrame (dt) => void, after the camera has settled for this frame and before it is drawn */
-export function startGameRenderLoop({ app, camera, cameraDirector, renderer, post, onFrame }) {
+export function startGameRenderLoop({ app, camera, cameraDirector, renderer, post, onFrame, adaptiveQuality }) {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const syncMotion = () => {
     if (motion.matches) {
@@ -21,7 +21,8 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
     }
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    if (adaptiveQuality) adaptiveQuality.applyOnResize();
+    else renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     post.setSize(window.innerWidth, window.innerHeight);
     cameraDirector.fitToViewport();
@@ -43,6 +44,7 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
     post.setFocus(cameraDirector.focusDistance);
     if (!app.paused) post.update(dt, time);
     post.render();
+    adaptiveQuality?.sampleFrame(dt * 1000);
   }
   requestAnimationFrame(frame);
 }
