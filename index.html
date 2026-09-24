@@ -153,7 +153,12 @@
       </div>
       <div class="pause-face" data-face-panel="settings" hidden>
         <h2 class="card-title">Settings</h2>
-        <section class="setting-group" aria-labelledby="setting-sound">
+        <div class="settings-tabs" role="group" aria-label="Settings sections">
+          <button type="button" class="settings-tab" data-action="settings-section" data-section="sound" aria-controls="pause-setting-sound" aria-pressed="true">Sound</button>
+          <button type="button" class="settings-tab" data-action="settings-section" data-section="camera" aria-controls="pause-setting-camera" aria-pressed="false">Camera</button>
+          <button type="button" class="settings-tab" data-action="settings-section" data-section="table" aria-controls="pause-setting-table" aria-pressed="false">Table</button>
+        </div>
+        <section class="setting-group" id="pause-setting-sound" data-setting-section="sound" aria-labelledby="setting-sound">
           <h3 class="setting-group-title" id="setting-sound">Sound</h3>
           <div class="setting-row" role="group" aria-labelledby="setting-music">
             <span class="setting-label" id="setting-music">Music</span>
@@ -172,7 +177,7 @@
             </span>
           </div>
         </section>
-        <section class="setting-group" aria-labelledby="setting-camera">
+        <section class="setting-group" id="pause-setting-camera" data-setting-section="camera" aria-labelledby="setting-camera">
           <h3 class="setting-group-title" id="setting-camera">Camera</h3>
           <div class="setting-row" role="group" aria-labelledby="setting-view">
             <span class="setting-label" id="setting-view">View</span>
@@ -191,7 +196,7 @@
             </span>
           </div>
         </section>
-        <section class="setting-group" aria-labelledby="setting-table">
+        <section class="setting-group" id="pause-setting-table" data-setting-section="table" aria-labelledby="setting-table">
           <h3 class="setting-group-title" id="setting-table">Table</h3>
           <div class="setting-row" role="group" aria-labelledby="setting-scoreboard">
             <span class="setting-label" id="setting-scoreboard">Score</span>

@@ -2,7 +2,7 @@
 // flow (title, levels, intro, match, results) lives in main.js; this is only
 // the routing table plus the saved preference toggles.
 import { applyAudioSettings, MUSIC_LEVELS } from '../audio/music-and-effects-audio-settings.js';
-import { markChoice, showPauseFace } from './pause-card-faces-and-setting-chips.js';
+import { markChoice, selectSettingsSection, showPauseFace } from './pause-card-faces-and-setting-chips.js';
 
 const ARM_SECONDS = 4;
 
@@ -87,6 +87,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     },
     'open-settings': () => showPauseFace('settings'),
     'close-settings': () => showPauseFace('actions'),
+    'settings-section': (el) => selectSettingsSection(el.dataset.section),
     'choose-setting': (el) => choose[el.dataset.choice]?.(el.dataset.value),
     'reset-hints': (el) => { hints.reset(); el.dataset.value = 'On'; },
     'how-to-play': (el) => {

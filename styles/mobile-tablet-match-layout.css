@@ -51,6 +51,11 @@
   .ink-game .goal-banner { bottom: 68px; }
   #film-frame { box-shadow: inset 0 0 55px 8px rgb(var(--vignette-rgb) / .15); }
 }
+@media (orientation: landscape) and (max-height: 420px) {
+  .ink-game .goal-banner { left: 12px; bottom: 64px; max-width: calc(100% - 88px); padding: 6px 10px; gap: 2px; }
+  .ink-game .goal-word { font-size: var(--text-xl); line-height: 1; }
+  .ink-game .goal-sub { font-size: var(--text-xs); line-height: 1.2; }
+}
 @media (max-height: 650px) {
   .player-camera fieldset { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .player-camera fieldset span { min-height: 48px; }

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CAMERA_VIEWS, viewName } from '../src/ui/camera-view-icons-and-copy.js';
 import { createMenuActions } from '../src/ui/menu-button-action-routes.js';
+import { selectSettingsSection } from '../src/ui/pause-card-faces-and-setting-chips.js';
 
 // The routing table with stand-ins that record what each route asked for.
 function routes() {
@@ -45,6 +46,23 @@ test('the settings chips pick a camera view directly, ignore unknown views, and 
   actions['reset-hints'](tips);
   assert.deepEqual(calls.at(-1), ['hintsReset']);
   assert.equal(tips.dataset.value, 'On');
+});
+
+test('compact settings switches one category without changing saved preferences', () => {
+  const tabs = ['sound', 'camera', 'table'].map(section => ({ dataset: { section },
+    setAttribute(name, value) { this[name] = value; } }));
+  const card = { dataset: {}, querySelectorAll: () => tabs };
+  const previous = globalThis.document;
+  globalThis.document = { getElementById: () => card };
+  try {
+    const { actions, saved } = routes();
+    actions['settings-section']({ dataset: { section: 'camera' } });
+    assert.equal(card.dataset.settingsSection, 'camera');
+    assert.deepEqual(tabs.map(tab => tab['aria-pressed']), ['false', 'true', 'false']);
+    selectSettingsSection('unknown');
+    assert.equal(card.dataset.settingsSection, 'camera');
+    assert.equal(saved.length, 0);
+  } finally { globalThis.document = previous; }
 });
 
 test('music and scoreboard chips save exactly the chosen value; a music choice lifts the all-sound mute', () => {

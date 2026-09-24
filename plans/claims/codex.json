@@ -2,14 +2,21 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Mobile settings and camera selector fit",
+  "task": "Adaptive hero menus and match HUD",
   "status": "released",
   "paths": [
+    "index.html",
+    "src/fx/camera-director-attract-intro-play-goal.js",
+    "src/ui/pause-card-faces-and-setting-chips.js",
+    "src/ui/menu-button-action-routes.js",
+    "styles/ink-impact-home.css",
+    "styles/circuit-venue-preview.css",
+    "styles/game-ui-base-and-hud.css",
     "styles/game-ui-menus-and-results.css",
-    "styles/player-camera-controls.css",
     "styles/mobile-tablet-match-layout.css",
+    "tests/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T17:15:06.416Z",
-  "head": "317e5da01378b38cb33e963b4f4e3b170f85c185"
+  "updatedAt": "2026-09-24T17:45:47.897Z",
+  "head": "7c77eb69e2a19eca7af2c29bb6581740a56154ff"
 }
