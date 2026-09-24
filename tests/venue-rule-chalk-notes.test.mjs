@@ -59,7 +59,7 @@ test('coin notes follow each side\'s chain in its own colour, then mark the goal
   assert.ok(home().x > 0, 'home opens the goal it attacks');
 });
 
-test('a note slides along the table, never across it, to the nearest spot no piece covers', async () => {
+test('a note slides along the table first, keeping its place across it, to the nearest spot no piece covers', async () => {
   const { placeClear, tableObstacles } = await import('../src/scene/chalk-note-clear-placement.js');
   const physics = new FlickPhysicsEngine();
   physics.addBody({ x: 0.3, z: 0.6, radius: 0.085, mass: 1, kind: 'cap' });
@@ -93,5 +93,26 @@ test('table chalk reads upright on screen from the side and from straight above,
   ]) {
     const { dx, dy } = topOnScreen(camera);
     assert.ok(dy > 0 && Math.abs(dx) < dy * 0.05, `${name}: top points up the screen (dx ${dx.toFixed(3)}, dy ${dy.toFixed(3)})`);
+  }
+});
+
+test('at every lorry stop the note clears the kickoff caps, moving across by no more than a nudge', async () => {
+  const { placeClear, tableObstacles, NOTE_SIZE, NUDGE_Z } = await import('../src/scene/chalk-note-clear-placement.js');
+  const { TEAM_FORMATION } = await import('../src/core/pitch-dimensions-and-constants.js');
+  const physics = new FlickPhysicsEngine();
+  for (const [x, z] of TEAM_FORMATION) for (const sign of [-1, 1]) physics.addBody({ x: sign * x, z, radius: 0.085, mass: 1, kind: 'cap' });
+  physics.addBody({ x: 0, z: 0, radius: 0.035, mass: 0.12, kind: 'ball' });
+  const lorries = new DepartingLorryGoals();
+  lorries.attach(physics);
+  const obstacles = tableObstacles(physics);
+  const [w, h] = NOTE_SIZE;
+  const clear = (n) => obstacles.every((c) => Math.hypot(Math.max(Math.abs(c.x - n.x) - w / 2, 0), Math.max(Math.abs(c.z - n.z) - h / 2, 0)) >= c.r);
+  for (let turn = 0; turn < 8; turn++) {
+    for (const note of lorries.chalkNotes()) {
+      const placed = placeClear(note, obstacles);
+      assert.ok(clear(placed), `turn ${turn}: "${note.text}" for the stop at ${note.z} sits clear (${placed.x.toFixed(2)}, ${placed.z.toFixed(2)})`);
+      assert.ok(Math.abs(placed.z - note.z) <= NUDGE_Z + 1e-9, 'still reads as the same stop');
+    }
+    lorries.advance('home'); lorries.advance('away');
   }
 });

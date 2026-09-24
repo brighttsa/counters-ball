@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Chalk tallies upright in Tactical",
+  "task": "Lorry chalk note clear of kickoff caps",
   "status": "released",
   "paths": [
     "src/scene/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T12:19:41.262Z",
-  "head": "0f3d3501d31312c6571fb5b14c7173f3ca759c34"
+  "updatedAt": "2026-09-24T12:35:02.083Z",
+  "head": "4181b9454b1208851631f21733ab0816df7dd02d"
 }

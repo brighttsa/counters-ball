@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2026-09-24 — Lorry note clear of the kickoff caps
+
+### Fixed
+- At a lorry's outer stops, "LORRY NEXT" sat under a corner kickoff cap: the note is wider than the room between
+  that cap and the goal line, so sliding along the table never cleared it. When no slide along is clear, a note now
+  also shifts across the table by at most 0.12 (under half the 0.28 between lorry stops, and half a toll lane), so
+  it still reads as the same stop or lane.
+- Since the notes grew, the farthest a note could sit (1.18) was short of where the ruler and lorry notes ask to be
+  (1.2), so they were always nudged inward; notes may now reach 1.47, just inside the goal line.
+
 ## 2026-09-24 — Chalk score and tallies upright in Tactical view
 
 ### Fixed
