@@ -157,7 +157,7 @@
     padding:
       max(8px, calc(env(safe-area-inset-top) + 6px))
       max(16px, calc(env(safe-area-inset-right) + 12px))
-      max(8px, calc(env(safe-area-inset-bottom) + 6px))
+      max(68px, calc(env(safe-area-inset-bottom) + 8px))
       max(clamp(56px, 8vw, 88px), calc(env(safe-area-inset-left) + 14px));
   }
   .screen-title::before {
