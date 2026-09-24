@@ -2,17 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Implement approved KONK copy deck",
+  "task": "Mobile settings and camera selector fit",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/ui/",
-    "src/gameplay/",
-    "src/levels/",
-    "src/core/",
-    "tests/",
+    "styles/game-ui-menus-and-results.css",
+    "styles/player-camera-controls.css",
+    "styles/mobile-tablet-match-layout.css",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T16:02:46.919Z",
-  "head": "53419ad55888d04a8d4132e9391daaec59b7bb65"
+  "updatedAt": "2026-09-24T17:15:06.416Z",
+  "head": "317e5da01378b38cb33e963b4f4e3b170f85c185"
 }

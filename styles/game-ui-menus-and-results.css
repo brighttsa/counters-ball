@@ -69,6 +69,7 @@
 .setting-row { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 8px; margin-bottom: 8px; }
 .setting-label { font: 700 var(--text-xs) var(--font-body); text-transform: uppercase; color: var(--paper-muted); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.setting-row[aria-labelledby='setting-view'] .chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .chip {
   flex: 1 1 0; min-width: 0; min-height: 44px; padding: 6px 8px; cursor: pointer;
   font: 700 var(--text-sm) var(--font-body); color: var(--paper); background: var(--ink-raised);
@@ -114,6 +115,10 @@
 }
 @media (max-width: 560px) {
   .screen { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .screen-pause { padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .pause-card { max-height: calc(100dvh - 24px); }
+  .pause-face[data-face-panel='settings'] .setting-row[aria-labelledby='setting-music'] .chip { padding-inline: 4px; font-size: var(--text-xs); }
+  .pause-face[data-face-panel='settings'] .pause-done { position: sticky; bottom: 0; z-index: 1; }
   .card-title { font-size: var(--text-2xl); }
   .card-actions { gap: 8px; justify-content: start; }
   .paper-card { max-width: 100%; }
@@ -131,6 +136,7 @@
   .card-title { font-size: var(--text-2xl); }
 }
 @media (max-height: 500px) {
+  .screen-pause { padding: 8px 12px; align-content: center; }
   .intro-card { padding: 12px 20px; }
   .intro-blurb, .intro-versus { display: none; }
   .challenge-card .intro-blurb { display: block; } /* the friend's mark is the whole point of that card */
@@ -143,11 +149,21 @@
   .menu-card .menu-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .menu-card .menu-stack .btn-primary { grid-column: 1 / -1; }
   /* Settings side by side: Sound | Camera, then Table, Tips and Done across the card. */
-  .pause-card[data-face='settings'] { max-width: 720px; }
+  .pause-card[data-face='settings'] { width: min(720px, 100%); max-width: 720px; max-height: calc(100dvh - 16px); padding: 10px 20px; }
+  .pause-card[data-face='settings'] .card-title { margin-bottom: 4px; }
   .pause-face[data-face-panel='settings']:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
   .pause-face[data-face-panel='settings'] > :not(.setting-group) { grid-column: 1 / -1; }
+  .pause-face[data-face-panel='settings'] .setting-group { margin-bottom: 2px; padding-top: 4px; }
+  .pause-face[data-face-panel='settings'] .setting-group-title { margin-bottom: 4px; }
+  .pause-face[data-face-panel='settings'] .setting-row { grid-template-columns: 54px minmax(0, 1fr); gap: 6px; margin-bottom: 4px; }
+  .pause-face[data-face-panel='settings'] .chip { min-height: 44px; padding-inline: 4px; }
+  .pause-face[data-face-panel='settings'] .pause-done { margin-top: 0; }
   .results-card { max-width: 760px; padding-block: 16px; }
   .results-note { margin-bottom: 8px; }
   .results-card .results-title { font-size: var(--text-2xl); }
   .results-stars { grid-auto-flow: column; gap: 16px; }
+}
+@media (min-width: 700px) and (max-height: 500px) {
+  .pause-face[data-face-panel='settings'] .setting-row[aria-labelledby='setting-view'] .chips { display: flex; }
+  .pause-face[data-face-panel='settings'] .setting-row[aria-labelledby='setting-view'] .chip { font-size: 12px; }
 }
