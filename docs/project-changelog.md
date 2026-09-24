@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-24 — Lighter aim arrow
+
+### Changed
+- The aim arrow keeps its shape but is slimmer and slightly see-through: at full power it is 26px wide on a
+  phone (was 52px) and 21px with a mouse (was 42px). The ivory band, gold core, rim, rings and shadows are all
+  lighter, so the table and the pieces show through and it no longer covers the pitch on small screens.
+
 ## 2026-09-23 — Broadcast shows both goals
 
 ### Changed

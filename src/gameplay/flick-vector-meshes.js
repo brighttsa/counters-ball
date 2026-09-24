@@ -33,18 +33,20 @@ export function shapeRibbon(mesh, length, width, start = 0, head = Math.min(leng
   attribute.needsUpdate = true;
 }
 
+// The aim reads as a light, see-through overlay rather than a solid sticker: the table and the
+// pieces stay visible through every layer, and the shadows are only a faint lift off the surface.
 export function createFlickMeshes(parent) {
   const group = new THREE.Group();
-  const ring = flatRing(1.25, 1.85, IVORY, 0.9);
-  const ringShadow = flatRing(1.18, 1.98, 0x241c14, 0.45);
-  // Dark outline under the ribbon keeps it readable on pale cardboard and in sunlight.
-  const ribbonShadow = ribbonMesh(0x241c14, 0.5);
-  const glow = flatRing(1.02, 2.3, GOLD, 0.2);
-  const notch = ribbonMesh(GOLD, 0.95);
-  const ribbon = ribbonMesh(IVORY, 0.95);
-  const core = ribbonMesh(GOLD, 0.85);
-  const edge = ribbonMesh(ENAMEL, 0.8);
-  const ghost = flatRing(0.84, 1, GOLD, 0.7);
+  const ring = flatRing(1.25, 1.7, IVORY, 0.7);
+  const ringShadow = flatRing(1.2, 1.8, 0x241c14, 0.2);
+  // A faint dark outline under the ribbon keeps it readable on pale cardboard and in sunlight.
+  const ribbonShadow = ribbonMesh(0x241c14, 0.26);
+  const glow = flatRing(1.02, 2.1, GOLD, 0.14);
+  const notch = ribbonMesh(GOLD, 0.8);
+  const ribbon = ribbonMesh(IVORY, 0.72);
+  const core = ribbonMesh(GOLD, 0.6);
+  const edge = ribbonMesh(ENAMEL, 0.5);
+  const ghost = flatRing(0.84, 1, GOLD, 0.55);
   const ghostFill = new THREE.Mesh(new THREE.CircleGeometry(1, 48), flatMaterial(IVORY, 0.12));
   ghostFill.rotation.x = -Math.PI / 2;
   const flash = flatRing(1.15, 1.65, GOLD, 0);

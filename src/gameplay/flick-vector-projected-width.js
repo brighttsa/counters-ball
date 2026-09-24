@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 
-// On-screen shaft width at the cap, in CSS pixels. Power reads as width as well
-// as length; touch screens get a bolder ribbon because a thumb covers the cap.
-export const flickWidthPixels = (power, coarse = false) => (coarse ? 24 + 28 * power : 18 + 24 * power);
+// On-screen shaft width at the cap, in CSS pixels. Power reads as width as well as length. Touch
+// screens get a little more because a thumb covers the cap, but the arrow stays slim: at full power
+// it is 26px on a phone (it was 52px, which covered the table).
+export const flickWidthPixels = (power, coarse = false) => (coarse ? 14 + 12 * power : 11 + 10 * power);
 
 export function projectedFlickWidth(camera, canvas, origin, direction, power, coarse = false) {
   const rect = canvas?.getBoundingClientRect?.();

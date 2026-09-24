@@ -45,7 +45,10 @@ test('projected mobile widths and pausable aim lifecycle', { skip: !process.env.
       const b = new THREE.Vector3(0, 0.035, -w / 2).project(camera);
       const pixels = Math.hypot((a.x - b.x) * width / 2, (a.y - b.y) * height / 2);
       assert.ok(Math.abs(pixels - flickWidthPixels(power, mobile)) < 0.001);
-      assert.ok(flickWidthPixels(power, mobile) >= (mobile ? 24 : 18)); // bold enough to read under a thumb
+      // Slim but still readable: never thinner than 14px under a thumb or 11px with a mouse, and never the
+      // table-covering 40-50px ribbon it used to be on phones.
+      assert.ok(flickWidthPixels(power, mobile) >= (mobile ? 14 : 11));
+      assert.ok(flickWidthPixels(power, mobile) <= (mobile ? 26 : 21));
     }
     const parent = new THREE.Group(), aim = new AimVisuals(parent, { camera, canvas, physics: { bodies: [] } });
     aim.show(cap(), { x: 0.085, y: 0 }); assert.equal(aim.ribbon.visible, true);

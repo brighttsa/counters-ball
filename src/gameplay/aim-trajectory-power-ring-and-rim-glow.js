@@ -34,7 +34,7 @@ export class AimVisuals {
       mesh.scale.setScalar(body.radius * (1 - power * 0.08));
     }
     this.ring.material.color.set(IVORY).lerp(this.core.material.color, power * 0.45);
-    this.glow.material.opacity = 0.18 + power * 0.16;
+    this.glow.material.opacity = 0.12 + power * 0.12;
     for (const mesh of [this.notch, this.ribbon, this.ribbonShadow, this.core, this.edge, this.ghost, this.ghostFill]) mesh.visible = false;
     if (power < 0.02) return;
     const angle = -Math.atan2(direction.y, direction.x);
@@ -45,7 +45,7 @@ export class AimVisuals {
     const start = body.radius * 1.72;
     const length = Math.max(0, distance - start);
     const head = Math.min(length * 0.42, width * 1.5);
-    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.2, 0.028], [this.edge, 1.12, 0.03],
+    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.12, 0.028], [this.edge, 1.1, 0.03],
       [this.ribbon, 1, 0.034], [this.core, 0.36, 0.038]]) {
       shapeRibbon(mesh, length, width * scale, start, head * (mesh === this.core ? 0.7 : 1));
       mesh.position.set(body.pos.x, y, body.pos.y);
@@ -54,7 +54,7 @@ export class AimVisuals {
         || (mesh === this.core ? power > 0.3 : power > 0.85));
     }
     // A gold core fills in as the pull deepens; the enamel rim marks the top of the range.
-    this.core.material.opacity = Math.min(1, Math.max(0, (power - 0.3) / 0.5)) * 0.9;
+    this.core.material.opacity = Math.min(1, Math.max(0, (power - 0.3) / 0.5)) * 0.6;
     shapeRibbon(this.notch, body.radius * 0.55, body.radius * 0.42, body.radius * 1.23);
     this.notch.position.set(body.pos.x, 0.041, body.pos.y);
     this.notch.rotation.y = angle;
@@ -66,7 +66,7 @@ export class AimVisuals {
         mesh.scale.setScalar(body.radius);
       }
       this.ghost.material.color.set(IVORY).lerp(this.notch.material.color, contact.alignment);
-      this.ghost.material.opacity = 0.4 + contact.alignment * 0.4;
+      this.ghost.material.opacity = 0.3 + contact.alignment * 0.35;
       if (contact.kind === 'wall') {
         this.ghost.position.set(contact.position.x - contact.normal.x * body.radius, 0.018,
           contact.position.y - contact.normal.y * body.radius);
