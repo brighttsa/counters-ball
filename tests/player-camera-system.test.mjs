@@ -5,7 +5,7 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
   skip: !process.env.COUNTERS_TEST_THREE,
 }, async t => {
   const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
-  const { playerCameraPose, loadCameraPreferences, pitchFramePoints, hudReservePixels } = await import('../src/fx/player-camera-view-poses.js');
+  const { playerCameraPose, loadCameraPreferences, openingCameraMode, pitchFramePoints, hudReservePixels } = await import('../src/fx/player-camera-view-poses.js');
   const { HumanDragAimInput } = await import('../src/gameplay/human-drag-aim-input.js');
   const previous = globalThis.window;
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
@@ -17,6 +17,13 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
     assert.deepEqual(loadCameraPreferences({ getItem: () => '{"home":"street","away":"invalid"}' }),
       { home: 'street', away: 'broadcast' });
     assert.deepEqual(loadCameraPreferences(null), { home: 'broadcast', away: 'broadcast' });
+  });
+  await t.test('match openings never start in close or free inspection cameras', () => {
+    assert.equal(openingCameraMode('tactical'), 'tactical');
+    assert.equal(openingCameraMode('broadcast'), 'broadcast');
+    assert.equal(openingCameraMode('street'), 'broadcast');
+    assert.equal(openingCameraMode('free'), 'broadcast');
+    assert.equal(openingCameraMode('invalid'), 'broadcast');
   });
   await t.test('Tactical and the Free overview frame both goals, lorries and outer lanes', () => {
     for (const aspect of [320 / 844, 375 / 844, 390 / 844, 430 / 844, 16 / 9]) {

@@ -2,14 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "KONK branded first load",
+  "task": "Broadcast match start camera",
   "status": "released",
   "paths": [
-    "index.html",
-    "styles/game-ui-base-and-hud.css",
-    "src/main.js",
+    "src/fx/player-camera-controller.js",
+    "src/fx/player-camera-view-poses.js",
+    "tests/player-camera-system.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T23:37:30Z",
-  "head": "4c0efad6a4d1586cd05f2d1f7cc5bb4364628306"
+  "updatedAt": "2026-09-24T23:46:51Z",
+  "head": "2407a7fc9ccb5d413af9cd05815b5f1aeb84be6e"
 }

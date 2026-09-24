@@ -17,6 +17,10 @@ export function loadCameraPreferences(storage) {
   } catch { return { home: 'broadcast', away: 'broadcast' }; }
 }
 
+export function openingCameraMode(mode) {
+  return mode === 'tactical' ? 'tactical' : 'broadcast';
+}
+
 // The match is framed on the pitch, not the table or the room: the outer edge and top of the
 // rail battens plus the matchstick crossbars. Lorry acts add the toy lorries that carry each
 // goal along the table ends, behind the battens.
