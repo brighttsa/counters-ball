@@ -2,21 +2,12 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Adaptive hero menus and match HUD",
+  "task": "Align adaptive home actions",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/fx/camera-director-attract-intro-play-goal.js",
-    "src/ui/pause-card-faces-and-setting-chips.js",
-    "src/ui/menu-button-action-routes.js",
     "styles/ink-impact-home.css",
-    "styles/circuit-venue-preview.css",
-    "styles/game-ui-base-and-hud.css",
-    "styles/game-ui-menus-and-results.css",
-    "styles/mobile-tablet-match-layout.css",
-    "tests/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T17:45:47.897Z",
-  "head": "7c77eb69e2a19eca7af2c29bb6581740a56154ff"
+  "updatedAt": "2026-09-24T17:54:17.110Z",
+  "head": "3351e0fe5bec1ccf3358f23b4aca23241263105c"
 }

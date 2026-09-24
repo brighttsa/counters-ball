@@ -16,7 +16,7 @@
 .home-edition { margin-top: 8px; text-transform: uppercase; letter-spacing: .06em; }
 .home-location { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--paper); font: var(--text-sm)/1.4 var(--font-body); }
 .home-location b { font: var(--text-xl)/1 var(--font-display); color: var(--yellow); border-right: 3px solid; padding-right: 12px; }
-.screen-title .menu-stack { display: grid; gap: 8px; width: 340px; max-width: 100%; }
+.screen-title .menu-stack { display: grid; grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: 8px; width: 340px; max-width: 100%; }
 .screen-title .home-play { background: var(--yellow); color: var(--ink); display: flex; justify-content: space-between; align-items: center; min-height: 66px; font: var(--text-2xl)/1 var(--font-display); }
 .home-play span[aria-hidden] { font-family: var(--font-body); font-size: var(--text-2xl); }
 @media (hover: hover) { .screen-title .btn:hover { background: var(--paper); color: var(--ink); } }
