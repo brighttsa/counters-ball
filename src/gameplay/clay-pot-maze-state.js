@@ -65,6 +65,11 @@ export class ClayPotMaze {
     return pots >= 2 ? 'DOUBLE POT' : pots === 1 ? 'OFF THE POT' : 'OFF THE RAIL';
   }
 
+  /** Auntie Ama's rule, chalked once just below the centre spot: it holds at both goals. */
+  chalkNotes() {
+    return [{ x: 0, z: 0.22, text: 'NO STRAIGHT GOALS' }];
+  }
+
   describe() {
     return `No straight goals: bounce it off a pot or the rail first · ${this.denied} waved off so far`;
   }

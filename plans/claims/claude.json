@@ -2,16 +2,15 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Match HUD one frame + between-match polish",
+  "task": "Chalk venue rules on the table",
   "status": "released",
   "paths": [
     "src/",
-    "index.html",
     "styles/",
     "tests/",
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T11:53:36.988Z",
-  "head": "906d0039eb9422ae0ee090fdf0985b9b9168e78a"
+  "updatedAt": "2026-09-24T12:10:30.079Z",
+  "head": "2199776a79bf0bf7a0a2942f116f5f0b5bae0c17"
 }

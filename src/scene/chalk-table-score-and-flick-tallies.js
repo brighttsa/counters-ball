@@ -9,7 +9,7 @@ const TOUCHLINE_CLEARANCE = 0.05; // chalk stops just short of the painted touch
 const TALLY_X = 0.82;
 const SCORE_SIZE = [0.72, 0.27]; // world units, matches the 512x192 canvas; clears the centre circle
 const TALLY_SIZE = [0.92, 0.23];  // world units, matches the 512x128 canvas
-const CHALK_WHITE = '#f5f1df'; // matches --paper in the stylesheets
+export const CHALK_WHITE = '#f5f1df'; // matches --paper in the stylesheets
 const MAX_TALLIES = 25; // beyond five gates, a number reads faster than marks
 const SIDE_FLIP_MARGIN = 0.35; // hysteresis: a camera near the pitch axis must not make the chalk jump
 
@@ -33,7 +33,8 @@ export function nearTouchlineSign(cameraZ, previous = 1) {
   return previous;
 }
 
-function chalkSurface(width, height, pixelWidth, pixelHeight) {
+/** A flat chalk panel on the table (canvas texture), drawn into with `chalkify`. */
+export function chalkSurface(width, height, pixelWidth, pixelHeight) {
   const canvas = document.createElement('canvas');
   canvas.width = pixelWidth;
   canvas.height = pixelHeight;
@@ -52,7 +53,7 @@ function chalkSurface(width, height, pixelWidth, pixelHeight) {
 }
 
 // Rubbed-in chalk: several slightly offset passes, then grain knocked out of the dust.
-function chalkify(ctx, draw) {
+export function chalkify(ctx, draw) {
   const { width, height } = ctx.canvas;
   ctx.clearRect(0, 0, width, height);
   for (const [dx, dy, alpha] of [[0, 0, 0.75], [1.5, -1, 0.4], [-1, 1.5, 0.35]]) {

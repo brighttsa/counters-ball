@@ -1,6 +1,6 @@
 // Adabraka Primary set piece at bottle-cap scale: a 30 cm school ruler standing
 // on its edge, pinned through a pink-and-blue eraser. Chalk on the table shows
-// the ruler's NEXT angle (a dashed ghost line) and which way it will turn
+// the ruler's NEXT angle (a solid, fainter ghost line) and which way it will turn
 // (curved arrows at both ends). The ruler only turns between turns.
 import * as THREE from 'three';
 import { createCanvas, toTexture } from './environment/canvas-texture-helpers.js';
@@ -27,14 +27,6 @@ function rulerTexture() {
   return toTexture(c);
 }
 
-function chalkDashTexture() {
-  const c = createCanvas(256, 8);
-  const ctx = c.getContext('2d');
-  ctx.fillStyle = '#f4f1e8';
-  for (let x = 0; x < 256; x += 32) ctx.fillRect(x, 0, 20, 8);
-  return toTexture(c);
-}
-
 function flat(mesh, y = 0.003) {
   mesh.rotation.x = -Math.PI / 2;
   mesh.position.y = y;
@@ -52,7 +44,7 @@ function buildOne(root, ruler, mats) {
 
   const telegraph = new THREE.Group();
   telegraph.position.x = ruler.x;
-  const ghost = flat(new THREE.Mesh(new THREE.PlaneGeometry(RULER_HALF_LENGTH * 2, 0.014), mats.chalkDash));
+  const ghost = flat(new THREE.Mesh(new THREE.PlaneGeometry(RULER_HALF_LENGTH * 2, 0.022), mats.chalkGhost));
   const ghostTurn = new THREE.Group();
   ghostTurn.add(ghost);
   const arcs = [0, Math.PI].map((phase) => {
@@ -73,7 +65,8 @@ export function buildRulerSeesaws(parent, rulers) {
   const mats = {
     ruler: new THREE.MeshStandardMaterial({ map: rulerTexture(), roughness: 0.7 }),
     eraser: material('#e8878f', 0, 0.95), eraserBlue: material('#3f6fb5', 0, 0.95), chalk,
-    chalkDash: new THREE.MeshBasicMaterial({ map: chalkDashTexture(), transparent: true, opacity: 0.7, depthWrite: false }),
+    // One solid stroke, fainter than the turn arrows, so it reads as "where it goes", not as a dashed line.
+    chalkGhost: new THREE.MeshBasicMaterial({ color: 0xf4f1e8, transparent: true, opacity: 0.7, depthWrite: false }),
   };
   const rigs = rulers.rulers.map((ruler) => buildOne(root, ruler, mats));
   parent.add(root);

@@ -16,6 +16,7 @@ export function createChangeDishMechanic(session) {
     hint: { label: 'FIND THE GAP IN THE DISH', detail: 'Chalk shows where it covers next' },
     onTurn: (side, bodies) => dishes.advance(side, bodies),
     describe: (side) => dishes.describe(side),
+    chalkNotes: () => dishes.chalkNotes(),
     onFlick: (side) => dishes.beginFlick(side),
     noteImpact(a, b, strength) {
       dishes.noteImpact(a, b);

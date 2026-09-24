@@ -62,3 +62,6 @@ body[data-screen="match"] .sound-btn { display: none; }
 /* ---- Aim fade ---- */
 .hud-layer .pause-btn, .player-camera { transition: opacity 220ms ease; }
 body:has(#game-canvas.aiming) :is(.hud-layer .pause-btn, .player-camera) { opacity: .12; }
+
+/* Read to screen readers, never drawn: e.g. the venue's live reading, which is chalked on the table instead. */
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

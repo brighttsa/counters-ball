@@ -150,6 +150,13 @@ export class TollGateLaneSignals {
   }
 
   /** One short line for the player whose turn it is. */
+  /** Chalk on the lane whose boom comes down next at each plaza, in front of it on the attacker's side. */
+  chalkNotes() {
+    return this.plazas.map((plaza) => ({
+      x: plaza.x - Math.sign(plaza.x) * 0.4, z: LANES[this.closedLane(plaza, 1)].center, text: 'SHUTS NEXT',
+    }));
+  }
+
   describe(side) {
     const target = this.plazaDefendedBy(otherSide(side));
     const own = this.plazaDefendedBy(side);

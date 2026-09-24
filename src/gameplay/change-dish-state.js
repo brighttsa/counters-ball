@@ -98,6 +98,23 @@ export class ChangeDishes {
     return this.flight.rattled ? 'OFF THE DISH' : '';
   }
 
+  /**
+   * Chalk in each gap a dish will leave next, just outside the dish: the covered arc is DISH_SPAN wide about
+   * its cover angle, inside the half-circle that faces the pitch, and every gap wider than 10° gets a note.
+   */
+  chalkNotes() {
+    const half = Math.PI / 2, reach = DISH_RADIUS + 0.15;
+    return this.dishes.flatMap((dish) => {
+      const phi = COVER_ANGLES[this.state(dish, 1)];
+      return [[-half, phi - DISH_SPAN / 2], [phi + DISH_SPAN / 2, half]]
+        .filter(([a, b]) => b - a > Math.PI / 18)
+        .map(([a, b]) => {
+          const angle = this.worldAngle(dish, (a + b) / 2);
+          return { x: dish.sign * GOAL_LINE_X + Math.cos(angle) * reach, z: Math.sin(angle) * reach, text: 'GAP NEXT' };
+        });
+    });
+  }
+
   describe(side) {
     const theirs = this.dishDefendedBy(otherSide(side)), own = this.dishDefendedBy(side);
     return `Their dish: ${OPEN_NAMES[this.state(theirs)]} → next ${OPEN_NAMES[this.state(theirs, 1)]}`

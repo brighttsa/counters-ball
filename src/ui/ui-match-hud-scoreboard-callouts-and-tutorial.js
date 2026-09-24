@@ -67,11 +67,20 @@ export class MatchHud {
     $('hud-away-name').textContent = away.toUpperCase();
   }
 
-  /** Street Legends objective + live signal reading; hidden on classic tables. */
-  setObjective(text) {
+  /**
+   * Street Legends objective; hidden on classic tables. The venue's live reading (which way the ruler turns
+   * next, which lane shuts…) is chalked on the table, so on screen it is only read out to screen readers.
+   */
+  setObjective(text, reading = '') {
     const el = $('hud-objective');
     el.hidden = !text;
     el.textContent = text ?? '';
+    if (text && reading) {
+      const spoken = document.createElement('span');
+      spoken.className = 'visually-hidden';
+      spoken.textContent = ` · ${reading}`;
+      el.append(spoken);
+    }
   }
 
   setScore(scores, poppedSide) {

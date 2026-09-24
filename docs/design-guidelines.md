@@ -101,7 +101,12 @@ pitch stays crisp (±1.9 units of focus), the street falls off into bokeh.
   chickens: repeated generic creatures made venues feel assembled, not designed.
 - **Street Legends set pieces** are built from the place's architecture (the Tema
   toll plaza, booths, booms and canopy), not scattered props. A mechanic's
-  telegraph must read on a phone: lamp, coloured floor pool and a HUD line.
+  telegraph must read on a phone: lamp, coloured floor pool, and a short chalk
+  note on the table beside the prop ("SHUTS NEXT" on the lane, "NEXT: ACROSS" by
+  the ruler, "GAP NEXT" in the dish's next gap). Where the note sits carries the
+  meaning, so it never says left or right; it reads upright in every camera and
+  slides along the table clear of pieces. The HUD line carries only the act's
+  goal; the full reading is kept for screen readers. Chalk is solid, never dashed.
 - **Props are real geometry**, casting and receiving real shadows (sun shadow
   box ±7.5; 2048² sun map on coarse pointers, 4096² otherwise).
 - **Rejected:** sleeping dog/cat built from primitives (read as toys at this

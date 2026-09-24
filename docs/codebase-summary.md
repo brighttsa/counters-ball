@@ -111,7 +111,8 @@ mesh sync → AI → juice → replay capture → particles → aim → backdrop
   optional `rules.awayFlickLimit`, `awaySlots`, `ballStart`). Add them to
   `street-legends-acts-and-unlocks.js`. Register a factory in `FACTORIES`
   (`street-legends-venue-mechanic-wiring.js`) returning `{ view: { animating, update },
-  onTurn(side, bodies) → callouts, describe(side), hint, onFlick?, observe?, noteImpact?,
+  onTurn(side, bodies) → callouts, describe(side), chalkNotes() → [{ x, z, text, side? }], hint,
+  onFlick?, observe?, noteImpact?,
   goalLabel, aiCandidates(side, ballZ, { defend }), aiScore(sim, side, i, { defend }) }`.
   The wiring is created before `wireMatchFeedback`, so the venue steps before the AI
   plans. State changes only between turns. Physics hooks: `body.disabled`,

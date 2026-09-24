@@ -1,5 +1,21 @@
 # Project Changelog
 
+## 2026-09-24 — Venue rules chalked on the table
+
+### Changed
+- **Each Street Legends venue chalks its rule on the table, next to the prop it is about**, instead of spelling it
+  out under the scoreboard. The scoreboard line now carries only the act's goal ("Beat Kwame around the ruler").
+  - Schoolyard: "NEXT: ACROSS" between each ruler and the goal it guards.
+  - Kiosk: "GAP NEXT" in each gap the change dish leaves next.
+  - Veranda: "NO STRAIGHT GOALS", once, by the centre spot.
+  - Roadside: "SHUTS NEXT" on the toll lane whose boom comes down next.
+  - Harmattan: "LORRY NEXT" at the stop each lorry moves to.
+  - Lights Out: "STRIKE · 1/3 LIT" by the stack each side must hit next, in that side's colour, then "GOAL OPEN".
+- Where a note sits is half its meaning, so no note says left or right (which flipped with the camera). Notes read
+  upright in every camera, have a faint dark edge so pale chalk reads on pale tables, slide along the table to stay
+  clear of caps and props, and fade in when they change. Screen readers still hear the full reading.
+- The ruler's next-angle ghost line is a solid chalk stroke instead of dashes.
+
 ## 2026-09-24 — Match HUD as one frame, and between-match polish
 
 ### Changed

@@ -16,6 +16,7 @@ export function createRulerSeesawMechanic(session) {
     hint: { label: 'BANK OFF THE RULER', detail: 'The chalk shows its next angle' },
     onTurn: (side, bodies) => rulers.advance(side, bodies),
     describe: (side) => rulers.describe(side),
+    chalkNotes: () => rulers.chalkNotes(),
     onFlick: (side) => rulers.beginFlick(side),
     noteImpact(a, b, strength) {
       rulers.noteImpact(a, b);
