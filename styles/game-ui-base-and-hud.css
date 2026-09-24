@@ -63,6 +63,8 @@ button, h1, h2, p, span { letter-spacing: 0; }
 }
 .btn-primary { background: var(--yellow); color: var(--ink); }
 .btn-small { font-size: var(--text-sm); padding: 8px 12px; }
+.btn-icon { width: 1em; height: 1em; flex-shrink: 0; vertical-align: -0.125em; }
+.star-svg { width: 1em; height: 1em; vertical-align: -0.125em; flex-shrink: 0; }
 .btn:disabled { opacity: .45; }
 /* The slanted clip-path cuts off anything drawn outside the button, including the focus
    ring, so a keyboard-focused button squares up and shows its ring. */
@@ -85,8 +87,11 @@ button, h1, h2, p, span { letter-spacing: 0; }
 }
 .icon-btn:active { transform: scale(0.92); }
 .icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+.icon-btn svg { width: 1em; height: 1em; }
 .sound-btn { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); font-size: var(--text-lg); }
-.sound-btn.muted { opacity: 0.55; text-decoration: line-through; }
+.sound-btn .sound-icon { width: 22px; height: 22px; }
+.sound-btn.muted { opacity: 0.55; }
+.sound-btn.muted .sound-icon { opacity: 0.5; }
 
 /* ---- HUD ---- */
 .hud-layer { position: fixed; inset: 0; z-index: 10; pointer-events: none; }

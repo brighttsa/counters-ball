@@ -94,7 +94,7 @@
 .results-stars { list-style: none; margin: 0 auto 12px; padding: 0; display: grid; gap: 8px; width: fit-content; text-align: left; }
 .results-stars li { display: flex; align-items: center; gap: 12px; font-size: var(--text-md); color: var(--paper); }
 .result-star {
-  width: 38px; height: 38px; display: grid; place-items: center; flex-shrink: 0; font-size: var(--text-xl); border-radius: 50%;
+  width: 38px; height: 38px; padding: 6px; display: grid; place-items: center; flex-shrink: 0; border-radius: 50%;
   color: var(--line-strong); border: 2px dashed var(--line-strong);
 }
 .results-stars li.earned .result-star { color: var(--yellow); border-style: solid; border-color: var(--yellow); animation: rise-in 250ms ease both; }

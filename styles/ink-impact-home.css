@@ -17,7 +17,7 @@
 .home-location b { font: var(--text-xl)/1 var(--font-display); color: var(--yellow); border-right: 3px solid; padding-right: 12px; }
 .screen-title .menu-stack { display: grid; grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: 8px; width: 340px; max-width: 100%; }
 .screen-title .home-play { background: var(--yellow); color: var(--ink); display: flex; justify-content: space-between; align-items: center; min-height: 66px; font: var(--text-2xl)/1 var(--font-display); }
-.home-play span[aria-hidden] { font-family: var(--font-body); font-size: var(--text-2xl); }
+.play-arrow { width: 1em; height: 1em; flex-shrink: 0; }
 @media (hover: hover) { .screen-title .btn:hover { background: var(--paper); color: var(--ink); } }
 .screen-title .home-venues { text-align: left; padding: 12px 20px; }
 .home-secondary { display: flex; gap: 8px; }

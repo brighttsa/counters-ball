@@ -71,7 +71,7 @@ export class FullTimeResultsCard {
     list.hidden = versus;
     list.replaceChildren(...labels.map((label) => {
       const li = document.createElement('li');
-      li.innerHTML = '<span class="result-star" aria-hidden="true">★</span><span class="result-star-label"></span>';
+      li.innerHTML = '<svg class="result-star" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg><span class="result-star-label"></span>';
       li.lastChild.textContent = label;
       return li;
     }));

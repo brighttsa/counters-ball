@@ -6,7 +6,7 @@ import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 import { featuredActCopy } from '../levels/featured-home-legends-act.js';
-import { MENU_COPY, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js';
+import { MENU_COPY, STAR_SVG, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -84,7 +84,8 @@ export class MenuScreens {
   }
 
   setTitleStars(earned, max) {
-    $('title-stars').textContent = titleStarsCopy(earned, max);
+    const starsCopy = titleStarsCopy(earned, max);
+    $('title-stars').innerHTML = earned > 0 ? `${STAR_SVG} ${starsCopy}` : starsCopy;
   }
 
   setSoundIcon(muted) {
@@ -99,12 +100,12 @@ export class MenuScreens {
     this.circuitProgress = progress;
     const versus = mode === 'versus';
     $('levels-heading').textContent = mode === 'legends' ? 'Street Legends' : versus ? 'The Circuit · 2 Players' : 'The Circuit';
-    $('levels-star-total').textContent = versus ? '' : `★ ${totalStars(progress, levels)} / ${levels.length * 3}`;
+    $('levels-star-total').innerHTML = versus ? '' : `<svg class="star-svg" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg> ${totalStars(progress, levels)} / ${levels.length * 3}`;
     $('level-grid').innerHTML = levels.map((level, i) => {
       const unlocked = isUnlocked(i);
       const stars = progress.stars[level.id] ?? 0;
       const starRow = versus ? '' : `<span class="level-stars" aria-label="${stars} of 3 stars">${
-        [0, 1, 2].map((n) => `<i class="${n < stars ? 'on' : ''}">★</i>`).join('')}</span>`;
+        [0, 1, 2].map((n) => `<svg class="star-svg ${n < stars ? 'on' : ''}" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg>`).join('')}</span>`;
       const group = level.legend?.act === 1 ? `<span class="level-group">${escapeHtml(level.name)}</span>` : '';
       return `${group}<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
         aria-pressed="false" style="--accent:${level.opponent.team.hudColor}">
@@ -159,7 +160,8 @@ export class MenuScreens {
       : [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
     if (level.obstacles.length && !legend) lines.push(MENU_COPY.obstacles);
     if ((level.frictionScale ?? 1) > 1) lines.push(MENU_COPY.dust);
-    if (!versus && !level.practice) lines.push(...starRules(rules.threeStarFlicks));
+    const starGoalTexts = !versus && !level.practice ? starRules(rules.threeStarFlicks) : [];
+    if (starGoalTexts.length) lines.push(...starGoalTexts);
     const memory = schoolyardReturnMemory(level, mode);
     if (memory) lines.unshift(memory);
     lines.unshift(...extraLines);
@@ -168,8 +170,13 @@ export class MenuScreens {
     const list = $('intro-rules');
     list.replaceChildren(...lines.map((text) => {
       const li = document.createElement('li');
-      li.textContent = text;
-      if (text.startsWith('★')) li.className = 'star-goal';
+      const isStar = starGoalTexts.includes(text);
+      if (isStar) {
+        li.innerHTML = `${STAR_SVG} ${text}`;
+        li.className = 'star-goal';
+      } else {
+        li.textContent = text;
+      }
       if (text === rivalry) li.className = 'rivalry-line';
       return li;
     }));

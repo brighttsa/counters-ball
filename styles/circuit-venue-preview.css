@@ -25,7 +25,9 @@
 #circuit-venue-place { font-size: var(--text-lg); }
 #circuit-venue-opponent { font-size: var(--text-sm); font-weight: 700; }
 #circuit-venue-note { font: var(--text-lg)/1.3 var(--font-hand); max-width: 36ch; margin: 8px 0 4px; }
-#circuit-venue-stars { color: var(--yellow); font-size: var(--text-lg); letter-spacing: 2px; }
+#circuit-venue-stars { display: flex; align-items: center; gap: 4px; color: var(--yellow); font-size: var(--text-lg); }
+#circuit-venue-stars .star-svg { width: 1em; height: 1em; }
+#circuit-venue-stars .star-svg:not(.on) { color: var(--line-strong); }
 #circuit-enter { margin-top: 8px; }
 #circuit-enter:disabled { background: var(--ink-pressed); color: var(--paper-muted); cursor: not-allowed; }
 #circuit-lock-note { font-size: var(--text-sm); margin: 4px 0 0; }
@@ -62,8 +64,8 @@
 .level-name { font: var(--text-md)/1.05 var(--font-display); letter-spacing: 0; text-transform: uppercase; overflow-wrap: anywhere; }
 .level-place { font-size: var(--text-xs); line-height: 1.4; color: var(--paper-muted); }
 .level-stars { min-height: 0; }
-.level-stars i { font-style: normal; font-size: var(--text-sm); margin-right: 4px; color: var(--line-strong); }
-.level-stars i.on { color: var(--yellow); }
+.level-stars .star-svg { width: var(--text-sm); height: var(--text-sm); margin-right: 4px; color: var(--line-strong); }
+.level-stars .star-svg.on { color: var(--yellow); }
 .level-card.locked { color: var(--paper-muted); cursor: not-allowed; }
 .level-card.locked .level-stars { display: none; } /* a locked act has no stars yet; its lock label says so */
 .level-card.locked .level-number { border-style: dashed; border-color: var(--line-strong); }

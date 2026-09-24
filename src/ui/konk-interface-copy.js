@@ -19,7 +19,8 @@ export const RESULTS_COPY = Object.freeze({
 });
 
 export const starGoals = (flicks) => ['Win', 'Concede no goals', `Win in ${flicks} flicks or fewer`];
-export const starRules = (flicks) => starGoals(flicks).map((goal) => `★ ${goal}`);
+export const STAR_SVG = '<svg class="star-svg" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg>';
+export const starRules = (flicks) => starGoals(flicks);
 export const conditionObstacleCopy = (count) => (count ? `${count} fixed obstacle${count === 1 ? '' : 's'}` : MENU_COPY.noObstacles);
 
 // A Street Legends table is defined by its moving feature, so "No fixed obstacles" alone would mislead.
@@ -40,7 +41,7 @@ export function tableConditionCopy(level) {
   return count ? `${feature} · ${conditionObstacleCopy(count)}` : feature;
 }
 export const titleStarsCopy = (earned, max) => earned > 0
-  ? `★ ${earned}/${max} stars` : 'Six pitches. Six stories to settle.';
+  ? `${earned}/${max} stars` : 'Six pitches. Six stories to settle.';
 
 export function resultTitle(winner, mode, names, opponent) {
   if (winner === null) return RESULTS_COPY.draw;
