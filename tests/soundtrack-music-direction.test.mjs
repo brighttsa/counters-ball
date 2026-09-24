@@ -4,7 +4,7 @@ import { existsSync, statSync } from 'node:fs';
 import { SOUNDTRACK, musicForScreen, matchTrackFor } from '../src/audio/soundtrack-track-list-and-screen-routing.js';
 import { bakeLoopSeam } from '../src/audio/soundtrack-loop-seam.js';
 import { SoundtrackDirector } from '../src/audio/soundtrack-music-director.js';
-import { nextMusicVolume, musicLabel, MUSIC_LEVELS } from '../src/audio/music-and-effects-audio-settings.js';
+import { MUSIC_LEVELS } from '../src/audio/music-and-effects-audio-settings.js';
 
 test('each screen plays its track: Home on menus, Classic or Legends in play, results quieter, retries uninterrupted', () => {
   assert.equal(musicForScreen('title', 'campaign').id, 'home');
@@ -97,11 +97,8 @@ test('volume and mute set the music bus; a goal dips it and brings it back', asy
   assert.deepEqual(d.dip.gain.calls.slice(-2), [0.5, 1]);
 });
 
-test('music volume steps Off → Low → Medium → High and back, and bad saves fall back to Medium', async () => {
+test('music has four levels, Off to High, and bad saves fall back to Medium', async () => {
   assert.deepEqual(MUSIC_LEVELS.map((l) => l.label), ['Off', 'Low', 'Medium', 'High']);
-  assert.equal(nextMusicVolume(1), 0);
-  assert.equal(nextMusicVolume(0.7), 1);
-  assert.equal(musicLabel(0.42), 'Medium');
   const { loadProgress } = await import('../src/core/save-progress-local-storage.js');
   const saved = (data) => { globalThis.window = { localStorage: { getItem: () => JSON.stringify(data) } }; return loadProgress(); };
   try {

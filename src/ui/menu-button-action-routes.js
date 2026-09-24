@@ -1,7 +1,8 @@
 // Every [data-action] button in index.html, mapped to what it does. The app
 // flow (title, levels, intro, match, results) lives in main.js; this is only
 // the routing table plus the saved preference toggles.
-import { applyAudioSettings, nextMusicVolume, DEFAULT_MUSIC_VOLUME } from '../audio/music-and-effects-audio-settings.js';
+import { applyAudioSettings, MUSIC_LEVELS } from '../audio/music-and-effects-audio-settings.js';
+import { markChoice, showPauseFace } from './pause-card-faces-and-setting-chips.js';
 
 const ARM_SECONDS = 4;
 
@@ -9,12 +10,38 @@ const ARM_SECONDS = 4;
  * @param ctx { app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus }
  *   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex }
  */
-const VIEW_LABELS = { tactical: 'Tactical', broadcast: 'Broadcast', street: 'Street Level', free: 'Free Camera' };
-const VIEW_ORDER = ['tactical', 'broadcast', 'street', 'free'];
+const VIEWS = ['tactical', 'broadcast', 'street', 'free'];
 
 export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus, hints }) {
   const audio = () => { save(progress); applyAudioSettings({ progress, sound, music, menus }); };
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
+  // The chips on the back of the pause card. Unknown values are ignored, so a stale chip can't save junk.
+  // Choosing a music level or switching effects on also lifts the ♪ all-sound mute: the player wants sound.
+  const choose = {
+    music: (value) => {
+      const level = MUSIC_LEVELS.find((l) => String(l.value) === value);
+      if (!level) return;
+      progress.musicVolume = level.value;
+      progress.muted = false;
+      audio();
+    },
+    effects: (value) => { progress.effectsOff = value === 'off'; progress.muted = false; audio(); },
+    view: (value) => {
+      if (!VIEWS.includes(value)) return;
+      cameraDirector.playerControl.select(value); // the match shows the new view on Resume
+      markChoice('view', cameraDirector.playerControl.mode);
+    },
+    motion: (value) => {
+      cameraDirector.setMotion(value === 'on');
+      markChoice('motion', cameraDirector.motionEnabled ? 'on' : 'off');
+      if (!cameraDirector.motionEnabled) finishReplay();
+    },
+    scoreboard: (value) => {
+      progress.hudStyle = value === 'broadcast' ? 'broadcast' : 'chalk';
+      hud.setStyle(progress.hudStyle);
+      save(progress);
+    },
+  };
   // Restart and Quit throw a match away. Once a flick has been played, the first press only arms the
   // button ("Sure? Press again…"); a second press within a few seconds acts. Works the same by keyboard.
   const armed = new Set();
@@ -49,27 +76,18 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'intro-back': () => flow.showLevels(),
     'kick-off': () => flow.kickOff(),
     'skip-replay': finishReplay,
-    'toggle-camera-motion': (el) => {
-      cameraDirector.setMotion(!cameraDirector.motionEnabled);
-      el.setAttribute('aria-pressed', String(cameraDirector.motionEnabled));
-      if (!cameraDirector.motionEnabled) finishReplay();
-    },
+    // Pausing always opens on the front of the card; the view chip follows any mid-match camera change.
     pause: () => {
       armed.forEach(disarm);
+      showPauseFace('actions');
       flow.setPaused(true);
-      const byId = id => globalThis.document?.getElementById(id);
-      const view = byId('camera-view-toggle'), tips = byId('hints-reset');
-      if (view) view.dataset.value = VIEW_LABELS[cameraDirector?.playerControl?.mode] ?? 'Broadcast';
+      markChoice('view', cameraDirector?.playerControl?.mode ?? 'broadcast');
+      const tips = globalThis.document?.getElementById('hints-reset');
       if (tips) delete tips.dataset.value;
     },
-    // Pause menu settings: step through the four views (the match shows the new one on Resume),
-    // bring the one-time chalk tips back, or leave for Kwame's Corner.
-    'cycle-camera-view': (el) => {
-      const control = cameraDirector.playerControl;
-      const next = VIEW_ORDER[(VIEW_ORDER.indexOf(control.mode) + 1) % VIEW_ORDER.length];
-      control.select(next);
-      el.dataset.value = VIEW_LABELS[control.mode];
-    },
+    'open-settings': () => showPauseFace('settings'),
+    'close-settings': () => showPauseFace('actions'),
+    'choose-setting': (el) => choose[el.dataset.choice]?.(el.dataset.value),
     'reset-hints': (el) => { hints.reset(); el.dataset.value = 'On'; },
     'how-to-play': (el) => {
       if (!confirmed(el, 'Sure? Press again to leave for practice')) return;
@@ -100,18 +118,6 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     },
     'challenge-decline': () => flow.showTitle(),
     'next-level': () => flow.prepareMatch(app.levelIndex + 1),
-    'toggle-hud-style': () => {
-      progress.hudStyle = hud.style === 'chalk' ? 'broadcast' : 'chalk';
-      hud.setStyle(progress.hudStyle);
-      save(progress);
-    },
     'toggle-sound': () => { progress.muted = !progress.muted; audio(); },
-    // Choosing a music level or switching effects on in the pause menu also lifts the ♪ all-sound mute.
-    'cycle-music-volume': () => {
-      progress.musicVolume = nextMusicVolume(progress.musicVolume ?? DEFAULT_MUSIC_VOLUME);
-      progress.muted = false;
-      audio();
-    },
-    'toggle-effects': () => { progress.effectsOff = !progress.effectsOff; progress.muted = false; audio(); },
   };
 }

@@ -2,6 +2,7 @@
 // turn banner, event callouts, replay label and the tutorial hand.
 import { SIDE_HOME, SIDE_AWAY } from '../core/pitch-dimensions-and-constants.js';
 import { KineticEventCallout } from './ui-kinetic-event-callout.js';
+import { markChoice } from './pause-card-faces-and-setting-chips.js';
 
 const $ = (id) => document.getElementById(id);
 const TURN_CALL_MS = 1800;
@@ -34,7 +35,7 @@ export class MatchHud {
   setStyle(style) {
     this.style = style === 'broadcast' ? 'broadcast' : 'chalk';
     document.body.classList.toggle('hud-chalk', this.style === 'chalk');
-    $('hud-style-toggle').dataset.value = this.style === 'chalk' ? 'Chalk' : 'Broadcast';
+    markChoice('scoreboard', this.style);
     this.table?.setVisible(this.style === 'chalk');
   }
 

@@ -2,18 +2,17 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Soundtrack integration",
+  "task": "Pause menu: four actions + settings on the card back",
   "status": "released",
   "paths": [
-    "src/",
-    "assets/",
     "index.html",
+    "src/ui/",
+    "src/audio/music-and-effects-audio-settings.js",
     "styles/",
     "tests/",
     "docs/",
-    "AGENTS.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T13:22:18.467Z",
-  "head": "b253016aa48688d5bd2fa747ed49ae9539c55c1f"
+  "updatedAt": "2026-09-24T16:43:40.913Z",
+  "head": "699e4dc094973e81c7f73f8d09c242e300f02b6b"
 }

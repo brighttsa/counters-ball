@@ -139,21 +139,71 @@
   </section>
 
   <section class="screen screen-pause" data-screen="pause">
-    <article class="paper-card menu-card">
+    <article class="paper-card menu-card pause-card" id="pause-card" data-face="actions">
       <span class="tape tape-left"></span>
-      <h2 class="card-title">Paused</h2>
-      <nav class="menu-stack">
-        <button class="btn btn-primary" data-action="resume">Resume</button>
-        <button class="btn" data-action="restart">Restart match</button>
-        <button class="btn" id="camera-motion-toggle" data-action="toggle-camera-motion" aria-pressed="true">Camera motion</button>
-        <button class="btn" id="camera-view-toggle" data-action="cycle-camera-view" data-value="Broadcast">Camera view</button>
-        <button class="btn" id="hud-style-toggle" data-action="toggle-hud-style" data-value="Chalk">Scoreboard</button>
-        <button class="btn" id="hints-reset" data-action="reset-hints">Show tips again</button>
-        <button class="btn" id="music-volume-toggle" data-action="cycle-music-volume" data-value="Medium">Music</button>
-        <button class="btn" id="effects-toggle" data-action="toggle-effects" data-value="On">Sound effects</button>
-        <button class="btn" data-action="how-to-play">How to play · Kwame's Corner</button>
-        <button class="btn" data-action="quit" data-track-label="Quit to {track}">Quit to Pitches</button>
-      </nav>
+      <div class="pause-face" data-face-panel="actions">
+        <h2 class="card-title">Paused</h2>
+        <nav class="menu-stack">
+          <button class="btn btn-primary" data-action="resume">Resume</button>
+          <button class="btn" data-action="restart">Restart match</button>
+          <button class="btn" data-action="how-to-play">How to play · Kwame's Corner</button>
+          <button class="btn" data-action="quit" data-track-label="Quit to {track}">Quit to Pitches</button>
+        </nav>
+        <button class="pause-settings-link" data-action="open-settings"><span aria-hidden="true">⚙</span> Settings</button>
+      </div>
+      <div class="pause-face" data-face-panel="settings" hidden>
+        <h2 class="card-title">Settings</h2>
+        <section class="setting-group" aria-labelledby="setting-sound">
+          <h3 class="setting-group-title" id="setting-sound">Sound</h3>
+          <div class="setting-row" role="group" aria-labelledby="setting-music">
+            <span class="setting-label" id="setting-music">Music</span>
+            <span class="chips">
+              <button class="chip" data-action="choose-setting" data-choice="music" data-value="0" aria-pressed="false">Off</button>
+              <button class="chip" data-action="choose-setting" data-choice="music" data-value="0.35" aria-pressed="false">Low</button>
+              <button class="chip" data-action="choose-setting" data-choice="music" data-value="0.7" aria-pressed="true">Med</button>
+              <button class="chip" data-action="choose-setting" data-choice="music" data-value="1" aria-pressed="false">High</button>
+            </span>
+          </div>
+          <div class="setting-row" role="group" aria-labelledby="setting-effects">
+            <span class="setting-label" id="setting-effects">Effects</span>
+            <span class="chips">
+              <button class="chip" data-action="choose-setting" data-choice="effects" data-value="on" aria-pressed="true">On</button>
+              <button class="chip" data-action="choose-setting" data-choice="effects" data-value="off" aria-pressed="false">Off</button>
+            </span>
+          </div>
+        </section>
+        <section class="setting-group" aria-labelledby="setting-camera">
+          <h3 class="setting-group-title" id="setting-camera">Camera</h3>
+          <div class="setting-row" role="group" aria-labelledby="setting-view">
+            <span class="setting-label" id="setting-view">View</span>
+            <span class="chips">
+              <button class="chip" data-action="choose-setting" data-choice="view" data-value="tactical" aria-pressed="false">Tactical</button>
+              <button class="chip" data-action="choose-setting" data-choice="view" data-value="broadcast" aria-pressed="true">Broadcast</button>
+              <button class="chip" data-action="choose-setting" data-choice="view" data-value="street" aria-pressed="false">Street</button>
+              <button class="chip" data-action="choose-setting" data-choice="view" data-value="free" aria-pressed="false">Free</button>
+            </span>
+          </div>
+          <div class="setting-row" role="group" aria-labelledby="setting-motion">
+            <span class="setting-label" id="setting-motion">Motion</span>
+            <span class="chips">
+              <button class="chip" data-action="choose-setting" data-choice="motion" data-value="on" aria-pressed="true">On</button>
+              <button class="chip" data-action="choose-setting" data-choice="motion" data-value="off" aria-pressed="false">Off</button>
+            </span>
+          </div>
+        </section>
+        <section class="setting-group" aria-labelledby="setting-table">
+          <h3 class="setting-group-title" id="setting-table">Table</h3>
+          <div class="setting-row" role="group" aria-labelledby="setting-scoreboard">
+            <span class="setting-label" id="setting-scoreboard">Score</span>
+            <span class="chips">
+              <button class="chip" data-action="choose-setting" data-choice="scoreboard" data-value="chalk" aria-pressed="true">Chalk</button>
+              <button class="chip" data-action="choose-setting" data-choice="scoreboard" data-value="broadcast" aria-pressed="false">Broadcast</button>
+            </span>
+          </div>
+        </section>
+        <button class="pause-settings-link" id="hints-reset" data-action="reset-hints">Show first-match tips again</button>
+        <button class="btn btn-primary pause-done" data-action="close-settings">Done</button>
+      </div>
     </article>
   </section>
 

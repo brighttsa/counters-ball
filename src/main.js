@@ -18,6 +18,7 @@ import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
+import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
@@ -210,7 +211,8 @@ const actions = createMenuActions({
 window.addEventListener('pointerdown', () => sound.unlock());
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  if (menus.current === 'pause') setPaused(false);
+  if (menus.current === 'pause' && pauseFace() === 'settings') showPauseFace('actions'); // Esc turns the card back first
+  else if (menus.current === 'pause') setPaused(false);
   else if (menus.current === null && app.session && !app.session.options.isAttract) actions.pause();
 });
 
