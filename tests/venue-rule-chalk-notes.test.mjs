@@ -69,3 +69,29 @@ test('a note slides along the table, never across it, to the nearest spot no pie
   assert.ok(Math.abs(placed.x - 0.3) >= 0.3, `slid clear to ${placed.x}`);
   assert.deepEqual(placeClear(note, []), note, 'an open table leaves it where it asked to be');
 });
+
+test('table chalk reads upright on screen from the side and from straight above, in both orientations', async () => {
+  const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
+  const { screenUprightYaw } = await import('../src/scene/chalk-table-score-and-flick-tallies.js');
+  const view = (position, up = [0, 1, 0]) => {
+    const camera = new THREE.PerspectiveCamera(42, 1.5);
+    camera.position.set(...position); camera.up.set(...up); camera.lookAt(0, 0, 0); camera.updateMatrixWorld(true);
+    return camera;
+  };
+  // The chalk's top edge after the turn, on the table: (−sin yaw, −cos yaw).
+  const topOnScreen = (camera) => {
+    const yaw = screenUprightYaw(camera);
+    const centre = new THREE.Vector3(0, 0, 0).project(camera);
+    const top = new THREE.Vector3(-Math.sin(yaw) * 0.1, 0, -Math.cos(yaw) * 0.1).project(camera);
+    return { dx: top.x - centre.x, dy: top.y - centre.y };
+  };
+  for (const [name, camera] of [
+    ['broadcast', view([0, 2, 3])],
+    ['tactical, landscape', view([0, 4, 0.36])],
+    ['tactical, portrait', view([-0.36, 4, 0])],
+    ['straight down, turned', view([0, 4, 0], [1, 0, 0])],
+  ]) {
+    const { dx, dy } = topOnScreen(camera);
+    assert.ok(dy > 0 && Math.abs(dx) < dy * 0.05, `${name}: top points up the screen (dx ${dx.toFixed(3)}, dy ${dy.toFixed(3)})`);
+  }
+});

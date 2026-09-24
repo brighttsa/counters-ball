@@ -2,15 +2,14 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Chalk venue rules on the table",
+  "task": "Chalk tallies upright in Tactical",
   "status": "released",
   "paths": [
-    "src/",
-    "styles/",
+    "src/scene/",
     "tests/",
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T12:10:30.079Z",
-  "head": "2199776a79bf0bf7a0a2942f116f5f0b5bae0c17"
+  "updatedAt": "2026-09-24T12:19:41.262Z",
+  "head": "0f3d3501d31312c6571fb5b14c7173f3ca759c34"
 }

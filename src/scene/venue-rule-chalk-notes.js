@@ -6,7 +6,7 @@
 //   { x, z, text, side? }  (side tints the chalk in that team's colour, e.g. whose coin chain it is)
 // and each is slid along the table to the nearest spot no piece or prop covers.
 import * as THREE from 'three';
-import { chalkSurface, chalkify, chalkTint, CHALK_WHITE } from './chalk-table-score-and-flick-tallies.js';
+import { chalkSurface, chalkify, chalkTint, screenUprightYaw, CHALK_WHITE } from './chalk-table-score-and-flick-tallies.js';
 import { NOTE_SIZE, placeClear } from './chalk-note-clear-placement.js';
 
 const MAX_NOTES = 4;
@@ -41,11 +41,8 @@ export function createVenueRuleChalkNotes(parent, colours = {}) {
     const { mesh } = surface;
     mesh.visible = false;
     mesh.material.opacity = 0;
-    // Turned so the words' top points the way the screen's top does, laid on the table: upright from a
-    // low side view and from straight above alike (turning toward the camera's position fails overhead).
     mesh.onBeforeRender = (renderer, scene, camera) => {
-      const e = camera.matrixWorld.elements; // column 1 is the camera's up in world space
-      if (Math.hypot(e[4], e[6]) > 1e-4) mesh.rotation.y = Math.atan2(-e[4], -e[6]);
+      mesh.rotation.y = screenUprightYaw(camera) ?? mesh.rotation.y;
       mesh.updateMatrixWorld();
     };
     root.add(mesh);

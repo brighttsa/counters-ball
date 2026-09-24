@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-24 — Chalk score and tallies upright in Tactical view
+
+### Fixed
+- The score and flick tallies chalked on the table read sideways in the overhead Tactical view (they turned toward
+  the camera's position, which is meaningless from straight above). They now turn to read upright on screen, the
+  same way as the venue rule notes, in every camera and in both phone orientations.
+
 ## 2026-09-24 — Venue rules chalked on the table
 
 ### Changed

@@ -1,7 +1,7 @@
 // Scoreboard chalked onto the pitch itself, just inside the touchline nearest
 // the camera (where the player leans over the table): the score at halfway, and each side's remaining flicks as
-// tally gates in its own half. Each mark turns to face the camera so it stays
-// readable in landscape, portrait and the free camera.
+// tally gates in its own half. Each mark turns to read upright on screen, so it stays
+// readable in landscape, portrait, the overhead Tactical view and the free camera.
 import * as THREE from 'three';
 import { PITCH_HALF_WIDTH, SIDE_HOME, SIDE_AWAY } from '../core/pitch-dimensions-and-constants.js';
 
@@ -31,6 +31,17 @@ export function nearTouchlineSign(cameraZ, previous = 1) {
   if (cameraZ > SIDE_FLIP_MARGIN) return 1;
   if (cameraZ < -SIDE_FLIP_MARGIN) return -1;
   return previous;
+}
+
+/**
+ * The turn (about the table's up axis) that makes flat chalk read upright on screen: the words' top points
+ * the way the screen's top does. Works from a low side view and from straight above alike; turning toward
+ * the camera's position instead leaves chalk sideways in the overhead Tactical view. Null when the camera's
+ * up is vertical (looking dead level), where any turn reads the same.
+ */
+export function screenUprightYaw(camera) {
+  const e = camera.matrixWorld.elements; // column 1 is the camera's up in world space
+  return Math.hypot(e[4], e[6]) > 1e-4 ? Math.atan2(-e[4], -e[6]) : null;
 }
 
 /** A flat chalk panel on the table (canvas texture), drawn into with `chalkify`. */
@@ -145,13 +156,11 @@ export function createChalkTableScoreboard(parent, homeColour, awayColour) {
   tallies[SIDE_HOME].mesh.position.set(-TALLY_X, 0.004, 0);
   tallies[SIDE_AWAY].mesh.position.set(TALLY_X, 0.004, 0);
   let side = 1;
-  const facing = new THREE.Vector3();
   for (const [surface, [w, h]] of [[score, SCORE_SIZE], [tallies[SIDE_HOME], TALLY_SIZE], [tallies[SIDE_AWAY], TALLY_SIZE]]) {
     const { mesh } = surface;
     mesh.onBeforeRender = (renderer, scene, camera) => {
       side = nearTouchlineSign(camera.position.z, side);
-      mesh.getWorldPosition(facing);
-      const yaw = Math.atan2(camera.position.x - facing.x, camera.position.z - facing.z);
+      const yaw = screenUprightYaw(camera) ?? mesh.rotation.y;
       // Turned to face the camera, the panel's reach across the pitch changes; keep it inside the touchline.
       const reach = (Math.abs(Math.sin(yaw)) * w + Math.abs(Math.cos(yaw)) * h) / 2;
       mesh.position.z = side * (PITCH_HALF_WIDTH - TOUCHLINE_CLEARANCE - reach);
