@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="styles/ink-impact-home.css" />
 <link rel="stylesheet" href="styles/player-camera-controls.css" />
 <link rel="stylesheet" href="styles/mobile-tablet-match-layout.css" />
+<link rel="stylesheet" href="styles/match-hud-one-frame-and-aim-fade.css" />
 <script type="importmap">
 {
   "imports": {
@@ -69,8 +70,6 @@
         <h3 id="circuit-venue-name"></h3>
         <p id="circuit-venue-place"></p>
         <p id="circuit-venue-opponent"></p>
-        <p id="circuit-venue-conditions"></p>
-        <p id="circuit-venue-rules"></p>
         <p id="circuit-venue-note"></p>
         <p id="circuit-venue-stars"></p>
       </div>
@@ -126,7 +125,7 @@
       <span class="team-name" id="hud-away-name"></span>
       <span class="turn-dot away inactive" id="turn-dot-away"></span>
     </div>
-    <div class="flick-meter"><b id="flicks-home"></b><span>flicks left</span><b id="flicks-away"></b></div>
+    <div class="flick-meter"><b id="flicks-home"></b><span id="flick-meter-label">flicks left</span><b id="flicks-away"></b></div>
     <button class="icon-btn pause-btn" data-action="pause" aria-label="Pause">❚❚</button>
     <div class="turn-banner" id="turn-banner" aria-live="polite"></div>
     <div class="legend-objective" id="hud-objective" aria-live="polite" hidden></div>
@@ -150,6 +149,7 @@
         <button class="btn" id="camera-view-toggle" data-action="cycle-camera-view" data-value="Broadcast">Camera view</button>
         <button class="btn" id="hud-style-toggle" data-action="toggle-hud-style" data-value="Chalk">Scoreboard</button>
         <button class="btn" id="hints-reset" data-action="reset-hints">Show tips again</button>
+        <button class="btn" id="sound-pause-toggle" data-action="toggle-sound" data-value="On">Sound</button>
         <button class="btn" data-action="how-to-play">How to play · Kwame's Corner</button>
         <button class="btn" data-action="quit" data-track-label="Quit to {track}">Quit to Pitches</button>
       </nav>

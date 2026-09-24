@@ -148,6 +148,8 @@ export function wireMatchFeedback(session) {
     sound.whistle();
     if (result.winner && (versus || result.winner === SIDE_HOME)) sound.event?.('win');
     hud.event(result.winner ? 'WINNER' : 'FULL TIME', { priority: 12, duration: 1.2 });
-    session.schedule(1.5, () => options.onEnd?.(result));
+    // The opponent's goal confetti should not keep falling behind the player's loss card.
+    const lost = !versus && result.winner !== SIDE_HOME;
+    session.schedule(1.5, () => { if (lost) particles.clearConfetti(); options.onEnd?.(result); });
   });
 }

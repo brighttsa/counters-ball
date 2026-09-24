@@ -4,6 +4,7 @@ import { SIDE_HOME, SIDE_AWAY } from '../core/pitch-dimensions-and-constants.js'
 import { KineticEventCallout } from './ui-kinetic-event-callout.js';
 
 const $ = (id) => document.getElementById(id);
+const TURN_CALL_MS = 1800;
 
 function restartAnimation(el, className) {
   el.classList.remove(className);
@@ -52,6 +53,9 @@ export class MatchHud {
     this.clearEvents();
     this.lowAttention.clear();
     $('turn-banner').textContent = '';
+    clearTimeout(this.turnCallTimer);
+    $('flick-meter-label').textContent = 'flicks left';
+    $('flick-meter-label').classList.remove('turn-call');
     this.setFlicks(level.rules.flickLimit, level.rules.awayFlickLimit ?? level.rules.flickLimit);
     this.setObjective(level.objective ?? null);
     this.hideTutorial();
@@ -79,14 +83,26 @@ export class MatchHud {
     this.table?.setScore(scores);
   }
 
+  /**
+   * Whose turn it is lives in the score frame: the side's bar lights, and for a moment the middle of the
+   * flicks row reads "Your flick" / "Kwame lines up" in that side's colour before going back to "flicks
+   * left". The turn banner stays as the screen-reader announcement only.
+   */
   setTurn(side, text) {
     $('turn-dot-home').classList.toggle('inactive', side !== SIDE_HOME);
     $('turn-dot-away').classList.toggle('inactive', side !== SIDE_AWAY);
     const banner = $('turn-banner');
     banner.textContent = text;
-    banner.style.setProperty('--turn-color', side === SIDE_AWAY ? 'var(--away-color)' : 'var(--home-color)');
     banner.dataset.side = side;
-    banner.classList.add('show');
+    const label = $('flick-meter-label');
+    clearTimeout(this.turnCallTimer);
+    label.textContent = text;
+    label.style.setProperty('--turn-color', side === SIDE_AWAY ? 'var(--away-color)' : 'var(--home-color)');
+    restartAnimation(label, 'turn-call');
+    this.turnCallTimer = setTimeout(() => {
+      label.textContent = 'flicks left';
+      label.classList.remove('turn-call');
+    }, TURN_CALL_MS);
   }
 
   setFlicks(home, away) {

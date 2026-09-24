@@ -91,6 +91,9 @@ export class MenuScreens {
     button.classList.toggle('muted', muted);
     button.setAttribute('aria-pressed', String(!muted));
     button.setAttribute('aria-label', muted ? 'Sound is off' : 'Sound is on');
+    // In a match the floating button steps aside; the pause menu carries the switch instead.
+    const pauseToggle = $('sound-pause-toggle');
+    if (pauseToggle) pauseToggle.dataset.value = muted ? 'Off' : 'On';
   }
 
   renderLevels(levels, progress, mode, isUnlocked) {
@@ -117,7 +120,7 @@ export class MenuScreens {
   }
 
   previewLevel(level, index, unlocked, mode) {
-    fillVenuePreview(level, index, unlocked, mode, this.circuitProgress?.stars[level.id] ?? 0, conditions(level));
+    fillVenuePreview(level, index, unlocked, mode, this.circuitProgress?.stars[level.id] ?? 0);
   }
 
   /**

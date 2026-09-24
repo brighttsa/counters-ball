@@ -1,5 +1,23 @@
 # Project Changelog
 
+## 2026-09-24 — Match HUD as one frame, and between-match polish
+
+### Changed
+- **One frame at the top of a match**: score, flicks left and (on Street Legends tables) the objective now read as
+  one strip with one yellow edge, instead of three separate boxes.
+- **Whose turn it is** shows in that strip: the side's bar lights, and the flicks row briefly reads "Your flick" or
+  "Kwame lines up" in that side's colour. The separate "Your flick" box in the bottom-left corner is gone (it is
+  still announced to screen readers).
+- **One corner tray**: the Camera button and Tactical peek are joined, and sit alone in the bottom-right corner.
+  The Camera button shows a small "CAMERA" caption over the view name instead of a label that wrapped. The floating
+  ♪ button steps aside during matches; **Sound** is now in the pause menu.
+- **Aim fade**: while you aim, the pause button and camera tray fade right back; the score and the table stay.
+- **No MATCH POINT shout on first-to-1 tables**, where every flick is match point.
+- **Act card**: eight lines down to five. Opponent, difficulty and terms share one line, the conditions line is gone
+  (the live table behind the card shows them), and stars show as ★★☆.
+- **Results**: after a loss or draw, **Play again** is the yellow button and takes focus (it used to focus "Acts");
+  after a win, Next act leads. The opponent's goal confetti no longer falls behind the loss card.
+
 ## 2026-09-24 — Physics feel: rail bite, clean contact, quick settle
 
 ### Changed

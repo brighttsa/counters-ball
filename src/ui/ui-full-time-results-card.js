@@ -92,10 +92,13 @@ export class FullTimeResultsCard {
       li.textContent = text;
       return li;
     }));
-    // Two players want the same table again at once: Rematch leads, and it's one tap.
+    // Two players want the same table again at once: Rematch leads, and it's one tap. Solo, a win leads on to
+    // the next table; after a loss or a draw (or with nothing next) Play again leads, and the menu focuses it.
     const replay = $('btn-replay');
+    const nextLeads = !versus && hasNext && title.dataset.outcome === 'win';
     replay.textContent = versus ? rematchLabel : RESULTS_COPY.playAgain;
-    replay.classList.toggle('btn-primary', versus);
+    replay.classList.toggle('btn-primary', !nextLeads);
+    $('btn-next').classList.toggle('btn-primary', nextLeads);
     $('btn-next').hidden = !hasNext;
     $('btn-next').textContent = level.legend ? 'Next act' : 'Next pitch';
   }

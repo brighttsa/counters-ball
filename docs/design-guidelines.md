@@ -171,15 +171,25 @@ local music or recorded voices. Pause suspends the audio context, including ambi
   Star at its centre, chalk flick-streaks trailing behind, a paper ball flying
   off, and sticker-cut wordmark. Animated on the title screen: the cap drops and
   settles, streaks draw on, the ball flies in, the `3D` tag slaps down.
-- **Circuit:** selected venue hero over the actual generated environment, with
-  place, opponent, conditions, difficulty and stars. Six connected route buttons
+- **Circuit:** selected venue hero over the actual generated environment, kept
+  short: act, place, one line for opponent, difficulty and terms, the story, and
+  stars as glyphs (the live table behind already shows light, surface and props).
+  Six connected route buttons
   preview even locked venues; Enter is disabled until unlocked. Mobile scrolls.
 - **Intro/results:** short skippable broadcast opening; large final score,
   opponent and star objectives with handwritten finishing notes.
-- **HUD:** compact score, persistent textual turn ownership, quiet flick budget,
-  one-shot low-flick attention and labeled Heat. One priority callout lane uses
+- **HUD:** one table-side frame: score, flick budget and the Street Legends
+  objective stack as one strip closed by one yellow edge. Turn ownership is the
+  lit side bar, plus a brief call ("Your flick") in the flicks row at each change;
+  there is no separate turn box. In a match the camera controls are the only
+  corner tray (Sound lives in the pause menu), and while a flick is aimed the
+  corner controls fade to 12% so only the score and the table remain. MATCH
+  POINT is never called on first-to-1 tables. One priority callout lane uses
   directional entrance/exit driven by elapsed time; reduced motion keeps text.
   Replay skip and camera-motion controls preserve 44px-or-larger targets.
+- **Results:** after a win with a next table, Next leads; after a loss or draw,
+  Play again leads and takes focus. A loss card never has the opponent's goal
+  confetti falling behind it.
 - On level 1 a chalk hand loops the drag gesture, anchored by projecting the
   striker's world position to screen space.
 

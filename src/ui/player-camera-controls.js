@@ -81,7 +81,7 @@ export function createPlayerCameraControls(control) {
       root.querySelectorAll('[name="camera-view"]').forEach(input => { input.checked = input.value === mode; });
       find('camera-free').hidden = mode !== 'free';
       const view = CAMERA_VIEWS[mode] ?? CAMERA_VIEWS.broadcast;
-      menu.innerHTML = `${view.icon}<span>Camera: ${view.label}</span><kbd>C</kbd>`;
+      menu.innerHTML = `${view.icon}<span class="camera-menu-label"><small>Camera</small>${view.label}</span><kbd>C</kbd>`;
       menu.setAttribute('aria-label', `Camera: ${view.label}. Choose a view`);
     },
   };

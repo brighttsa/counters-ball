@@ -1,7 +1,9 @@
 const $ = (id) => document.getElementById(id);
 const capitalize = (text) => String(text).charAt(0).toUpperCase() + String(text).slice(1);
 
-export function fillVenuePreview(level, index, unlocked, mode, stars, conditions) {
+// The act card stays short: the live table behind it already shows the venue, its light and its props,
+// so the card names the act, the place, who you play and on what terms, the story, and the stars.
+export function fillVenuePreview(level, index, unlocked, mode, stars) {
   const versus = mode === 'versus';
   const canEnter = unlocked || versus;
   const legend = level.legend; // Street Legends act: show the act, not the circuit match
@@ -9,13 +11,13 @@ export function fillVenuePreview(level, index, unlocked, mode, stars, conditions
     : `Ghana / Match ${String(index + 1).padStart(2, '0')}`;
   $('circuit-venue-name').textContent = legend ? level.actTitle : level.name;
   $('circuit-venue-place').textContent = level.place;
-  $('circuit-venue-opponent').textContent = versus ? `Accra Reds vs ${level.opponent.team.name}`
-    : `${level.opponent.kid} · ${level.opponent.team.name} · ${capitalize(level.opponent.difficulty)}`;
-  $('circuit-venue-conditions').textContent = conditions;
-  $('circuit-venue-rules').textContent = legend ? level.introLines[0]
-    : `First to ${level.rules.goalsToWin} · ${level.rules.flickLimit} flicks each`;
+  const terms = legend ? level.introLines[0] : `First to ${level.rules.goalsToWin} · ${level.rules.flickLimit} flicks each`;
+  $('circuit-venue-opponent').textContent = versus ? `Accra Reds vs ${level.opponent.team.name} · ${terms}`
+    : `vs ${level.opponent.kid} · ${capitalize(level.opponent.difficulty)} · ${terms}`;
   $('circuit-venue-note').textContent = level.blurb;
-  $('circuit-venue-stars').textContent = versus ? '2-player table' : `${stars} / 3 stars earned`;
+  const starLine = $('circuit-venue-stars');
+  starLine.textContent = versus ? '2-player table' : '★'.repeat(stars) + '☆'.repeat(3 - stars);
+  starLine.setAttribute('aria-label', versus ? '2-player table' : `${stars} of 3 stars earned`);
   const enter = $('circuit-enter');
   enter.dataset.index = String(index);
   enter.disabled = !canEnter;

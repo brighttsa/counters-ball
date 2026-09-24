@@ -35,7 +35,8 @@ export class MatchPresentationDirector {
     cameraDirector.setTension(critical ? 1 : 0);
     sound.setTension?.(critical);
     const key = `${side}:${rules.scores.home}:${rules.scores.away}`;
-    if (critical && key !== this.matchPointKey) {
+    // On a first-to-1 table every flick is match point, so saying it would only shout over each kickoff.
+    if (critical && rules.rules.goalsToWin > 1 && key !== this.matchPointKey) {
       this.matchPointKey = key;
       hud.event('MATCH POINT', { priority: 4, duration: 0.9 });
       sound.event?.('matchPoint');

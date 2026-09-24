@@ -9,7 +9,8 @@ function element() {
     textContent: '', hidden: false, dataset: {}, children: [], className: '',
     style: { setProperty: (k, v) => props.set(k, v), getPropertyValue: (k) => props.get(k) ?? '' },
     classList: { add() {}, remove() {}, toggle() {} },
-    setAttribute() {}, querySelector: () => element(), querySelectorAll: () => [],
+    setAttribute(k, v) { this.attributes = { ...this.attributes, [k]: String(v) }; },
+    getAttribute(k) { return this.attributes?.[k] ?? null; }, querySelector: () => element(), querySelectorAll: () => [],
     replaceChildren(...nodes) {
       this.children = nodes;
       this.textContent = nodes.map((n) => (typeof n === 'string' ? n : n.textContent)).join('');
@@ -71,10 +72,13 @@ test('Act 2 loss and draw offer the venue-specific next decision without changin
   assert.doesNotMatch(fullTimeNote({ winner: null }, act('schoolyard', 3), 'legends', {}), /Next shot/);
 });
 
-test('the venue panel names the opponent in one consistent style', () => {
+test('the venue panel names the opponent and the terms on one line, and shows stars as stars', () => {
   const level = act('roadside', 2);
   document.getElementById('level-grid');
-  fillVenuePreview(level, 0, true, 'legends', 0, 'Late afternoon');
+  fillVenuePreview(level, 0, true, 'legends', 2);
   const line = document.getElementById('circuit-venue-opponent').textContent;
-  assert.equal(line, `${level.opponent.kid} · ${level.opponent.team.name} · Medium`);
+  assert.equal(line, `vs ${level.opponent.kid} · Medium · ${level.introLines[0]}`);
+  const stars = document.getElementById('circuit-venue-stars');
+  assert.equal(stars.textContent, '★★☆');
+  assert.equal(stars.getAttribute('aria-label'), '2 of 3 stars earned');
 });

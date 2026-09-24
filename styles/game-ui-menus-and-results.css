@@ -56,8 +56,8 @@
 .menu-card .card-title { margin-bottom: 16px; }
 #camera-motion-toggle[aria-pressed='true']::after { content: ' · On'; color: var(--yellow); }
 #camera-motion-toggle[aria-pressed='false']::after { content: ' · Off'; }
-#hud-style-toggle::after, #camera-view-toggle::after, #hints-reset[data-value]::after { content: ' · ' attr(data-value); color: var(--yellow); }
-#camera-motion-toggle::after, #hud-style-toggle::after, #camera-view-toggle::after, #hints-reset[data-value]::after { white-space: nowrap; } /* the value never wraps away from its label's dot */
+#hud-style-toggle::after, #camera-view-toggle::after, #hints-reset[data-value]::after, #sound-pause-toggle::after { content: ' · ' attr(data-value); color: var(--yellow); }
+#camera-motion-toggle::after, #hud-style-toggle::after, #camera-view-toggle::after, #hints-reset[data-value]::after, #sound-pause-toggle::after { white-space: nowrap; } /* the value never wraps away from its label's dot */
 
 .results-card { max-width: 520px; width: min(720px, 100%); padding: 24px; text-align: center; background: var(--ink); border-top: 6px solid var(--yellow); }
 .results-card .card-actions { justify-content: center; }
