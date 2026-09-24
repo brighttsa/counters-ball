@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CAMERA_VIEWS, viewName } from '../src/ui/camera-view-icons-and-copy.js';
 import { createMenuActions } from '../src/ui/menu-button-action-routes.js';
+import { selectSettingsSection } from '../src/ui/pause-card-faces-and-setting-chips.js';
 
 // The routing table with stand-ins that record what each route asked for.
 function routes() {
@@ -45,6 +46,47 @@ test('the settings chips pick a camera view directly, ignore unknown views, and 
   actions['reset-hints'](tips);
   assert.deepEqual(calls.at(-1), ['hintsReset']);
   assert.equal(tips.dataset.value, 'On');
+});
+
+test('compact settings switches one category without changing saved preferences', () => {
+  const tabs = ['sound', 'camera', 'table'].map(section => ({ dataset: { section },
+    setAttribute(name, value) { this[name] = value; } }));
+  const card = { dataset: {}, querySelectorAll: () => tabs };
+  const previous = globalThis.document;
+  globalThis.document = { getElementById: () => card };
+  try {
+    const { actions, saved } = routes();
+    actions['settings-section']({ dataset: { section: 'camera' } });
+    assert.equal(card.dataset.settingsSection, 'camera');
+    assert.deepEqual(tabs.map(tab => tab['aria-pressed']), ['false', 'true', 'false']);
+    selectSettingsSection('unknown');
+    assert.equal(card.dataset.settingsSection, 'camera');
+    assert.equal(saved.length, 0);
+  } finally { globalThis.document = previous; }
+});
+
+test('Home settings reuse the pause controls and return to Home without pausing a match', () => {
+  const calls = [];
+  const panels = ['actions', 'settings'].map(face => ({ dataset: { facePanel: face }, hidden: face === 'settings' }));
+  const card = { dataset: {}, querySelectorAll: selector => selector === '[data-face-panel]' ? panels : [],
+    querySelector: () => ({ focus() {} }) };
+  const containers = { pause: { append: () => calls.push('restore') },
+    'home-settings': { append: () => calls.push('move') } };
+  const previous = globalThis.document;
+  globalThis.document = { getElementById: () => card, querySelector: selector =>
+    containers[selector.match(/data-screen="([^"]+)"/)?.[1]], querySelectorAll: () => [] };
+  try {
+    const menus = { current: 'title', show(name) { this.current = name; calls.push(name); } };
+    const actions = createMenuActions({ app: { session: null }, progress: {}, menus,
+      flow: { showTitle: () => calls.push('title') }, cameraDirector: { playerControl: { mode: 'street' } } });
+    actions['home-settings']();
+    assert.equal(card.dataset.face, 'settings');
+    assert.deepEqual(calls, ['move', 'home-settings']);
+    actions['close-settings']();
+    assert.deepEqual(calls, ['move', 'home-settings', 'restore', 'title']);
+    actions['home-credits']();
+    assert.equal(menus.current, 'credits');
+  } finally { globalThis.document = previous; }
 });
 
 test('music and scoreboard chips save exactly the chosen value; a music choice lifts the all-sound mute', () => {

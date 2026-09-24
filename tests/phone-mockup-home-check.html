@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KONK! phone mockup home check</title>
+<style>
+html,body{margin:0;background:#222626;color:#f8f1df;font:14px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{padding:18px}
+header{max-width:1180px;margin:0 auto 18px}
+h1{margin:0 0 6px;font:800 24px/1.1 system-ui;text-transform:uppercase}
+p{margin:0;color:#d8d0bd}.summary{max-width:1500px;margin:0 auto 14px;font:800 14px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#f4d54c}.summary.fail{color:#ff8a75}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:22px;align-items:start;max-width:1500px;margin:0 auto}
+.device{display:grid;gap:8px;justify-items:center}.device.wide{grid-column:1 / -1}.label{justify-self:stretch;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.label b{font-size:13px}.status{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#f4d54c}.status.fail{color:#ff8a75}
+.phone{position:relative;background:#090b0b;border:4px solid #c8bea3;border-radius:34px;padding:20px 8px 8px;box-shadow:0 16px 40px #0008, inset 0 0 0 2px #34302a}
+.phone::before{content:"";position:absolute;top:7px;left:50%;width:84px;height:8px;border-radius:999px;background:#050606;transform:translateX(-50%);z-index:2}
+.phone.landscape{padding:8px 20px 8px 54px;border-radius:38px}
+.phone.landscape::before{top:50%;left:18px;width:12px;height:68px;transform:translateY(-50%)}
+.android{border-color:#9fa8ad}.android::before{width:14px;height:14px;border-radius:50%}
+.android.landscape::before{width:14px;height:14px}
+iframe{display:block;border:0;background:#111;width:var(--w);height:var(--h);border-radius:18px;overflow:hidden}
+</style>
+<header>
+  <h1>KONK! Phone Mockup Home Check</h1>
+  <p>Real app iframes in representative iPhone and Samsung viewport shells. If the Three.js runtime cannot boot inside many headless iframes, the harness activates the Home markup as a CSS layout fallback.</p>
+</header>
+<div class="summary" id="summary">Running checks…</div>
+<main class="grid" id="devices"></main>
+<script type="module" src="./phone-mockup-home-check.js?v=4"></script>
+</html>

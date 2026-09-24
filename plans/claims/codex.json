@@ -2,17 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Implement approved KONK copy deck",
+  "task": "Phone home notch and landscape fit",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/ui/",
-    "src/gameplay/",
-    "src/levels/",
-    "src/core/",
-    "tests/",
+    "styles/ink-impact-home.css",
+    "tests/phone-mockup-home-check.html",
+    "tests/phone-mockup-home-check.js",
+    "plans/reports/phone-mockup-home-check.md",
+    "plans/reports/phone-mockup-home-check",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-23T16:02:46.919Z",
-  "head": "53419ad55888d04a8d4132e9391daaec59b7bb65"
+  "updatedAt": "2026-09-24T19:16:58.215Z",
+  "head": "df17ceacea89dddc13db91fb3ef7a0a0e7ce36bb"
 }
