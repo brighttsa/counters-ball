@@ -4,6 +4,7 @@
 const STORAGE_KEY = 'counters-ball-3d/progress-v1';
 
 const isCount = (value) => Number.isInteger(value) && value >= 0;
+const MUSIC_VOLUMES = [0, 0.35, 0.7, 1]; // the pause menu's Off / Low / Medium / High
 const isPlainObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 const validNames = (names) => isPlainObject(names) && [names.home, names.away].every((n) => typeof n === 'string' && n.length > 0 && n.length <= 12);
 
@@ -25,6 +26,8 @@ export function loadProgress() {
       stars: parsed?.stars && typeof parsed.stars === 'object' && !Array.isArray(parsed.stars)
         ? Object.fromEntries(Object.entries(parsed.stars).filter(([, value]) => Number.isInteger(value) && value >= 0 && value <= 3)) : {},
       muted: Boolean(parsed?.muted),
+      ...(MUSIC_VOLUMES.includes(parsed?.musicVolume) && { musicVolume: parsed.musicVolume }), // Medium when unset
+      ...(parsed?.effectsOff === true && { effectsOff: true }),
       ...(typeof parsed?.lastLegendAct === 'string' && { lastLegendAct: parsed.lastLegendAct }),
       ...(parsed?.hudStyle === 'broadcast' && { hudStyle: 'broadcast' }), // chalk is the default
       ...(parsed?.practiceDone === true && { practiceDone: true }), // finished Kwame's Corner once

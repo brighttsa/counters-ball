@@ -1,17 +1,19 @@
 // Every [data-action] button in index.html, mapped to what it does. The app
 // flow (title, levels, intro, match, results) lives in main.js; this is only
-// the routing table plus the two saved preference toggles.
+// the routing table plus the saved preference toggles.
+import { applyAudioSettings, nextMusicVolume, DEFAULT_MUSIC_VOLUME } from '../audio/music-and-effects-audio-settings.js';
 
 const ARM_SECONDS = 4;
 
 /**
- * @param ctx { app, progress, save, flow, hud, sound, cameraDirector, hotSeat, resultsShare, menus }
+ * @param ctx { app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus }
  *   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex }
  */
 const VIEW_LABELS = { tactical: 'Tactical', broadcast: 'Broadcast', street: 'Street Level', free: 'Free Camera' };
 const VIEW_ORDER = ['tactical', 'broadcast', 'street', 'free'];
 
-export function createMenuActions({ app, progress, save, flow, hud, sound, cameraDirector, hotSeat, resultsShare, menus, hints }) {
+export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus, hints }) {
+  const audio = () => { save(progress); applyAudioSettings({ progress, sound, music, menus }); };
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
   // Restart and Quit throw a match away. Once a flick has been played, the first press only arms the
   // button ("Sure? Press again…"); a second press within a few seconds acts. Works the same by keyboard.
@@ -103,11 +105,13 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, camer
       hud.setStyle(progress.hudStyle);
       save(progress);
     },
-    'toggle-sound': () => {
-      progress.muted = !progress.muted;
-      sound.setMuted(progress.muted);
-      save(progress);
-      menus.setSoundIcon(progress.muted);
+    'toggle-sound': () => { progress.muted = !progress.muted; audio(); },
+    // Choosing a music level or switching effects on in the pause menu also lifts the ♪ all-sound mute.
+    'cycle-music-volume': () => {
+      progress.musicVolume = nextMusicVolume(progress.musicVolume ?? DEFAULT_MUSIC_VOLUME);
+      progress.muted = false;
+      audio();
     },
+    'toggle-effects': () => { progress.effectsOff = !progress.effectsOff; progress.muted = false; audio(); },
   };
 }

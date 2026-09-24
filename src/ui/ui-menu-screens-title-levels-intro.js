@@ -57,6 +57,7 @@ export class MenuScreens {
 
   show(name) {
     document.body.dataset.screen = name ?? 'match';
+    this.onShow?.(name ?? null); // the soundtrack follows the screen
     for (const [key, el] of Object.entries(this.screens)) el.classList.toggle('is-active', key === name);
     this.current = name;
     // One selector list would match in document order and land on a Back button placed before
@@ -91,9 +92,6 @@ export class MenuScreens {
     button.classList.toggle('muted', muted);
     button.setAttribute('aria-pressed', String(!muted));
     button.setAttribute('aria-label', muted ? 'Sound is off' : 'Sound is on');
-    // In a match the floating button steps aside; the pause menu carries the switch instead.
-    const pauseToggle = $('sound-pause-toggle');
-    if (pauseToggle) pauseToggle.dataset.value = muted ? 'Off' : 'On';
   }
 
   renderLevels(levels, progress, mode, isUnlocked) {

@@ -29,7 +29,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         if (!AudioCtx) return;
         this.ctx = new AudioCtx();
         this.master = this.ctx.createGain();
-        this.master.gain.value = this.muted ? 0 : MASTER_LEVEL;
+        this.master.gain.value = this.muted || this.effectsOff ? 0 : MASTER_LEVEL;
         this.compressor = this.ctx.createDynamicsCompressor();
         this.master.connect(this.compressor).connect(this.ctx.destination);
         const buffer = this.ctx.createBuffer(1, this.ctx.sampleRate * NOISE_SECONDS, this.ctx.sampleRate);
@@ -38,6 +38,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         this.noiseBuffer = buffer;
         this.ambience.attach(this.ctx, this.master, buffer);
       }
+      this.music?.attach(this.ctx); // the soundtrack shares the context on its own bus
       this.setPaused(this.paused);
     } catch {
       this.dispose(); // audio unavailable: the game stays playable in silence
@@ -46,7 +47,17 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
 
   setMuted(muted) {
     this.muted = muted;
-    this.master?.gain.setTargetAtTime(muted ? 0 : MASTER_LEVEL, this.ctx.currentTime, 0.05);
+    this.applyMasterLevel();
+  }
+
+  /** Effects only (contacts, whistles, street ambience); the music has its own bus and control. */
+  setEffectsOff(off) {
+    this.effectsOff = Boolean(off);
+    this.applyMasterLevel();
+  }
+
+  applyMasterLevel() {
+    this.master?.gain.setTargetAtTime(this.muted || this.effectsOff ? 0 : MASTER_LEVEL, this.ctx.currentTime, 0.05);
   }
 
   setSfxLevel(level) {

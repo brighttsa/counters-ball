@@ -8,6 +8,8 @@ import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js'
 import { PlayerCameraController } from './fx/player-camera-controller.js';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
+import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
+import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
 import { MatchSession } from './gameplay/match-session-runtime.js';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js';
@@ -35,6 +37,7 @@ const post = createPostProcessing(renderer, scene, camera);
 const cameraDirector = new CameraDirector(camera, scene);
 const progress = loadProgress();
 const sound = new ProceduralSoundBoard({ muted: progress.muted });
+const music = new SoundtrackDirector();
 const hud = new MatchHud();
 const resultsCard = new FullTimeResultsCard();
 const resultsShare = new ResultsShare(document.getElementById('results-share-status'));
@@ -198,7 +201,7 @@ const menus = new MenuScreens((action, el) => {
 });
 const chalkHints = new JustInTimeChalkHints();
 const actions = createMenuActions({
-  app, progress, save: saveProgress, hud, sound, cameraDirector, hotSeat, resultsShare, menus, hints: chalkHints,
+  app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus, hints: chalkHints,
   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex },
 });
 
@@ -209,7 +212,7 @@ window.addEventListener('keydown', (e) => {
   else if (menus.current === null && app.session && !app.session.options.isAttract) actions.pause();
 });
 
-menus.setSoundIcon(progress.muted);
+wireSoundtrack({ app, sound, music, menus, progress });
 hud.setStyle(progress.hudStyle);
 app.challenge = takeChallengeFromUrl();
 if (app.challenge) showChallenge(); else showTitle();
@@ -219,4 +222,4 @@ startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
     app.practice?.update(camera, cameraDirector.playerControl, dt);
   } });
 
-window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions };
+window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions, music, sound };

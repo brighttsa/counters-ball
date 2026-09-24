@@ -7,7 +7,10 @@ Claude Code reads it via `CLAUDE.md`). Two agents work here in parallel, so the
 ## Project
 Browser game of Ghanaian bottle-cap tabletop football. Three.js r160 from CDN via
 an import map, **no build step, no binary assets** — every texture, sound and
-sprite is generated at runtime. Six-venue campaign vs a simulating AI, 2-player
+sprite is generated at runtime. **One owner-approved exception (2026-09-24):**
+the soundtrack, the owner's three original recordings, as 128 kbps MP3 web
+copies in `assets/audio/` (see `src/audio/soundtrack-*.js`). Sound effects and
+ambience stay synthesised; do not add other binary assets without asking. Six-venue campaign vs a simulating AI, 2-player
 hot-seat, procedural audio, depth-of-field street environments.
 
 Read before changing things:

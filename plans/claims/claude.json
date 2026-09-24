@@ -2,14 +2,18 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Lorry chalk note clear of kickoff caps",
+  "task": "Soundtrack integration",
   "status": "released",
   "paths": [
-    "src/scene/",
+    "src/",
+    "assets/",
+    "index.html",
+    "styles/",
     "tests/",
     "docs/",
+    "AGENTS.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T12:35:02.083Z",
-  "head": "4181b9454b1208851631f21733ab0816df7dd02d"
+  "updatedAt": "2026-09-24T13:22:18.467Z",
+  "head": "b253016aa48688d5bd2fa747ed49ae9539c55c1f"
 }

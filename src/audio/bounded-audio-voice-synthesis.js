@@ -1,7 +1,7 @@
 // Sources are single-use Web Audio nodes; reusable buffers and a hard voice
 // limit bound allocation, and every ended voice disconnects its entire chain.
 export class BoundedAudioVoiceSynthesis {
-  constructor() { this.voices = new Set(); this.paused = false; }
+  constructor() { this.voices = new Set(); this.paused = false; this.hidden = false; }
 
   track(source, nodes) {
     const voice = { source, nodes };
@@ -12,7 +12,7 @@ export class BoundedAudioVoiceSynthesis {
     };
   }
 
-  available() { return this.ctx && !this.muted && !this.paused && this.voices.size < 32; }
+  available() { return this.ctx && !this.muted && !this.effectsOff && !this.paused && this.voices.size < 32; }
 
   /** Gain envelope into the master bus; a non-zero pan places the voice left/right of centre. */
   envelope(level, start, attack, duration, pan = 0) {
@@ -63,8 +63,18 @@ export class BoundedAudioVoiceSynthesis {
 
   setPaused(paused) {
     this.paused = Boolean(paused);
+    this.applySuspension();
+  }
+
+  /** A hidden tab goes quiet (music included) and picks up where it was when shown again. */
+  setHidden(hidden) {
+    this.hidden = Boolean(hidden);
+    this.applySuspension();
+  }
+
+  applySuspension() {
     if (!this.ctx) return;
-    const action = this.paused ? this.ctx.suspend() : this.ctx.resume();
+    const action = this.paused || this.hidden ? this.ctx.suspend() : this.ctx.resume();
     action?.catch(() => {});
   }
 

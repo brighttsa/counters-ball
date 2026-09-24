@@ -1,5 +1,27 @@
 # Project Changelog
 
+## 2026-09-24 — Soundtrack: the owner's three original recordings
+
+### Added
+- **Music**, from three original recordings supplied by the owner (128 kbps web copies in `assets/audio/`; the
+  originals are kept outside the repo, unchanged):
+  - Home (title, table and act lists, intro card): *Three-Contact Motif*.
+  - Classic Match, 2-Player and Kwame's Corner: *Found Object Groove*.
+  - Street Legends: *Bottle Cap Challenge*.
+- One music director plays exactly one track: asking for the track already playing does nothing, so turns, goals,
+  the results card, Play again, Restart and Next act never restart or double it; a new track crossfades in over
+  1.2 s. Pause freezes the music where it is; results play it 4 dB quieter; goals dip it 6 dB for 2.5 s; a hidden
+  tab goes quiet. Music starts after the first tap or key (browser rule).
+- Each track plays its intro once and then loops a region that skips its ending (Three-Contact Motif 19.18–145.40 s,
+  Found Object Groove 14.10–127.22 s, Bottle Cap Challenge 18.66–169.19 s), joined with a 150 ms crossfade baked
+  into the decoded copy. Loop points came from an offline search of each recording's rhythm and level.
+- Pause menu: **Music** (Off / Low / Medium / High) and **Sound effects** (On / Off), saved; the ♪ button still
+  mutes everything. Music sits on its own bus, below the effects.
+
+### Changed
+- AGENTS.md and the design guidelines record the soundtrack as the one owner-approved exception to "no binary
+  assets"; sound effects stay synthesised.
+
 ## 2026-09-24 — Lorry note clear of the kickoff caps
 
 ### Fixed

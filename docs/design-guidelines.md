@@ -157,7 +157,7 @@ aperture 0.004 up to 0.013 max blur; focus tracks the camera director) → Unrea
 35mm hash grain, warm grade, dust-haze veil toward the light, vignette floor
 0.72. The CSS `#film-frame` inset shadow completes the frame.
 
-## 7. Audio (all synthesised, no files)
+## 7. Audio (synthesised effects; the soundtrack is the one file-based exception)
 Metal caps are inharmonic partials (1 : 2.76 : 5.4) with a noise transient; the
 paper ball is a low-passed thud; battens are a 190 Hz body plus a knock; stones
 are a tight band-passed clack; the bottle rings at 3150/4730 Hz. The referee
@@ -167,6 +167,19 @@ Semantic cues cover interaction, contact, skills, match point and outcomes.
 Transient sources are capped at 32 and disconnected after ending. Heat lifts
 ambience; tension ducks it. These are abstract synthesized cues, not invented
 local music or recorded voices. Pause suspends the audio context, including ambience.
+
+**Soundtrack (owner-approved exception, 2026-09-24).** Three original recordings
+by the owner, as 128 kbps web copies in `assets/audio/`. Home (title, lists,
+intro card): *Three-Contact Motif*, the brightest, kept where there are almost
+no effects to mask. Classic, 2-Player and Kwame's Corner: *Found Object Groove*,
+the steadiest and least trebly, under the cap clinks. Street Legends: *Bottle Cap
+Challenge*, the longest and dark. Each plays its intro once and then loops a
+region that skips its ending, joined with a 150 ms baked crossfade. The match
+track carries through pause (frozen), results (−4 dB) and Play again / Next
+act (never restarted); goals dip it −6 dB for 2.5 s. Music is on its own bus
+at about −10 dB (Medium) below the masters so contacts stay on top; Music
+(Off/Low/Medium/High) and Sound effects are separate pause-menu settings, and
+♪ mutes everything. A hidden tab goes quiet.
 
 ## 8. Interface
 - **Voice:** 70% charcoal sports/editorial structure, 30% chalk/tape character.
