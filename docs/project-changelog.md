@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-09-24 — One-piece aim arrow
+
+### Changed
+- The aim arrow is one piece: a ring round the chosen cap and a single band growing straight out of it.
+  The separate gold notch, the inner gold strip, the red max-power rim and the second shadow ring are gone,
+  so the see-through layers no longer read as dashes or stripes. Power now warms the ring and the band
+  together from ivory to gold, on top of the band's length and width.
+
 ## 2026-09-24 — Lighter aim arrow
 
 ### Changed

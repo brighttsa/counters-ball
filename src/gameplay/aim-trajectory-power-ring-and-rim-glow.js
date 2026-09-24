@@ -1,7 +1,10 @@
 import { MAX_FLICK_SPEED } from '../core/pitch-dimensions-and-constants.js';
 import { flickPreview } from './flick-vector-contact-preview.js';
 import { projectedFlickWidth } from './flick-vector-projected-width.js';
-import { createFlickMeshes, shapeRibbon, IVORY } from './flick-vector-meshes.js';
+import * as THREE from 'three';
+import { createFlickMeshes, shapeRibbon, IVORY, GOLD } from './flick-vector-meshes.js';
+
+const IVORY_TINT = new THREE.Color(IVORY), FULL_GOLD = new THREE.Color(GOLD), GOLD_TINT = new THREE.Color();
 
 const preference = query => globalThis.matchMedia?.(query)?.matches ?? false;
 
@@ -28,44 +31,37 @@ export class AimVisuals {
     const { power, direction, range, contact } = preview;
     this.power = power;
     this.preview = preview;
-    this.ring.visible = this.glow.visible = this.ringShadow.visible = true;
-    for (const mesh of [this.ring, this.glow, this.ringShadow]) {
-      mesh.position.set(body.pos.x, 0.012, body.pos.y);
-      mesh.scale.setScalar(body.radius * (1 - power * 0.08));
-    }
-    this.ring.material.color.set(IVORY).lerp(this.core.material.color, power * 0.45);
-    this.glow.material.opacity = 0.12 + power * 0.12;
-    for (const mesh of [this.notch, this.ribbon, this.ribbonShadow, this.core, this.edge, this.ghost, this.ghostFill]) mesh.visible = false;
+    this.ring.visible = true;
+    this.glow.visible = false;
+    this.ring.position.set(body.pos.x, 0.012, body.pos.y);
+    this.ring.scale.setScalar(body.radius);
+    // Power warms the ring and the band together from ivory to gold, instead of a separate gold strip.
+    const tint = GOLD_TINT.copy(IVORY_TINT).lerp(FULL_GOLD, power * 0.75);
+    this.ring.material.color.copy(tint);
+    for (const mesh of [this.ribbon, this.ribbonShadow, this.ghost, this.ghostFill]) mesh.visible = false;
     if (power < 0.02) return;
     const angle = -Math.atan2(direction.y, direction.x);
     const width = projectedFlickWidth(this.camera, this.canvas, body.pos, direction, power,
       preference('(pointer: coarse)') || (this.canvas?.getBoundingClientRect?.().width ?? 1000) < 600)
       * (power > 0.95 && !preference('(prefers-reduced-motion: reduce)') ? 1 + Math.sin(this.elapsed * 5) * 0.025 : 1);
     const distance = Math.max(0.42 + power * 0.65, Math.min(1.35, contact?.distance ?? range));
-    const start = body.radius * 1.72;
+    const start = body.radius * 1.7; // the band grows out of the ring's outer edge, no gap
     const length = Math.max(0, distance - start);
     const head = Math.min(length * 0.42, width * 1.5);
-    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.12, 0.028], [this.edge, 1.1, 0.03],
-      [this.ribbon, 1, 0.034], [this.core, 0.36, 0.038]]) {
-      shapeRibbon(mesh, length, width * scale, start, head * (mesh === this.core ? 0.7 : 1));
+    for (const [mesh, scale, y] of [[this.ribbonShadow, 1.2, 0.028], [this.ribbon, 1, 0.034]]) {
+      shapeRibbon(mesh, length, width * scale, start, head);
       mesh.position.set(body.pos.x, y, body.pos.y);
       mesh.rotation.y = angle;
-      mesh.visible = length > 0.008 && (mesh === this.ribbon || mesh === this.ribbonShadow
-        || (mesh === this.core ? power > 0.3 : power > 0.85));
+      mesh.visible = length > 0.008;
     }
-    // A gold core fills in as the pull deepens; the enamel rim marks the top of the range.
-    this.core.material.opacity = Math.min(1, Math.max(0, (power - 0.3) / 0.5)) * 0.6;
-    shapeRibbon(this.notch, body.radius * 0.55, body.radius * 0.42, body.radius * 1.23);
-    this.notch.position.set(body.pos.x, 0.041, body.pos.y);
-    this.notch.rotation.y = angle;
-    this.notch.visible = true;
+    this.ribbon.material.color.copy(tint);
     if (contact) {
       for (const mesh of [this.ghost, this.ghostFill]) {
         mesh.visible = true;
         mesh.position.set(contact.position.x, 0.018, contact.position.y);
         mesh.scale.setScalar(body.radius);
       }
-      this.ghost.material.color.set(IVORY).lerp(this.notch.material.color, contact.alignment);
+      this.ghost.material.color.copy(IVORY_TINT).lerp(FULL_GOLD, contact.alignment);
       this.ghost.material.opacity = 0.3 + contact.alignment * 0.35;
       if (contact.kind === 'wall') {
         this.ghost.position.set(contact.position.x - contact.normal.x * body.radius, 0.018,

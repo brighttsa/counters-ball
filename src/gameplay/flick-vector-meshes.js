@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const IVORY = 0xfdf6e6, GOLD = 0xdfb94f, ENAMEL = 0xa83b2a;
+export const IVORY = 0xfdf6e6, GOLD = 0xdfb94f;
 export function flatMaterial(color, opacity = 1) {
   return new THREE.MeshBasicMaterial({ color, opacity, transparent: true,
     depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
@@ -33,31 +33,28 @@ export function shapeRibbon(mesh, length, width, start = 0, head = Math.min(leng
   attribute.needsUpdate = true;
 }
 
-// The aim reads as a light, see-through overlay rather than a solid sticker: the table and the
-// pieces stay visible through every layer, and the shadows are only a faint lift off the surface.
+// The aim is one light, see-through piece: a ring round the chosen cap and a single band that grows
+// straight out of it, so nothing reads as separate dashes or stripes. The table and the pieces stay
+// visible through it, and the dark outline underneath is only a faint lift off the surface.
 export function createFlickMeshes(parent) {
   const group = new THREE.Group();
-  const ring = flatRing(1.25, 1.7, IVORY, 0.7);
-  const ringShadow = flatRing(1.2, 1.8, 0x241c14, 0.2);
-  // A faint dark outline under the ribbon keeps it readable on pale cardboard and in sunlight.
-  const ribbonShadow = ribbonMesh(0x241c14, 0.26);
-  const glow = flatRing(1.02, 2.1, GOLD, 0.14);
-  const notch = ribbonMesh(GOLD, 0.8);
+  const ring = flatRing(1.25, 1.7, IVORY, 0.92);
+  // A faint dark outline under the band keeps it readable on pale cardboard and in sunlight.
+  const ribbonShadow = ribbonMesh(0x241c14, 0.34);
+  const glow = flatRing(1.02, 2.1, GOLD, 0.14); // hover only: which cap you can pick up
   const ribbon = ribbonMesh(IVORY, 0.72);
-  const core = ribbonMesh(GOLD, 0.6);
-  const edge = ribbonMesh(ENAMEL, 0.5);
   const ghost = flatRing(0.84, 1, GOLD, 0.55);
   const ghostFill = new THREE.Mesh(new THREE.CircleGeometry(1, 48), flatMaterial(IVORY, 0.12));
   ghostFill.rotation.x = -Math.PI / 2;
   const flash = flatRing(1.15, 1.65, GOLD, 0);
   const scrape = ribbonMesh(IVORY, 0);
-  const meshes = { ringShadow, ribbonShadow, ring, glow, notch, ribbon, core, edge, ghost, ghostFill, flash, scrape };
+  const meshes = { ribbonShadow, ring, glow, ribbon, ghost, ghostFill, flash, scrape };
   Object.values(meshes).forEach((mesh, i) => {
     mesh.visible = false;
     mesh.renderOrder = 20 + i;
     group.add(mesh);
   });
-  edge.renderOrder = 25; ribbon.renderOrder = 26; core.renderOrder = 27;
+  ribbon.renderOrder = 26;
   parent.add(group);
   return { group, ...meshes };
 }

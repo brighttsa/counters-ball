@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Lighter, translucent aim arrow",
+  "task": "One-piece aim arrow",
   "status": "released",
   "paths": [
     "src/gameplay/",
@@ -10,6 +10,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T09:55:44.886Z",
-  "head": "d6bd1245296bfd8bddfefa9774b299283cca171a"
+  "updatedAt": "2026-09-24T10:00:56.518Z",
+  "head": "8e467f25bcff02a5eea6d2647ba2c0a9c8300cfb"
 }
