@@ -89,6 +89,7 @@ function showTitle() {
   ensureAttractMode();
   menus.setHomeFeature(STREET_LEGENDS_ACTS[featuredIndex()]);
   menus.setTitleStars(totalStars(progress, CAMPAIGN_LEVELS), CAMPAIGN_LEVELS.length * 3);
+  menus.setFirstLaunch(!progress.practiceDone && !progress.practiceSkipped);
   menus.show('title');
 }
 
@@ -195,8 +196,9 @@ const menus = new MenuScreens((action, el) => {
   if (action !== 'toggle-sound') sound.uiTick();
   actions[action]?.(el);
 });
+const chalkHints = new JustInTimeChalkHints();
 const actions = createMenuActions({
-  app, progress, save: saveProgress, hud, sound, cameraDirector, hotSeat, resultsShare, menus,
+  app, progress, save: saveProgress, hud, sound, cameraDirector, hotSeat, resultsShare, menus, hints: chalkHints,
   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex },
 });
 
@@ -211,7 +213,6 @@ menus.setSoundIcon(progress.muted);
 hud.setStyle(progress.hudStyle);
 app.challenge = takeChallengeFromUrl();
 if (app.challenge) showChallenge(); else showTitle();
-const chalkHints = new JustInTimeChalkHints();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
   onFrame: (dt) => {
     chalkHints.update(app.session, camera, cameraDirector.playerControl, dt);

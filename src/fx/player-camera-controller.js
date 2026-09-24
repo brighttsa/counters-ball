@@ -55,6 +55,7 @@ export class PlayerCameraController {
     this.director.goal = null;
     this.pose = this.poseFor(mode); this.rate = CAMERA_SNAP_RATE;
     if (save) {
+      this.ui.announce?.(mode);
       this.preferences[this.owner()] = mode;
       try { this.storage?.setItem(CAMERA_PREFERENCE_KEY, JSON.stringify(this.preferences)); } catch { /* storage is optional */ }
     }

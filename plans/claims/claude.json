@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Kwame's Corner practice table",
+  "task": "First-launch Kwame, camera cues, pause settings",
   "status": "released",
   "paths": [
     "src/",
@@ -12,6 +12,6 @@
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T11:10:01.882Z",
-  "head": "7471ef0a3b9871c38958963481a3709c68e613f6"
+  "updatedAt": "2026-09-24T11:18:49.285Z",
+  "head": "26c27bac43ecb1617f9a7a8040084ceca9755f27"
 }

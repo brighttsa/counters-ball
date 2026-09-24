@@ -75,6 +75,13 @@ export class MenuScreens {
     $('home-feature-button').textContent = copy.button;
   }
 
+  /** Until Kwame's Corner is finished or skipped, the big title button offers it instead of the featured act. */
+  setFirstLaunch(first) {
+    for (const el of document.querySelectorAll('.home-learn, .home-just-play')) el.hidden = !first;
+    document.querySelector('.home-featured').hidden = first;
+    document.querySelector('.home-secondary [data-action="play-practice"]').hidden = first; // the big button already offers it
+  }
+
   setTitleStars(earned, max) {
     $('title-stars').textContent = titleStarsCopy(earned, max);
   }

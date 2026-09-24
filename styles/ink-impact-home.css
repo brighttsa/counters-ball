@@ -41,3 +41,8 @@
   .tagline, .title-stars { display: none; }
   .screen-title .home-play { min-height: 48px; font-size: var(--text-xl); }
 }
+
+/* First launch: the big button offers Kwame's Corner, with a quieter way straight into a match. */
+.screen-title .home-learn-label { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.screen-title .home-learn small { font: 700 var(--text-xs)/1 var(--font-body); letter-spacing: .04em; text-transform: uppercase; opacity: .7; }
+.screen-title .home-just-play { text-align: left; padding: 10px 20px; font-size: var(--text-sm); }

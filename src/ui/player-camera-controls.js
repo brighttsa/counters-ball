@@ -1,3 +1,7 @@
+import { CAMERA_VIEWS, viewName } from './camera-view-icons-and-copy.js';
+
+const TOAST_SECONDS = 1.8;
+
 export function createPlayerCameraControls(control) {
   const root = document.createElement('section');
   root.className = 'player-camera'; root.setAttribute('aria-label', 'Match camera'); root.hidden = true;
@@ -6,8 +10,8 @@ export function createPlayerCameraControls(control) {
     <button type="button" id="camera-peek" title="Hold for Tactical view">Tactical peek</button></div>
     <div id="camera-panel" hidden>
       <div class="camera-panel-heading"><strong>Match camera</strong><button type="button" id="camera-close">Close</button></div>
-      <fieldset><legend>Camera angle</legend>${[['tactical','Tactical'],['broadcast','Broadcast'],['street','Street Level'],['free','Free Camera']]
-        .map(([value, label]) => `<label><input type="radio" name="camera-view" value="${value}"><span>${label}</span></label>`).join('')}</fieldset>
+      <fieldset><legend>Camera angle</legend>${Object.entries(CAMERA_VIEWS).map(([value, view]) => `<label><input type="radio" name="camera-view" value="${value}"><span>${view.icon}<b>${view.label}</b><small>${view.purpose}</small>${view.key ? `<kbd>${view.key}</kbd>` : ''}</span></label>`).join('')}</fieldset>
+      <p class="camera-keys-note">Keys: 1 · 2 · 3, or C to step through them</p>
       <div id="camera-free" hidden><div id="camera-orbit" tabindex="0" role="group" aria-label="Drag to orbit camera"></div>
         <div class="camera-orbit-buttons"><button data-orbit="-1" aria-label="Orbit left" title="Orbit left">&#8592;</button>
         <button data-tilt="-1" aria-label="Raise camera" title="Raise camera">&#8593;</button>
@@ -64,12 +68,21 @@ export function createPlayerCameraControls(control) {
     if (mode) { e.preventDefault(); control.select(mode); }
     if (e.key.toLowerCase() === 'c') { e.preventDefault(); control.cycle(); }
   });
-  return { root, pad: find('camera-orbit'), notice: text => { find('camera-status').textContent = text; },
+  let toastTimer = 0;
+  return { root, pad: find('camera-orbit'), notice: text => { clearTimeout(toastTimer); find('camera-status').textContent = text; },
+    /** A short name toast when the player switches view, so view names and keys are learnt by using them. */
+    announce(mode) {
+      clearTimeout(toastTimer);
+      find('camera-status').textContent = `Now: ${viewName(mode)}`;
+      toastTimer = setTimeout(() => { find('camera-status').textContent = ''; }, TOAST_SECONDS * 1000);
+    },
     sync(mode, active) {
       root.hidden = !active;
       root.querySelectorAll('[name="camera-view"]').forEach(input => { input.checked = input.value === mode; });
       find('camera-free').hidden = mode !== 'free';
-      menu.textContent = `Camera: ${mode === 'street' ? 'Street Level' : mode[0].toUpperCase() + mode.slice(1)}`;
+      const view = CAMERA_VIEWS[mode] ?? CAMERA_VIEWS.broadcast;
+      menu.innerHTML = `${view.icon}<span>Camera: ${view.label}</span><kbd>C</kbd>`;
+      menu.setAttribute('aria-label', `Camera: ${view.label}. Choose a view`);
     },
   };
 }

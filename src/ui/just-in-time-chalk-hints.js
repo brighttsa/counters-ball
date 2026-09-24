@@ -34,6 +34,12 @@ export class JustInTimeChalkHints {
     this.hide();
   }
 
+  /** "Show tips again": every hint can appear once more. */
+  reset() {
+    this.seen.clear();
+    try { this.storage?.removeItem(CHALK_HINTS_KEY); } catch { /* storage is optional */ }
+  }
+
   remember(id) {
     this.seen.add(id);
     try { this.storage?.setItem(CHALK_HINTS_KEY, JSON.stringify([...this.seen])); } catch { /* storage is optional */ }

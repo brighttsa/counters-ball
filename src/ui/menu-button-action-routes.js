@@ -8,7 +8,10 @@ const ARM_SECONDS = 4;
  * @param ctx { app, progress, save, flow, hud, sound, cameraDirector, hotSeat, resultsShare, menus }
  *   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex }
  */
-export function createMenuActions({ app, progress, save, flow, hud, sound, cameraDirector, hotSeat, resultsShare, menus }) {
+const VIEW_LABELS = { tactical: 'Tactical', broadcast: 'Broadcast', street: 'Street Level', free: 'Free Camera' };
+const VIEW_ORDER = ['tactical', 'broadcast', 'street', 'free'];
+
+export function createMenuActions({ app, progress, save, flow, hud, sound, cameraDirector, hotSeat, resultsShare, menus, hints }) {
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
   // Restart and Quit throw a match away. Once a flick has been played, the first press only arms the
   // button ("Sure? Press again…"); a second press within a few seconds acts. Works the same by keyboard.
@@ -49,7 +52,35 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, camer
       el.setAttribute('aria-pressed', String(cameraDirector.motionEnabled));
       if (!cameraDirector.motionEnabled) finishReplay();
     },
-    pause: () => { armed.forEach(disarm); flow.setPaused(true); },
+    pause: () => {
+      armed.forEach(disarm);
+      flow.setPaused(true);
+      const byId = id => globalThis.document?.getElementById(id);
+      const view = byId('camera-view-toggle'), tips = byId('hints-reset');
+      if (view) view.dataset.value = VIEW_LABELS[cameraDirector?.playerControl?.mode] ?? 'Broadcast';
+      if (tips) delete tips.dataset.value;
+    },
+    // Pause menu settings: step through the four views (the match shows the new one on Resume),
+    // bring the one-time chalk tips back, or leave for Kwame's Corner.
+    'cycle-camera-view': (el) => {
+      const control = cameraDirector.playerControl;
+      const next = VIEW_ORDER[(VIEW_ORDER.indexOf(control.mode) + 1) % VIEW_ORDER.length];
+      control.select(next);
+      el.dataset.value = VIEW_LABELS[control.mode];
+    },
+    'reset-hints': (el) => { hints.reset(); el.dataset.value = 'On'; },
+    'how-to-play': (el) => {
+      if (!confirmed(el, 'Sure? Press again to leave for practice')) return;
+      app.mode = 'practice';
+      flow.prepareMatch(0);
+    },
+    'skip-practice': () => {
+      progress.practiceSkipped = true;
+      save(progress);
+      menus.setFirstLaunch(false);
+      app.mode = 'legends';
+      flow.prepareMatch(flow.featuredIndex());
+    },
     resume: () => flow.setPaused(false),
     restart: (el) => { if (confirmed(el, 'Sure? Press again to restart')) flow.prepareMatch(app.levelIndex); },
     quit: (el) => { if (confirmed(el, 'Sure? Press again to quit')) flow.showLevels(); },

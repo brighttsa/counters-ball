@@ -1,5 +1,16 @@
 # Project Changelog
 
+## 2026-09-24 — First-launch walkthrough, camera cues and pause settings
+
+### Added
+- **First launch**: until Kwame's Corner is finished or skipped, the big title button is **Learn with Kwame**
+  (2-minute practice), with **I know how to play: just play** beneath it. Either choice is remembered.
+- **Camera cues**: the Camera button shows a drawn icon of the current view and its C key; the camera panel lists
+  each view with its icon, what it is for, and its key (1, 2, 3) on keyboard devices; switching views flashes
+  "Now: Street Level · 3" for a moment.
+- **Pause menu**: Camera view (steps through all four), Show tips again (the one-time chalk hints come back),
+  and How to play · Kwame's Corner.
+
 ## 2026-09-24 — Kwame's Corner practice table
 
 ### Added
