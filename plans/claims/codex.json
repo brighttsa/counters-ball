@@ -2,13 +2,12 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Mobile simulator home fit",
+  "task": "Cross-phone home mockup fit",
   "status": "released",
   "paths": [
-    "index.html",
     "styles/ink-impact-home.css",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T18:38:02.160Z",
-  "head": "04f6879d7cb1ed58e61753cdc2716519998d44bf"
+  "updatedAt": "2026-09-24T18:44:51.409Z",
+  "head": "05a8910f4393c8fe1983cbb4138573281a5c50a7"
 }
