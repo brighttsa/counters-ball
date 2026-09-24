@@ -1,4 +1,6 @@
 // One presentation clock freezes with pause; simulation retains its fixed-step clock.
+import { markChoice } from '../ui/pause-card-faces-and-setting-chips.js';
+
 /** @param onFrame (dt) => void, after the camera has settled for this frame and before it is drawn */
 export function startGameRenderLoop({ app, camera, cameraDirector, renderer, post, onFrame }) {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -7,7 +9,7 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
       cameraDirector.setMotion(false);
       if (app.session?.presentation.replay.active) app.session.presentation.finishReplay();
     }
-    document.getElementById('camera-motion-toggle')?.setAttribute('aria-pressed', String(cameraDirector.motionEnabled));
+    markChoice('motion', cameraDirector.motionEnabled ? 'on' : 'off');
   };
   motion.addEventListener('change', syncMotion);
   syncMotion();

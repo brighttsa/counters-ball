@@ -54,10 +54,33 @@
 
 .menu-card { max-width: 400px; text-align: center; background: var(--ink); border-top: 6px solid var(--yellow); }
 .menu-card .card-title { margin-bottom: 16px; }
-#camera-motion-toggle[aria-pressed='true']::after { content: ' · On'; color: var(--yellow); }
-#camera-motion-toggle[aria-pressed='false']::after { content: ' · Off'; }
-#hud-style-toggle::after, #camera-view-toggle::after, #hints-reset[data-value]::after, #music-volume-toggle::after, #effects-toggle::after { content: ' · ' attr(data-value); color: var(--yellow); }
-#camera-motion-toggle::after, #hud-style-toggle::after, #camera-view-toggle::after, #hints-reset[data-value]::after, #music-volume-toggle::after, #effects-toggle::after { white-space: nowrap; } /* the value never wraps away from its label's dot */
+/* Pause card: the front holds four actions; "Settings" turns it over to chalk chips on the back. */
+.pause-face:not([hidden]) { animation: pause-card-turn 220ms var(--ease-out) both; }
+.pause-settings-link {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 12px; padding: 8px 12px; cursor: pointer;
+  font: 700 var(--text-sm) var(--font-body); text-transform: uppercase; color: var(--paper-muted);
+  background: none; border: 0; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line-strong);
+}
+.pause-settings-link:hover { color: var(--paper); }
+.pause-settings-link:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+#hints-reset[data-value]::after { content: ' · on'; color: var(--yellow); }
+.setting-group { margin: 0 0 12px; padding-top: 12px; border-top: 1px dashed var(--line); text-align: left; }
+.setting-group-title { margin: 0 0 8px; font: var(--text-lg) var(--font-chalk); color: var(--yellow); }
+.setting-row { display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 8px; margin-bottom: 8px; }
+.setting-label { font: 700 var(--text-xs) var(--font-body); text-transform: uppercase; color: var(--paper-muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  flex: 1 1 0; min-width: 0; min-height: 44px; padding: 6px 8px; cursor: pointer;
+  font: 700 var(--text-sm) var(--font-body); color: var(--paper); background: var(--ink-raised);
+  border: 2px solid transparent; border-radius: 0; clip-path: polygon(2% 6%, 98% 0, 100% 90%, 0 100%);
+}
+.chip:hover { background: var(--ink-pressed); }
+.chip[aria-pressed='true'] { color: var(--ink); background: var(--yellow); }
+.chip:focus-visible { clip-path: none; outline: 3px solid var(--yellow); outline-offset: 2px; }
+.chip:active { transform: translateY(1px); }
+.pause-done { width: 100%; margin-top: 8px; }
+@keyframes pause-card-turn { from { opacity: 0; transform: perspective(700px) rotateY(-70deg); } }
+@media (prefers-reduced-motion: reduce) { .pause-face:not([hidden]) { animation: none; } }
 
 .results-card { max-width: 520px; width: min(720px, 100%); padding: 24px; text-align: center; background: var(--ink); border-top: 6px solid var(--yellow); }
 .results-card .card-actions { justify-content: center; }
@@ -119,6 +142,10 @@
   .menu-card .card-title { margin-bottom: 12px; }
   .menu-card .menu-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .menu-card .menu-stack .btn-primary { grid-column: 1 / -1; }
+  /* Settings side by side: Sound | Camera, then Table, Tips and Done across the card. */
+  .pause-card[data-face='settings'] { max-width: 720px; }
+  .pause-face[data-face-panel='settings']:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .pause-face[data-face-panel='settings'] > :not(.setting-group) { grid-column: 1 / -1; }
   .results-card { max-width: 760px; padding-block: 16px; }
   .results-note { margin-bottom: 8px; }
   .results-card .results-title { font-size: var(--text-2xl); }

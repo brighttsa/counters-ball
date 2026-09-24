@@ -32,16 +32,40 @@ test('"Just play" on first launch skips practice for good and starts the feature
   assert.deepEqual(calls, [['firstLaunch', false], ['prepareMatch', 4]]);
 });
 
-test('the pause menu steps through all four views in order and can bring the tips back', () => {
+test('the settings chips pick a camera view directly, ignore unknown views, and can bring the tips back', () => {
   const { actions, calls, control } = routes();
-  const button = { dataset: {} };
-  for (const expected of ['street', 'free', 'tactical', 'broadcast']) {
-    actions['cycle-camera-view'](button);
-    assert.equal(control.mode, expected);
+  const chip = (choice, value) => ({ dataset: { choice, value } });
+  for (const view of ['street', 'free', 'tactical', 'broadcast']) {
+    actions['choose-setting'](chip('view', view));
+    assert.equal(control.mode, view);
   }
-  assert.equal(button.dataset.value, 'Broadcast');
+  actions['choose-setting'](chip('view', 'drone'));
+  assert.equal(control.mode, 'broadcast', 'a view that does not exist changes nothing');
   const tips = { dataset: {} };
   actions['reset-hints'](tips);
   assert.deepEqual(calls.at(-1), ['hintsReset']);
   assert.equal(tips.dataset.value, 'On');
+});
+
+test('music and scoreboard chips save exactly the chosen value; a music choice lifts the all-sound mute', () => {
+  const calls = [], saved = [];
+  const progress = { stars: {}, muted: true };
+  const actions = createMenuActions({
+    app: { session: null }, progress, save: (p) => saved.push({ ...p }),
+    sound: { setMuted: (m) => calls.push(['muted', m]), setEffectsOff: () => {} },
+    music: { setVolume: (v) => calls.push(['volume', v]), setMuted: () => {} },
+    hud: { setStyle: (s) => calls.push(['hud', s]) }, menus: { setSoundIcon: () => {} },
+  });
+  const chip = (choice, value) => ({ dataset: { choice, value } });
+  actions['choose-setting'](chip('music', '0.35'));
+  assert.equal(progress.musicVolume, 0.35);
+  assert.equal(progress.muted, false);
+  assert.deepEqual(calls.slice(0, 2), [['muted', false], ['volume', 0.35]]);
+  actions['choose-setting'](chip('music', '7'));
+  assert.equal(progress.musicVolume, 0.35, 'a level that is not on the card is ignored');
+  actions['choose-setting'](chip('effects', 'off'));
+  assert.equal(progress.effectsOff, true);
+  actions['choose-setting'](chip('scoreboard', 'broadcast'));
+  assert.equal(saved.at(-1).hudStyle, 'broadcast');
+  assert.deepEqual(calls.at(-1), ['hud', 'broadcast']);
 });
