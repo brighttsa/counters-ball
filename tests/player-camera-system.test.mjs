@@ -25,6 +25,10 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
     assert.equal(openingCameraMode('free'), 'broadcast');
     assert.equal(openingCameraMode('invalid'), 'broadcast');
   });
+  await t.test('phone landscape keeps smaller HUD reserves so the table stays close', () => {
+    assert.deepEqual(hudReservePixels(844, 390), { top: 62, bottom: 54 });
+    assert.deepEqual(hudReservePixels(390, 844), { top: 136, bottom: 144 });
+  });
   await t.test('Tactical and the Free overview frame both goals, lorries and outer lanes', () => {
     for (const aspect of [320 / 844, 375 / 844, 390 / 844, 430 / 844, 16 / 9]) {
       for (const mode of ['tactical', 'free']) for (const type of ['ruler-seesaw', 'departing-lorry']) {

@@ -36,7 +36,7 @@ export function pitchFramePoints(session) {
 // Screen space kept clear for the scoreboard and its callout (top) and the flick/camera chips (bottom).
 export function hudReservePixels(width, height) {
   const roomy = width / height < .95 || height > 600;
-  return { top: roomy ? 136 : 80, bottom: roomy ? 144 : 72 };
+  return { top: roomy ? 136 : 62, bottom: roomy ? 144 : 54 };
 }
 
 export function fitCameraPose(camera, target, direction, points = pitchFramePoints(), minimum = 3.2, bounds = { x: .95, top: .62, bottom: -.76 }) {

@@ -48,7 +48,7 @@ test('mobile framing keeps playable rails and goals clear of HUD reservations', 
   skip: !process.env.COUNTERS_TEST_THREE,
 }, async t => {
   const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
-  const { playerCameraPose, pitchFramePoints } = await import('../src/fx/player-camera-view-poses.js');
+  const { hudReservePixels, playerCameraPose, pitchFramePoints } = await import('../src/fx/player-camera-view-poses.js');
   const old = globalThis.window;
   t.after(() => { globalThis.window = old; });
   for (const [width, height] of [[320,844],[375,844],[390,844],[430,844],[568,320],[844,390],[768,1024],[1024,768]]) {
@@ -58,9 +58,7 @@ test('mobile framing keeps playable rails and goals clear of HUD reservations', 
       const session = { level: { mechanic: { type } } };
       const pose = playerCameraPose(camera, mode, session);
       camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
-      const portrait = width / height < .95;
-      const top = portrait || height > 600 ? 136 : 80;
-      const bottom = portrait || height > 600 ? 144 : 72;
+      const { top, bottom } = hudReservePixels(width, height);
       for (const point of pitchFramePoints(session)) {
         const p = point.project(camera);
         assert.ok(Math.abs(p.x) < .95, `${width} ${mode} horizontal`);

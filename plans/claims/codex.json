@@ -2,14 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Broadcast match start camera",
+  "task": "Cohesive mobile landscape and closer table framing",
   "status": "released",
   "paths": [
-    "src/fx/player-camera-controller.js",
+    "styles/ink-impact-home.css",
+    "styles/mobile-tablet-match-layout.css",
     "src/fx/player-camera-view-poses.js",
+    "tests/mobile-shot-confidence.test.mjs",
     "tests/player-camera-system.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T23:46:51Z",
-  "head": "2407a7fc9ccb5d413af9cd05815b5f1aeb84be6e"
+  "updatedAt": "2026-09-24T23:57:20Z",
+  "head": "57f9552dd8b4739b4ea37f04d0c6f6da5686540c"
 }
