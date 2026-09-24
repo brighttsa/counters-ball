@@ -2,12 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Cross-phone home mockup fit",
+  "task": "Phone home notch and landscape fit",
   "status": "released",
   "paths": [
     "styles/ink-impact-home.css",
+    "tests/phone-mockup-home-check.html",
+    "tests/phone-mockup-home-check.js",
+    "plans/reports/phone-mockup-home-check.md",
+    "plans/reports/phone-mockup-home-check",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T18:44:51.409Z",
-  "head": "05a8910f4393c8fe1983cbb4138573281a5c50a7"
+  "updatedAt": "2026-09-24T19:16:58.215Z",
+  "head": "df17ceacea89dddc13db91fb3ef7a0a0e7ce36bb"
 }
