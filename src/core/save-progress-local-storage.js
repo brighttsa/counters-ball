@@ -27,6 +27,7 @@ export function loadProgress() {
       muted: Boolean(parsed?.muted),
       ...(typeof parsed?.lastLegendAct === 'string' && { lastLegendAct: parsed.lastLegendAct }),
       ...(parsed?.hudStyle === 'broadcast' && { hudStyle: 'broadcast' }), // chalk is the default
+      ...(parsed?.practiceDone === true && { practiceDone: true }), // finished Kwame's Corner once
       ...(validNames(parsed?.versusNames) && { versusNames: { home: parsed.versusNames.home, away: parsed.versusNames.away } }),
       ...rivalriesField(parsed?.rivalries),
     };

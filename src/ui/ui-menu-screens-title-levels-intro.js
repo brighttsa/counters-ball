@@ -120,11 +120,12 @@ export class MenuScreens {
   fillIntro(level, index, total, mode, homeTeam, { names, rivalryFor, lines: extraLines = [] } = {}) {
     const versus = mode === 'versus';
     // Back buttons on the intro, pause and results name the track they return to.
-    const track = mode === 'legends' ? 'Acts' : 'Pitches';
+    const track = level.practice ? 'Home' : mode === 'legends' ? 'Acts' : 'Pitches';
     for (const el of document.querySelectorAll('[data-track-label]')) el.textContent = el.dataset.trackLabel.replace('{track}', track);
     const { rules, opponent } = level;
     const legend = level.legend;
-    $('intro-number').textContent = legend ? `Street Legends / ${level.name} / Act ${legend.act} of ${legend.acts}`
+    $('intro-number').textContent = level.practice ? `${level.name} / Practice`
+      : legend ? `Street Legends / ${level.name} / Act ${legend.act} of ${legend.acts}`
       : `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
     $('intro-title').textContent = legend ? level.actTitle : level.name;
     $('intro-place').textContent = level.place;
@@ -150,7 +151,7 @@ export class MenuScreens {
       : [`First to ${rules.goalsToWin} goal${rules.goalsToWin > 1 ? 's' : ''} · ${rules.flickLimit} flicks each`, conditions(level)];
     if (level.obstacles.length && !legend) lines.push(MENU_COPY.obstacles);
     if ((level.frictionScale ?? 1) > 1) lines.push(MENU_COPY.dust);
-    if (!versus) lines.push(...starRules(rules.threeStarFlicks));
+    if (!versus && !level.practice) lines.push(...starRules(rules.threeStarFlicks));
     const memory = schoolyardReturnMemory(level, mode);
     if (memory) lines.unshift(memory);
     lines.unshift(...extraLines);

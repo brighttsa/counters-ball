@@ -59,7 +59,8 @@ export class JustInTimeChalkHints {
   /** Called every frame after the camera has moved. */
   update(session, camera, control, dt = 0) {
     const side = session?.rules.turn;
-    const playing = session && !session.options.isAttract && !session.options.isPreview && control?.active
+    // Kwame's Corner teaches the same things itself, so the one-time hints stay out of the practice table.
+    const playing = session && !session.options.isAttract && !session.options.isPreview && !session.level.practice && control?.active
       && !session.paused && !session.tutorialActive && session.rules.phase === 'aiming' && !session.rules.isAi(side);
     if (!playing) { if (this.active) this.hide(); this.turn = null; return; }
     // A new turn for a human player: look for the turn-start hints once.

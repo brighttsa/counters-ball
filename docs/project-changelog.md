@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2026-09-24 — Kwame's Corner practice table
+
+### Added
+- **Practice with Kwame** on the title screen: a solo Schoolyard table where Kwame walks you through six short
+  lessons: pick a cap and pull back, flick into the ball, knock the ball into his chalk ring, bank one off the
+  rail past his blocking cap into the goal, hold Tactical peek, and switch to Street view. His line sits in a
+  card under the scoreboard; the ring and the bank path are chalked on the table; a miss resets the table, and
+  after three misses he lets it go and moves on. No flick limit and no score. Finishing returns to the title
+  screen and is remembered; Quit to Home leaves at any time. The one-time chalk hints stay out of practice.
+
 ## 2026-09-24 — In-match chalk hints
 
 ### Added

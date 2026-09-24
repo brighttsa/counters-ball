@@ -19,6 +19,7 @@ import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { JustInTimeChalkHints } from './ui/just-in-time-chalk-hints.js';
+import { KwameCornerCoach } from './ui/kwame-corner-practice-coach.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
 import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js';
 import {
@@ -49,6 +50,8 @@ const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress)
 
 function replaceSession(options, sessionHud) {
   resultsCard.cancelReveal();
+  app.practice?.dispose();
+  app.practice = null;
   app.session?.dispose();
   app.paused = false;
   sound.setPaused?.(false);
@@ -98,6 +101,7 @@ function showChallenge() {
 }
 
 function showLevels(mode = app.mode) {
+  if (mode === 'practice') return showTitle(); // Kwame's Corner has no table list: Back and Quit go home
   app.challenge = null;
   if (mode !== app.mode && (mode === 'legends' || app.mode === 'legends')) app.levelIndex = 0; // different track
   app.mode = mode;
@@ -137,6 +141,7 @@ function prepareMatch(index, { rematch = false } = {}) {
   hud.attachTableChalk(createChalkTableScoreboard(app.session.stage.group, HOME_TEAM.hudColor, level.opponent.team.hudColor));
   hud.reset(level, HOME_TEAM, level.opponent.team, versus);
   cameraDirector.playIntro(2.8);
+  if (level.practice) app.practice = new KwameCornerCoach(app.session, { onComplete: finishPractice });
   const challenge = challengeFor(level);
   menus.fillIntro(level, index, track.length, app.mode, HOME_TEAM, {
     names: hotSeat.names, rivalryFor: hotSeat.rivalryFor,
@@ -144,6 +149,13 @@ function prepareMatch(index, { rematch = false } = {}) {
   });
   if (rematch) return kickOff();
   menus.show('intro'); // the match waits for Kick Off: the rules card stays until the player has read it
+}
+
+/** Kwame's Corner is done: remember it and go back to the title screen. */
+function finishPractice() {
+  progress.practiceDone = true;
+  saveProgress(progress);
+  showTitle();
 }
 
 function kickOff() {
@@ -201,6 +213,9 @@ app.challenge = takeChallengeFromUrl();
 if (app.challenge) showChallenge(); else showTitle();
 const chalkHints = new JustInTimeChalkHints();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
-  onFrame: (dt) => chalkHints.update(app.session, camera, cameraDirector.playerControl, dt) });
+  onFrame: (dt) => {
+    chalkHints.update(app.session, camera, cameraDirector.playerControl, dt);
+    app.practice?.update(camera, cameraDirector.playerControl, dt);
+  } });
 
 window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions };

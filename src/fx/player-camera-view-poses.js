@@ -81,7 +81,7 @@ function centredPitchPose(camera, direction, points, bounds, minimum = 2.6) {
 // two or three lines on some Street Legends acts, deeper than the fixed reserve.
 function measuredHudBottom() {
   if (typeof document === 'undefined') return 0;
-  return Math.max(0, ...['.scoreboard', '#hud-objective'].map(selector => {
+  return Math.max(0, ...['.scoreboard', '#hud-objective', '#kwame-coach'].map(selector => {
     const box = document.querySelector(selector)?.getBoundingClientRect();
     return box?.height ? box.bottom : 0;
   }));

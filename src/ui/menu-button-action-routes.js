@@ -35,6 +35,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, camer
   return {
     'play-featured': () => { app.mode = 'legends'; flow.prepareMatch(flow.featuredIndex()); },
     'play-campaign': () => flow.showLevels('campaign'),
+    'play-practice': () => { app.mode = 'practice'; flow.prepareMatch(0); },
     'play-versus': () => flow.showLevels('versus'),
     'play-legends': () => flow.showLevels('legends'),
     'back-to-title': () => flow.showTitle(),

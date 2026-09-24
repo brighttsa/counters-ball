@@ -2,19 +2,16 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Just-in-time chalk hints",
+  "task": "Kwame's Corner practice table",
   "status": "released",
   "paths": [
-    "src/ui/",
-    "src/gameplay/",
-    "src/core/",
-    "src/main.js",
+    "src/",
     "index.html",
     "styles/",
     "tests/",
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T11:00:16.853Z",
-  "head": "3ed2fad45bcdabce2893acd66b143b2f19724ba5"
+  "updatedAt": "2026-09-24T11:10:01.882Z",
+  "head": "7471ef0a3b9871c38958963481a3709c68e613f6"
 }
