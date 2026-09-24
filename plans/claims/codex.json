@@ -1,17 +1,15 @@
 {
   "schema": 1,
   "owner": "codex",
-  "branch": "codex/workspace",
-  "task": "Phone home notch and landscape fit",
+  "branch": "main",
+  "task": "KONK branded first load",
   "status": "released",
   "paths": [
-    "styles/ink-impact-home.css",
-    "tests/phone-mockup-home-check.html",
-    "tests/phone-mockup-home-check.js",
-    "plans/reports/phone-mockup-home-check.md",
-    "plans/reports/phone-mockup-home-check",
+    "index.html",
+    "styles/game-ui-base-and-hud.css",
+    "src/main.js",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T19:16:58.215Z",
-  "head": "df17ceacea89dddc13db91fb3ef7a0a0e7ce36bb"
+  "updatedAt": "2026-09-24T23:37:30Z",
+  "head": "4c0efad6a4d1586cd05f2d1f7cc5bb4364628306"
 }

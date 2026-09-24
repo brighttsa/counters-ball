@@ -33,6 +33,7 @@ import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 
 const canvas = document.getElementById('game-canvas');
+const bootScreen = document.getElementById('boot-screen');
 const { renderer, scene, camera } = createRendererSceneCamera(canvas);
 const post = createPostProcessing(renderer, scene, camera);
 const cameraDirector = new CameraDirector(camera, scene);
@@ -51,6 +52,13 @@ new PlayerCameraController(app, cameraDirector);
 const challengeFor = (level) => challengeForLevel(app.challenge, level);
 const unlockedIn = (mode, i) => isTrackLevelUnlocked(progress, mode, i, app.challenge);
 const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress);
+
+function finishBoot() {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.body.classList.remove('is-loading');
+    bootScreen?.setAttribute('aria-hidden', 'true');
+  }));
+}
 
 function replaceSession(options, sessionHud) {
   resultsCard.cancelReveal();
@@ -225,5 +233,6 @@ startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
     chalkHints.update(app.session, camera, cameraDirector.playerControl, dt);
     app.practice?.update(camera, cameraDirector.playerControl, dt);
   } });
+finishBoot();
 
 window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions, music, sound };

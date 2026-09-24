@@ -37,7 +37,11 @@
 }
 </script>
 </head>
-<body>
+<body class="is-loading">
+  <div id="boot-screen" class="boot-screen" role="status" aria-live="polite" aria-label="Loading KONK!">
+    <img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK!" />
+    <p>Setting the caps...</p>
+  </div>
   <canvas id="game-canvas" aria-label="Tabletop football pitch"></canvas>
   <div id="film-frame"></div>
 
