@@ -43,7 +43,6 @@
 
   <section class="screen screen-title" data-screen="title">
     <h1 class="home-logo"><img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK! Bottle-cap football" /></h1>
-    <p class="tagline">Small pitch. Big mouth.</p>
     <p class="home-edition">Street Legends · featured</p>
     <div class="home-location"><b id="home-feature-act">ACT 1 / 3</b><span><span id="home-feature-venue">Roadside Showdown</span><br><span id="home-feature-title"></span></span></div>
     <nav class="menu-stack">
@@ -56,6 +55,24 @@
       <button class="btn" data-action="play-versus">2-Player Table</button></div>
     </nav>
     <p class="title-stars" id="title-stars"></p>
+    <nav class="home-utilities" aria-label="Game information">
+      <button type="button" data-action="home-settings">Settings</button>
+      <button type="button" data-action="home-credits">Credits</button>
+    </nav>
+  </section>
+
+  <section class="screen screen-pause screen-home-settings" data-screen="home-settings" aria-label="Settings"></section>
+
+  <section class="screen screen-pause screen-credits" data-screen="credits">
+    <article class="paper-card menu-card credits-card" aria-labelledby="credits-title">
+      <p class="card-kicker">KONK!</p>
+      <h2 class="card-title" id="credits-title">Credits</h2>
+      <p>Bright Tsa grew up loving Counters ball. A few bottle caps, a ball, and suddenly everyone had an opinion about whether that was a goal. KONK! brings that feeling back.</p>
+      <h3>On the speakers</h3>
+      <p>Three-Contact Motif · Found Object Groove · Bottle Cap Challenge. Music made by Bright Tsa with Suno.</p>
+      <p>Built with Codex and Claude on Three.js. The cap clinks, street sounds and venues are made in-game.</p>
+      <button class="btn btn-primary" data-action="back-to-title">Back to the pitch</button>
+    </article>
   </section>
 
   <section class="screen screen-levels" data-screen="levels">

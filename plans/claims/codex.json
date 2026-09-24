@@ -2,12 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/workspace",
-  "task": "Align adaptive home actions",
+  "task": "Home settings, credits and information hierarchy",
   "status": "released",
   "paths": [
+    "index.html",
+    "src/main.js",
+    "src/ui/menu-button-action-routes.js",
     "styles/ink-impact-home.css",
+    "tests/first-launch-and-camera-settings.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T17:54:17.110Z",
-  "head": "3351e0fe5bec1ccf3358f23b4aca23241263105c"
+  "updatedAt": "2026-09-24T18:20:12.598Z",
+  "head": "459720858a894de113c0f5cae76434c7e100c82d"
 }

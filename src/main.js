@@ -209,7 +209,9 @@ const actions = createMenuActions({
 window.addEventListener('pointerdown', () => sound.unlock());
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  if (menus.current === 'pause' && pauseFace() === 'settings') showPauseFace('actions'); // Esc turns the card back first
+  if (menus.current === 'home-settings') actions['close-settings']();
+  else if (menus.current === 'credits') showTitle();
+  else if (menus.current === 'pause' && pauseFace() === 'settings') showPauseFace('actions'); // Esc turns the card back first
   else if (menus.current === 'pause') setPaused(false);
   else if (menus.current === null && app.session && !app.session.options.isAttract) actions.pause();
 });

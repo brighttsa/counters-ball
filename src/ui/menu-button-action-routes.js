@@ -64,6 +64,10 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     armed.add(el);
     return false;
   };
+  const returnSettingsCard = () => {
+    const card = document.getElementById('pause-card');
+    document.querySelector('[data-screen="pause"]').append(card);
+  };
   return {
     'play-featured': () => { app.mode = 'legends'; flow.prepareMatch(flow.featuredIndex()); },
     'play-campaign': () => flow.showLevels('campaign'),
@@ -71,6 +75,14 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'play-versus': () => flow.showLevels('versus'),
     'play-legends': () => flow.showLevels('legends'),
     'back-to-title': () => flow.showTitle(),
+    'home-settings': () => {
+      const card = document.getElementById('pause-card');
+      document.querySelector('[data-screen="home-settings"]').append(card);
+      showPauseFace('settings');
+      markChoice('view', cameraDirector?.playerControl?.mode ?? 'broadcast');
+      menus.show('home-settings');
+    },
+    'home-credits': () => menus.show('credits'),
     'select-level': (el) => flow.prepareMatch(Number(el.dataset.index)),
     'preview-level': (el) => flow.previewLevel(Number(el.dataset.index)),
     'intro-back': () => flow.showLevels(),
@@ -86,7 +98,12 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
       if (tips) delete tips.dataset.value;
     },
     'open-settings': () => showPauseFace('settings'),
-    'close-settings': () => showPauseFace('actions'),
+    'close-settings': () => {
+      if (menus.current === 'home-settings') {
+        returnSettingsCard();
+        flow.showTitle();
+      } else showPauseFace('actions');
+    },
     'settings-section': (el) => selectSettingsSection(el.dataset.section),
     'choose-setting': (el) => choose[el.dataset.choice]?.(el.dataset.value),
     'reset-hints': (el) => { hints.reset(); el.dataset.value = 'On'; },

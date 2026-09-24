@@ -65,6 +65,30 @@ test('compact settings switches one category without changing saved preferences'
   } finally { globalThis.document = previous; }
 });
 
+test('Home settings reuse the pause controls and return to Home without pausing a match', () => {
+  const calls = [];
+  const panels = ['actions', 'settings'].map(face => ({ dataset: { facePanel: face }, hidden: face === 'settings' }));
+  const card = { dataset: {}, querySelectorAll: selector => selector === '[data-face-panel]' ? panels : [],
+    querySelector: () => ({ focus() {} }) };
+  const containers = { pause: { append: () => calls.push('restore') },
+    'home-settings': { append: () => calls.push('move') } };
+  const previous = globalThis.document;
+  globalThis.document = { getElementById: () => card, querySelector: selector =>
+    containers[selector.match(/data-screen="([^"]+)"/)?.[1]], querySelectorAll: () => [] };
+  try {
+    const menus = { current: 'title', show(name) { this.current = name; calls.push(name); } };
+    const actions = createMenuActions({ app: { session: null }, progress: {}, menus,
+      flow: { showTitle: () => calls.push('title') }, cameraDirector: { playerControl: { mode: 'street' } } });
+    actions['home-settings']();
+    assert.equal(card.dataset.face, 'settings');
+    assert.deepEqual(calls, ['move', 'home-settings']);
+    actions['close-settings']();
+    assert.deepEqual(calls, ['move', 'home-settings', 'restore', 'title']);
+    actions['home-credits']();
+    assert.equal(menus.current, 'credits');
+  } finally { globalThis.document = previous; }
+});
+
 test('music and scoreboard chips save exactly the chosen value; a music choice lifts the all-sound mute', () => {
   const calls = [], saved = [];
   const progress = { stars: {}, muted: true };
