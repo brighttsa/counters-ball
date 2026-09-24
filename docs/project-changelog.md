@@ -1,5 +1,16 @@
 # Project Changelog
 
+## 2026-09-24 — In-match chalk hints
+
+### Added
+- Three hints that teach at the moment they help, once each (remembered on the device), only on your own turn
+  while aiming, and gone as soon as you flick:
+  - **Bank it off the rail**: when the straight line from the ball to goal is blocked but a one-rail bank is clean,
+    a solid chalk line shows the bank path.
+  - **Get low: Street view**: when the flick you're aiming will run into a pot, booth or coin stack.
+  - **Hold Tactical peek**: when one of your caps is hidden behind another piece from the current camera; the
+    Tactical peek button glows.
+
 ## 2026-09-24 — One-piece aim arrow
 
 ### Changed

@@ -2,14 +2,19 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "One-piece aim arrow",
+  "task": "Just-in-time chalk hints",
   "status": "released",
   "paths": [
+    "src/ui/",
     "src/gameplay/",
+    "src/core/",
+    "src/main.js",
+    "index.html",
+    "styles/",
     "tests/",
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T10:00:56.518Z",
-  "head": "8e467f25bcff02a5eea6d2647ba2c0a9c8300cfb"
+  "updatedAt": "2026-09-24T11:00:16.853Z",
+  "head": "3ed2fad45bcdabce2893acd66b143b2f19724ba5"
 }

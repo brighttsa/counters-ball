@@ -1,5 +1,6 @@
 // One presentation clock freezes with pause; simulation retains its fixed-step clock.
-export function startGameRenderLoop({ app, camera, cameraDirector, renderer, post }) {
+/** @param onFrame (dt) => void, after the camera has settled for this frame and before it is drawn */
+export function startGameRenderLoop({ app, camera, cameraDirector, renderer, post, onFrame }) {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const syncMotion = () => {
     if (motion.matches) {
@@ -38,6 +39,7 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
     if (!app.paused) time += dt;
     app.session?.update(dt, time);
     if (!app.paused) cameraDirector.update(dt, time);
+    onFrame?.(dt);
     post.setFocus(cameraDirector.focusDistance);
     if (!app.paused) post.update(dt, time);
     post.render();

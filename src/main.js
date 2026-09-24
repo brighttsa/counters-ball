@@ -18,6 +18,7 @@ import { createMenuActions } from './ui/menu-button-action-routes.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
+import { JustInTimeChalkHints } from './ui/just-in-time-chalk-hints.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
 import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js';
 import {
@@ -198,6 +199,8 @@ menus.setSoundIcon(progress.muted);
 hud.setStyle(progress.hudStyle);
 app.challenge = takeChallengeFromUrl();
 if (app.challenge) showChallenge(); else showTitle();
-startGameRenderLoop({ app, camera, cameraDirector, renderer, post });
+const chalkHints = new JustInTimeChalkHints();
+startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
+  onFrame: (dt) => chalkHints.update(app.session, camera, cameraDirector.playerControl, dt) });
 
 window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions };

@@ -189,3 +189,16 @@ button, h1, h2, p, span { letter-spacing: 0; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .tutorial-finger, .tutorial-ring { animation: none; }
 }
+
+/* In-match chalk hints: a chalk line on the table and a short chalked note, shown once each. */
+.chalk-hint-path { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; overflow: visible; }
+.chalk-hint-path polyline { fill: none; stroke: #f6f1e4; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; opacity: .85;
+  filter: drop-shadow(0 1px 1.5px rgb(var(--ink-rgb) / .6)); }
+.chalk-hint-label { position: fixed; left: 0; top: 0; margin: 0; max-width: min(280px, calc(100vw - 24px)); pointer-events: none; z-index: 5;
+  padding: 7px 12px; border-radius: 10px; background: rgb(var(--ink-rgb) / .72); color: #f6f1e4;
+  font: 700 15px/1.25 var(--font-chalk); letter-spacing: .01em; text-align: center;
+  box-shadow: 0 4px 14px rgb(var(--ink-rgb) / .35); animation: chalk-hint-in .25s ease-out; }
+@keyframes chalk-hint-in { from { opacity: 0; } }
+#camera-peek.chalk-hint-glow { outline: 2px solid var(--yellow); outline-offset: 2px; animation: chalk-hint-glow 1.2s ease-in-out infinite; }
+@keyframes chalk-hint-glow { 50% { outline-offset: 5px; outline-color: rgb(255 214 64 / .35); } }
+@media (prefers-reduced-motion: reduce) { .chalk-hint-label, #camera-peek.chalk-hint-glow { animation: none; } }
