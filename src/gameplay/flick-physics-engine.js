@@ -8,11 +8,10 @@ import {
 } from '../core/pitch-dimensions-and-constants.js';
 import { createStaticSegment, cloneSegment, resolveSegmentContacts } from './static-segment-collisions.js';
 import { checkGoalCrossing, noteBankTouch, noteRailBank, clearBankTouches } from './goal-line-crossing-detection.js';
+import { RAIL_RESTITUTION, RAIL_GRIP, contactRestitution, settleFriction } from './flick-feel-contact-rail-and-settle-rules.js';
 
 export const FIXED_STEP = 1 / 240;
 const REST_SPEED = 0.015;
-const WALL_RESTITUTION = 0.55;
-const BODY_RESTITUTION = 0.72;
 const MIN_EVENT_IMPULSE = 0.02;
 
 export class FlickPhysicsEngine {
@@ -94,7 +93,8 @@ export class FlickPhysicsEngine {
       b.prev.copy(b.pos);
       const speed = b.vel.length();
       if (speed === 0) continue;
-      const next = Math.max(0, speed - (b.linearDamping * speed + b.constantFriction) * h);
+      const friction = b.constantFriction + settleFriction(speed, this.frictionScale);
+      const next = Math.max(0, speed - (b.linearDamping * speed + friction) * h);
       if (next < REST_SPEED) b.vel.set(0, 0);
       else b.vel.multiplyScalar(next / speed);
       b.pos.addScaledVector(b.vel, h);
@@ -120,10 +120,12 @@ export class FlickPhysicsEngine {
         const push = (minDist - dist) / totalInv;
         a.pos.x -= nx * push * a.invMass; a.pos.y -= nz * push * a.invMass;
         b.pos.x += nx * push * b.invMass; b.pos.y += nz * push * b.invMass;
-        const relVel = (b.vel.x - a.vel.x) * nx + (b.vel.y - a.vel.y) * nz;
+        const rx = b.vel.x - a.vel.x, rz = b.vel.y - a.vel.y;
+        const relVel = rx * nx + rz * nz;
         if (relVel > 0) continue;
         if (relVel < -0.02) noteBankTouch(this, a, b); // a real impact, not a ball resting against a pot
-        const impulse = (-(1 + BODY_RESTITUTION) * relVel) / totalInv;
+        const restitution = contactRestitution(-relVel, Math.hypot(rx, rz));
+        const impulse = (-(1 + restitution) * relVel) / totalInv;
         a.vel.x -= nx * impulse * a.invMass; a.vel.y -= nz * impulse * a.invMass;
         b.vel.x += nx * impulse * b.invMass; b.vel.y += nz * impulse * b.invMass;
         if (this.onImpact && impulse > MIN_EVENT_IMPULSE) {
@@ -150,8 +152,9 @@ export class FlickPhysicsEngine {
     b.pos[axis] = overMin ? -limit + b.radius : limit - b.radius;
     if (into <= 0) return;
     noteRailBank(this, b);
-    b.vel[axis] = (overMin ? into : -into) * WALL_RESTITUTION;
-    const impulse = into * (1 + WALL_RESTITUTION) * b.mass;
+    b.vel[axis] = (overMin ? into : -into) * RAIL_RESTITUTION;
+    b.vel[axis === 'x' ? 'y' : 'x'] *= RAIL_GRIP; // the rail bites along its length too
+    const impulse = into * (1 + RAIL_RESTITUTION) * b.mass;
     if (this.onWallHit && impulse > MIN_EVENT_IMPULSE) this.onWallHit(b, impulse, b.pos.x, b.pos.y);
   }
 

@@ -2,16 +2,14 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "First-launch Kwame, camera cues, pause settings",
+  "task": "Physics feel pass: rail bite, clean contact, quick settle",
   "status": "released",
   "paths": [
-    "src/",
-    "index.html",
-    "styles/",
+    "src/gameplay/",
     "tests/",
     "docs/",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T11:18:49.285Z",
-  "head": "26c27bac43ecb1617f9a7a8040084ceca9755f27"
+  "updatedAt": "2026-09-24T11:37:29.754Z",
+  "head": "891d4bc352c31551a5081d03b2399a28bb324f9d"
 }

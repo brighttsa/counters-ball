@@ -7,11 +7,13 @@ import { createSchoolyardShotMemory } from '../core/schoolyard-shot-memory.js';
 import { screenPan } from '../audio/screen-space-stereo-pan.js';
 import { needsFirstShotGuidance, completeFirstShotGuidance } from '../core/first-shot-guidance.js';
 import { MATCH_COPY, ordinaryGoalDetail } from './konk-match-reaction-copy.js';
+import { CONTACT_RESTITUTION_SQUARE, RAIL_RESTITUTION } from './flick-feel-contact-rail-and-settle-rules.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
   boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
-const BODY_RESTITUTION_FACTOR = 1.72;
-const WALL_RESTITUTION_FACTOR = 1.55;
+// A full-speed square hit reads as strength 1.
+const BODY_RESTITUTION_FACTOR = 1 + CONTACT_RESTITUTION_SQUARE;
+const WALL_RESTITUTION_FACTOR = 1 + RAIL_RESTITUTION;
 
 export function wireMatchFeedback(session) {
   const { physics, rules, sound, particles, juice, time, cameraDirector, post, hud, options, level } = session;

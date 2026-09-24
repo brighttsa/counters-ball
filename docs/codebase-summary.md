@@ -48,6 +48,7 @@ Owns everything venue-specific and disposes it cleanly:
 |---|---|
 | `buildLevelStage` | Lights, table, caps, ball, goals, obstacles, backdrop in one Group |
 | `FlickPhysicsEngine` | Fixed 1/240 s circle physics; impact/wall/goal events |
+| `flick-feel-contact-rail-and-settle-rules.js` | Feel constants the engine applies: clean contact (square hits bounce harder), rail bite (banks leave near the mirror angle), quick settle (no slow creep) |
 | `MatchRules` | Turns, flick budgets, goals, kickoffs, result + stars |
 | `HumanDragAimInput` / `AiTurnPerformer` | The two ways a flick happens |
 | `AimVisuals` | Origin ring, projected ribbon/head, first-contact ghost and release scrape; shared by human and AI |

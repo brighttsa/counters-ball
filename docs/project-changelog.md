@@ -1,5 +1,27 @@
 # Project Changelog
 
+## 2026-09-24 — Physics feel: rail bite, clean contact, quick settle
+
+### Changed
+- **Rail bite**: the table's rails bounce pieces back livelier (0.72, was 0.55) and grip them along their length
+  (80% of along-rail speed kept, was 100%), so a piece leaves the rail within a few degrees of the angle it came in.
+  Banks now follow the mirror line a player aims by.
+- **Clean contact**: a square, centred strike bounces harder (0.8) than a glancing one (0.6), in place of one fixed
+  0.72. A well-lined-up hit pops the ball about 5% faster; a thin cut drifts off about 5% softer.
+- **Quick settle**: below 0.12 units/s pieces rattle to a stop under extra friction instead of creeping. The slow
+  tail at the end of a turn drops from about 0.34 s to 0.11 s on average, and a whole turn from 1.68 s to 1.48 s.
+- All three live in `src/gameplay/flick-feel-contact-rail-and-settle-rules.js`; the computer rehearses its shots on
+  the same engine, so its planning follows them. Its goal rate in a 60-flick check is unchanged within noise
+  (medium 4 → 6, hard 9 → 8), and all Street Legends venue regressions pass. Wooden ruler segments are unchanged.
+
+### Fixed
+- **The chalk bank line was not a real shot.** With the old rails every bank came off at least 15° flatter than the
+  mirror line the hint draws, and none of 336 test balls sent along it went in; now every one that reaches the goal
+  line scores (116 of 336; the rest run out of pace).
+- **Kwame's bank lesson could not be completed**: no aim from the lesson cap banked in at any power, and only the
+  three-miss rule moved players on. A firm flick straight through the ball now banks in, with about 6° of aim to
+  spare.
+
 ## 2026-09-24 — First-launch walkthrough, camera cues and pause settings
 
 ### Added

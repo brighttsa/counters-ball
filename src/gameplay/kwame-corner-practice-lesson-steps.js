@@ -21,8 +21,9 @@ export const PRACTICE_LESSONS = [
   },
   {
     id: 'bank', say: 'My cap blocks the straight line. Bank it off the rail into the goal.', retry: true,
-    // The ball sits near the rail so the bank path is short (about 1.6 units, roughly ±9° of aim to spare):
-    // a first bank should be learnable in a few tries, not a trick shot.
+    // The ball sits near the rail so the bank path is short (about 1.6 units): a firm flick straight through
+    // the ball banks in, with about 6° of aim to spare at ¾ to full power (measured in simulation, and it
+    // relies on the rail bite in flick-feel-contact-rail-and-settle-rules.js). Learnable, not a trick shot.
     setup: { ball: [.6, .85], home: { 3: [.49, .69] }, away: { 0: [1.05, .425] }, bankLine: true, railOnly: true },
     done: ({ attempt }) => attempt.scored,
   },
