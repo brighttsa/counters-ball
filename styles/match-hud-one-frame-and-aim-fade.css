@@ -15,7 +15,7 @@
   .legend-objective { top: calc(max(14px, env(safe-area-inset-top)) + 88px); }
 }
 @media (orientation: portrait) and (max-width: 1100px) {
-  .ink-game .legend-objective { top: calc(max(12px, env(safe-area-inset-top)) + 72px); width: calc(100% - 84px); max-width: 440px; left: 12px; transform: none; }
+  .ink-game .legend-objective { top: calc(max(10px, env(safe-area-inset-top)) + 86px); width: calc(100% - 84px); max-width: 440px; left: max(12px, env(safe-area-inset-left)); transform: none; }
 }
 /* Where the objective hangs straight under the flicks row, the yellow edge moves down to close it. */
 @media (min-height: 601px), (orientation: portrait) {
@@ -39,8 +39,9 @@
 
 /* ---- One corner tray ---- */
 body[data-screen="match"] .sound-btn { display: none; }
-.camera-toolbar { gap: 0; }
-.camera-toolbar button + button { border-left: 0; }
+.camera-toolbar { gap: 0; overflow: hidden; border: 1px solid rgb(var(--paper-rgb) / .16); background: rgb(var(--ink-rgb) / .72); }
+.camera-toolbar button { border: 0; }
+.camera-toolbar button + button { border-left: 1px solid rgb(var(--paper-rgb) / .14); }
 .camera-menu-label { display: grid; text-align: left; line-height: 1.15; }
 .camera-menu-label small { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
 .player-camera { bottom: max(16px, env(safe-area-inset-bottom)); }
@@ -60,8 +61,9 @@ body[data-screen="match"] .sound-btn { display: none; }
 .player-camera #camera-panel { width: min(280px, calc(100vw - 24px)); }
 
 /* ---- Aim fade ---- */
-.hud-layer .pause-btn, .player-camera { transition: opacity 220ms ease; }
-body:has(#game-canvas.aiming) :is(.hud-layer .pause-btn, .player-camera) { opacity: .12; }
+.hud-layer .pause-btn, .player-camera { transition: opacity 220ms ease, transform 220ms var(--ease-out); }
+body:has(#game-canvas.aiming) :is(.hud-layer .pause-btn, .player-camera) { opacity: .28; }
+body:has(#game-canvas.aiming) .player-camera { transform: translateY(4px); }
 
 /* Read to screen readers, never drawn: e.g. the venue's live reading, which is chalked on the table instead. */
 .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

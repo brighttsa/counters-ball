@@ -17,7 +17,6 @@ export function createTollGateMechanic(session) {
     onTurn: (side, bodies) => gates.advance(side, bodies)
       .map((jam) => `JAMMED ${LANE_KEYS[jam.lane].toUpperCase()} BOOM`),
     describe: (side) => gates.describe(side),
-    chalkNotes: () => gates.chalkNotes(),
     onFlick: (side) => gates.beginFlick(side),
     observe: (ball) => gates.observe(ball),
     noteImpact(a, b, strength) {

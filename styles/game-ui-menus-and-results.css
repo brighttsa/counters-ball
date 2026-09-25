@@ -55,6 +55,12 @@
 .screen-challenge { background: var(--scrim); }
 
 .menu-card { max-width: 400px; text-align: center; background: rgb(var(--ink-rgb) / .96); border: 1px solid rgb(var(--paper-rgb) / .14); border-top: 6px solid var(--yellow); }
+.menu-card::before,
+.results-card::before,
+.intro-card::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(var(--paper-rgb) / .38), transparent);
+}
 .menu-card .card-title { margin-bottom: 16px; }
 /* Pause card: the front holds four actions; "Settings" turns it over to chalk chips on the back. */
 .pause-face:not([hidden]) { animation: pause-card-turn 220ms var(--ease-out) both; }
@@ -121,6 +127,24 @@
   .screen { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
   .screen-pause { padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
   .pause-card { max-height: calc(100dvh - 24px); }
+  .menu-card,
+  .intro-card,
+  .results-card {
+    border-top-width: 4px;
+    box-shadow: 0 10px 30px rgb(var(--ink-rgb) / .45);
+  }
+  .menu-card .menu-stack,
+  .results-card .card-actions {
+    gap: 8px;
+  }
+  .menu-card .btn,
+  .results-card .btn,
+  .intro-card .btn {
+    width: 100%;
+    min-height: 48px;
+    padding-inline: 14px;
+    text-align: center;
+  }
   .pause-face[data-face-panel='settings'] .setting-row[aria-labelledby='setting-music'] .chip { padding-inline: 4px; font-size: var(--text-xs); }
   .pause-face[data-face-panel='settings'] .pause-done { position: sticky; bottom: 0; z-index: 1; }
   .card-title { font-size: var(--text-2xl); }
@@ -166,6 +190,7 @@
   .menu-card { max-width: 520px; }
   .menu-card .card-title { margin-bottom: 12px; }
   .menu-card .menu-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .menu-card .btn { min-height: 44px; padding: 8px 10px; font-size: var(--text-sm); }
   .menu-card .menu-stack .btn-primary { grid-column: 1 / -1; }
   /* Settings side by side: Sound | Camera, then Table, Tips and Done across the card. */
   .pause-card[data-face='settings'] { width: min(720px, 100%); max-width: 720px; max-height: calc(100dvh - 16px); padding: 10px 20px; }

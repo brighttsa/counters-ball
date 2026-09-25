@@ -16,7 +16,6 @@ export function createDepartingLorryMechanic(session) {
     hint: { label: 'CATCH THE LORRY', detail: 'The ghost goal shows its next stop' },
     onTurn: (side) => lorries.advance(side),
     describe: (side) => lorries.describe(side),
-    chalkNotes: () => lorries.chalkNotes(),
     onFlick: (side) => lorries.beginFlick(side),
     goalLabel: (scorer) => lorries.goalLabel(scorer),
     aiCandidates: (side, _ballZ, options) => lorryCandidatePoints(lorries, side, options),

@@ -84,11 +84,6 @@ export class RulerSeesaws {
     return this.flight?.side === scorer && this.flight.rulerBank ? 'RULER BANK' : '';
   }
 
-  /** Chalk between each ruler and the goal it guards, clear of its sweep: the angle it turns to next. */
-  chalkNotes() {
-    return this.rulers.map((r) => ({ x: Math.sign(r.x) * 1.2, z: 0.33, icon: 'ruler-angle', value: this.angleIndex(r, 1) }));
-  }
-
   describe(side) {
     const theirs = this.rulerDefendedBy(otherSide(side)), own = this.rulerDefendedBy(side);
     return `Their ruler: ${ANGLE_NAMES[this.angleIndex(theirs)]} → next ${ANGLE_NAMES[this.angleIndex(theirs, 1)]}`

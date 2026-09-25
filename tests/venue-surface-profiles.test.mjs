@@ -96,6 +96,36 @@ test('all six surfaces produce distinct, repeatable color, bump and roughness ma
   } finally { Math.random = random; }
 });
 
+test('playable table textures use marks and wear, not readable words', () => {
+  const random = Math.random;
+  Math.random = () => { throw new Error('Unseeded surface randomness'); };
+  try {
+    for (const level of CAMPAIGN_LEVELS) {
+      const [colorCalls] = render(getVenueVisualProfile(level.backdrop), 24680);
+      assert.ok(colorCalls);
+    }
+  } finally { Math.random = random; }
+  for (const level of CAMPAIGN_LEVELS) {
+    const profile = getVenueVisualProfile(level.backdrop);
+    const previous = globalThis.document;
+    const canvases = [];
+    globalThis.document = { createElement() {
+      const record = recordingContext();
+      const canvas = { ...record, getContext: () => record.ctx };
+      canvases.push(canvas); return canvas;
+    } };
+    try {
+      paintTableSurfaceTextures({ kind: 'cardboard', base: '#000000' }, 24680, profile);
+    } finally {
+      if (previous === undefined) delete globalThis.document;
+      else globalThis.document = previous;
+    }
+    for (const canvas of canvases) {
+      assert.equal(canvas.calls.filter(([name]) => name === 'fillText' || name === 'strokeText').length, 0, level.id);
+    }
+  }
+});
+
 test('material wear coordinates match across albedo, bump and roughness', () => {
   for (const level of CAMPAIGN_LEVELS) {
     const surface = getVenueVisualProfile(level.backdrop).surface;

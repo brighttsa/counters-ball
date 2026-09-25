@@ -19,7 +19,6 @@ export function createCoinStackChainMechanic(session) {
     hint: { label: 'STRIKE THE STACK IN THE BEAM', detail: 'Ball or your own cap · light all three to open the padlock' },
     onTurn: () => chains.advance(),
     describe: (side) => chains.describe(side, rivalName),
-    chalkNotes: () => chains.chalkNotes(),
     onFlick: (side) => chains.beginFlick(side),
     noteImpact(a, b) {
       for (const label of chains.noteImpact(a, b)) {
