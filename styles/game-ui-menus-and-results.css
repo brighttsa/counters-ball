@@ -9,7 +9,7 @@
 .screen-results { background: var(--scrim); }
 .screen-intro { justify-items: start; align-content: end; padding-bottom: 36px; }
 
-.chalk-heading, .card-title { margin: 0; font-family: var(--font-display); letter-spacing: 0; text-transform: uppercase; }
+.chalk-heading, .card-title { margin: 0; font-family: var(--font-display); letter-spacing: -0.02em; text-transform: uppercase; }
 .card-title { font-size: var(--text-3xl); line-height: 1.06; overflow-wrap: anywhere; }
 
 .menu-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 16px; }
@@ -172,10 +172,13 @@
   .pause-face[data-face-panel='settings'] .setting-row { grid-template-columns: 54px minmax(0, 1fr); gap: 6px; margin-bottom: 4px; }
   .pause-face[data-face-panel='settings'] .chip { min-height: 44px; padding-inline: 4px; }
   .pause-face[data-face-panel='settings'] .pause-done { margin-top: 0; }
-  .results-card { max-width: 760px; padding-block: 16px; }
-  .results-note { margin-bottom: 8px; }
+  .results-card { max-width: 760px; padding-block: 12px; }
+  .results-score { margin: 4px 0 6px; font-size: var(--text-4xl); }
+  .results-note { margin-bottom: 4px; font-size: var(--text-sm); }
   .results-card .results-title { font-size: var(--text-2xl); }
-  .results-stars { grid-auto-flow: column; gap: 16px; }
+  .results-stars { grid-auto-flow: column; gap: 12px; }
+  .results-stars li { font-size: var(--text-sm); gap: 8px; }
+  .result-star { width: 30px; height: 30px; padding: 4px; }
 }
 @media (min-width: 701px) and (max-height: 500px) {
   .pause-face[data-face-panel='settings']:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
@@ -186,11 +189,14 @@
 @media (max-width: 699px) and (max-height: 500px) and (orientation: landscape) {
   .screen-intro, .screen-pause { padding-right: max(68px, env(safe-area-inset-right)); }
   .screen-intro { padding-left: max(16px, env(safe-area-inset-left)); padding-bottom: 8px; }
-  .intro-card { max-height: calc(100dvh - 16px); padding: 8px 16px; }
-  .intro-place { margin: 0 0 4px; font-size: var(--text-sm); }
-  .intro-rules { margin-bottom: 4px; }
+  .intro-card { max-height: calc(100dvh - 16px); padding: 8px 14px; }
+  .intro-card .card-kicker { font-size: 10px; margin-bottom: 2px; }
+  .intro-card .card-title { font-size: var(--text-xl); }
+  .intro-place { margin: 0 0 2px; font-size: var(--text-xs); }
+  .intro-rules { margin-bottom: 4px; font-size: 11px; gap: 2px; }
   .pause-card[data-face='settings'] { padding-block: 8px; }
   .pause-card[data-face='settings'] .card-title { margin-bottom: 0; }
   .pause-card[data-face='settings'] .settings-tabs { margin-bottom: 4px; }
   .pause-card[data-face='settings'] .setting-row { margin-bottom: 2px; }
+  .pause-card[data-face='settings'] .chip { min-height: 38px; font-size: var(--text-xs); }
 }

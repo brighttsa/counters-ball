@@ -1,7 +1,7 @@
 // Wires physics and rules events to everything the player sees and hears:
 // sounds, dust, springs, hit-stop, slow motion, camera, HUD and AI turns.
 import {
-  SIDE_HOME, SIDE_AWAY, GOAL_LINE_X, MAX_FLICK_SPEED,
+  SIDE_HOME, SIDE_AWAY, GOAL_LINE_X, GOAL_HALF_WIDTH, MAX_FLICK_SPEED,
 } from '../core/pitch-dimensions-and-constants.js';
 import { createSchoolyardShotMemory } from '../core/schoolyard-shot-memory.js';
 import { screenPan } from '../audio/screen-space-stereo-pan.js';
@@ -23,6 +23,8 @@ export function wireMatchFeedback(session) {
   // 2-Player seats go by the names typed on the intro card; the object is read live, so kick-off can fill it.
   const nameOf = (side) => options.playerNames?.[side] ?? (side === SIDE_HOME ? options.homeTeam.name : options.awayTeam.name);
   let lastHumanSide = null;
+  let firstTurn = true;
+  let lastTurnTime = 0;
   const goalCounts = { [SIDE_HOME]: 0, [SIDE_AWAY]: 0 };
   const kid = level.opponent.kid;
   const syncFlicks = () => hud.setFlicks(rules.flicksLeft(SIDE_HOME), rules.flicksLeft(SIDE_AWAY));
@@ -43,6 +45,10 @@ export function wireMatchFeedback(session) {
         if (strength > 0.2) { // the strike: freeze a beat, then let it fly
           time.hitStop(0.02 + strength * 0.065);
           cameraDirector.addTrauma(strength * 0.3);
+        }
+        if (strength > 0.15 && Math.abs(Math.abs(x) - GOAL_LINE_X) < 0.08
+          && Math.abs(z - (physics.goalCenters?.[Math.sign(x)] ?? 0)) < GOAL_HALF_WIDTH + 0.04) {
+          sound.event?.('goalLineSave', strength);
         }
       } else {
         sound[SURFACE_SOUND[other.kind]]?.(strength, pan);
@@ -82,6 +88,14 @@ export function wireMatchFeedback(session) {
     session.input.cancel();
     session.presentation.turn(side);
     syncFlicks();
+    const now = performance.now();
+    if (firstTurn) { firstTurn = false; if (!options.isAttract) sound.event?.('matchStart'); }
+    else if (lastHumanSide && lastHumanSide !== side) {
+      const gap = (now - lastTurnTime) / 1000;
+      const pace = Math.min(1, Math.max(0.2, gap / 8));
+      sound.event?.('turnChange', pace);
+    }
+    lastTurnTime = now;
     if (rules.isAi(side)) {
       hud.setTurn(side, `${side === SIDE_AWAY ? kid : nameOf(side)} lines up`);
       const difficulty = side === SIDE_AWAY ? level.opponent.difficulty : options.homeDifficulty;
@@ -102,6 +116,12 @@ export function wireMatchFeedback(session) {
     if (!options.isAttract && !rules.isAi(side)) completeFirstShotGuidance();
     session.hideTutorial();
   });
+
+  const origResolve = rules.resolvePlayAtRest.bind(rules);
+  rules.resolvePlayAtRest = function () {
+    if (session.slowMoUsed && rules.phase === 'moving') sound.event?.('nearMiss');
+    origResolve();
+  };
 
   rules.on('goal', ({ scorer, scores }) => {
     goalCounts[scorer] += 1;
@@ -148,6 +168,7 @@ export function wireMatchFeedback(session) {
     hud.setTurn(null, MATCH_COPY.fullTime);
     sound.whistle();
     if (result.winner && (versus || result.winner === SIDE_HOME)) sound.event?.('win');
+    else if (result.winner && !versus && result.winner !== SIDE_HOME) sound.event?.('loss');
     hud.event(result.winner ? 'WINNER' : 'FULL TIME', { priority: 12, duration: 1.2 });
     // The opponent's goal confetti should not keep falling behind the player's loss card.
     const lost = !versus && result.winner !== SIDE_HOME;

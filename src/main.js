@@ -226,7 +226,11 @@ function setPaused(paused) {
 
 const menus = new MenuScreens((action, el) => {
   sound.unlock();
-  if (action !== 'toggle-sound') sound.uiTick();
+  if (action === 'preview-level') {
+    el.classList.contains('locked') ? sound.uiLocked() : sound.uiSelect();
+  } else if (action !== 'toggle-sound') {
+    sound.uiTick();
+  }
   actions[action]?.(el);
 });
 const chalkHints = new JustInTimeChalkHints();

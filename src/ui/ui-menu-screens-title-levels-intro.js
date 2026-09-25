@@ -64,8 +64,8 @@ export class MenuScreens {
 
   show(name) {
     document.body.dataset.screen = name ?? 'match';
-    this.onShow?.(name ?? null); // the soundtrack follows the screen
     for (const [key, el] of Object.entries(this.screens)) el.classList.toggle('is-active', key === name);
+    this.onShow?.(name ?? null); // after the DOM updates so sound and visual land on the same frame
     this.current = name;
     // One selector list would match in document order and land on a Back button placed before
     // the primary action (Enter on the intro would leave the match), so try each in priority order.

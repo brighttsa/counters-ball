@@ -7,11 +7,20 @@ import { applyAudioSettings } from './music-and-effects-audio-settings.js';
 
 export function wireSoundtrack({ app, sound, music, menus, progress }) {
   sound.music = music; // unlock() attaches it; goals duck it
+  let lastScreen = null;
   menus.onShow = (screen) => {
+    if (lastScreen !== null && screen !== null && screen !== lastScreen) sound.event?.('screenTransition');
+    lastScreen = screen;
     const { id, dip } = musicForScreen(screen, app.mode, music.playing ?? music.wanted?.id ?? null);
     music.request(id, { dip });
   };
   window.addEventListener('keydown', () => sound.unlock());
-  document.addEventListener('visibilitychange', () => sound.setHidden(document.hidden));
+  const onHide = (hidden) => {
+    sound.setHidden(hidden);
+    music.setHidden(hidden);
+  };
+  document.addEventListener('visibilitychange', () => onHide(document.hidden));
+  window.addEventListener('pagehide', () => onHide(true));
+  window.addEventListener('pageshow', () => onHide(false));
   applyAudioSettings({ progress, sound, music, menus });
 }

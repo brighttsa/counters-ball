@@ -84,7 +84,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
   color: var(--paper); background: var(--ink); border: 0; border-radius: 0;
   clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
   box-shadow: none; transform: none; text-shadow: none; overflow-wrap: anywhere;
-  transition: background 160ms ease, border-color 160ms ease;
+  transition: background 160ms ease, border-color 160ms ease, transform 100ms ease-out, filter 100ms ease-out;
 }
 .btn-primary { background: var(--yellow); color: var(--ink); }
 .btn-small { font-size: var(--text-sm); padding: 8px 12px; }
@@ -113,7 +113,11 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 .icon-btn:active { transform: scale(0.92); }
 .icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; box-shadow: 0 0 0 5px rgb(var(--ink-rgb) / .8); }
 .icon-btn svg { width: 1em; height: 1em; }
-.sound-btn { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); font-size: var(--text-lg); }
+.sound-btn {
+  position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
+  font-size: var(--text-lg); border: 1px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82);
+}
+.sound-btn:hover { border-color: var(--yellow); color: var(--yellow); }
 .sound-btn .sound-icon { width: 22px; height: 22px; }
 .sound-btn.muted { opacity: 0.55; }
 .sound-btn.muted .sound-icon { opacity: 0.5; }
