@@ -31,7 +31,7 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
     blurb: 'A ruler in an eraser. It turns every flick. Kwame reckons you can\'t use it.',
     objective: 'Score past the turning ruler',
     introLines: [
-      'First to 1 · 10 flicks each · rookie rival',
+      'First to 1 · 10 flicks each',
       'The ruler turns 45° every flick: open, slanted, across, slanted back',
       'Watch the ruler turn between turns. Bank the ball off it',
       'The turn sweeps caps and ball aside. Watch where they settle',

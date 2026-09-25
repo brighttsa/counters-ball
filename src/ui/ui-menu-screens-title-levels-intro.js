@@ -123,7 +123,11 @@ export class MenuScreens {
       const stars = progress.stars[level.id] ?? 0;
       const starRow = versus ? '' : `<span class="level-stars" aria-label="${stars} of 3 stars">${
         [0, 1, 2].map((n) => `<svg class="star-svg ${n < stars ? 'on' : ''}" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg>`).join('')}</span>`;
-      const group = level.legend?.act === 1 ? `<span class="level-group">${escapeHtml(level.place)} <small>· ${escapeHtml(level.name)}</small></span>` : '';
+      // The act strip is only ~100px tall, so the divider carries the venue's first words ("Kiosk", "Lights Out");
+      // the full name and place are on the preview card and in the accessible name.
+      const venueTag = level.name.split(' ').slice(0, -1).join(' ') || level.name;
+      const group = level.legend?.act === 1
+        ? `<span class="level-group" title="${escapeHtml(`${level.name} · ${level.place}`)}" aria-label="${escapeHtml(`${level.name}, ${level.place}`)}">${escapeHtml(venueTag)}</span>` : '';
       return `${group}<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
         aria-pressed="false" style="--accent:${level.opponent.team.hudColor}">
         <span class="level-number">${level.legend?.act ?? i + 1}</span>
