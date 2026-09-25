@@ -19,7 +19,7 @@ import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
-import { createMessageMatchFlow } from './ui/message-match-flow.js';
+import { createMessageMatchFlow } from './ui/message-match-flow.js?v=2';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';

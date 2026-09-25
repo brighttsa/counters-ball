@@ -1,7 +1,7 @@
 // Message Match app flow: start one from a 2-Player table, open a friend's move (short match link or
 // self-contained letter link), replay it, play your flick, and send the table back. The match server
 // is the transport when it is reachable; a letter link is the fallback, so a match never gets stuck.
-import { MessageMatchLetters } from '../gameplay/message-match-letter-recorder-and-replayer.js';
+import { MessageMatchLetters } from '../gameplay/message-match-letter-recorder-and-replayer.js?v=2';
 import { encodeLetterLink, packLetter, unpackLetter } from '../core/message-match-turn-letter-codec.js';
 import {
   MatchSeats, MatchServerError, fetchLatestLetter, matchApiBase, openServerMatch, sendServerTurn, shortMatchLink,
@@ -9,7 +9,7 @@ import {
 import { pushAvailability, subscribeToMatch } from '../core/message-match-push-subscription.js';
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
-import { MessageMatchLetterCard } from './message-match-letter-card.js';
+import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
 
 const other = (side) => (side === 'home' ? 'away' : 'home');
 

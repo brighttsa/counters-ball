@@ -2,17 +2,20 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Active rivals and progressive Street Legends difficulty",
+  "task": "One-flick shared-link multiplayer",
   "status": "released",
   "paths": [
-    "src/levels/",
-    "src/gameplay/ai-opponent-shot-planner.js",
-    "src/gameplay/ai-positional-shot-evaluation.js",
-    "tests/active-rival-difficulty.test.mjs",
-    "plans/reports/active-rival-difficulty.md",
+    "src/gameplay/message-match-letter-recorder-and-replayer.js",
+    "src/ui/message-match-flow.js",
+    "src/ui/message-match-letter-card.js",
+    "src/core/message-match-turn-letter-codec.js",
+    "tests/message-match-letters.test.mjs",
+    "tests/message-match-server.test.mjs",
+    "index.html",
+    "src/main.js",
     "plans/agent-handoff-board.md",
-    "tests/menu-and-results-copy.test.mjs"
+    "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T17:22:05Z",
-  "head": "795fd7e86f82dd81f35464dd08bfe75ea672311b"
+  "updatedAt": "2026-09-25T18:55:10Z",
+  "head": "b33a5a6"
 }

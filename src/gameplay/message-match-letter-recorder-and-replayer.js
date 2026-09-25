@@ -1,5 +1,5 @@
-// Message Match on one device: records this player's move into a letter, and replays the
-// friend's letter flick by flick through the real rules and physics before handing over the table.
+// Message Match on one device: records one flick into a letter, and replays the
+// friend's letter through the real rules and physics before handing over the table.
 // The physics steps at a fixed rate, so a replay from the same table matches the sender; each
 // flick still snaps to the sender's settled positions so no drift can ever build up.
 
@@ -50,7 +50,6 @@ export class MessageMatchLetters {
     if (!rec) return;
     const last = rec.flicks.at(-1);
     if (last && !last.after) last.after = readTable(this.session);
-    if (kind === 'turn' && side === this.mySide) return; // own goal or they are out of flicks: keep going
     this.recording = null;
     this.seq += 1;
     this.onLetter({
