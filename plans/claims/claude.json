@@ -2,17 +2,15 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Pause menu: four actions + settings on the card back",
+  "task": "Trim game text: act card details, practice card, short hints",
   "status": "released",
   "paths": [
+    "src/ui/ui-menu-screens-title-levels-intro.js",
+    "src/ui/just-in-time-chalk-hints.js",
+    "src/levels/kwame-corner-practice-table.js",
     "index.html",
-    "src/ui/",
-    "src/audio/music-and-effects-audio-settings.js",
-    "styles/",
-    "tests/",
-    "docs/",
-    "plans/agent-handoff-board.md"
+    "styles/game-ui-menus-and-results.css"
   ],
-  "updatedAt": "2026-09-24T16:43:40.913Z",
-  "head": "699e4dc094973e81c7f73f8d09c242e300f02b6b"
+  "updatedAt": "2026-09-25T23:14:42.422Z",
+  "head": "08c3d8b7ea3d146f565f238baae4e872d7d2928d"
 }
