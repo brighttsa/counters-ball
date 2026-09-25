@@ -2,15 +2,13 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Trim game text: act card details, practice card, short hints",
+  "task": "Pause fades audio before suspending",
   "status": "released",
   "paths": [
-    "src/ui/ui-menu-screens-title-levels-intro.js",
-    "src/ui/just-in-time-chalk-hints.js",
-    "src/levels/kwame-corner-practice-table.js",
-    "index.html",
-    "styles/game-ui-menus-and-results.css"
+    "src/audio/bounded-audio-voice-synthesis.js",
+    "src/audio/soundtrack-music-director.js",
+    "tests/audio-voice-and-ambience-lifecycle.test.mjs"
   ],
-  "updatedAt": "2026-09-25T23:14:42.422Z",
-  "head": "08c3d8b7ea3d146f565f238baae4e872d7d2928d"
+  "updatedAt": "2026-09-25T23:20:48.467Z",
+  "head": "0144c7e16f675b452a7464aef1c8963ab86972c1"
 }

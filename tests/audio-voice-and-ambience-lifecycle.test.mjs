@@ -8,7 +8,8 @@ import { SOUND_EVENT_NAMES } from '../src/audio/semantic-sound-event-mapping.js'
 function audioContext() {
   const nodes = [];
   const parameter = () => ({ value: 0, targets: [], setValueAtTime() {},
-    exponentialRampToValueAtTime() {}, setTargetAtTime(value) { this.targets.push(value); } });
+    exponentialRampToValueAtTime() {}, linearRampToValueAtTime() {}, cancelScheduledValues() {},
+    setTargetAtTime(value) { this.targets.push(value); } });
   const node = () => {
     const result = { gain: parameter(), frequency: parameter(), Q: parameter(), pan: parameter(), type: 'sine',
       disconnects: 0, stops: 0, starts: 0,
@@ -55,9 +56,11 @@ test('voice cap rejects extra allocation and ending a voice frees its full chain
   assert.ok(noise.nodes.every(node => node.disconnects === 1));
 });
 
-test('pause and mute suppress new voices and resume restores availability', () => {
+test('pause fades out before suspending, suppresses new voices, and resume restores availability', async () => {
   const { sound, ctx } = board();
   sound.setPaused(true);
+  assert.equal(ctx.suspends, 0, 'no hard cut: the context keeps running while the fade plays');
+  await new Promise((resolve) => setTimeout(resolve, 250));
   assert.equal(ctx.suspends, 1);
   assert.equal(sound.tone({ freq: 440 }), null);
   sound.setPaused(false);

@@ -1,6 +1,7 @@
 const HIDE_FADE = 0.4;      // seconds: music fades out before the context suspends
 const SHOW_FADE = 0.8;      // seconds: music fades back in after the context resumes
 const HIDE_LPF_END = 200;   // Hz: low-pass cutoff at the end of the hide fade ("going to sleep")
+const PAUSE_FADE = 0.12;    // seconds: pause is quicker than a tab hide but never a hard cut
 
 // Sources are single-use Web Audio nodes; reusable buffers and a hard voice
 // limit bound allocation, and every ended voice disconnects its entire chain.
@@ -78,13 +79,21 @@ export class BoundedAudioVoiceSynthesis {
     }
   }
 
+  /**
+   * Pausing fades both buses to silence before the context suspends. Suspending mid-waveform froze the
+   * last sample on some headphone outputs and left a buzz for as long as the pause menu stayed open.
+   */
   setPaused(paused) {
     this.paused = Boolean(paused);
+    clearTimeout(this._hideTimer);
     if (!this.ctx) return;
-    if (this.paused || this.hidden) {
-      this.ctx.suspend()?.catch(() => {});
-    } else {
+    if (this.paused) {
+      this._fadeForHide(PAUSE_FADE);
+      this.music?.setHidden(true, PAUSE_FADE);
+    } else if (!this.hidden) {
       this.ctx.resume()?.catch(() => {});
+      this._fadeForShow(PAUSE_FADE * 2);
+      this.music?.setHidden(false, PAUSE_FADE * 2);
     }
   }
 
@@ -101,37 +110,37 @@ export class BoundedAudioVoiceSynthesis {
     return lpf;
   }
 
-  _fadeForHide() {
+  _fadeForHide(fade = HIDE_FADE) {
     const lpf = this._ensureHideFilter();
     const now = this.ctx.currentTime;
     if (this.master) {
       this.master.gain.cancelScheduledValues(now);
       this.master.gain.setValueAtTime(this.master.gain.value, now);
-      this.master.gain.linearRampToValueAtTime(0, now + HIDE_FADE);
+      this.master.gain.linearRampToValueAtTime(0, now + fade);
     }
     if (lpf) {
       lpf.frequency.cancelScheduledValues(now);
       lpf.frequency.setValueAtTime(lpf.frequency.value, now);
-      lpf.frequency.exponentialRampToValueAtTime(HIDE_LPF_END, now + HIDE_FADE);
+      lpf.frequency.exponentialRampToValueAtTime(HIDE_LPF_END, now + fade);
     }
     this._hideTimer = setTimeout(() => {
       this.ctx?.suspend()?.catch(() => {});
-    }, HIDE_FADE * 1000 + 50);
+    }, fade * 1000 + 50);
   }
 
-  _fadeForShow() {
+  _fadeForShow(fade = SHOW_FADE) {
     const lpf = this._hideLpf;
     const now = this.ctx.currentTime;
     const level = this.muted || this.effectsOff ? 0 : 0.9;
     if (this.master) {
       this.master.gain.cancelScheduledValues(now);
       this.master.gain.setValueAtTime(0.0001, now);
-      this.master.gain.linearRampToValueAtTime(level, now + SHOW_FADE);
+      this.master.gain.linearRampToValueAtTime(level, now + fade);
     }
     if (lpf) {
       lpf.frequency.cancelScheduledValues(now);
       lpf.frequency.setValueAtTime(HIDE_LPF_END, now);
-      lpf.frequency.exponentialRampToValueAtTime(this.ctx.sampleRate / 2, now + SHOW_FADE);
+      lpf.frequency.exponentialRampToValueAtTime(this.ctx.sampleRate / 2, now + fade);
     }
   }
 

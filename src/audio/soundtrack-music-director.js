@@ -151,17 +151,17 @@ export class SoundtrackDirector {
   }
 
   /** Fade the music bus gracefully for tab hide/show (the effects bus handles its own). */
-  setHidden(hidden) {
+  setHidden(hidden, fade = hidden ? HIDE_FADE : SHOW_FADE) {
     if (!this.ctx || !this.level) return;
     const now = this.ctx.currentTime;
     this.level.gain.cancelScheduledValues(now);
     if (hidden) {
       this.level.gain.setValueAtTime(this.level.gain.value, now);
-      this.level.gain.linearRampToValueAtTime(0, now + HIDE_FADE);
+      this.level.gain.linearRampToValueAtTime(0, now + fade);
     } else {
       this.level.gain.setValueAtTime(0, now);
       const target = this.muted ? 0 : this.volume * MUSIC_BASE_LEVEL;
-      this.level.gain.linearRampToValueAtTime(target, now + SHOW_FADE);
+      this.level.gain.linearRampToValueAtTime(target, now + fade);
     }
   }
 
