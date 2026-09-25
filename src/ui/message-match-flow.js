@@ -1,7 +1,11 @@
-// Message Match app flow: start one from a 2-Player table, open a friend's letter from a link,
-// replay it, play your flick, and send the table back. Links are the transport for now.
+// Message Match app flow: start one from a 2-Player table, open a friend's move (short match link or
+// self-contained letter link), replay it, play your flick, and send the table back. The match server
+// is the transport when it is reachable; a letter link is the fallback, so a match never gets stuck.
 import { MessageMatchLetters } from '../gameplay/message-match-letter-recorder-and-replayer.js';
-import { encodeLetterLink } from '../core/message-match-turn-letter-codec.js';
+import { encodeLetterLink, packLetter, unpackLetter } from '../core/message-match-turn-letter-codec.js';
+import {
+  MatchSeats, MatchServerError, fetchLatestLetter, matchApiBase, openServerMatch, sendServerTurn, shortMatchLink,
+} from '../core/message-match-server-transport.js';
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js';
@@ -14,17 +18,23 @@ const other = (side) => (side === 'home' ? 'away' : 'home');
 export function createMessageMatchFlow(deps) {
   const { app, menus, hud, sound, cameraDirector } = deps;
   const card = new MessageMatchLetterCard();
+  const seats = new MatchSeats();
+  const api = matchApiBase();
+  let matchId = null;    // the server's record of this match, when there is one
   let incoming = null;   // a friend's letter waiting to be watched
   let outgoing = null;   // our finished move, waiting to be sent
+  let sentUrl = null;    // once a move is on the server, resending shares the same link
   let result = null;     // full time, held back until our last letter is sent
 
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
+  const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
 
   function openTable(index, mySide, names, seq) {
     const level = CAMPAIGN_LEVELS[index];
     Object.assign(app, { mode: 'versus', levelIndex: index });
     result = null;
     outgoing = null;
+    sentUrl = null;
     deps.openMatchTable(level, {
       controllers: { [mySide]: 'human', [other(mySide)]: 'remote' },
       playerNames: names,
@@ -37,35 +47,80 @@ export function createMessageMatchFlow(deps) {
     return new MessageMatchLetters(app.session, { mySide, levelId: level.id, names, seq, onLetter: (letter) => {
       outgoing = letter;
       app.session.schedule(0.7, () => {
-        card.showSend({ letter, level, url: (taunt) => encodeLetterLink({ ...letter, taunt }, deps.baseUrl) });
+        card.showSend({ letter, level });
         menus.show('letter');
       });
     } });
   }
 
+  /** Puts our move on the server and returns its short link, or null to fall back to a letter link. */
+  async function upload(packed) {
+    if (!api) return null;
+    try {
+      if (!matchId && packed.k === 1) matchId = (await openServerMatch(api, packed)).id;
+      else if (matchId) await sendServerTurn(api, matchId, packed);
+      else return null; // a match that began on letter links stays on letter links
+      seats.remember(matchId, outgoing.by);
+      return shortMatchLink(deps.baseUrl, matchId);
+    } catch (error) {
+      if (error instanceof MatchServerError && error.status === 409) throw error; // the match moved on: never fork it
+      return null;
+    }
+  }
+
+  function showIncoming(letter) {
+    incoming = letter;
+    card.showIncoming({ letter, level: levelOf(letter) });
+    menus.show('letter');
+  }
+
   return {
     /** From the 2-Player intro: this device plays home and flicks first. */
     start(index) {
+      matchId = null;
       const names = cleanPlayerNames(menus.readPlayerNames());
       openTable(index, 'home', names, 0);
       sound.whistle();
       app.session.start('home');
     },
 
-    /** A letter arrived in the URL: say who flicked before anything moves. */
+    /** A self-contained letter link arrived: say who flicked before anything moves. */
     open(letter) {
-      const index = levelIndexOf(letter.levelId);
-      if (index < 0) return false;
-      incoming = letter;
-      card.showIncoming({ letter, level: CAMPAIGN_LEVELS[index] });
-      menus.show('letter');
+      if (levelIndexOf(letter.levelId) < 0) return false;
+      matchId = null;
+      showIncoming(letter);
       return true;
+    },
+
+    /** A short match link arrived: load the latest move from the server. */
+    async openMatch(id) {
+      matchId = id;
+      card.showLoading();
+      menus.show('letter');
+      try {
+        const { letter: packed } = await fetchLatestLetter(api, id);
+        const letter = unpackLetter(packed);
+        if (!letter || levelIndexOf(letter.levelId) < 0) throw new Error('unusable letter');
+        if (seats.sideIn(id) === letter.by && letter.rulesAfter.phase !== 'ended') {
+          card.showWaiting({ letter, level: levelOf(letter) });
+        } else {
+          showIncoming(letter);
+        }
+      } catch (error) {
+        card.showUnavailable(error instanceof MatchServerError && error.status === 404
+          ? 'This match has expired or never existed.' : 'Could not reach the match. Check your connection and try again.');
+      }
+    },
+
+    refresh() {
+      if (matchId) this.openMatch(matchId);
     },
 
     async watch() {
       const letter = incoming;
       if (!letter) return;
       incoming = null;
+      if (matchId) seats.remember(matchId, other(letter.by));
       const letters = openTable(levelIndexOf(letter.levelId), other(letter.by), letter.names, letter.seq);
       if (letter.taunt) hud.event(`“${letter.taunt}”`, { priority: 3, duration: 2.4, detail: letter.names[letter.by] });
       try {
@@ -77,15 +132,32 @@ export function createMessageMatchFlow(deps) {
 
     async send() {
       if (!outgoing) return;
-      card.prepare(outgoing, (taunt) => encodeLetterLink({ ...outgoing, taunt }, deps.baseUrl));
-      await card.share.share();
+      card.setBusy(true);
+      try {
+        const letter = { ...outgoing, taunt: card.readTaunt() };
+        const url = sentUrl ?? await upload(packLetter(letter)) ?? encodeLetterLink(letter, deps.baseUrl);
+        if (url.includes('?m=')) sentUrl = url;
+        card.prepare(letter, url);
+        await card.share.share();
+      } catch (error) {
+        if (error instanceof MatchServerError) card.showConflict(error.message);
+      } finally {
+        card.setBusy(false);
+      }
       if (result) card.showFullTimeButton();
     },
 
     async copy() {
       if (!outgoing) return;
-      card.prepare(outgoing, (taunt) => encodeLetterLink({ ...outgoing, taunt }, deps.baseUrl));
-      await card.share.copy();
+      const letter = { ...outgoing, taunt: card.readTaunt() };
+      try {
+        const url = sentUrl ?? await upload(packLetter(letter)) ?? encodeLetterLink(letter, deps.baseUrl);
+        if (url.includes('?m=')) sentUrl = url;
+        card.prepare(letter, url);
+        await card.share.copy();
+      } catch (error) {
+        if (error instanceof MatchServerError) card.showConflict(error.message);
+      }
     },
 
     fullTime() {

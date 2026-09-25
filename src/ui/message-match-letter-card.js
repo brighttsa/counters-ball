@@ -1,9 +1,11 @@
-// The Message Match card: "they flicked, watch it" on the way in, "send your move" on the way out.
+// The Message Match card: "they flicked, watch it" on the way in, "send your move" on the way out,
+// plus the short-link states: loading the match, waiting on your friend, and a match that is gone.
 import { FriendMatchInviteShare } from './friend-match-invite-share.js';
 import { cleanTaunt } from '../core/message-match-turn-letter-codec.js';
 
 const $ = (id) => document.getElementById(id);
 const scoreLine = (names, scores) => `${names.home} ${scores.home}–${scores.away} ${names.away}`;
+const opponentOf = (letter) => letter.names[letter.by === 'home' ? 'away' : 'home'];
 
 export class MessageMatchLetterCard {
   constructor() {
@@ -15,9 +17,9 @@ export class MessageMatchLetterCard {
     for (const el of document.querySelectorAll('[data-letter-group]')) el.hidden = el.dataset.letterGroup !== name;
   }
 
-  fill({ title, level, line, taunt = '' }) {
+  fill({ title, level = null, line, taunt = '' }) {
     $('letter-title').textContent = title;
-    $('letter-venue').textContent = `${level.name} · ${level.place}`;
+    $('letter-venue').textContent = level ? `${level.name} · ${level.place}` : '';
     $('letter-line').textContent = line;
     $('letter-taunt').textContent = taunt ? `“${taunt}”` : '';
     $('letter-taunt').hidden = !taunt;
@@ -31,21 +33,46 @@ export class MessageMatchLetterCard {
     this.group('incoming');
   }
 
-  showSend({ letter, level, url }) {
-    const to = letter.names[letter.by === 'home' ? 'away' : 'home'];
+  showSend({ letter, level }) {
     const ended = letter.rulesAfter.phase === 'ended';
+    const to = opponentOf(letter);
     this.fill({ title: ended ? 'That is full time' : 'Your flick is in', level,
       line: `${scoreLine(letter.names, letter.rulesAfter.scores)}. ${ended ? `Send it so ${to} sees it land.` : `Send it to ${to}: they watch it, then flick back.`}` });
     $('letter-taunt-input').value = '';
     $('letter-full-time').hidden = true;
+    this.share.report('');
     this.group('send');
-    this.prepare(letter, url);
   }
 
+  showLoading() {
+    this.fill({ title: 'Opening the match…', line: 'Fetching the latest flick.' });
+    this.group('message');
+  }
+
+  showWaiting({ letter, level }) {
+    this.fill({ title: `Waiting for ${opponentOf(letter)}`, level,
+      line: `${scoreLine(letter.names, letter.rulesAfter.scores)}. Your flick is with them. This same link opens their reply when it lands.` });
+    this.group('waiting');
+  }
+
+  showUnavailable(line) {
+    this.fill({ title: 'Match not found', line });
+    this.group('message');
+  }
+
+  showConflict(reason) {
+    this.share.report(`Not sent: ${reason}. Open the match link again to see the latest flick.`);
+  }
+
+  setBusy(busy) {
+    for (const el of document.querySelectorAll('[data-action="letter-send"], [data-action="letter-copy"]')) el.disabled = busy;
+  }
+
+  /** @param url the link to share: a short match link, or a self-contained letter link */
   prepare(letter, url) {
     const me = letter.names[letter.by];
-    const taunt = this.readTaunt();
-    this.share.prepare({ url: url(taunt), text: taunt ? `${me}: “${taunt}” Your move in KONK!` : `${me} just flicked. Your move in KONK!` });
+    const taunt = cleanTaunt(letter.taunt);
+    this.share.prepare({ url, text: taunt ? `${me}: “${taunt}” Your move in KONK!` : `${me} just flicked. Your move in KONK!` });
   }
 
   readTaunt() {

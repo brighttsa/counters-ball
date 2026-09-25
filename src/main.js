@@ -20,6 +20,7 @@ import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
+import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
@@ -260,10 +261,13 @@ window.addEventListener('keydown', (e) => {
 
 wireSoundtrack({ app, sound, music, menus, progress });
 hud.setStyle(progress.hudStyle);
-const letter = takeLetterFromUrl();
-app.challenge = letter ? null : takeChallengeFromUrl();
-app.friendInvite = letter || app.challenge ? null : takeFriendInviteFromUrl();
-if (letter) { ensureAttractMode(); if (!messageMatch.open(letter)) showTitle(); } // the match waits for a tap: audio needs a gesture
+const matchId = takeMatchIdFromUrl();
+const letter = matchId ? null : takeLetterFromUrl();
+app.challenge = matchId || letter ? null : takeChallengeFromUrl();
+app.friendInvite = matchId || letter || app.challenge ? null : takeFriendInviteFromUrl();
+// Message Match links wait on a card for a tap: audio needs a gesture before the replay.
+if (matchId) { ensureAttractMode(); messageMatch.openMatch(matchId); }
+else if (letter) { ensureAttractMode(); if (!messageMatch.open(letter)) showTitle(); }
 else if (app.challenge) showChallenge(); else if (app.friendInvite) showFriendMatch({ incoming: true }); else showTitle();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post,
   onFrame: (dt) => {
