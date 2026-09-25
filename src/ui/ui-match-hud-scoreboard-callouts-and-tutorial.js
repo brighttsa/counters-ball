@@ -68,6 +68,12 @@ export class MatchHud {
     $('hud-away-name').textContent = away.toUpperCase();
   }
 
+  setLocalPerspective(side, names) {
+    if (!side || !names) return;
+    this.setNames(side === SIDE_HOME ? 'YOU' : names.home, side === SIDE_AWAY ? 'YOU' : names.away);
+    this.root.dataset.localSide = side;
+  }
+
   /**
    * Street Legends objective; hidden on classic tables. The venue's live reading (which way the ruler turns
    * next, which lane shuts…) is chalked on the table, so on screen it is only read out to screen readers.

@@ -18,6 +18,7 @@ const WALL_RESTITUTION_FACTOR = 1 + RAIL_RESTITUTION;
 export function wireMatchFeedback(session) {
   const { physics, rules, sound, particles, juice, time, cameraDirector, post, hud, options, level } = session;
   const versus = options.controllers.home !== 'ai' && options.controllers.away !== 'ai'; // hot-seat or by message
+  const localSide = options.localSide ?? null;
   const tableSurface = level.surface?.kind ?? 'cardboard';
   const shotMemory = createSchoolyardShotMemory(level, options);
   const entryByBody = new Map(session.entries.map((e) => [e.body, e]));
@@ -110,7 +111,7 @@ export function wireMatchFeedback(session) {
       const difficulty = side === SIDE_AWAY ? level.opponent.difficulty : options.homeDifficulty;
       session.ai.takeTurn(side, session.entriesForSide(side), session.ballBody, difficulty);
     } else {
-      hud.setTurn(side, versus ? `${nameOf(side)}'s flick` : MATCH_COPY.soloTurn);
+      hud.setTurn(side, versus ? side === localSide ? 'YOUR FLICK' : `${nameOf(side)}'s flick` : MATCH_COPY.soloTurn);
       // One phone, two players: say out loud whose hands it belongs in now.
       if (versus && lastHumanSide && lastHumanSide !== side) {
         hud.event(`${nameOf(side).toUpperCase()}'S FLICK`, { priority: 2, duration: 1.1, detail: MATCH_COPY.handover });

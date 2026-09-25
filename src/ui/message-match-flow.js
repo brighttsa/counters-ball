@@ -42,9 +42,10 @@ export function createMessageMatchFlow(deps) {
     deps.openMatchTable(level, {
       controllers: { [mySide]: 'human', [other(mySide)]: 'remote' },
       playerNames: names,
+      localSide: mySide,
       onEnd: (fullTime) => { result = fullTime; if (outgoing) card.showFullTimeButton(); else deps.showResults(fullTime); },
     }, true);
-    hud.setNames(names.home, names.away);
+    hud.setLocalPerspective(mySide, names);
     cameraDirector.setMode('play');
     menus.show(null);
     hud.show(true);

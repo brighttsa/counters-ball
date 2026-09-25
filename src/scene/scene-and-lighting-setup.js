@@ -3,10 +3,18 @@
 import * as THREE from 'three';
 import { preferredShadowSize } from '../fx/adaptive-render-quality.js';
 
+export function readViewportSize() {
+  const viewport = window.visualViewport;
+  const width = document.documentElement?.clientWidth || viewport?.width || window.innerWidth;
+  const height = document.documentElement?.clientHeight || viewport?.height || window.innerHeight;
+  return { width, height };
+}
+
 export function createRendererSceneCamera(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  const { width, height } = readViewportSize();
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -16,7 +24,7 @@ export function createRendererSceneCamera(canvas) {
   scene.background = new THREE.Color(0xd99e63);
   scene.fog = new THREE.Fog(0xd99e63, 5.5, 13.0); // range set by the camera director
 
-  const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 40);
+  const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 40);
   return { renderer, scene, camera };
 }
 

@@ -36,10 +36,10 @@
 
 * { box-sizing: border-box; }
 html, body {
-  margin: 0; height: 100%; overflow: hidden;
+  margin: 0; height: 100%; min-height: 100%; overflow: hidden;
   background: var(--ink); color: var(--paper);
   font-family: var(--font-body); -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
 }
 [hidden] { display: none !important; }
 button { font: inherit; }
@@ -47,7 +47,7 @@ button, h1, h2, p, span { letter-spacing: 0; }
 
 #game-canvas {
   position: fixed; inset: 0; display: block; width: 100% !important; height: 100% !important;
-  touch-action: none; background: var(--ink); opacity: 1; transition: opacity 420ms ease;
+  touch-action: none; background: #d99e63; opacity: 1; transition: opacity 420ms ease;
 }
 body.is-loading #game-canvas { opacity: 0; }
 #game-canvas.can-grab { cursor: grab; }
@@ -177,6 +177,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 .turn-dot.home { background: var(--home-color); }
 .turn-dot.away { background: var(--away-color); }
 .turn-dot.inactive { opacity: 0.2; transform: scale(0.65); }
+.turn-dot:not(.inactive) { outline: 2px solid var(--paper); outline-offset: 2px; }
 
 .flick-meter {
   position: absolute; top: calc(max(14px, env(safe-area-inset-top)) + 60px); left: 50%; transform: translateX(-50%);
@@ -204,6 +205,26 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
     rgb(var(--ink-rgb) / .95);
   border: 1px solid rgb(var(--paper-rgb) / .16); border-left: 6px solid var(--yellow);
   box-shadow: 0 14px 30px rgb(var(--ink-rgb) / .35);
+}
+
+/* Colour is a supporting cue, never the only way to read a match state. */
+@media (prefers-contrast: more), (forced-colors: active) {
+  :root {
+    --ink-raised: #111716;
+    --ink-pressed: #000000;
+    --paper-muted: var(--paper);
+    --line: var(--paper);
+    --line-strong: var(--paper);
+    --warning: var(--paper);
+  }
+  .btn, .icon-btn, .sound-btn, .scoreboard, .flick-meter, .turn-banner, .goal-banner,
+  .paper-card, .intro-card, .screen-title .home-live {
+    border-color: var(--paper);
+    box-shadow: none;
+  }
+  .turn-dot:not(.inactive) { outline-width: 3px; }
+  .turn-dot.inactive { opacity: .55; }
+  .flick-meter b.low { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
 }
 .goal-word { max-width: 100%; font: var(--text-3xl)/.95 var(--font-display); letter-spacing: 0; overflow-wrap: anywhere; color: var(--yellow); paint-order: stroke fill; }
 .goal-sub { max-width: 36ch; font: 700 var(--text-sm)/1.4 var(--font-body); letter-spacing: 0; color: var(--paper); }
