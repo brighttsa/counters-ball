@@ -47,7 +47,7 @@ button, h1, h2, p, span { letter-spacing: 0; }
 
 #game-canvas {
   position: fixed; inset: 0; display: block; width: 100% !important; height: 100% !important;
-  touch-action: none; background: var(--ink); opacity: 1; transition: opacity 420ms ease;
+  touch-action: none; background: #d99e63; opacity: 1; transition: opacity 420ms ease;
 }
 body.is-loading #game-canvas { opacity: 0; }
 #game-canvas.can-grab { cursor: grab; }
