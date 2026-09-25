@@ -4,7 +4,7 @@
 //
 // A 30 cm ruler stands on its edge in each half, pinned through an eraser,
 // and turns 45° each time its attacker starts a turn. Bank off it.
-//   1 DISCOVER  Solo. Kwame's keeper stands still; only the ruler turns.
+//   1 DISCOVER  An active rookie with three caps; learn the mechanic in a match.
 //   2 MASTER    Kwame plays, and mostly ignores the ruler.
 //   3 SHOWDOWN  First to two before the last bell.
 import { CAMPAIGN_LEVELS } from './campaign-level-definitions.js';
@@ -31,15 +31,15 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
     blurb: 'A ruler in an eraser. It turns every flick. Kwame reckons you can\'t use it.',
     objective: 'Score past the turning ruler',
     introLines: [
-      'Solo challenge · score 1 goal in 10 flicks',
+      'First to 1 · 10 flicks each · rookie rival',
       'The ruler turns 45° every flick: open, slanted, across, slanted back',
-      'The chalk line shows its next angle. Bank the ball off it',
+      'Watch the ruler turn between turns. Bank the ball off it',
       'The turn sweeps caps and ball aside. Watch where they settle',
     ],
-    rules: { goalsToWin: 1, flickLimit: 10, awayFlickLimit: 0, threeStarFlicks: 3 },
-    awaySlots: [0],
+    rules: { goalsToWin: 1, flickLimit: 10, threeStarFlicks: 5 },
+    awaySlots: [0, 3, 4], // keeper and two forwards: a live rival with room to learn
     ballStart: [0.5, 0.42], // off to one side: the ruler's angle decides the route (playtest: 78% at 10 flicks)
-    opponent: { ...KWAME, difficulty: 'easy' },
+    opponent: { ...KWAME, difficulty: 'rookie' },
   }),
   act(2, {
     id: 'legends-schoolyard-act-2',

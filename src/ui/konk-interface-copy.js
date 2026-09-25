@@ -14,6 +14,8 @@ export const RESULTS_COPY = Object.freeze({
   soloOut: 'Out of flicks. Set up the next angle.',
   drawnStars: 'Level on goals. Win the rematch to earn stars.',
   playAgain: 'Play again',
+  runItBack: 'Run it back',
+  settleIt: 'Settle it',
   shareLocalFooter: 'One table. Two players. Settle it again.',
   shareSoloFooter: 'Same table. Your move.',
 });

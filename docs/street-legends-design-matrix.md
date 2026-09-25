@@ -38,7 +38,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 | **Opening camera** | Low across the desks toward the bell tower | Through the hatch | Down from the balustrade | Under the toll canopy, down the lanes | Out of the dust, from the lorry cab | Up from the sea wall into the bulb |
 
 ## Three acts per venue (pattern)
-1. **Discover**: a solo situation where the mechanic is the only moving part.
+1. **Discover**: a live rookie-rival match where the mechanic is readable, but someone always flicks back.
 2. **Master**: the rival plays and exploits the mechanic.
 3. **Showdown**: first to two, with one extra complication.
 
@@ -57,11 +57,11 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 - Slide a cap under a boom and park it in the lane the rival needs, or attack.
 - Leave the ball under the next boom to jam it. Bank off the lowered boom into an open lane.
 
-**Acts**: 1 *Green Means Go* (solo; ball starts at the plaza; keeper + two back caps; score in 8), 2 *Rush Hour* (first to 1, 14 flicks, medium Akosua), 3 *Last Toll Before the Motorway* (first to 2, 16 flicks, medium aim with sharper toll-collector tactics, bottle in the road).
+**Acts**: 1 *Green Means Go* (first to 1, 10 flicks each, rookie Akosua with a small team), 2 *Rush Hour* (first to 1, 14 flicks, medium Akosua), 3 *Last Toll Before the Motorway* (first to 2, 16 flicks, medium aim with sharper toll-collector tactics, bottle in the road).
 
 **Hero moments**: THROUGH THE LEFT/CENTRE/RIGHT TOLL, BOOM BANK, JAMMED THE GATE. Each gets the replay; generic contacts do not.
 
-**AI**: rehearses shots on the cloned table (booms included), aims candidates through open lanes, and tries blocking moves into the open lane the ball faces. It rewards setups in front of a lane still open on its next turn and penalises leaving the ball lined up for the player. In solo acts the defensive terms are off. Akosua's weights: block 1.6, setup 0.8, caution 1.3.
+**AI**: rehearses shots on the cloned table (booms included), aims candidates through open lanes, and tries blocking moves into the open lane the ball faces. It rewards setups in front of a lane still open on its next turn and penalises leaving the ball lined up for the player. In practice-only solo tables the defensive terms are off. Akosua's weights: block 1.6, setup 0.8, caution 1.3.
 
 **Balance history (headless, medium bot as the player proxy)**: see `plans/reports/playtest-260922-street-legends-roadside-toll-gates.md`.
 
@@ -78,7 +78,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **AI**: aims the ball into the beam stack or flicks a cap straight at it, rewards lighting it (more for two in one flick), and leaves the ball near the stack after next, or in front of the goal once the chain opens. Caution keeps the ball off the opponent's beam stack. Magic plans ahead: setup 2, caution 1.2.
 
-**Acts**: 1 *Light the Bulb* (solo, keeper only, ball between stacks two and three, 14 flicks), 2 *Magic's Table* (first to 1, 20 flicks, easy Magic), 3 *Lights Out* (first to 2, 24 flicks, easy Magic; the bulb goes out after every goal).
+**Acts**: 1 *Light the Bulb* (first to 1, 16 flicks each, rookie Magic with a small team), 2 *Magic's Table* (first to 1, 20 flicks, easy Magic), 3 *Lights Out* (first to 2, 24 flicks, easy Magic; the bulb goes out after every goal).
 
 ## Implemented: Veranda Derby — Clay-Pot Maze
 
@@ -92,7 +92,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **AI**: ghost-ball aims onto each pot, angled into the goal mouth (the bisector contact). It rewards leaving the ball where a pot can turn it into their goal and penalises leaving it bankable into its own. Yaw banks everything: setup 1.5.
 
-**Acts**: 1 *Auntie Ama's Rule* (solo, keeper only, ball beside the big pot, 10 flicks), 2 *Mind the Pots* (first to 1, 16 flicks, easy Yaw), 3 *The Derby* (first to 2, 18 flicks, easy Yaw; medium Yaw won 33% vs the proxy's 17%).
+**Acts**: 1 *Auntie Ama's Rule* (first to 1, 12 flicks each, rookie Yaw with a small team), 2 *Mind the Pots* (first to 1, 16 flicks, easy Yaw), 3 *The Derby* (first to 2, 18 flicks, easy Yaw; medium Yaw won 33% vs the proxy's 17%).
 
 ## Implemented: Kiosk Corner — Change Dish
 
@@ -105,7 +105,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **AI**: rehearses rattles off the pieces; aims the ball into the middle of each open window; rewards a clear line past their dish's next notch and penalises one past its own. Esi waits for the gap: setup 1.6, block 0.8, caution 1.
 
-**Acts**: 1 *Exact Change* (solo, keeper only, score in 10), 2 *Rush at the Hatch* (first to 1, 14 flicks, easy Esi), 3 *Closing Time* (first to 2, 16 flicks, medium Esi).
+**Acts**: 1 *Exact Change* (first to 1, 10 flicks each, rookie Esi with a small team), 2 *Rush at the Hatch* (first to 1, 14 flicks, easy Esi), 3 *Closing Time* (first to 2, 16 flicks, medium Esi).
 
 ## Implemented: Schoolyard Break — Ruler Seesaw
 
@@ -119,7 +119,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **AI**: rehearses bounces on the cloned segments; adds a mirrored-goal bank aim; rewards leaving the ball a clear line past their ruler's *next* angle; penalises a clear line past its own. Kwame "ignores the ruler": setup 0.4, block 0.5, caution 0.6.
 
-**Acts**: 1 *Before the Bell* (solo, keeper only, ball off to one side at (0.5, 0.42), score in 10), 2 *Ruler Rules* (first to 1, 14 flicks, rookie Kwame), 3 *Last Bell* (first to 2, 16 flicks, easy Kwame).
+**Acts**: 1 *Before the Bell* (first to 1, 10 flicks each, rookie Kwame with a small team), 2 *Ruler Rules* (first to 1, 14 flicks, rookie Kwame), 3 *Last Bell* (first to 2, 16 flicks, easy Kwame).
 
 ## Implemented: Harmattan Haze — Departing Lorry
 
@@ -132,7 +132,7 @@ Street Legends lists every built venue's acts; each venue's Act 1 is always open
 
 **Decisions it creates**: shoot now, or set the ball up for where the lorry will be *next*. Slide your keeper across to where your own goal is going. Hold for the far stop for the big label.
 
-**Acts**: 1 *Catch the Lorry* (solo, keeper only, ball starts near the end, score in 8), 2 *Loading Bay* (first to 1, 18 flicks), 3 *Last Lorry to Bolgatanga* (first to 2, 20 flicks, pebbles). Abdul chases the goal: setup 1.5, block 0.8, caution 0.8.
+**Acts**: 1 *Catch the Lorry* (first to 1, 10 flicks each, rookie Abdul with a small team), 2 *Loading Bay* (first to 1, 18 flicks), 3 *Last Lorry to Bolgatanga* (first to 2, 20 flicks, pebbles). Abdul chases the goal: setup 1.5, block 0.8, caution 0.8.
 
 ## Build order for the remaining one
 See `plans/260922-1136-street-legends-roadside-toll-gates/plan.md`.

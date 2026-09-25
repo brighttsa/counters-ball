@@ -4,7 +4,7 @@
 import { recordLevelStars } from '../core/save-progress-local-storage.js';
 import { challengeVerdictLine } from '../core/challenge-link-codec-and-comparison.js';
 import { buildResultShare } from './share-results-and-challenge-link.js';
-import { fullTimeTitle } from './ui-full-time-results-card.js';
+import { fullTimeTitle } from './ui-full-time-results-card.js?v=2';
 
 /**
  * @param ctx { level, mode, levelIndex, trackLength, progress, hotSeat, challenge, card, share, homeColour, baseUrl, onStar }

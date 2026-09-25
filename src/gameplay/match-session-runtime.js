@@ -7,7 +7,7 @@ import { FlickPhysicsEngine } from './flick-physics-engine.js';
 import { MatchRules } from './match-rules-turns-goals-and-results.js';
 import { AimVisuals } from './aim-trajectory-power-ring-and-rim-glow.js';
 import { HumanDragAimInput } from './human-drag-aim-input.js';
-import { AiTurnPerformer } from './ai-opponent-turn-performer.js';
+import { AiTurnPerformer } from './ai-opponent-turn-performer.js?v=2';
 import { wireMatchFeedback } from './match-session-feedback-hooks.js';
 import { JuiceAnimator } from '../fx/cap-ball-goal-juice-springs.js';
 import { ImpactParticles } from '../fx/impact-dust-puffs-and-goal-confetti.js';

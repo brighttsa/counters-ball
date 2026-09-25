@@ -18,10 +18,11 @@ export function pickFeaturedLegendAct(acts, progress) {
 }
 
 export function featuredActCopy(level) {
+  const opener = level.id === FIRST_VISIT_ACT_ID && level.legend.act === 1;
   return {
     kicker: `ACT ${level.legend.act} / ${level.legend.acts}`,
     venue: level.name,
     actTitle: level.actTitle,
-    button: `Play ${VENUE_SHORT_NAME[level.backdrop] ?? level.name}`,
+    button: opener ? 'Start Street Legends' : 'Continue Street Legends',
   };
 }

@@ -35,12 +35,12 @@ test('winning a venue finale stays on that finale instead of jumping venues', ()
   assert.equal(pickFeaturedLegendAct(acts, progress), finale);
 });
 
-test('home copy names the act and uses a short venue word on the button', () => {
+test('home copy names the act and makes the primary action progression-led', () => {
   const jamestown = acts.find((act) => act.backdrop === 'night');
   const copy = featuredActCopy(jamestown);
-  assert.equal(copy.button, 'Play Jamestown');
+  assert.equal(copy.button, 'Continue Street Legends');
   assert.match(copy.kicker, /^ACT \d \/ 3$/);
-  assert.equal(featuredActCopy(acts[indexOf(FIRST_VISIT_ACT_ID)]).button, 'Play Roadside');
+  assert.equal(featuredActCopy(acts[indexOf(FIRST_VISIT_ACT_ID)]).button, 'Start Street Legends');
 });
 
 test('saved progress keeps only a valid last act and scoreboard style', (t) => {

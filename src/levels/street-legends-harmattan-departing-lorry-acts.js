@@ -4,7 +4,7 @@
 //
 // The goals ride on departing lorries: one stop along the end line each time
 // their attacker starts a turn, turning back at the far stops.
-//   1 DISCOVER  Solo. Abdul's keeper stands still; only the lorry moves.
+//   1 DISCOVER  An active rookie with three caps; learn the mechanic in a match.
 //   2 MASTER    Abdul plays, chasing wherever the lorry goes next.
 //   3 SHOWDOWN  First to two in the dust, pebbles on the table.
 import { CAMPAIGN_LEVELS } from './campaign-level-definitions.js';
@@ -31,16 +31,16 @@ export const HARMATTAN_DEPARTING_LORRY_ACTS = [
     blurb: 'The Bolga Express is moving. A goal is strapped to it. Read the next stop.',
     objective: 'Score into the moving lorry',
     introLines: [
-      'Solo challenge · score 1 goal in 8 flicks',
+      'First to 1 · 10 flicks each · rookie rival',
       'Each flick the lorry drives one stop along the end line',
       'The ghost goal shows its next stop; it turns back at the far ends',
-      'The keeper stays put. Score when the lorry pulls away from him',
+      'Abdul plays too. Aim for the next stop before he blocks it',
     ],
     obstacles: [],
-    rules: { goalsToWin: 1, flickLimit: 8, awayFlickLimit: 0, threeStarFlicks: 3 },
-    awaySlots: [0], // only the sleepy keeper: the moving goal is the challenge
+    rules: { goalsToWin: 1, flickLimit: 10, threeStarFlicks: 5 },
+    awaySlots: [0, 3, 4], // keeper and two forwards: a live rival with room to learn
     ballStart: [0.72, 0.05],
-    opponent: { ...ABDUL, difficulty: 'easy' },
+    opponent: { ...ABDUL, difficulty: 'rookie' },
   }),
   act(2, {
     id: 'legends-harmattan-act-2',

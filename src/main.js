@@ -11,13 +11,13 @@ import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
-import { MatchSession } from './gameplay/match-session-runtime.js';
-import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
+import { MatchSession } from './gameplay/match-session-runtime.js?v=2';
+import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=2';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js';
-import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js';
+import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=2';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
-import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
+import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
@@ -31,12 +31,12 @@ import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { JustInTimeChalkHints } from './ui/just-in-time-chalk-hints.js';
 import { KwameCornerCoach } from './ui/kwame-corner-practice-coach.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
-import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js';
+import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js?v=2';
 import {
   trackFor, challengeForLevel, isTrackLevelUnlocked, takeChallengeFromUrl,
   takeFriendInviteFromUrl,
 } from './levels/level-tracks-and-challenge-unlocks.js';
-import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js';
+import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=2';
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 

@@ -4,6 +4,7 @@
 // execution error + a chance of settling for a lesser shot. Because shots are
 // simulated, obstacles, rebounds and bank shots are understood for free.
 import * as THREE from 'three';
+import { supportPointBehindBall, scoreShotAccess } from './ai-positional-shot-evaluation.js';
 import { attackDirection, GOAL_LINE_X, MAX_FLICK_SPEED } from '../core/pitch-dimensions-and-constants.js';
 
 export const AI_DIFFICULTY = {
@@ -47,6 +48,9 @@ function candidateShots(cap, ball, side, difficulty, rng, mechanic, goalZ = 0) {
     add(ball.pos.x - (px / pl) * contact - cap.pos.x, ball.pos.y - (pz / pl) * contact - cap.pos.y, difficulty.powers);
   }
   for (const point of extra?.blockPoints ?? []) add(point.x - cap.pos.x, point.z - cap.pos.y, [0.3, 0.45, 0.6]);
+  // A useful setup is better than a random sideways flick when no shot is open.
+  const support = supportPointBehindBall(ball, side);
+  add(support.x - cap.pos.x, support.z - cap.pos.y, [0.2, 0.4, 0.65]);
   add(toBallX, toBallZ, [0.4, 0.8]); // straight through the ball: a clearance
   for (let i = 0; i < difficulty.randomSamples; i++) {
     const a = rng() * Math.PI * 2;
@@ -80,7 +84,7 @@ function scoreOutcome(sim, side, ballIndex, goal, mechanic) {
     const aligned = (cx * toOwnX + cz * toOwnZ) / (d * toOwnLen);
     if (aligned > 0.6 && d < 0.8) score -= (0.8 - d) * aligned * 160;
   }
-  return score + (mechanic?.aiScore(sim, side, ballIndex) ?? 0);
+  return score + scoreShotAccess(sim, side, ballIndex) + (mechanic?.aiScore(sim, side, ballIndex) ?? 0);
 }
 
 /**

@@ -55,8 +55,23 @@ test('the full-time score is chalked per side in team colours', () => {
   assert.equal(away.style.getPropertyValue('--chalk-team'), level.opponent.team.hudColor);
 });
 
+test('solo result actions name the next decision by outcome', () => {
+  const card = new FullTimeResultsCard();
+  const level = act('schoolyard', 2);
+  const fill = (winner) => {
+    card.fill({ winner, scores: { home: winner === 'home' ? 1 : 0, away: winner === 'away' ? 1 : 0 }, starFlags: [false, false, false] },
+      level, 'legends', { hasNext: true, improved: false, isFinalVenue: false, onStar() {}, homeColour: '#d6503a' });
+    return document.getElementById('btn-replay').textContent;
+  };
+  assert.equal(fill('home'), 'Play again');
+  assert.equal(fill('away'), 'Run it back');
+  assert.equal(fill(null), 'Settle it');
+});
+
 test('running out of flicks in a solo challenge never names the Roadside lanes', () => {
-  const solo = STREET_LEGENDS_ACTS.filter((a) => a.rules.awayFlickLimit === 0);
+  // Legacy solo rules remain supported outside the now-opposed campaign.
+  const solo = STREET_LEGENDS_ACTS.filter(a => a.legend.act === 1)
+    .map(a => ({ ...a, rules: { ...a.rules, awayFlickLimit: 0 } }));
   assert.ok(solo.length > 0);
   for (const level of solo) {
     const note = fullTimeNote({ winner: null }, level, 'legends', {});

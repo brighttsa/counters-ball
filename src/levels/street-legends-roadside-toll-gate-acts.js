@@ -3,7 +3,7 @@
 // and team); the classic campaign match at this venue is unchanged.
 //
 // Three acts, taught through play:
-//   1 DISCOVER  Solo. Akosua's caps stand still; only the booms move.
+//   1 DISCOVER  An active rookie with three caps; learn the mechanic in a match.
 //   2 MASTER    Akosua plays, and she knows the signal cycle.
 //   3 SHOWDOWN  First to two, a bottle in the road, Akosua at her sharpest.
 import { CAMPAIGN_LEVELS } from './campaign-level-definitions.js';
@@ -32,15 +32,15 @@ export const ROADSIDE_TOLL_GATE_ACTS = [
     blurb: 'Rush hour. One boom drops every flick. Green is open; amber is next to close.',
     objective: 'Score through an open toll lane',
     introLines: [
-      'Solo challenge · score 1 goal in 8 flicks',
+      'First to 1 · 10 flicks each · rookie rival',
       'GREEN lane = boom up, the ball can pass · RED = boom down',
       'AMBER blinking = open now, shuts on your next flick',
       'Caps slide under the booms; the ball can\'t. Leave the ball under a boom and it jams open',
     ],
-    rules: { goalsToWin: 1, flickLimit: 8, awayFlickLimit: 0, threeStarFlicks: 3 },
-    awaySlots: [0, 1, 2], // keeper and two back caps: the booms are the defence here
+    rules: { goalsToWin: 1, flickLimit: 10, threeStarFlicks: 5 },
+    awaySlots: [0, 3, 4], // keeper and two forwards: a live rival with room to learn
     ballStart: [0.3, 0.05], // rolled up to the plaza: learn the lanes, not the long shot
-    opponent: { ...AKOSUA, difficulty: 'easy' },
+    opponent: { ...AKOSUA, difficulty: 'rookie' },
   }),
   act(2, {
     id: 'legends-roadside-act-2',

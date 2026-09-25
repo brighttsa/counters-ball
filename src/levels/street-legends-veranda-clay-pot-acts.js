@@ -4,7 +4,7 @@
 //
 // Auntie Ama's clay pots stand on the table, three in each half, and her rule
 // is simple: no straight goals. The ball must bounce off a pot or the rail first.
-//   1 DISCOVER  Solo. Yaw's keeper stands still; learn to bank off a pot.
+//   1 DISCOVER  An active rookie with three caps; learn the mechanic in a match.
 //   2 MASTER    Yaw plays, and he always looks for the bank.
 //   3 SHOWDOWN  First to two before Auntie Ama calls everyone in.
 import { CAMPAIGN_LEVELS } from './campaign-level-definitions.js';
@@ -32,15 +32,15 @@ export const VERANDA_CLAY_POT_ACTS = [
     blurb: 'Auntie Ama is watching from the doorway. Her pots are in play. Straight goals don\'t count.',
     objective: 'Score a bank goal: off a pot or the rail',
     introLines: [
-      'Solo challenge · score 1 bank goal in 10 flicks',
+      'First to 1 · 12 flicks each · bank goals only',
       'No straight goals: the ball must bounce off a pot or the rail on that flick',
       'Straight in? Waved off, and Auntie Ama throws the ball back',
       'Kiss the side of the big pot and it glances in past the keeper',
     ],
-    rules: { goalsToWin: 1, flickLimit: 10, awayFlickLimit: 0, threeStarFlicks: 4 },
-    awaySlots: [0],
+    rules: { goalsToWin: 1, flickLimit: 12, threeStarFlicks: 6 },
+    awaySlots: [0, 3, 4], // keeper and two forwards: a live rival with room to learn
     ballStart: [1.2, 0.22],
-    opponent: { ...YAW, difficulty: 'easy' },
+    opponent: { ...YAW, difficulty: 'rookie' },
   }),
   act(2, {
     id: 'legends-veranda-act-2',

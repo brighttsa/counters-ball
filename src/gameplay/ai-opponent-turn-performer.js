@@ -3,7 +3,7 @@
 // holds for a breath, then flicks. Planning runs across frames; stale plans
 // are discarded via a turn token when the match restarts or quits.
 import * as THREE from 'three';
-import { planAiShot, AI_DIFFICULTY } from './ai-opponent-shot-planner.js';
+import { planAiShot, AI_DIFFICULTY } from './ai-opponent-shot-planner.js?v=2';
 import { MAX_FLICK_SPEED, MAX_PULL } from '../core/pitch-dimensions-and-constants.js';
 
 const PULL_SECONDS = 0.75;
