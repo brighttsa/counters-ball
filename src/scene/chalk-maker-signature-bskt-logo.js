@@ -13,9 +13,9 @@ const LOGO_W = 78, LOGO_H = 43;
 
 export function drawChalkMakerSignature(ctx, toPx, rng, style = {}) {
   const color = style.color ?? '#ece1c6';
-  const alpha = style.alpha ?? 0.9;
+  const alpha = style.alpha ?? 0.55;
   const blur = style.blur ?? 2.5;
-  const scale = style.scale ?? 1.5;
+  const scale = style.scale ?? 0.9;
 
   const [cx, cy] = toPx(1.72, 1.28);
   const angle = -0.08 + (rng() - 0.5) * 0.06;
