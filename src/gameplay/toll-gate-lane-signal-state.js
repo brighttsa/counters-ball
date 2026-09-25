@@ -153,7 +153,7 @@ export class TollGateLaneSignals {
   /** Chalk on the lane whose boom comes down next at each plaza, in front of it on the attacker's side. */
   chalkNotes() {
     return this.plazas.map((plaza) => ({
-      x: plaza.x - Math.sign(plaza.x) * 0.4, z: LANES[this.closedLane(plaza, 1)].center, text: 'SHUTS NEXT',
+      x: plaza.x - Math.sign(plaza.x) * 0.4, z: LANES[this.closedLane(plaza, 1)].center, icon: 'boom-warning',
     }));
   }
 

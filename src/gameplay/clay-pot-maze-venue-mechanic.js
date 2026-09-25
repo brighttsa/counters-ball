@@ -19,7 +19,7 @@ export function createClayPotMazeMechanic(session) {
   return {
     maze,
     view,
-    hint: { label: 'NO STRAIGHT GOALS', detail: 'Bounce it off a pot or the rail first' },
+    hint: { label: 'BANK FIRST', detail: 'Bounce it off a pot or the rail first' },
     onTurn: (side, bodies) => maze.advance(side, bodies),
     describe: () => maze.describe(),
     chalkNotes: () => maze.chalkNotes(),

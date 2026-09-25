@@ -6,7 +6,7 @@ import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
 import { createAdaptiveQuality } from './fx/adaptive-render-quality.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
-import { PlayerCameraController } from './fx/player-camera-controller.js';
+import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
@@ -16,11 +16,13 @@ import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js';
 import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
+import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
+import { friendInviteLine } from './core/friend-match-invite-links.js';
 import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { JustInTimeChalkHints } from './ui/just-in-time-chalk-hints.js';
 import { KwameCornerCoach } from './ui/kwame-corner-practice-coach.js';
@@ -28,12 +30,14 @@ import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.
 import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js';
 import {
   trackFor, challengeForLevel, isTrackLevelUnlocked, takeChallengeFromUrl,
+  takeFriendInviteFromUrl,
 } from './levels/level-tracks-and-challenge-unlocks.js';
 import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js';
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 
 const canvas = document.getElementById('game-canvas');
+const bootScreen = document.getElementById('boot-screen');
 const { renderer, scene, camera } = createRendererSceneCamera(canvas);
 const post = createPostProcessing(renderer, scene, camera);
 const adaptiveQuality = createAdaptiveQuality(renderer, post, scene);
@@ -44,15 +48,23 @@ const music = new SoundtrackDirector();
 const hud = new MatchHud();
 const resultsCard = new FullTimeResultsCard();
 const resultsShare = new ResultsShare(document.getElementById('results-share-status'));
+const friendShare = new FriendMatchInviteShare(document.getElementById('friend-share-status'));
 const hotSeat = new HotSeatRivalry(progress, saveProgress);
 const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
 
-const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null };
+const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
 const orientation = createMatchOrientationPrompt();
 new PlayerCameraController(app, cameraDirector);
 const challengeFor = (level) => challengeForLevel(app.challenge, level);
-const unlockedIn = (mode, i) => isTrackLevelUnlocked(progress, mode, i, app.challenge);
+const unlockedIn = (mode, i) => isTrackLevelUnlocked(progress, mode, i, app.challenge ?? app.friendInvite);
 const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress);
+
+function finishBoot() {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.body.classList.remove('is-loading');
+    bootScreen?.setAttribute('aria-hidden', 'true');
+  }));
+}
 
 function replaceSession(options, sessionHud) {
   resultsCard.cancelReveal();
@@ -92,6 +104,7 @@ function ensureAttractMode() {
 
 function showTitle() {
   app.challenge = null;
+  app.friendInvite = null;
   ensureAttractMode();
   menus.setHomeFeature(STREET_LEGENDS_ACTS[featuredIndex()]);
   menus.setTitleStars(totalStars(progress, CAMPAIGN_LEVELS), CAMPAIGN_LEVELS.length * 3);
@@ -107,9 +120,22 @@ function showChallenge() {
   menus.show('challenge');
 }
 
+function showFriendMatch({ incoming = false } = {}) {
+  app.challenge = null;
+  ensureAttractMode();
+  if (!incoming) app.friendInvite = { levelId: STREET_LEGENDS_ACTS[featuredIndex()].id, mode: 'legends', index: featuredIndex() };
+  app.mode = app.friendInvite.mode;
+  app.levelIndex = app.friendInvite.index;
+  const level = trackFor(app.mode)[app.levelIndex];
+  menus.fillFriendMatch(level, incoming ? friendInviteLine(level) : 'Send the invite. They play the same table and share their full-time mark back. No excuses, just angles.', incoming);
+  friendShare.prepare(buildFriendInvite(level, app.mode, `${location.origin}${location.pathname}`));
+  menus.show('friend-match');
+}
+
 function showLevels(mode = app.mode) {
   if (mode === 'practice') return showTitle(); // Kwame's Corner has no table list: Back and Quit go home
   app.challenge = null;
+  app.friendInvite = null;
   if (mode !== app.mode && (mode === 'legends' || app.mode === 'legends')) app.levelIndex = 0; // different track
   app.mode = mode;
   menus.renderLevels(trackFor(mode), progress, mode, (i) => unlockedIn(mode, i));
@@ -152,7 +178,8 @@ function prepareMatch(index, { rematch = false } = {}) {
   const challenge = challengeFor(level);
   menus.fillIntro(level, index, track.length, app.mode, HOME_TEAM, {
     names: hotSeat.names, rivalryFor: hotSeat.rivalryFor,
-    lines: challenge ? [`Your friend's mark: ${markText(challenge)}`] : [],
+    lines: challenge ? [`Your friend's mark: ${markText(challenge)}`]
+      : challengeForLevel(app.friendInvite, level) ? ['Friend Match: play your mark, then share the result back.'] : [],
   });
   if (rematch) return kickOff();
   menus.show('intro'); // the match waits for Kick Off: the rules card stays until the player has read it
@@ -204,8 +231,8 @@ const menus = new MenuScreens((action, el) => {
 });
 const chalkHints = new JustInTimeChalkHints();
 const actions = createMenuActions({
-  app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus, hints: chalkHints,
-  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex },
+  app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints: chalkHints,
+  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch },
 });
 
 window.addEventListener('pointerdown', () => sound.unlock());
@@ -221,11 +248,13 @@ window.addEventListener('keydown', (e) => {
 wireSoundtrack({ app, sound, music, menus, progress });
 hud.setStyle(progress.hudStyle);
 app.challenge = takeChallengeFromUrl();
-if (app.challenge) showChallenge(); else showTitle();
+app.friendInvite = app.challenge ? null : takeFriendInviteFromUrl();
+if (app.challenge) showChallenge(); else if (app.friendInvite) showFriendMatch({ incoming: true }); else showTitle();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post, adaptiveQuality,
   onFrame: (dt) => {
     chalkHints.update(app.session, camera, cameraDirector.playerControl, dt);
     app.practice?.update(camera, cameraDirector.playerControl, dt);
   } });
+finishBoot();
 
 window.__countersBall = { app, progress, levels: CAMPAIGN_LEVELS, legends: STREET_LEGENDS_ACTS, actions, music, sound };

@@ -17,6 +17,10 @@ export function loadCameraPreferences(storage) {
   } catch { return { home: 'broadcast', away: 'broadcast' }; }
 }
 
+export function openingCameraMode(mode) {
+  return mode === 'tactical' ? 'tactical' : 'broadcast';
+}
+
 // The match is framed on the pitch, not the table or the room: the outer edge and top of the
 // rail battens plus the matchstick crossbars. Lorry acts add the toy lorries that carry each
 // goal along the table ends, behind the battens.
@@ -32,7 +36,7 @@ export function pitchFramePoints(session) {
 // Screen space kept clear for the scoreboard and its callout (top) and the flick/camera chips (bottom).
 export function hudReservePixels(width, height) {
   const roomy = width / height < .95 || height > 600;
-  return { top: roomy ? 136 : 80, bottom: roomy ? 144 : 72 };
+  return { top: roomy ? 136 : 62, bottom: roomy ? 144 : 54 };
 }
 
 export function fitCameraPose(camera, target, direction, points = pitchFramePoints(), minimum = 3.2, bounds = { x: .95, top: .62, bottom: -.76 }) {
@@ -94,6 +98,14 @@ function viewBounds(top, bottom) {
   const reserve = hudReservePixels(width, height);
   const topPx = top ?? Math.max(reserve.top, measuredHudBottom() + 8), bottomPx = bottom?.(reserve) ?? reserve.bottom;
   return { x: .95, top: Math.max(.15, 1 - 2 * topPx / height), bottom: -Math.max(.15, 1 - 2 * bottomPx / height) };
+}
+
+export function tacticalViewBounds() {
+  const viewport = typeof window !== 'undefined' ? window : null;
+  if (viewport?.innerWidth / viewport?.innerHeight > .95 && viewport.innerHeight <= 600) {
+    return { x: .98, top: .82, bottom: -.82 };
+  }
+  return viewBounds();
 }
 
 // Broadcast is a TV-style side-on view fitted as tight as the screen allows around both goals (the
@@ -172,5 +184,5 @@ export function playerCameraPose(camera, mode, session, selected, viewer = sessi
   // screen "up". Every view keeps its sideways offset at zero: any small sideways component rolls or
   // skews the table on screen, and the rails stop running square to the screen edges.
   const direction = portrait ? new THREE.Vector3(-.09, 1, 0) : new THREE.Vector3(0, 1, .09);
-  return centredPitchPose(camera, direction, pitchFramePoints(session), viewBounds());
+  return centredPitchPose(camera, direction, pitchFramePoints(session), tacticalViewBounds());
 }

@@ -101,8 +101,8 @@ export class CoinStackChains {
   chalkNotes() {
     return SIDES.map((side) => {
       const stack = this.nextStack(side);
-      return stack ? { x: stack.pos.x, z: stack.pos.y + Math.sign(stack.pos.y || 1) * 0.15, text: `STRIKE · ${this.lit[side]}/3 LIT`, side }
-        : { x: attackDirection(side) * 1.2, z: 0, text: 'GOAL OPEN', side };
+      return stack ? { x: stack.pos.x, z: stack.pos.y + Math.sign(stack.pos.y || 1) * 0.15, icon: 'coin-chain', value: this.lit[side], side }
+        : { x: attackDirection(side) * 1.2, z: 0, icon: 'goal-open', side };
     });
   }
 

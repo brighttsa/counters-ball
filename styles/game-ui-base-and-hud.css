@@ -2,19 +2,19 @@
    One printed ink identity: ink-black surfaces, paper text, a single yellow accent. */
 :root {
   /* Colour: one ink surface family, paper text, a single yellow accent. */
-  --ink-rgb: 16 21 20;
-  --paper-rgb: 245 241 223;
+  --ink-rgb: 12 17 16;
+  --paper-rgb: 250 245 226;
   --ink: rgb(var(--ink-rgb));
-  --ink-raised: #27302d;
-  --ink-pressed: #343a36;
+  --ink-raised: #25332f;
+  --ink-pressed: #34423d;
   --paper: rgb(var(--paper-rgb));
-  --paper-muted: #c0c8c0;
-  --yellow: #f0cf45;
-  --line: #4d5653;
-  --line-strong: #8d978f;
+  --paper-muted: #d3d8cc;
+  --yellow: #f5d84a;
+  --line: #66706a;
+  --line-strong: #aeb8ad;
   --warning: #ffbc83;
   --warning-flash: #744426;
-  --scrim: rgb(var(--ink-rgb) / .72);
+  --scrim: rgb(var(--ink-rgb) / .66);
   --shadow-card: 8px 8px 0 rgb(var(--ink-rgb) / .4);
   --shadow-text: 0 2px 8px rgb(var(--ink-rgb) / .9);
   --vignette-rgb: 30 14 2; /* warm lamp-lit edge around the table, not a UI colour */
@@ -41,15 +41,40 @@ html, body {
   font-family: var(--font-body); -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
-html { background: #d99e63; }
 [hidden] { display: none !important; }
 button { font: inherit; }
 button, h1, h2, p, span { letter-spacing: 0; }
 
-#game-canvas { position: fixed; inset: 0; display: block; width: 100% !important; height: 100% !important; touch-action: none; background: #d99e63; }
+#game-canvas {
+  position: fixed; inset: 0; display: block; width: 100% !important; height: 100% !important;
+  touch-action: none; background: var(--ink); opacity: 1; transition: opacity 420ms ease;
+}
+body.is-loading #game-canvas { opacity: 0; }
 #game-canvas.can-grab { cursor: grab; }
 #game-canvas.aiming { cursor: grabbing; }
-#film-frame { position: fixed; inset: 0; z-index: 5; pointer-events: none; box-shadow: inset 0 0 140px 30px rgb(var(--vignette-rgb) / .55); }
+#film-frame { position: fixed; inset: 0; z-index: 5; pointer-events: none; box-shadow: inset 0 0 110px 22px rgb(var(--vignette-rgb) / .42); }
+.boot-screen {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: 12px;
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  background:
+    linear-gradient(116deg, rgb(var(--ink-rgb) / .96) 0 52%, rgb(25 29 27 / .92) 52% 100%),
+    var(--ink);
+  color: var(--paper); opacity: 1; visibility: visible; transition: opacity 280ms ease, visibility 0ms linear 280ms;
+}
+.boot-screen::after {
+  content: ''; width: 92px; height: 4px; display: block; background: var(--yellow);
+  clip-path: polygon(0 12%, 100% 0, 96% 100%, 4% 88%);
+  animation: boot-pulse 900ms ease-in-out infinite;
+}
+.boot-screen img {
+  width: min(360px, 74vw); height: auto;
+  filter: drop-shadow(0 10px 18px rgb(var(--ink-rgb) / .7));
+}
+.boot-screen p {
+  margin: 0; color: var(--yellow); font: 800 var(--text-sm)/1.2 var(--font-body);
+  text-transform: uppercase;
+}
+body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-events: none; }
 .noscript { position: fixed; inset: auto 0 40% 0; text-align: center; font-size: var(--text-xl); }
 
 /* ---- Buttons: slanted ink tags ---- */
@@ -63,14 +88,16 @@ button, h1, h2, p, span { letter-spacing: 0; }
 }
 .btn-primary { background: var(--yellow); color: var(--ink); }
 .btn-small { font-size: var(--text-sm); padding: 8px 12px; }
+.btn-icon { width: 1em; height: 1em; flex-shrink: 0; vertical-align: -0.125em; }
+.star-svg { width: 1em; height: 1em; vertical-align: -0.125em; flex-shrink: 0; }
 .btn:disabled { opacity: .45; }
 /* The slanted clip-path cuts off anything drawn outside the button, including the focus
    ring, so a keyboard-focused button squares up and shows its ring. */
-.btn:focus-visible { clip-path: none; outline: 3px solid var(--yellow); outline-offset: 4px; }
+.btn:focus-visible { clip-path: none; outline: 3px solid var(--yellow); outline-offset: 4px; box-shadow: 0 0 0 6px rgb(var(--ink-rgb) / .75); }
 /* Pressed feedback that also works on touch, where :hover never fires reliably. */
 .btn:not(:disabled):active { filter: brightness(0.85); transform: translateY(1px); }
 /* Secondary buttons need their own fill: on an ink card, ink-on-ink text reads as a label, not a button. */
-.paper-card .btn:not(.btn-primary), .screen-title .btn:not(.btn-primary), .screen-header .btn:not(.btn-primary) { background: var(--ink-raised); color: var(--paper); }
+.paper-card .btn:not(.btn-primary), .screen-title .btn:not(.btn-primary), .screen-header .btn:not(.btn-primary) { background: var(--ink-raised); color: var(--paper); border: 1px solid rgb(var(--paper-rgb) / .18); }
 /* Hover only where a pointer really hovers: on touch screens a tapped button would stay lit. */
 @media (hover: hover) {
   .btn:hover, .paper-card .btn:not(.btn-primary):hover, .screen-title .btn:not(.btn-primary):hover,
@@ -84,9 +111,12 @@ button, h1, h2, p, span { letter-spacing: 0; }
   transition: transform 0.2s var(--spring), background 0.2s;
 }
 .icon-btn:active { transform: scale(0.92); }
-.icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+.icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; box-shadow: 0 0 0 5px rgb(var(--ink-rgb) / .8); }
+.icon-btn svg { width: 1em; height: 1em; }
 .sound-btn { position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); font-size: var(--text-lg); }
-.sound-btn.muted { opacity: 0.55; text-decoration: line-through; }
+.sound-btn .sound-icon { width: 22px; height: 22px; }
+.sound-btn.muted { opacity: 0.55; }
+.sound-btn.muted .sound-icon { opacity: 0.5; }
 
 /* ---- HUD ---- */
 .hud-layer { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
@@ -94,7 +124,7 @@ button, h1, h2, p, span { letter-spacing: 0; }
   position: absolute; top: max(14px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 8px; padding: 8px 12px; white-space: nowrap;
   width: min(440px, calc(100% - 32px)); height: 60px;
-  background: var(--ink); border: 0; border-bottom: 4px solid var(--yellow); border-radius: 2px; backdrop-filter: blur(6px);
+  background: rgb(var(--ink-rgb) / .94); border: 1px solid rgb(var(--paper-rgb) / .12); border-bottom: 4px solid var(--yellow); border-radius: 2px; backdrop-filter: blur(6px);
 }
 .team-name {
   flex: 1; min-width: 0; font: 700 var(--text-xs)/1.2 var(--font-body); letter-spacing: 0; color: var(--paper-muted);
@@ -112,7 +142,7 @@ button, h1, h2, p, span { letter-spacing: 0; }
   position: absolute; top: calc(max(14px, env(safe-area-inset-top)) + 60px); left: 50%; transform: translateX(-50%);
   display: flex; align-items: baseline; justify-content: center; gap: 12px;
   width: min(440px, calc(100% - 32px)); height: 28px; padding: 4px 12px;
-  background: var(--ink); font: var(--text-xs) var(--font-body); color: var(--paper-muted);
+  background: rgb(var(--ink-rgb) / .94); border-inline: 1px solid rgb(var(--paper-rgb) / .12); font: var(--text-xs) var(--font-body); color: var(--paper-muted);
 }
 .flick-meter b { font: 700 var(--text-sm) var(--font-body); color: var(--paper); min-width: 2ch; text-align: center; }
 .flick-meter b.low { color: var(--warning); }
@@ -123,13 +153,13 @@ button, h1, h2, p, span { letter-spacing: 0; }
   position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); left: 16px;
   width: auto; max-width: calc(100% - 88px); min-height: 28px; padding: 12px 16px;
   font: 700 var(--text-xs)/1.4 var(--font-body); color: var(--paper); text-align: left; white-space: normal; overflow-wrap: anywhere;
-  background: var(--ink); border-left: 5px solid var(--turn-color);
+  background: rgb(var(--ink-rgb) / .93); border: 1px solid rgb(var(--paper-rgb) / .12); border-left: 5px solid var(--turn-color);
 }
 
 .goal-banner {
   position: absolute; bottom: 105px; left: 18px; max-width: calc(100% - 36px); width: fit-content;
   display: grid; justify-items: start; gap: 8px; padding: 12px 20px; overflow: hidden; text-align: left;
-  background: var(--ink); border-left: 6px solid var(--yellow);
+  background: rgb(var(--ink-rgb) / .94); border: 1px solid rgb(var(--paper-rgb) / .14); border-left: 6px solid var(--yellow);
 }
 .goal-word { max-width: 100%; font: var(--text-3xl)/.95 var(--font-display); letter-spacing: 0; overflow-wrap: anywhere; color: var(--yellow); paint-order: stroke fill; }
 .goal-sub { max-width: 36ch; font: 700 var(--text-sm)/1.4 var(--font-body); letter-spacing: 0; color: var(--paper); }
@@ -167,6 +197,7 @@ button, h1, h2, p, span { letter-spacing: 0; }
   65% { transform: translate(-84px, 34px); opacity: 1; }
   80%, 100% { transform: translate(-84px, 34px); opacity: 0; }
 }
+@keyframes boot-pulse { 50% { transform: scaleX(.65); opacity: .65; } }
 @keyframes low-attention { 40% { background: var(--warning-flash); } }
 @keyframes score-confirm { 40% { color: var(--yellow); } }
 

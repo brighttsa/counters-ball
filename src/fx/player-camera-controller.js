@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, CAMERA_GLIDE_RATE, CAMERA_SNAP_RATE, cameraTransitionBlend,
-  loadCameraPreferences, playerCameraPose, overviewPose } from './player-camera-view-poses.js';
+  loadCameraPreferences, openingCameraMode, playerCameraPose, overviewPose } from './player-camera-view-poses.js?v=3';
 import { PlayerCameraOcclusion } from './player-camera-occlusion.js';
 import { createPlayerCameraControls } from '../ui/player-camera-controls.js';
 
@@ -110,7 +110,7 @@ export class PlayerCameraController {
       if (this.side) this.freePositions[this.side] = this.orbitCamera.position.clone();
       this.resetOrbit();
       if (this.freePositions[side]) { this.orbitCamera.position.copy(this.freePositions[side]); this.controls.update(); }
-      this.side = side; this.selected = null; this.select(this.preferences[side], false);
+      this.side = side; this.selected = null; this.select(openingCameraMode(this.preferences[side]), false);
       this.rate = CAMERA_GLIDE_RATE; // 2-Player hand-over: the view turns to the next player gently
     }
     if (this.aspect !== this.camera.aspect) {

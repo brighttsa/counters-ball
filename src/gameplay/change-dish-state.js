@@ -110,7 +110,7 @@ export class ChangeDishes {
         .filter(([a, b]) => b - a > Math.PI / 18)
         .map(([a, b]) => {
           const angle = this.worldAngle(dish, (a + b) / 2);
-          return { x: dish.sign * GOAL_LINE_X + Math.cos(angle) * reach, z: Math.sin(angle) * reach, text: 'GAP NEXT' };
+          return { x: dish.sign * GOAL_LINE_X + Math.cos(angle) * reach, z: Math.sin(angle) * reach, icon: 'dish-gap' };
         });
     });
   }

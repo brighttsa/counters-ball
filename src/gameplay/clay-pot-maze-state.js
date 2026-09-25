@@ -67,7 +67,7 @@ export class ClayPotMaze {
 
   /** Auntie Ama's rule, chalked once just below the centre spot: it holds at both goals. */
   chalkNotes() {
-    return [{ x: 0, z: 0.22, text: 'NO STRAIGHT GOALS' }];
+    return [{ x: 0, z: 0.22, icon: 'bank-curve' }];
   }
 
   describe() {

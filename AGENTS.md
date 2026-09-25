@@ -58,21 +58,23 @@ Codex's worktree uses port **4181** (see below). Open `http://localhost:<port>`.
 | | Claude Code | Codex |
 |---|---|---|
 | Folder | `/Users/bskt/Counters ball` | `/Users/bskt/Documents/ChatGPT/Counters ball` (own clone) |
-| Branch | `main` | `codex/workspace` (or `codex/<task>`) |
+| Branch | `main` | `main` |
 | Dev server port | 4180 | 4181 |
 
-1. **Start of every session:** read `plans/agent-handoff-board.md` and
-   `git log --oneline -10 --all`; run `node scripts/collaboration-workflow.mjs status`
-   to inspect the peer clone's live claims and uncommitted files.
+### Deployment
+GitHub Pages deploys from `main` automatically. Every `git push origin main`
+goes live at **konk.world** — no Vercel or deploy script needed.
+
+### Workflow
+1. **Start of every session:** `git pull origin main` to get latest, then read
+   `plans/agent-handoff-board.md` and `git log --oneline -10`.
 2. **Claim before you edit:** run `node scripts/collaboration-workflow.mjs claim
    "Task title" file.js folder/`. Each owner writes only their own
    `plans/claims/<owner>.json`. Read the board too; until both clones adopt
    live claims, board claims still require manual coordination.
 3. **Stay in your folder.** Each agent only writes inside its own folder.
-4. **Integrate through git:** Codex commits on its branch in its clone; Claude fetches it (remote `codex`) and
-   reviews and merges the exact handed-off commit into `main`. Before new work,
-   Codex runs `node scripts/collaboration-workflow.mjs sync` on a clean tree.
-   Never auto-stash or mix unrelated unfinished changes into a handoff.
+4. **Push to `main`:** Both agents commit and push directly to `main`.
+   Always `git pull --rebase origin main` before pushing to avoid conflicts.
 5. **Hand off in writing:** when you finish or stop, move the task on the board
    and leave a short note — what changed, how you verified it, what's left.
 6. **Shared files need care:** `AGENTS.md`, `docs/*`, and

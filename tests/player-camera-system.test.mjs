@@ -5,7 +5,8 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
   skip: !process.env.COUNTERS_TEST_THREE,
 }, async t => {
   const { THREE } = await import('./helpers/real-three-session-fixture.mjs');
-  const { playerCameraPose, loadCameraPreferences, pitchFramePoints, hudReservePixels } = await import('../src/fx/player-camera-view-poses.js');
+  const { playerCameraPose, loadCameraPreferences, openingCameraMode, pitchFramePoints,
+    hudReservePixels, tacticalViewBounds } = await import('../src/fx/player-camera-view-poses.js');
   const { HumanDragAimInput } = await import('../src/gameplay/human-drag-aim-input.js');
   const previous = globalThis.window;
   globalThis.window = { addEventListener() {}, removeEventListener() {} };
@@ -17,6 +18,29 @@ test('player camera poses fit mechanics and preserve world-plane flick direction
     assert.deepEqual(loadCameraPreferences({ getItem: () => '{"home":"street","away":"invalid"}' }),
       { home: 'street', away: 'broadcast' });
     assert.deepEqual(loadCameraPreferences(null), { home: 'broadcast', away: 'broadcast' });
+  });
+  await t.test('match openings never start in close or free inspection cameras', () => {
+    assert.equal(openingCameraMode('tactical'), 'tactical');
+    assert.equal(openingCameraMode('broadcast'), 'broadcast');
+    assert.equal(openingCameraMode('street'), 'broadcast');
+    assert.equal(openingCameraMode('free'), 'broadcast');
+    assert.equal(openingCameraMode('invalid'), 'broadcast');
+  });
+  await t.test('phone landscape keeps smaller HUD reserves so the table stays close', () => {
+    assert.deepEqual(hudReservePixels(844, 390), { top: 62, bottom: 54 });
+    assert.deepEqual(hudReservePixels(390, 844), { top: 136, bottom: 144 });
+  });
+  await t.test('Tactical uses a closer phone-landscape frame than the safe HUD strip', () => {
+    const oldWindow = globalThis.window;
+    try {
+      globalThis.window = { innerWidth: 568, innerHeight: 320 };
+      assert.deepEqual(tacticalViewBounds(), { x: .98, top: .82, bottom: -.82 });
+      const camera = new THREE.PerspectiveCamera(42, 568 / 320, .1, 100);
+      const pose = playerCameraPose(camera, 'tactical', { ...session, level: { mechanic: { type: 'ruler-seesaw' } } });
+      camera.position.copy(pose.position); camera.lookAt(pose.target); camera.updateMatrixWorld(true);
+      const ys = pitchFramePoints({ level: { mechanic: { type: 'ruler-seesaw' } } }).map(point => point.clone().project(camera).y);
+      assert.ok((Math.max(...ys) - Math.min(...ys)) / 2 > .78, 'table fills tactical phone landscape');
+    } finally { globalThis.window = oldWindow; }
   });
   await t.test('Tactical and the Free overview frame both goals, lorries and outer lanes', () => {
     for (const aspect of [320 / 844, 375 / 844, 390 / 844, 430 / 844, 16 / 9]) {

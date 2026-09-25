@@ -16,7 +16,7 @@ export function fillVenuePreview(level, index, unlocked, mode, stars) {
     : `vs ${level.opponent.kid} · ${capitalize(level.opponent.difficulty)} · ${terms}`;
   $('circuit-venue-note').textContent = level.blurb;
   const starLine = $('circuit-venue-stars');
-  starLine.textContent = versus ? '2-player table' : '★'.repeat(stars) + '☆'.repeat(3 - stars);
+  starLine.innerHTML = versus ? '2-player table' : [0, 1, 2].map(n => `<svg class="star-svg ${n < stars ? 'on' : ''}" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg>`).join('');
   starLine.setAttribute('aria-label', versus ? '2-player table' : `${stars} of 3 stars earned`);
   const enter = $('circuit-enter');
   enter.dataset.index = String(index);

@@ -1,10 +1,5 @@
-// A Street Legends venue's rule, chalked on the table next to the prop it is about: "NEXT: ACROSS" beside a
-// ruler, "SHUTS NEXT" on the toll lane that closes next, "LORRY NEXT" at the lorry's next stop. Where a
-// note sits carries half the meaning, so the words stay short and no note says "left" or "right" (which
-// flips with the camera). Each note lies flat on the pitch, turned to read upright on screen, and fades in
-// when its words change. Venues supply notes as plain data:
-//   { x, z, text, side? }  (side tints the chalk in that team's colour, e.g. whose coin chain it is)
-// and each is slid along the table to the nearest spot no piece or prop covers.
+// Street Legends table cues sit beside the prop they explain. They are symbols
+// first (arrows, warning bars, pips), with text only as a fallback/debug aid.
 import * as THREE from 'three';
 import { chalkSurface, chalkify, chalkTint, screenUprightYaw, CHALK_WHITE } from './chalk-table-score-and-flick-tallies.js';
 import { NOTE_SIZE, placeClear } from './chalk-note-clear-placement.js';
@@ -31,6 +26,52 @@ function drawNote(ctx, text, colour) {
   });
 }
 
+function drawIcon(ctx, note, colour) {
+  const { width: w, height: h } = ctx.canvas;
+  chalkify(ctx, (c) => {
+    c.strokeStyle = colour;
+    c.fillStyle = colour;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    c.lineWidth = h * 0.11;
+    const cx = w / 2, cy = h / 2;
+    if (note.icon === 'bank-curve') {
+      c.beginPath(); c.arc(cx, cy * 1.05, h * 0.34, Math.PI * 0.95, Math.PI * 1.95); c.stroke();
+      c.beginPath(); c.moveTo(cx + h * 0.32, cy * 0.82); c.lineTo(cx + h * 0.16, cy * 0.62); c.lineTo(cx + h * 0.42, cy * 0.57); c.stroke();
+      return;
+    }
+    if (note.icon === 'boom-warning') {
+      for (let i = -1; i <= 1; i++) { c.beginPath(); c.moveTo(cx - h * 0.32, cy + i * h * 0.22); c.lineTo(cx + h * 0.32, cy + i * h * 0.22); c.stroke(); }
+      return;
+    }
+    if (note.icon === 'dish-gap') {
+      c.beginPath(); c.arc(cx, cy, h * 0.35, Math.PI * 0.15, Math.PI * 0.85); c.stroke();
+      c.beginPath(); c.arc(cx, cy, h * 0.35, Math.PI * 1.15, Math.PI * 1.85); c.stroke();
+      return;
+    }
+    if (note.icon === 'lorry-stop') {
+      for (let i = -1; i <= 1; i++) { c.beginPath(); c.arc(cx + i * h * 0.22, cy, h * 0.06, 0, Math.PI * 2); c.fill(); }
+      c.beginPath(); c.moveTo(cx - h * 0.42, cy + h * 0.26); c.lineTo(cx + h * 0.42, cy + h * 0.26); c.stroke();
+      return;
+    }
+    if (note.icon === 'ruler-angle') {
+      const a = (Number(note.value) || 0) * Math.PI / 4;
+      c.beginPath(); c.moveTo(cx - Math.cos(a) * h * 0.42, cy + Math.sin(a) * h * 0.42);
+      c.lineTo(cx + Math.cos(a) * h * 0.42, cy - Math.sin(a) * h * 0.42); c.stroke();
+      return;
+    }
+    if (note.icon === 'coin-chain' || note.icon === 'goal-open') {
+      const lit = note.icon === 'goal-open' ? 3 : Number(note.value) || 0;
+      for (let i = 0; i < 3; i++) {
+        c.globalAlpha = i < lit ? 1 : 0.34;
+        c.beginPath(); c.arc(cx + (i - 1) * h * 0.25, cy, h * 0.1, 0, Math.PI * 2); c.stroke();
+      }
+      c.globalAlpha = 1;
+      if (note.icon === 'goal-open') { c.beginPath(); c.moveTo(cx - h * 0.34, cy + h * 0.25); c.lineTo(cx + h * 0.34, cy - h * 0.25); c.stroke(); }
+    }
+  });
+}
+
 /** @param colours { home, away } team hud colours, for notes that belong to one side */
 export function createVenueRuleChalkNotes(parent, colours = {}) {
   const root = new THREE.Group();
@@ -52,7 +93,8 @@ export function createVenueRuleChalkNotes(parent, colours = {}) {
 
   const draw = (slot) => {
     const { text, side } = slot.note;
-    drawNote(slot.ctx, text, tint[side] ?? CHALK_WHITE);
+    if (slot.note.icon) drawIcon(slot.ctx, slot.note, tint[side] ?? CHALK_WHITE);
+    else drawNote(slot.ctx, text, tint[side] ?? CHALK_WHITE);
     slot.texture.needsUpdate = true;
   };
   // Canvas text falls back to a system font until the chalk face loads; redraw once it has.
@@ -68,7 +110,7 @@ export function createVenueRuleChalkNotes(parent, colours = {}) {
     set(notes = [], obstacles = []) {
       slots.forEach((slot, i) => {
         const note = notes[i] ? placeClear(notes[i], obstacles) : null;
-        const key = note ? `${note.text}|${note.side ?? ''}|${note.x.toFixed(3)}|${note.z.toFixed(3)}` : '';
+        const key = note ? `${note.icon ?? note.text}|${note.value ?? ''}|${note.side ?? ''}|${note.x.toFixed(3)}|${note.z.toFixed(3)}` : '';
         if (key === slot.key) return;
         slot.key = key;
         slot.note = note;

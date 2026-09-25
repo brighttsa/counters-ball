@@ -7,12 +7,12 @@ import { markChoice, selectSettingsSection, showPauseFace } from './pause-card-f
 const ARM_SECONDS = 4;
 
 /**
- * @param ctx { app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus }
+ * @param ctx { app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus }
  *   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex }
  */
 const VIEWS = ['tactical', 'broadcast', 'street', 'free'];
 
-export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, menus, hints }) {
+export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints }) {
   const audio = () => { save(progress); applyAudioSettings({ progress, sound, music, menus }); };
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
   // The chips on the back of the pause card. Unknown values are ignored, so a stale chip can't save junk.
@@ -73,6 +73,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'play-campaign': () => flow.showLevels('campaign'),
     'play-practice': () => { app.mode = 'practice'; flow.prepareMatch(0); },
     'play-versus': () => flow.showLevels('versus'),
+    'play-friend': () => flow.showFriendMatch(),
     'play-legends': () => flow.showLevels('legends'),
     'back-to-title': () => flow.showTitle(),
     'home-settings': () => {
@@ -129,6 +130,14 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
       flow.prepareMatch(app.levelIndex, { rematch: true });
     },
     'share-result': () => resultsShare.share(),
+    'friend-share': () => friendShare.share(),
+    'friend-copy': () => friendShare.copy(),
+    'friend-play': () => {
+      app.mode = app.friendInvite.mode;
+      app.levelIndex = app.friendInvite.index;
+      flow.prepareMatch(app.friendInvite.index);
+    },
+    'friend-pick-table': () => flow.showLevels('legends'),
     'challenge-accept': () => {
       app.mode = app.challenge.mode;
       app.levelIndex = app.challenge.index;
