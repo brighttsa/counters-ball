@@ -4,7 +4,9 @@
   padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(84px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
 }
 .screen.is-active { display: grid; animation: screen-in 200ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+.screen.is-exiting { display: grid; animation: screen-out 180ms var(--ease-out) both; }
 .screen-pause.is-active, .screen-pause .paper-card { animation: none; }
+.screen-pause.is-exiting { animation: screen-out 140ms var(--ease-out) both; }
 .screen-pause { background: var(--scrim); }
 .screen-results { background: var(--scrim); }
 .screen-intro { justify-items: start; align-content: end; padding-bottom: 36px; }
@@ -108,7 +110,8 @@
 .results-share-status:empty { display: none; }
 
 @keyframes screen-in { from { opacity: 0; transform: translateY(8px); } }
-@keyframes rise-in { from { opacity: 0; transform: translateY(16px); } }
+@keyframes screen-out { to { opacity: 0; } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(12px) scale(0.85); } }
 
 @media (max-width: 640px) {
   .screen-intro { justify-items: center; }

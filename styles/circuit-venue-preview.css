@@ -66,6 +66,13 @@
 .level-stars { min-height: 0; }
 .level-stars .star-svg { width: var(--text-sm); height: var(--text-sm); margin-right: 4px; color: var(--line-strong); }
 .level-stars .star-svg.on { color: var(--yellow); }
+.screen-levels.is-active .level-card { animation: card-stagger 200ms var(--ease-out) both; }
+.screen-levels.is-active .level-card:nth-child(2) { animation-delay: 40ms; }
+.screen-levels.is-active .level-card:nth-child(3) { animation-delay: 80ms; }
+.screen-levels.is-active .level-card:nth-child(4) { animation-delay: 120ms; }
+.screen-levels.is-active .level-card:nth-child(n+5) { animation-delay: 160ms; }
+@keyframes card-stagger { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .screen-levels.is-active .level-card { animation: none; } }
 .level-card.locked { color: color-mix(in srgb, var(--paper-muted) 74%, var(--ink)); cursor: not-allowed; background: rgb(var(--ink-rgb) / .72); }
 .level-card.locked .level-stars { display: none; } /* a locked act has no stars yet; its lock label says so */
 .level-card.locked .level-number { border-style: dashed; border-color: var(--line-strong); }
