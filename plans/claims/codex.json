@@ -2,14 +2,18 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Home secondary buttons spacing",
+  "task": "Mobile match HUD consistency",
   "status": "released",
   "paths": [
+    "styles/game-ui-base-and-hud.css",
+    "styles/game-ui-menus-and-results.css",
     "styles/ink-impact-home.css",
+    "styles/mobile-tablet-match-layout.css",
+    "styles/match-hud-one-frame-and-aim-fade.css",
     "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T01:56:00Z",
+  "updatedAt": "2026-09-25T02:22:00Z",
   "head": "36ef6b32f35cb2b4e6ea6864d959fe2119dd4b3e"
 }

@@ -15,7 +15,7 @@
   .legend-objective { top: calc(max(14px, env(safe-area-inset-top)) + 88px); }
 }
 @media (orientation: portrait) and (max-width: 1100px) {
-  .ink-game .legend-objective { top: calc(max(12px, env(safe-area-inset-top)) + 72px); width: calc(100% - 84px); max-width: 440px; left: 12px; transform: none; }
+  .ink-game .legend-objective { top: calc(max(10px, env(safe-area-inset-top)) + 86px); width: calc(100% - 84px); max-width: 440px; left: max(12px, env(safe-area-inset-left)); transform: none; }
 }
 /* Where the objective hangs straight under the flicks row, the yellow edge moves down to close it. */
 @media (min-height: 601px), (orientation: portrait) {

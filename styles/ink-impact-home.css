@@ -15,13 +15,22 @@
 .home-edition { margin-top: 8px; text-transform: uppercase; letter-spacing: .06em; }
 .home-location { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--paper); font: var(--text-sm)/1.4 var(--font-body); }
 .home-location b { font: var(--text-xl)/1 var(--font-display); color: var(--yellow); border-right: 3px solid; padding-right: 12px; }
-.screen-title .menu-stack { display: grid; grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: 8px; width: min(620px, 56vw); max-width: 100%; }
+.screen-title .menu-stack { display: grid; grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: 8px; width: min(560px, 54vw); max-width: 100%; }
 .screen-title .home-play { background: var(--yellow); color: var(--ink); display: flex; justify-content: space-between; align-items: center; min-height: 66px; font: var(--text-2xl)/1 var(--font-display); }
 .play-arrow { width: 1em; height: 1em; flex-shrink: 0; }
 @media (hover: hover) { .screen-title .btn:hover { background: var(--paper); color: var(--ink); } }
 .screen-title .home-venues { text-align: left; padding: 12px 20px; }
-.home-secondary { display: grid; grid-template-columns: repeat(4, minmax(116px, 1fr)); gap: 8px; }
-.home-secondary .btn { min-height: 50px; min-width: 0; font-size: var(--text-xs); line-height: 1; padding: 10px 12px; white-space: nowrap; }
+.home-secondary {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
+  padding: 5px; background: rgb(var(--ink-rgb) / .42); border: 1px solid rgb(var(--paper-rgb) / .12);
+}
+.home-secondary .btn {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 44px; min-width: 0; padding: 8px 10px; background: rgb(var(--paper-rgb) / .06);
+  border: 1px solid rgb(var(--paper-rgb) / .08); color: var(--paper); font-size: var(--text-xs);
+  line-height: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  clip-path: polygon(0 6%, 98% 0, 100% 92%, 2% 100%);
+}
 .friend-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 16px 0 6px; }
 .friend-card .results-share-status { min-height: 1.4em; margin: 0 0 12px; color: var(--yellow); }
 .title-stars { align-self: start; margin: 4px 0; font: var(--text-xs)/1.4 var(--font-body); color: var(--paper); }
@@ -91,18 +100,14 @@
     min-height: 48px;
     padding: 10px 16px;
   }
-  .home-secondary {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-  }
+  .home-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; }
   .home-secondary .btn {
     min-height: 44px;
     padding: 8px 6px;
     text-align: center;
     font-size: 11px;
-    line-height: 1.12;
-    white-space: normal;
+    line-height: 1;
+    white-space: nowrap;
   }
   .title-stars { margin: 0; }
   .home-utilities {
@@ -190,11 +195,11 @@
     min-height: 44px;
     padding: 8px 18px;
   }
-  .home-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .home-secondary { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 5px; }
   .home-secondary .btn {
-    min-height: 42px;
-    padding: 7px 10px;
-    font-size: 12px;
+    min-height: 40px;
+    padding: 7px 6px;
+    font-size: 11px;
     line-height: 1.05;
     white-space: nowrap;
   }
@@ -244,9 +249,9 @@
   }
   .home-secondary .btn,
   .home-utilities button {
-    font-size: 11px;
+    font-size: 10px;
     line-height: 1.05;
-    padding-inline: 8px;
+    padding-inline: 4px;
   }
   .home-utilities button {
     min-height: 38px;
