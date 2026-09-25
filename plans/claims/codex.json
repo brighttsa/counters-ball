@@ -2,14 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Friend Match Lite multiplayer",
+  "task": "Street Legends symbolic table cues",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/ui",
-    "src/core",
+    "src/gameplay",
+    "src/scene/venue-rule-chalk-notes.js",
+    "tests/venue-rule-chalk-notes.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-25T00:37:16Z",
-  "head": "870c0dbe6fdbb939ef5775f1a3a121b77fa091ff"
+  "updatedAt": "2026-09-25T00:46:21Z",
+  "head": "e2b019bcfc8ff46057d0a3a4cc63271990e91939"
 }

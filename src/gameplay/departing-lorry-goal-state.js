@@ -73,7 +73,7 @@ export class DepartingLorryGoals {
 
   /** Chalk just inside each end where its lorry stops next. */
   chalkNotes() {
-    return this.goals.map((goal) => ({ x: goal.sign * 1.2, z: this.center(goal, 1), text: 'LORRY NEXT' }));
+    return this.goals.map((goal) => ({ x: goal.sign * 1.2, z: this.center(goal, 1), icon: 'lorry-stop' }));
   }
 
   describe(side) {

@@ -86,7 +86,7 @@ export class RulerSeesaws {
 
   /** Chalk between each ruler and the goal it guards, clear of its sweep: the angle it turns to next. */
   chalkNotes() {
-    return this.rulers.map((r) => ({ x: Math.sign(r.x) * 1.2, z: 0.33, text: `NEXT: ${ANGLE_NAMES[this.angleIndex(r, 1)]}` }));
+    return this.rulers.map((r) => ({ x: Math.sign(r.x) * 1.2, z: 0.33, icon: 'ruler-angle', value: this.angleIndex(r, 1) }));
   }
 
   describe(side) {
