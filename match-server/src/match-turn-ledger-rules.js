@@ -38,3 +38,21 @@ export function newMatchId(random = crypto.getRandomValues.bind(crypto)) {
 }
 
 export const MATCH_ID = /^[a-km-np-zA-HJ-NP-Z2-9]{10}$/;
+
+/** What the player whose turn it now is sees on their lock screen after a move lands. */
+export function pushMessageFor(packed, matchId, siteUrl) {
+  const names = { h: packed.n[0], a: packed.n[1] };
+  const [, , [home, away]] = packed.ra;
+  const mover = names[packed.by];
+  const score = `${packed.n[0]} ${home}–${away} ${packed.n[1]}`;
+  const ended = packed.ra[0] === 1;
+  return {
+    to: packed.by === 'h' ? 'away' : 'home',
+    payload: {
+      title: ended ? `${mover} took the last flick` : `${mover} flicked. Your move!`,
+      body: `${score}${packed.m ? ` · “${packed.m}”` : ''}`,
+      url: `${siteUrl}?m=${matchId}`,
+      tag: `konk-${matchId}`,
+    },
+  };
+}

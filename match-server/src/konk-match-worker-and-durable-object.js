@@ -2,9 +2,11 @@
 //   POST /matches            { letter }  → 201 { id, seq }        opens a match with home's first move
 //   POST /matches/:id/turns  { letter }  → 200 { seq } | 409      appends the next move, strictly in order
 //   GET  /matches/:id                    → 200 { letter, seq }    the latest move (what a short link opens)
+//   POST /matches/:id/subscribe { side, subscription } → 204        Web Push for that side's "your move"
 // The Durable Object handles one request at a time, so two replies to the same move can never both land.
 import { DurableObject } from 'cloudflare:workers';
-import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMatchId } from './match-turn-ledger-rules.js';
+import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMatchId, pushMessageFor } from './match-turn-ledger-rules.js';
+import { cleanSubscription, sendPush } from './web-push-vapid-and-aes128gcm.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
@@ -14,7 +16,9 @@ export class KonkMatch extends DurableObject {
     const latest = await this.ctx.storage.get('latest');
     if (request.method === 'GET') return latest ? json({ letter: latest, seq: latest.k }) : json({ error: 'no such match' }, 404);
 
-    const letter = (await request.json()).letter;
+    const body = await request.json();
+    if (pathname.endsWith('/subscribe')) return this.subscribe(latest, body);
+    const letter = body.letter;
     const verdict = pathname.endsWith('/open')
       ? (latest ? { ok: false, status: 409, error: 'match already exists' } : checkOpeningLetter(letter))
       : (latest ? checkNextLetter(latest, letter) : { ok: false, status: 404, error: 'no such match' });
@@ -22,7 +26,25 @@ export class KonkMatch extends DurableObject {
 
     await this.ctx.storage.put({ latest: letter, [`turn:${String(letter.k).padStart(4, '0')}`]: letter });
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
+    if (latest) this.ctx.waitUntil(this.notify(letter)); // the sender's share sheet never waits on a push service
     return json({ seq: letter.k }, latest ? 200 : 201);
+  }
+
+  async subscribe(latest, { side, subscription, id }) {
+    const clean = cleanSubscription(subscription);
+    if (!latest) return json({ error: 'no such match' }, 404);
+    if ((side !== 'home' && side !== 'away') || !clean || !MATCH_ID.test(id ?? '')) return json({ error: 'bad subscription' }, 400);
+    await this.ctx.storage.put({ [`push:${side}`]: clean, matchId: id });
+    return new Response(null, { status: 204 });
+  }
+
+  async notify(letter) {
+    const vapid = vapidFrom(this.env);
+    const matchId = await this.ctx.storage.get('matchId');
+    if (!vapid || !matchId) return;
+    const { to, payload } = pushMessageFor(letter, matchId, this.env.SITE_URL);
+    const subscription = await this.ctx.storage.get(`push:${to}`);
+    if (subscription && await sendPush(subscription, payload, vapid) === 'gone') await this.ctx.storage.delete(`push:${to}`);
   }
 
   async alarm() {
@@ -55,12 +77,26 @@ async function route(request, env) {
   }
   if (!id || !MATCH_ID.test(id)) return json({ error: 'not found' }, 404);
   if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/latest');
+  if (request.method === 'POST' && action === 'subscribe') {
+    const text = await request.text();
+    if (text.length > 4096) return json({ error: 'too large' }, 413);
+    let parsed;
+    try { parsed = JSON.parse(text); } catch { return json({ error: 'bad subscription' }, 400); }
+    const body = JSON.stringify({ side: parsed?.side, subscription: parsed?.subscription, id });
+    return stub(env, id).fetch('https://match/subscribe', { method: 'POST', body });
+  }
   if (request.method === 'POST' && action === 'turns') {
     const body = await readBody(request);
     if (!body) return json({ error: 'letter missing or too large' }, 413);
     return stub(env, id).fetch('https://match/turns', { method: 'POST', body });
   }
   return json({ error: 'not found' }, 404);
+}
+
+/** VAPID signing key (Worker secret VAPID_PRIVATE_JWK) plus its public half; null until both are configured. */
+function vapidFrom(env) {
+  if (!env.VAPID_PRIVATE_JWK || !env.VAPID_PUBLIC_KEY) return null;
+  try { return { privateJwk: JSON.parse(env.VAPID_PRIVATE_JWK), publicKey: env.VAPID_PUBLIC_KEY, subject: env.SITE_URL }; } catch { return null; }
 }
 
 const stub = (env, id) => env.KONK_MATCH.get(env.KONK_MATCH.idFromName(id));

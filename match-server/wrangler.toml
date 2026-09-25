@@ -6,6 +6,10 @@ compatibility_date = "2026-09-01"
 [vars]
 # Pages that may call the API from the browser.
 ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180"
+# Where notifications send players back to; also the VAPID contact.
+SITE_URL = "https://konk.world/"
+# Public half of the Web Push VAPID key (the private half is the secret VAPID_PRIVATE_JWK).
+VAPID_PUBLIC_KEY = "BLpzTuejTciUgcCBrrFCDewABuKpHfQetTVfarfjMpdTsV5uG4j-wcjnPUiU3EFMSLmb9NKimmIoE6ybYpX5zuI"
 
 [[durable_objects.bindings]]
 name = "KONK_MATCH"

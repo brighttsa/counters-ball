@@ -17,6 +17,9 @@
 <meta name="theme-color" content="#191b1b" />
 <link rel="icon" type="image/svg+xml" href="assets/konk-favicon.svg" />
 <link rel="apple-touch-icon" href="assets/konk-app-icon-180.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="KONK!" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin+Sketch:wght@700&family=Lilita+One&family=Patrick+Hand&display=swap" />
@@ -171,6 +174,10 @@
           <button class="btn btn-small" data-action="letter-home">Later</button>
           <button class="btn btn-primary" data-action="letter-watch">Watch their flick</button>
         </div>
+      </div>
+      <div class="letter-notify" id="letter-notify" hidden>
+        <button class="btn" data-action="letter-notify" id="letter-notify-button">Notify me</button>
+        <p class="letter-notify-status" id="letter-notify-status" aria-live="polite"></p>
       </div>
       <div class="letter-group" data-letter-group="waiting" hidden>
         <div class="card-actions">

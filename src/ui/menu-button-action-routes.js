@@ -153,6 +153,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'letter-full-time': () => messageMatch.fullTime(),
     'letter-home': () => messageMatch.home(),
     'letter-refresh': () => messageMatch.refresh(),
+    'letter-notify': () => messageMatch.notify(),
     'next-level': () => flow.prepareMatch(app.levelIndex + 1),
     'toggle-sound': () => { progress.muted = !progress.muted; audio(); },
   };

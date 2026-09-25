@@ -6,6 +6,7 @@ import { encodeLetterLink, packLetter, unpackLetter } from '../core/message-matc
 import {
   MatchSeats, MatchServerError, fetchLatestLetter, matchApiBase, openServerMatch, sendServerTurn, shortMatchLink,
 } from '../core/message-match-server-transport.js';
+import { pushAvailability, subscribeToMatch } from '../core/message-match-push-subscription.js';
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js';
@@ -68,6 +69,17 @@ export function createMessageMatchFlow(deps) {
     }
   }
 
+  /** After our move is on the server (or while waiting): offer "notify me when they flick". */
+  let notifyFor = null;
+  async function offerNotifications(side, opponent) {
+    notifyFor = matchId && api ? { side, opponent } : null;
+    if (!notifyFor) return card.showNotify(null);
+    const state = pushAvailability();
+    if (state !== 'granted') return card.showNotify(state === 'ready' || state === 'install' ? state : null, opponent);
+    const ok = await subscribeToMatch({ api, matchId, side }).catch(() => false); // already allowed: no prompt needed
+    card.showNotify(ok ? 'on' : 'failed', opponent);
+  }
+
   function showIncoming(letter) {
     incoming = letter;
     card.showIncoming({ letter, level: levelOf(letter) });
@@ -103,6 +115,7 @@ export function createMessageMatchFlow(deps) {
         if (!letter || levelIndexOf(letter.levelId) < 0) throw new Error('unusable letter');
         if (seats.sideIn(id) === letter.by && letter.rulesAfter.phase !== 'ended') {
           card.showWaiting({ letter, level: levelOf(letter) });
+          offerNotifications(letter.by, letter.names[other(letter.by)]);
         } else {
           showIncoming(letter);
         }
@@ -139,6 +152,7 @@ export function createMessageMatchFlow(deps) {
         if (url.includes('?m=')) sentUrl = url;
         card.prepare(letter, url);
         await card.share.share();
+        if (sentUrl && letter.rulesAfter.phase !== 'ended') offerNotifications(letter.by, letter.names[other(letter.by)]);
       } catch (error) {
         if (error instanceof MatchServerError) card.showConflict(error.message);
       } finally {
@@ -155,9 +169,17 @@ export function createMessageMatchFlow(deps) {
         if (url.includes('?m=')) sentUrl = url;
         card.prepare(letter, url);
         await card.share.copy();
+        if (sentUrl && letter.rulesAfter.phase !== 'ended') offerNotifications(letter.by, letter.names[other(letter.by)]);
       } catch (error) {
         if (error instanceof MatchServerError) card.showConflict(error.message);
       }
+    },
+
+    /** From the "Notify me" tap: the permission prompt needs this gesture. */
+    async notify() {
+      if (!notifyFor) return;
+      const ok = await subscribeToMatch({ api, matchId, side: notifyFor.side }).catch(() => false);
+      card.showNotify(ok ? 'on' : (pushAvailability() === 'denied' ? null : 'failed'), notifyFor.opponent);
     },
 
     fullTime() {

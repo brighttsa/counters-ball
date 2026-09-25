@@ -93,3 +93,30 @@ test('each device remembers its own side per match, and forgets the oldest past 
   assert.deepEqual(seats.read(), {});
   assert.equal(new MatchSeats({ getItem() { throw new Error('blocked'); } }).sideIn('x'), null);
 });
+
+test('the lock-screen message names the mover, the score and the taunt, and goes to the other side', async () => {
+  const { pushMessageFor } = await import('../match-server/src/match-turn-ledger-rules.js');
+  const withTaunt = { ...reply(), m: 'Top bins' };
+  const { to, payload } = pushMessageFor(withTaunt, 'abcdefghij', 'https://konk.world/');
+  assert.equal(to, 'home');
+  assert.deepEqual(payload, { title: 'Kofi flicked. Your move!', body: 'Ama 0–0 Kofi · “Top bins”',
+    url: 'https://konk.world/?m=abcdefghij', tag: 'konk-abcdefghij' });
+  const ended = { ...opening, ra: [1, 'a', [1, 0], [1, 0], 'h', 0, [0, 0]] };
+  assert.equal(pushMessageFor(ended, 'abcdefghij', 'https://konk.world/').payload.title, 'Ama took the last flick');
+  assert.equal(pushMessageFor(ended, 'abcdefghij', 'https://konk.world/').to, 'away');
+});
+
+test('push availability: ask, already on, blocked, unsupported, or install to Home Screen first', async () => {
+  const { pushAvailability } = await import('../src/core/message-match-push-subscription.js');
+  const win = ({ permission = 'default', push = true, ua = 'Mozilla/5.0 (X11; Linux x86_64)', standalone = false } = {}) => ({
+    isSecureContext: true, navigator: { userAgent: ua, ...(push ? { serviceWorker: {} } : {}) },
+    matchMedia: () => ({ matches: standalone }), ...(push ? { PushManager: class {}, Notification: { permission } } : {}),
+  });
+  assert.equal(pushAvailability(win()), 'ready');
+  assert.equal(pushAvailability(win({ permission: 'granted' })), 'granted');
+  assert.equal(pushAvailability(win({ permission: 'denied' })), 'denied');
+  assert.equal(pushAvailability(win({ push: false })), 'unsupported');
+  const iphone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)';
+  assert.equal(pushAvailability(win({ push: false, ua: iphone })), 'install', 'Safari tab on iPhone');
+  assert.equal(pushAvailability(win({ ua: iphone, standalone: true })), 'ready', 'installed Home Screen app');
+});

@@ -14,6 +14,7 @@ export class MessageMatchLetterCard {
   }
 
   group(name) {
+    $('letter-notify').hidden = true; // offered again by the flow once a match is on the server
     for (const el of document.querySelectorAll('[data-letter-group]')) el.hidden = el.dataset.letterGroup !== name;
   }
 
@@ -77,6 +78,23 @@ export class MessageMatchLetterCard {
 
   readTaunt() {
     return cleanTaunt($('letter-taunt-input').value);
+  }
+
+  /** @param state from pushAvailability, or 'on' once subscribed; null hides the row */
+  showNotify(state, opponent) {
+    const row = $('letter-notify');
+    const button = $('letter-notify-button');
+    const copy = {
+      ready: ['', `Notify me when ${opponent} flicks`],
+      on: [`Notifications on: you will hear when ${opponent} flicks.`, null],
+      install: ['On iPhone, tap Share → Add to Home Screen, then open KONK! from there to get notified.', null],
+      failed: ['Could not turn on notifications. Your link still works.', `Try notifications again`],
+    }[state];
+    row.hidden = !copy;
+    if (!copy) return;
+    $('letter-notify-status').textContent = copy[0];
+    button.hidden = !copy[1];
+    if (copy[1]) button.textContent = copy[1];
   }
 
   showFullTimeButton() {
