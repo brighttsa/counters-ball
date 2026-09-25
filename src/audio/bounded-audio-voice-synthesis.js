@@ -1,7 +1,8 @@
 const HIDE_FADE = 0.4;      // seconds: music fades out before the context suspends
 const SHOW_FADE = 0.8;      // seconds: music fades back in after the context resumes
 const HIDE_LPF_END = 200;   // Hz: low-pass cutoff at the end of the hide fade ("going to sleep")
-const PAUSE_FADE = 0.12;    // seconds: pause is quicker than a tab hide but never a hard cut
+const PAUSE_FADE = 0.12;    // seconds: effects fade out on pause, quicker than a tab hide but never a hard cut
+const PAUSE_MUSIC_DIP = 0.5; // about −6 dB: the music carries on under the pause menu
 
 // Sources are single-use Web Audio nodes; reusable buffers and a hard voice
 // limit bound allocation, and every ended voice disconnects its entire chain.
@@ -17,7 +18,8 @@ export class BoundedAudioVoiceSynthesis {
     };
   }
 
-  available() { return this.ctx && !this.muted && !this.effectsOff && !this.paused && this.voices.size < 32; }
+  // Button clicks (uiVoice) stay available on the pause menu; everything else waits for play to resume.
+  available() { return this.ctx && !this.muted && !this.effectsOff && (!this.paused || this.uiVoice) && this.voices.size < 32; }
 
   /** Gain envelope into the master bus; a non-zero pan places the voice left/right of centre. */
   envelope(level, start, attack, duration, pan = 0) {
@@ -25,13 +27,14 @@ export class BoundedAudioVoiceSynthesis {
     g.gain.setValueAtTime(0.0001, start);
     g.gain.exponentialRampToValueAtTime(Math.max(0.0002, level * this.sfxLevel), start + attack);
     g.gain.exponentialRampToValueAtTime(0.0001, start + attack + duration);
+    const bus = this.uiVoice && this.uiBus ? this.uiBus : this.master; // button clicks skip the paused effects bus
     if (!pan) {
-      g.connect(this.master);
+      g.connect(bus);
       return { input: g, nodes: [g] };
     }
     const panner = this.ctx.createStereoPanner();
     panner.pan.value = Math.max(-1, Math.min(1, pan));
-    g.connect(panner).connect(this.master);
+    g.connect(panner).connect(bus);
     return { input: g, nodes: [g, panner] };
   }
 
@@ -73,27 +76,27 @@ export class BoundedAudioVoiceSynthesis {
     if (!this.ctx) return;
     if (this.hidden) {
       this._fadeForHide();
-    } else if (!this.paused) {
+    } else {
       this.ctx.resume()?.catch(() => {});
-      this._fadeForShow();
+      if (!this.paused) this._fadeForShow();
     }
   }
 
   /**
-   * Pausing fades both buses to silence before the context suspends. Suspending mid-waveform froze the
-   * last sample on some headphone outputs and left a buzz for as long as the pause menu stayed open.
+   * Pause silences the effects but keeps the context running, so the music plays on quietly under the pause
+   * menu. Suspending the context froze the music and, on some headphone outputs, left the frozen last sample
+   * buzzing for as long as the menu stayed open.
    */
   setPaused(paused) {
     this.paused = Boolean(paused);
-    clearTimeout(this._hideTimer);
-    if (!this.ctx) return;
+    if (!this.ctx || this.hidden) return;
     if (this.paused) {
-      this._fadeForHide(PAUSE_FADE);
-      this.music?.setHidden(true, PAUSE_FADE);
-    } else if (!this.hidden) {
+      this._fadeForHide(PAUSE_FADE, { suspend: false, muffle: false });
+      this.music?.setDip?.(PAUSE_MUSIC_DIP, 0.4);
+    } else {
       this.ctx.resume()?.catch(() => {});
       this._fadeForShow(PAUSE_FADE * 2);
-      this.music?.setHidden(false, PAUSE_FADE * 2);
+      this.music?.setDip?.(1, 0.4);
     }
   }
 
@@ -110,8 +113,8 @@ export class BoundedAudioVoiceSynthesis {
     return lpf;
   }
 
-  _fadeForHide(fade = HIDE_FADE) {
-    const lpf = this._ensureHideFilter();
+  _fadeForHide(fade = HIDE_FADE, { suspend = true, muffle = true } = {}) {
+    const lpf = muffle ? this._ensureHideFilter() : null; // pause keeps button clicks bright
     const now = this.ctx.currentTime;
     if (this.master) {
       this.master.gain.cancelScheduledValues(now);
@@ -123,13 +126,12 @@ export class BoundedAudioVoiceSynthesis {
       lpf.frequency.setValueAtTime(lpf.frequency.value, now);
       lpf.frequency.exponentialRampToValueAtTime(HIDE_LPF_END, now + fade);
     }
-    this._hideTimer = setTimeout(() => {
-      this.ctx?.suspend()?.catch(() => {});
-    }, fade * 1000 + 50);
+    clearTimeout(this._hideTimer);
+    if (suspend) this._hideTimer = setTimeout(() => this.ctx?.suspend()?.catch(() => {}), fade * 1000 + 50);
   }
 
   _fadeForShow(fade = SHOW_FADE) {
-    const lpf = this._hideLpf;
+    const lpf = this._hideLpf?.frequency.value < this.ctx.sampleRate / 4 ? this._hideLpf : null; // only if muffled
     const now = this.ctx.currentTime;
     const level = this.muted || this.effectsOff ? 0 : 0.9;
     if (this.master) {
@@ -154,6 +156,8 @@ export class BoundedAudioVoiceSynthesis {
     }
     this.voices.clear();
     this.master?.disconnect();
+    this.uiBus?.disconnect();
+    this.uiBus = null;
     this._hideLpf?.disconnect();
     this.compressor?.disconnect();
     this.ctx?.close()?.catch(() => {});

@@ -94,13 +94,14 @@ export class SoundtrackDirector {
 
   start(id, dip) {
     const token = ++this.token;
-    this.fadeOut(this.voice);
-    this.voice = null;
     this.setDip(dip ? RESULTS_DIP : 1, 0.6);
     const track = id && this.tracks[id];
-    if (!track) return;
+    if (!track) { this.fadeOut(this.voice); this.voice = null; return; }
+    // The old track keeps playing until the new one is decoded, then they crossfade: no silent gap while a
+    // 2–3 MB track downloads and decodes.
     this.load(id).then((buffer) => {
       if (token !== this.token || !this.ctx) return;
+      this.fadeOut(this.voice);
       const source = this.ctx.createBufferSource(), gain = this.ctx.createGain();
       Object.assign(source, { buffer, loop: true, loopStart: track.loopStart, loopEnd: track.loopEnd });
       const fadeIn = this.firstPlay ? FIRST_PLAY_FADE : SWITCH_FADE;
@@ -115,6 +116,11 @@ export class SoundtrackDirector {
       this.warned = true;
       this.decoded.delete(id);
     });
+  }
+
+  /** Download and decode a track ahead of time (the match card warms its match track). */
+  warm(id) {
+    if (this.ctx && id && this.tracks[id] && this.voice?.id !== id) this.load(id).catch(() => {});
   }
 
   fadeOut(voice) {

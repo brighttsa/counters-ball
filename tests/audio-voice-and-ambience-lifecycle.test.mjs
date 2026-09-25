@@ -56,15 +56,18 @@ test('voice cap rejects extra allocation and ending a voice frees its full chain
   assert.ok(noise.nodes.every(node => node.disconnects === 1));
 });
 
-test('pause fades out before suspending, suppresses new voices, and resume restores availability', async () => {
+test('pause silences effects without suspending, so the music plays on; resume restores availability', async () => {
   const { sound, ctx } = board();
+  const dips = [];
+  sound.music = { setDip: (value) => dips.push(value) };
   sound.setPaused(true);
-  assert.equal(ctx.suspends, 0, 'no hard cut: the context keeps running while the fade plays');
   await new Promise((resolve) => setTimeout(resolve, 250));
-  assert.equal(ctx.suspends, 1);
+  assert.equal(ctx.suspends, 0, 'the context keeps running under the pause menu');
+  assert.deepEqual(dips, [0.5]);
   assert.equal(sound.tone({ freq: 440 }), null);
   sound.setPaused(false);
   assert.equal(ctx.resumes, 1);
+  assert.deepEqual(dips, [0.5, 1]);
   sound.setMuted(true);
   assert.equal(sound.tone({ freq: 440 }), null);
   sound.setMuted(false);
