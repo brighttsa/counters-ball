@@ -21,7 +21,7 @@ export function createRoom({ levelId, homeName, now = Date.now() }) {
 
 export function joinRoom(room, { name, now = Date.now() }) {
   if (!room || room.phase === 'ended') return { ok: false, status: 410, error: 'room is closed' };
-  if (room.seats.away) return { ok: false, status: 409, error: 'room is full' };
+  if (room.seats.away && now - room.seats.away.seenAt <= PRESENCE_MS) return { ok: false, status: 409, error: 'room is full' };
   room.seats.away = { name: cleanRoomName(name, 'Player 2'), ready: false, seenAt: now };
   room.updatedAt = now;
   return { ok: true, seat: 'away' };

@@ -30,6 +30,13 @@ test('a live room cannot accept a third player or an unknown seat', () => {
   assert.equal(touch(room, 'spectator').status, 404);
 });
 
+test('an abandoned away seat can be reclaimed after presence expires', () => {
+  const room = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 100 });
+  joinRoom(room, { name: 'Kofi', now: 200 });
+  assert.deepEqual(joinRoom(room, { name: 'Yaw', now: 200 + PRESENCE_MS + 1 }), { ok: true, seat: 'away' });
+  assert.equal(room.seats.away.name, 'Yaw');
+});
+
 test('browser transport keeps room actions small and addressable', async () => {
   const calls = [];
   const fake = async (url, init) => {
