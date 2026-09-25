@@ -99,16 +99,23 @@ function paintWood(ctx, rng, s) {
   }
   softBlotch(ctx, W / 2, H / 2, 480, 'rgba(255, 236, 200, 0.07)'); // varnish worn by elbows
   paintScratches(ctx, rng, 120, (r) => `rgba(235, 205, 165, ${0.06 + r() * 0.12})`);
-  for (const text of s.carvings ?? []) { // initials carved into the desk margins
+  for (const _mark of s.carvings ?? []) { // carved desk marks, kept non-literal on the playable surface
     ctx.save();
     ctx.translate(120 + rng() * (W - 480), rng() > 0.5 ? 70 + rng() * 60 : H - 60 - rng() * 60);
     ctx.rotate((rng() - 0.5) * 0.3);
-    ctx.font = 'bold 42px Georgia, serif';
-    ctx.lineWidth = 2.4;
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
-    ctx.strokeText(text, 1.5, 1.5);
+    ctx.lineWidth = 2.4;
+    for (let i = 0; i < 4; i++) {
+      const x = i * 22 + rng() * 10;
+      ctx.beginPath();
+      ctx.moveTo(x, rng() * 10);
+      ctx.lineTo(x + 15 + rng() * 12, 20 + rng() * 16);
+      ctx.stroke();
+    }
     ctx.strokeStyle = 'rgba(232, 200, 158, 0.32)';
-    ctx.strokeText(text, 0, 0);
+    ctx.beginPath();
+    ctx.ellipse(48, 18, 54 + rng() * 16, 20 + rng() * 8, 0, 0.1, Math.PI * 1.8);
+    ctx.stroke();
     ctx.restore();
   }
 }

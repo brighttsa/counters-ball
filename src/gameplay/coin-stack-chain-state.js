@@ -97,15 +97,6 @@ export class CoinStackChains {
     return this.flight.coins ? 'OFF THE COINS' : '';
   }
 
-  /** Chalk, in each side's colour, beside the stack it must strike next, or at the goal its chain has opened. */
-  chalkNotes() {
-    return SIDES.map((side) => {
-      const stack = this.nextStack(side);
-      return stack ? { x: stack.pos.x, z: stack.pos.y + Math.sign(stack.pos.y || 1) * 0.15, icon: 'coin-chain', value: this.lit[side], side }
-        : { x: attackDirection(side) * 1.2, z: 0, icon: 'goal-open', side };
-    });
-  }
-
   describe(side, rivalName) {
     const other = SIDES.find((s) => s !== side);
     const chain = (s) => (this.isOpen(s) ? 'GOAL OPEN' : `${this.lit[s]}/3 lit`);

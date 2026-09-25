@@ -20,10 +20,10 @@ function rulerTexture() {
   for (let cm = 0; cm <= 30; cm++) {
     const x = 12 + cm * 33.3;
     ctx.fillRect(x, 0, 3, cm % 5 === 0 ? 34 : 20);
-    if (cm % 5 === 0 && cm) { ctx.font = 'bold 20px sans-serif'; ctx.fillText(String(cm), x - 8, 58); }
+    if (cm % 5 === 0 && cm) ctx.fillRect(x - 8, 54, 18, 3);
   }
-  ctx.font = 'bold 22px sans-serif';
-  ctx.fillText('30 cm · ADABRAKA PRIMARY', 360, 86);
+  ctx.fillRect(360, 82, 280, 3);
+  for (let i = 0; i < 7; i++) ctx.fillRect(370 + i * 38, 74, 18, 2);
   return toTexture(c);
 }
 

@@ -44,8 +44,12 @@ export function paintSurfaceMaterialWear(ctx, rng, s, w, h, channel = 'color') {
       ctx.save(); ctx.translate(w * 0.4, h * 0.92); ctx.rotate(-0.035);
       ctx.strokeStyle = ink('rgba(62,77,60,0.23)', '#808080', '#b0b0b0');
       ctx.lineWidth = 3; ctx.strokeRect(0, -38, 200, 44);
-      ctx.fillStyle = ctx.strokeStyle; ctx.font = 'bold 24px sans-serif';
-      ctx.fillText('24 x 330 ml', 14, -8); ctx.restore();
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 9; i++) {
+        const x = 16 + i * 18;
+        line([[x, -32], [x, -10]], ctx.strokeStyle, i % 3 === 0 ? 3 : 1.5);
+      }
+      ctx.restore();
     }
     if (s.dusty) for (const x of [20, w - 20]) for (const y of [20, h - 20]) {
       blotch(x, y, 160 + rng() * 100, ink('rgba(239,221,185,0.6)', '#999999', '#fafafa'));

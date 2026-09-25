@@ -22,7 +22,6 @@ export function createClayPotMazeMechanic(session) {
     hint: { label: 'BANK FIRST', detail: 'Bounce it off a pot or the rail first' },
     onTurn: (side, bodies) => maze.advance(side, bodies),
     describe: () => maze.describe(),
-    chalkNotes: () => maze.chalkNotes(),
     onFlick: (side) => maze.beginFlick(side),
     noteImpact(a, b, strength) {
       maze.noteImpact(a, b);

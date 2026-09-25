@@ -2,14 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Graphics readability and accessibility pass",
+  "task": "Remove readable table words",
   "status": "released",
   "paths": [
-    "src/fx/post-processing-bloom-grain-haze.js",
-    "src/scene/lighting-presets-by-time-of-day.js",
-    "styles",
+    "src/scene/table-surface-texture-painters.js",
+    "src/scene/table-surface-material-wear-painter.js",
+    "src/scene/ruler-seesaw-and-chalk-telegraph.js",
+    "tests/venue-surface-profiles.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-25T00:53:34Z",
-  "head": "8ff59493090219375df21e7b79a53aaf9032a412"
+  "updatedAt": "2026-09-25T01:03:19Z",
+  "head": "36ef6b32f35cb2b4e6ea6864d959fe2119dd4b3e"
 }
