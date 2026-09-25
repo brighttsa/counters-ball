@@ -13,6 +13,7 @@ export class KineticEventCallout {
     this.active = { priority, direction: direction < 0 ? -1 : 1,
       fromOpacity: this.active ? this.opacity : 0,
       fromOffset: this.active ? this.offset : (direction < 0 ? 32 : -32),
+      fromScale: this.active ? 1 : 0.97, fromLift: this.active ? 0 : 6,
       duration: Math.max(0.2, Number.isFinite(duration) ? duration : 0.9), elapsed: 0 };
     this.word.textContent = label;
     this.sub.textContent = detail;
@@ -29,13 +30,15 @@ export class KineticEventCallout {
   }
 
   paint() {
-    const { elapsed, duration, direction, fromOpacity, fromOffset } = this.active;
+    const { elapsed, duration, direction, fromOpacity, fromOffset, fromScale, fromLift } = this.active;
     const enter = Math.min(1, elapsed / Math.min(0.14, duration / 3));
     const exit = Math.max(0, 1 - (duration - elapsed) / Math.min(0.16, duration / 3));
     this.offset = this.motion.matches ? 0 : fromOffset * (1 - enter) + direction * exit * 32;
     this.opacity = Math.min(fromOpacity + (1 - fromOpacity) * enter, 1 - exit);
+    const scale = this.motion.matches ? 1 : fromScale + (1 - fromScale) * enter;
+    const lift = this.motion.matches ? 0 : fromLift * (1 - enter);
     this.root.style.opacity = String(this.opacity);
-    this.root.style.transform = `translateX(${this.offset}px)`;
+    this.root.style.transform = `translateX(${this.offset}px) translateY(${lift}px) scale(${scale})`;
   }
 
   clear() {
