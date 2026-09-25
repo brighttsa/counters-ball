@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CAMERA_MODES, CAMERA_PREFERENCE_KEY, CAMERA_GLIDE_RATE, CAMERA_SNAP_RATE, cameraTransitionBlend,
-  loadCameraPreferences, openingCameraMode, playerCameraPose, overviewPose } from './player-camera-view-poses.js';
+  loadCameraPreferences, openingCameraMode, playerCameraPose, overviewPose } from './player-camera-view-poses.js?v=3';
 import { PlayerCameraOcclusion } from './player-camera-occlusion.js';
 import { createPlayerCameraControls } from '../ui/player-camera-controls.js';
 

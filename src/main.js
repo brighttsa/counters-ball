@@ -5,7 +5,7 @@
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
-import { PlayerCameraController } from './fx/player-camera-controller.js';
+import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
