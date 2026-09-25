@@ -249,7 +249,9 @@ const actions = createMenuActions({
   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch,
 });
 
-window.addEventListener('pointerdown', () => sound.unlock());
+// Browsers only unlock audio on some gestures: on touch screens pointerdown is not one of them,
+// so a player whose first touch is on the table would otherwise hear nothing until a menu tap.
+for (const type of ['pointerdown', 'pointerup', 'touchend', 'click']) window.addEventListener(type, () => sound.unlock(), { passive: true });
 window.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (menus.current === 'home-settings') actions['close-settings']();

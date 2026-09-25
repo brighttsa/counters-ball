@@ -2,6 +2,15 @@
 // dogs, car passes, crickets and other environmental sounds. Each recipe takes
 // an AudioContext, a destination node and a gain level, and schedules its own
 // short burst of oscillators/noise. All abstract/synthetic — no samples.
+// Ambience stays at or below AMBIENT_CEILING_HZ: pure tones above it pierce on phone speakers.
+export const AMBIENT_CEILING_HZ = 3500;
+
+function noiseBuffer(ctx, seconds) {
+  const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * seconds), ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  return buf;
+}
 
 export const AMBIENT_RECIPES = {
   birdChirp(ctx, dest, gain) {
@@ -11,9 +20,9 @@ export const AMBIENT_RECIPES = {
       const t = now + i * (0.08 + Math.random() * 0.06);
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
-      const freq = 3200 + Math.random() * 1800;
+      const freq = 2200 + Math.random() * 700;
       osc.frequency.setValueAtTime(freq, t);
-      osc.frequency.linearRampToValueAtTime(freq * (1.1 + Math.random() * 0.3), t + 0.04);
+      osc.frequency.linearRampToValueAtTime(freq * (1.05 + Math.random() * 0.1), t + 0.04);
       osc.frequency.linearRampToValueAtTime(freq * 0.9, t + 0.07);
       g.gain.setValueAtTime(0, t);
       g.gain.linearRampToValueAtTime(gain, t + 0.008);
@@ -131,8 +140,9 @@ export const AMBIENT_RECIPES = {
     const src = ctx.createBufferSource();
     src.buffer = buf;
     const filter = ctx.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.value = 2800 + Math.random() * 1200;
+    filter.type = 'bandpass'; // a band, not a highpass: dust rustles without hissing above the ceiling
+    filter.frequency.value = 1800 + Math.random() * 800;
+    filter.Q.value = 1.2;
     const g = ctx.createGain();
     g.gain.setValueAtTime(0, now);
     g.gain.linearRampToValueAtTime(gain, now + 0.02);
@@ -142,39 +152,52 @@ export const AMBIENT_RECIPES = {
     src.stop(now + dur);
   },
 
+  // A cricket: a soft band of noise pulsed ~30 times a second. The pulse drives the *gain*; wiring it into
+  // the signal instead produced an audible low buzz under a piercing sine.
   crickets(ctx, dest, gain) {
     const now = ctx.currentTime;
-    const dur = 0.8 + Math.random() * 0.6;
-    const osc = ctx.createOscillator();
-    const mod = ctx.createOscillator();
-    const modGain = ctx.createGain();
-    const g = ctx.createGain();
-    osc.frequency.value = 4800 + Math.random() * 1200;
-    mod.frequency.value = 45 + Math.random() * 20;
-    modGain.gain.value = gain;
-    g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(1, now + 0.05);
-    g.gain.setValueAtTime(1, now + dur - 0.1);
-    g.gain.linearRampToValueAtTime(0, now + dur);
-    mod.connect(modGain);
-    osc.connect(g).connect(modGain).connect(dest);
-    osc.start(now);
-    mod.start(now);
-    osc.stop(now + dur + 0.05);
-    mod.stop(now + dur + 0.05);
+    const dur = 0.6 + Math.random() * 0.5;
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(ctx, dur + 0.1);
+    const band = ctx.createBiquadFilter();
+    band.type = 'bandpass';
+    band.frequency.value = 2900 + Math.random() * 400;
+    band.Q.value = 8;
+    const pulse = ctx.createOscillator();
+    const depth = ctx.createGain();
+    const am = ctx.createGain();
+    const env = ctx.createGain();
+    pulse.frequency.value = 26 + Math.random() * 8;
+    depth.gain.value = 0.5;
+    am.gain.value = 0.5; // 0.5 ± 0.5: silent to full on every pulse
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(gain, now + 0.08);
+    env.gain.setValueAtTime(gain, now + dur - 0.12);
+    env.gain.linearRampToValueAtTime(0, now + dur);
+    pulse.connect(depth).connect(am.gain);
+    src.connect(band).connect(am).connect(env).connect(dest);
+    src.start(now);
+    pulse.start(now);
+    src.stop(now + dur + 0.05);
+    pulse.stop(now + dur + 0.05);
   },
 
+  // A soft insect tick at night: filtered noise, not a pure high sine.
   nightInsect(ctx, dest, gain) {
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(ctx, 0.12);
+    const band = ctx.createBiquadFilter();
+    band.type = 'bandpass';
+    band.frequency.value = 2400 + Math.random() * 600;
+    band.Q.value = 5;
     const g = ctx.createGain();
-    osc.frequency.value = 5500 + Math.random() * 2000;
     g.gain.setValueAtTime(0, now);
     g.gain.linearRampToValueAtTime(gain, now + 0.01);
     g.gain.linearRampToValueAtTime(0, now + 0.06 + Math.random() * 0.04);
-    osc.connect(g).connect(dest);
-    osc.start(now);
-    osc.stop(now + 0.12);
+    src.connect(band).connect(g).connect(dest);
+    src.start(now);
+    src.stop(now + 0.12);
   },
 
   windGust(ctx, dest, gain) {
