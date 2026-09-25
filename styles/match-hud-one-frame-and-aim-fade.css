@@ -44,18 +44,18 @@ body[data-screen="match"] .sound-btn { display: none; }
 .camera-toolbar button + button { border-left: 1px solid rgb(var(--paper-rgb) / .14); }
 .camera-menu-label { display: grid; text-align: left; line-height: 1.15; }
 .camera-menu-label small { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
-.player-camera { bottom: max(16px, env(safe-area-inset-bottom)); }
+.player-camera { bottom: max(var(--control-edge-pad), env(safe-area-inset-bottom)); }
 @media (max-width: 1100px), (pointer: coarse) {
-  .player-camera { bottom: max(12px, env(safe-area-inset-bottom)); width: auto; }
+  .player-camera { bottom: max(var(--control-edge-pad), env(safe-area-inset-bottom)); width: auto; }
 }
 @media (max-width: 560px) {
-  .player-camera { bottom: max(12px, env(safe-area-inset-bottom)); width: auto; }
+  .player-camera { bottom: max(var(--control-edge-pad), env(safe-area-inset-bottom)); width: auto; }
 }
 @media (orientation: landscape) and (max-height: 600px) {
-  .player-camera { bottom: max(8px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); width: auto; }
+  .player-camera { bottom: max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-bottom)); right: max(calc(var(--control-size) + 24px), calc(env(safe-area-inset-right) + var(--control-size) + 24px)); width: auto; }
 }
 @media (max-height: 500px) {
-  .player-camera { bottom: max(8px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); }
+  .player-camera { bottom: max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-bottom)); right: max(calc(var(--control-size) + 24px), calc(env(safe-area-inset-right) + var(--control-size) + 24px)); }
 }
 /* The panel opens above the tray at the width it had before the tray shrank to its buttons. */
 .player-camera #camera-panel { width: min(280px, calc(100vw - 24px)); }

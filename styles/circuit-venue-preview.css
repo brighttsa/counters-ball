@@ -3,9 +3,10 @@
    whole screen fits one viewport, including a landscape phone. */
 .screen-levels.is-active {
   display: grid; grid-template-rows: auto minmax(0, 1fr) auto; align-items: stretch; justify-items: stretch;
-  height: 100dvh; overflow: hidden; gap: 12px;
+  box-sizing: border-box; height: 100dvh; overflow: hidden; gap: 12px;
   padding: max(16px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
   background: linear-gradient(90deg, rgb(var(--ink-rgb) / .86), rgb(var(--ink-rgb) / .48) 44%, rgb(var(--ink-rgb) / .08) 74%, transparent 100%);
+  animation: none;
 }
 .screen-header {
   display: grid; align-items: center; gap: 12px; width: 100%; padding-bottom: 8px; border-bottom: 4px solid var(--yellow);
@@ -16,7 +17,7 @@
 .screen-levels .chalk-heading { font: var(--text-2xl)/1 var(--font-display); text-transform: uppercase; }
 
 .circuit-hero {
-  align-self: center; width: min(460px, 100%); max-height: 100%; overflow-y: auto; padding: 16px 20px;
+  align-self: center; width: min(460px, 100%); max-height: 100%; overflow: hidden; padding: 16px 20px;
   background: rgb(var(--ink-rgb) / .95); border: 1px solid rgb(var(--paper-rgb) / .14); border-left: 6px solid var(--yellow); display: grid; gap: 4px; justify-items: start;
 }
 .circuit-venue-copy { max-width: none; text-shadow: none; }
@@ -98,4 +99,52 @@
   .screen-levels .level-card { height: 80px; flex-basis: 170px; padding-block: 4px; }
   /* A short card keeps the act name and its stars or lock; the badge and venue label carry the rest. */
   .screen-levels .level-place { display: none; }
+}
+@media (orientation: landscape) and (max-height: 360px) {
+  .screen-levels.is-active {
+    grid-template-rows: 42px minmax(0, 1fr) 68px;
+    gap: 6px;
+    padding:
+      max(6px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+  .screen-levels .screen-header {
+    height: 42px; padding-bottom: 3px; gap: 8px; border-bottom-width: 3px;
+  }
+  .screen-levels .screen-header .btn { min-height: 36px; padding: 6px 10px; font-size: var(--text-xs); }
+  .screen-levels .chalk-heading { font-size: clamp(26px, 5vw, var(--text-2xl)); }
+  .screen-levels .star-total { font-size: var(--text-sm); }
+  .circuit-hero {
+    align-self: stretch; width: min(620px, 62vw); padding: 7px 12px; gap: 3px;
+    grid-template-columns: minmax(0, 1fr) auto; align-content: center; align-items: center;
+  }
+  .circuit-venue-copy { min-width: 0; }
+  .circuit-venue-copy p { margin: 1px 0; line-height: 1.15; }
+  .circuit-venue-copy .card-kicker { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .circuit-venue-copy h3 {
+    margin: 1px 0 2px; font-size: clamp(28px, 6.6vw, 44px); line-height: .92;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  #circuit-venue-opponent {
+    max-width: 100%; font-size: var(--text-xs); line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #circuit-enter {
+    grid-column: 2; grid-row: 1; align-self: stretch; width: 120px; min-height: 44px; margin: 0; padding-inline: 8px; font-size: var(--text-xs);
+  }
+  #circuit-lock-note { grid-column: 1 / -1; margin: 0; font-size: 10px; line-height: 1.1; }
+  .screen-levels .level-grid {
+    min-height: 0; margin-right: 58px; padding: 0; gap: 6px; overflow-y: hidden;
+  }
+  .screen-levels .level-group { flex-basis: 24px; padding-inline: 2px; font-size: 10px; }
+  .screen-levels .level-card {
+    height: 68px; min-height: 68px; flex-basis: 148px; padding: 4px 8px 4px 44px; gap: 2px;
+  }
+  .level-number { left: 8px; width: 28px; height: 28px; font-size: var(--text-sm); }
+  .level-name {
+    font-size: clamp(18px, 3.6vw, var(--text-md)); line-height: .95;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .level-stars .star-svg { width: 13px; height: 13px; margin-right: 2px; }
 }

@@ -138,6 +138,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
       flow.prepareMatch(app.friendInvite.index);
     },
     'friend-pick-table': () => flow.showLevels('legends'),
+    'friend-back': () => flow.showTitle(),
     'challenge-accept': () => {
       app.mode = app.challenge.mode;
       app.levelIndex = app.challenge.index;

@@ -2,19 +2,18 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Premium mobile UI follow-up audit",
+  "task": "Adaptive viewport controls and non-scrolling settings",
   "status": "released",
   "paths": [
     "styles/game-ui-base-and-hud.css",
-    "styles/game-ui-menus-and-results.css",
-    "styles/ink-impact-home.css",
     "styles/mobile-tablet-match-layout.css",
     "styles/match-hud-one-frame-and-aim-fade.css",
-    "styles/player-camera-controls.css",
+    "styles/ink-impact-home.css",
+    "styles/game-ui-menus-and-results.css",
     "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T03:14:00Z",
-  "head": "36ef6b32f35cb2b4e6ea6864d959fe2119dd4b3e"
+  "updatedAt": "2026-09-25T11:21:00Z",
+  "head": "4631c9a7b470e24284f3ed42bd50e0ab0b53f4f6"
 }
