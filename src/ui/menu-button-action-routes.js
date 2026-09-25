@@ -12,7 +12,7 @@ const ARM_SECONDS = 4;
  */
 const VIEWS = ['tactical', 'broadcast', 'street', 'free'];
 
-export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints, messageMatch }) {
+export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints, messageMatch }) {
   const audio = () => { save(progress); applyAudioSettings({ progress, sound, music, menus }); };
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
   // The chips on the back of the pause card. Unknown values are ignored, so a stale chip can't save junk.
@@ -74,7 +74,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'play-campaign': () => flow.showLevels('campaign'),
     'play-practice': () => { app.mode = 'practice'; flow.prepareMatch(0); },
     'play-versus': () => flow.showLevels('versus'),
-    'play-friend': () => flow.showFriendMatch(),
+    'play-friend': () => liveRoom.show(),
     'play-legends': () => flow.showLevels('legends'),
     'back-to-title': () => flow.showTitle(),
     'home-settings': () => {
@@ -140,6 +140,11 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     },
     'friend-pick-table': () => flow.showLevels('legends'),
     'friend-back': () => flow.showTitle(),
+    'live-room-create': () => liveRoom.create(),
+    'live-room-join': () => liveRoom.join(),
+    'live-room-ready': () => liveRoom.ready(),
+    'live-room-copy': () => liveRoom.copy(),
+    'live-room-back': () => liveRoom.back(),
     'challenge-accept': () => {
       app.mode = app.challenge.mode;
       app.levelIndex = app.challenge.index;

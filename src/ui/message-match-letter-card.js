@@ -6,6 +6,9 @@ import { cleanTaunt } from '../core/message-match-turn-letter-codec.js';
 const $ = (id) => document.getElementById(id);
 const scoreLine = (names, scores) => `${names.home} ${scores.home}–${scores.away} ${names.away}`;
 const opponentOf = (letter) => letter.names[letter.by === 'home' ? 'away' : 'home'];
+const friendName = (name) => (/^Player [12]$/.test(name) ? 'Friend' : name);
+const youVs = (name) => `You vs ${friendName(name)}`;
+const themVsYou = (name) => `${friendName(name)} vs You`;
 
 export class MessageMatchLetterCard {
   constructor() {
@@ -29,16 +32,16 @@ export class MessageMatchLetterCard {
   showIncoming({ letter, level }) {
     const from = letter.names[letter.by];
     const ended = letter.rulesAfter.phase === 'ended';
-    this.fill({ title: ended ? `${from} took the last flick` : `${from} flicked`, level, taunt: letter.taunt,
-      line: `${scoreLine(letter.names, letter.rulesBefore.scores)}. ${ended ? 'Watch how it ended.' : 'Watch their flick, then it is yours.'}` });
+    this.fill({ title: ended ? `${themVsYou(from)}: full time` : themVsYou(from), level, taunt: letter.taunt,
+      line: `${scoreLine(letter.names, letter.rulesBefore.scores)}. ${ended ? 'Watch how it ended.' : 'Watch one flick, then answer with one flick.'}` });
     this.group('incoming');
   }
 
   showSend({ letter, level }) {
     const ended = letter.rulesAfter.phase === 'ended';
     const to = opponentOf(letter);
-    this.fill({ title: ended ? 'That is full time' : 'Your flick is in', level,
-      line: `${scoreLine(letter.names, letter.rulesAfter.scores)}. ${ended ? `Send it so ${to} sees it land.` : `Send it to ${to}: they watch it, then flick back.`}` });
+    this.fill({ title: ended ? `${youVs(to)}: full time` : youVs(to), level,
+      line: `${scoreLine(letter.names, letter.rulesAfter.scores)}. ${ended ? `Send it so ${to} sees it land.` : `Send it to ${to}: one flick each, back and forth.`}` });
     $('letter-taunt-input').value = '';
     $('letter-full-time').hidden = true;
     this.share.report('');
@@ -51,7 +54,7 @@ export class MessageMatchLetterCard {
   }
 
   showWaiting({ letter, level }) {
-    this.fill({ title: `Waiting for ${opponentOf(letter)}`, level,
+    this.fill({ title: youVs(opponentOf(letter)), level,
       line: `${scoreLine(letter.names, letter.rulesAfter.scores)}. Your flick is with them. This same link opens their reply when it lands.` });
     this.group('waiting');
   }
@@ -72,8 +75,10 @@ export class MessageMatchLetterCard {
   /** @param url the link to share: a short match link, or a self-contained letter link */
   prepare(letter, url) {
     const me = letter.names[letter.by];
+    const opponent = friendName(opponentOf(letter));
     const taunt = cleanTaunt(letter.taunt);
-    this.share.prepare({ url, text: taunt ? `${me}: “${taunt}” Your move in KONK!` : `${me} just flicked. Your move in KONK!` });
+    this.share.prepare({ url, text: taunt ? `${me} vs ${opponent}: “${taunt}” Your move in KONK!`
+      : `${me} vs ${opponent}. One flick each. Your move in KONK!` });
   }
 
   readTaunt() {

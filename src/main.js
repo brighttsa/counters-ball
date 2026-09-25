@@ -5,6 +5,7 @@
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
 import { createAdaptiveQuality } from './fx/adaptive-render-quality.js';
+import { AttractModeCallout, createAttractHud } from './ui/attract-mode-callout.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
@@ -19,10 +20,12 @@ import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
-import { createMessageMatchFlow } from './ui/message-match-flow.js';
+import { createMessageMatchFlow } from './ui/message-match-flow.js?v=2';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
+import { takeRoomIdFromUrl } from './core/live-match-room-transport.js';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
@@ -55,9 +58,13 @@ const resultsCard = new FullTimeResultsCard();
 const resultsShare = new ResultsShare(document.getElementById('results-share-status'));
 const friendShare = new FriendMatchInviteShare(document.getElementById('friend-share-status'));
 const hotSeat = new HotSeatRivalry(progress, saveProgress);
-const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
+const silentHud = new Proxy({}, { get: () => () => {} }); // table previews talk to nobody
+const attractCallout = new AttractModeCallout();
+const attractHud = createAttractHud(attractCallout); // the title-screen match only announces goals
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
+const liveRoom = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: `${location.origin}${location.pathname}`, showTitle,
+  onStart: (roomId, seat) => messageMatch.startRoom(0, roomId, seat, { home: 'Player 1', away: 'Player 2' }) });
 const orientation = createMatchOrientationPrompt();
 new PlayerCameraController(app, cameraDirector);
 const challengeFor = (level) => challengeForLevel(app.challenge, level);
@@ -71,6 +78,7 @@ function finishBoot() {
 }
 
 function replaceSession(options, sessionHud) {
+  attractCallout.hide();
   resultsCard.cancelReveal();
   app.practice?.dispose();
   app.practice = null;
@@ -99,7 +107,7 @@ function ensureAttractMode() {
       app.session = null;
       ensureAttractMode();
     },
-  }, silentHud);
+  }, attractHud);
   hud.show(false);
   sound.setSfxLevel(0.35);
   sound.setAmbience('day');
@@ -247,7 +255,7 @@ const chalkHints = new JustInTimeChalkHints();
 const messageMatch = createMessageMatchFlow({ app, openMatchTable, menus, hud, sound, cameraDirector, showResults, showTitle,
   baseUrl: `${location.origin}${location.pathname}` });
 const actions = createMenuActions({
-  app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints: chalkHints,
+  app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints: chalkHints,
   flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch,
 });
 
@@ -266,11 +274,13 @@ window.addEventListener('keydown', (e) => {
 wireSoundtrack({ app, sound, music, menus, progress });
 hud.setStyle(progress.hudStyle);
 const matchId = takeMatchIdFromUrl();
+const roomId = takeRoomIdFromUrl();
 const letter = matchId ? null : takeLetterFromUrl();
 app.challenge = matchId || letter ? null : takeChallengeFromUrl();
-app.friendInvite = matchId || letter || app.challenge ? null : takeFriendInviteFromUrl();
+app.friendInvite = matchId || roomId || letter || app.challenge ? null : takeFriendInviteFromUrl();
 // Message Match links wait on a card for a tap: audio needs a gesture before the replay.
-if (matchId) { ensureAttractMode(); messageMatch.openMatch(matchId); }
+if (roomId) { ensureAttractMode(); liveRoom.open(roomId); }
+else if (matchId) { ensureAttractMode(); messageMatch.openMatch(matchId); }
 else if (letter) { ensureAttractMode(); if (!messageMatch.open(letter)) showTitle(); }
 else if (app.challenge) showChallenge(); else if (app.friendInvite) showFriendMatch({ incoming: true }); else showTitle();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post, adaptiveQuality,

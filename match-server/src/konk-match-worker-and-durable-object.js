@@ -11,12 +11,18 @@ import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMat
 import { cleanSubscription, sendPush } from './web-push-vapid-and-aes128gcm.js';
 import { describeMatch, previewPageHtml, scoreCardSvg } from './match-link-preview-card-and-page.js';
 import { renderScoreCardPng } from './score-card-png-renderer.js';
+import { createRoom, joinRoom, publicRoom, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
 export class KonkMatch extends DurableObject {
   async fetch(request) {
     const { pathname } = new URL(request.url);
+    if (pathname === '/room') return this.room(request);
+    if (pathname === '/room/join') return this.roomJoin(request);
+    if (pathname === '/room/ready') return this.roomReady(request);
+    if (pathname === '/room/heartbeat') return this.roomHeartbeat(request);
+    if (pathname === '/room/turn') return this.roomTurn(request);
     const latest = await this.ctx.storage.get('latest');
     if (request.method === 'GET') return latest ? json({ letter: latest, seq: latest.k }) : json({ error: 'no such match' }, 404);
 
@@ -32,6 +38,63 @@ export class KonkMatch extends DurableObject {
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
     if (latest) this.ctx.waitUntil(this.notify(letter)); // the sender's share sheet never waits on a push service
     return json({ seq: letter.k }, latest ? 200 : 201);
+  }
+
+  async room(request) {
+    const room = await this.ctx.storage.get('room');
+    if (request.method === 'GET') return room ? json({ room: publicRoom(room) }) : json({ error: 'room not found' }, 404);
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const body = await request.json();
+    if (room) return json({ error: 'room already exists' }, 409);
+    const created = createRoom(body);
+    await this.ctx.storage.put('room', created);
+    await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
+    return json({ room: publicRoom(created), seat: 'home' }, 201);
+  }
+
+  async roomJoin(request) {
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const room = await this.ctx.storage.get('room');
+    const verdict = joinRoom(room, await request.json());
+    if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
+    await this.ctx.storage.put('room', room);
+    return json({ room: publicRoom(room), seat: verdict.seat });
+  }
+
+  async roomReady(request) {
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const room = await this.ctx.storage.get('room');
+    const body = await request.json();
+    const verdict = setReady(room, body.seat, body.ready);
+    if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
+    await this.ctx.storage.put('room', room);
+    return json({ room: publicRoom(room), seat: body.seat });
+  }
+
+  async roomHeartbeat(request) {
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const room = await this.ctx.storage.get('room');
+    const body = await request.json();
+    const verdict = touch(room, body.seat);
+    if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
+    await this.ctx.storage.put('room', room);
+    return json({ room: publicRoom(room) });
+  }
+
+  async roomTurn(request) {
+    if (request.method === 'GET') {
+      const letter = await this.ctx.storage.get('room:letter');
+      return letter ? json({ letter, seq: letter.k }) : json({ error: 'match has not started' }, 404);
+    }
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const body = await request.json();
+    const previous = await this.ctx.storage.get('room:letter');
+    const verdict = previous ? checkNextLetter(previous, body.letter) : checkOpeningLetter(body.letter);
+    if (!verdict.ok) return json({ error: verdict.error, ...(previous ? { letter: previous, seq: previous.k } : {}) }, verdict.status);
+    await this.ctx.storage.put('room:letter', body.letter);
+    const room = await this.ctx.storage.get('room');
+    if (room) { room.phase = body.letter.ra[0] === 1 ? 'ended' : 'playing'; room.updatedAt = Date.now(); await this.ctx.storage.put('room', room); }
+    return json({ seq: body.letter.k }, previous ? 200 : 201);
   }
 
   async subscribe(latest, { side, subscription, id }) {
@@ -70,8 +133,24 @@ export default {
 async function route(request, env) {
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
   if (parts[0] === 'm' && request.method === 'GET') return preview(request, env, parts[1], parts[2]);
-  if (parts[0] !== 'matches') return json({ error: 'not found' }, 404);
+  if (parts[0] === 'rooms' && request.method === 'POST' && parts.length === 1) {
+    const body = await request.json().catch(() => null);
+    if (!body?.levelId) return json({ error: 'levelId missing' }, 400);
+    const id = newRoomId();
+    const response = await stub(env, id).fetch('https://match/room', { method: 'POST', body: JSON.stringify(body) });
+    return response.status === 201 ? json({ id, ...(await response.json()) }, 201) : response;
+  }
+  if (parts[0] !== 'matches' && parts[0] !== 'rooms') return json({ error: 'not found' }, 404);
   const [, id, action] = parts;
+
+  if (parts[0] === 'rooms') {
+    if (!id || !ROOM_ID.test(id)) return json({ error: 'room not found' }, 404);
+    const target = action === 'join' ? '/room/join' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
+    if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
+    if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch('https://match/room/turn');
+    if (request.method === 'POST' && ['join', 'ready', 'heartbeat', 'turn'].includes(action)) return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: await request.text() });
+    return json({ error: 'not found' }, 404);
+  }
 
   if (request.method === 'POST' && !id) {
     const body = await readBody(request);

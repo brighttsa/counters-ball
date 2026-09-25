@@ -76,6 +76,33 @@ test('rules snapshot/restore hands the table over mid-match without firing event
   assert.equal(b.isAi('home'), false, 'a remote side is never handed to the AI');
 });
 
+test('message match letters end after one flick even if the same side remains active', async () => {
+  const { MessageMatchLetters } = await import('../src/gameplay/message-match-letter-recorder-and-replayer.js');
+  const listeners = {};
+  const body = (x, y) => ({ pos: { x, y } });
+  const session = {
+    entries: [{ side: 'home', body: body(0, 0) }],
+    ballBody: body(1, 0),
+    physics: {},
+    syncMeshes() {},
+    flick() {},
+    rules: {
+      canFlick: () => true,
+      snapshot: () => ({ phase: 'aiming', turn: 'home', scores: { home: 0, away: 0 }, flicksUsed: { home: 1, away: 0 },
+        lastScorer: null, tiebreak: null, tiebreakBonus: { home: 0, away: 0 } }),
+      on: (event, fn) => { listeners[event] = fn; },
+    },
+  };
+  const sent = [];
+  const letters = new MessageMatchLetters(session, { mySide: 'home', levelId: 'schoolyard',
+    names: { home: 'Ama', away: 'Kofi' }, onLetter: (letter) => sent.push(letter) });
+  letters.session.flick(session.entries[0], { x: 2, y: 0 });
+  listeners.turn('home');
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].flicks.length, 1);
+  assert.equal(sent[0].by, 'home');
+});
+
 test('the receiver replays the sender\'s flick onto exactly the same table', needsThree, async () => {
   const { fixture, THREE } = await import('./helpers/real-three-session-fixture.mjs');
   const { MessageMatchLetters, readTable } = await import('../src/gameplay/message-match-letter-recorder-and-replayer.js');
