@@ -18,6 +18,7 @@ import { syncMatchMeshes } from './match-mesh-motion.js';
 import { createVenueMechanic } from './street-legends-venue-mechanic-wiring.js';
 import { applyVenueInkTreatment } from '../scene/venue-ink-treatment.js';
 import { InkImpactBursts } from '../fx/ink-impact-contact-bursts.js';
+import { classifyOutOfBounds, restartPoint } from './out-of-bounds-restart-rules.js';
 import {
   BALL_RADIUS, GOAL_LINE_X, GOAL_HALF_WIDTH, MAX_FLICK_SPEED, SIDE_HOME,
 } from '../core/pitch-dimensions-and-constants.js';
@@ -132,6 +133,7 @@ export class MatchSession {
 
     const dt = this.time.step(realDt);
     this.physics.advance(dt);
+    if (this.rules.phase === 'moving') this.checkOutOfBounds();
     if (this.rules.phase === 'moving') {
       this.watchForDramaticShot();
       if (this.physics.allBodiesResting()) this.rules.resolvePlayAtRest();
@@ -147,6 +149,19 @@ export class MatchSession {
     this.mechanic?.update(realDt);
     this.cameraDirector.setFocus(this.ballBody.pos.x, this.ballBody.pos.y, this.ballBody.vel);
     if (this.tutorialActive && !this.input.selected) this.positionTutorial();
+  }
+
+  checkOutOfBounds() {
+    const restart = classifyOutOfBounds(this.ballBody);
+    if (!restart) return;
+    const point = restartPoint(restart);
+    this.ballBody.pos.set(point.x, point.z);
+    this.ballBody.vel.set(0, 0);
+    this.physics.resetGoalCooldown();
+    this.hud.event(restart.type === 'corner' ? 'CORNER' : restart.type === 'goal-kick' ? 'GOAL KICK' : 'BALL OUT', {
+      priority: 7, duration: 1.5, detail: `${restart.side === SIDE_HOME ? 'Your' : 'Opponent'} restart`,
+    });
+    this.rules.resolvePlayAtRest();
   }
 
   runTimers(dt) {
