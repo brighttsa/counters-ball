@@ -95,6 +95,7 @@
 .results-card { max-width: 520px; width: min(720px, 100%); padding: 24px; text-align: center; background: rgb(var(--ink-rgb) / .96); border: 1px solid rgb(var(--paper-rgb) / .14); border-top: 6px solid var(--yellow); }
 .results-card .card-actions { justify-content: center; }
 .results-card .results-title { font-size: var(--text-3xl); color: var(--paper); }
+.maker-stamp { position: absolute; bottom: 10px; right: 14px; width: 36px; opacity: .12; color: var(--paper); transform: rotate(4deg); pointer-events: none; }
 /* Full-time score in the same team-tinted chalk as the table. */
 .results-score { margin: 12px 0 16px; font: 700 var(--text-5xl)/1 var(--font-chalk); letter-spacing: 0; color: var(--paper); }
 .results-score .chalk-side { color: color-mix(in srgb, var(--chalk-team) 55%, var(--paper)); }

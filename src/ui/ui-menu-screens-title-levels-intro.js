@@ -145,6 +145,7 @@ export class MenuScreens {
    */
   fillIntro(level, index, total, mode, homeTeam, { names, rivalryFor, lines: extraLines = [] } = {}) {
     const versus = mode === 'versus';
+    $('intro-letter').hidden = !versus; // Message Match starts from a 2-Player table
     // Back buttons on the intro, pause and results name the track they return to.
     const track = level.practice ? 'Home' : mode === 'legends' ? 'Acts' : 'Pitches';
     for (const el of document.querySelectorAll('[data-track-label]')) el.textContent = el.dataset.trackLabel.replace('{track}', track);

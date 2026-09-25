@@ -1,5 +1,6 @@
 // Seeded albedo, bump and roughness maps share the same world-aligned sheet.
 import { drawChalkPitchMarkings } from './chalk-pitch-markings.js';
+import { drawChalkMakerSignature } from './chalk-maker-signature-bskt-logo.js';
 import { paintConcreteSurface } from './table-surface-concrete-painter.js';
 import { paintSurfaceMaterialWear } from './table-surface-material-wear-painter.js';
 import { createSeededRandom } from '../core/seeded-random-number-generator.js';
@@ -151,6 +152,7 @@ export function paintTableSurfaceTextures(surface, seed, profile) {
   wear(ctx, 'color');
   // Markings have their own stream, so extra surface wear cannot move the pitch.
   drawChalkPitchMarkings(ctx, toPx, createSeededRandom(seed ^ 0xc4a1), profile?.markings);
+  drawChalkMakerSignature(ctx, toPx, createSeededRandom(seed ^ 0xb5c7), profile?.markings);
 
   const edge = ctx.createRadialGradient(W / 2, H / 2, H * 0.42, W / 2, H / 2, H * 0.86);
   edge.addColorStop(0, 'rgba(0,0,0,0)');

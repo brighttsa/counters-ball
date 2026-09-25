@@ -6,7 +6,7 @@ import { SIDE_HOME, SIDE_AWAY, otherSide } from '../core/pitch-dimensions-and-co
 export class MatchRules {
   /**
    * @param {{ goalsToWin:number, flickLimit:number, threeStarFlicks:number }} rules
-   * @param {{ home:'human'|'ai', away:'human'|'ai' }} controllers
+   * @param {{ home:'human'|'ai'|'remote', away:'human'|'ai'|'remote' }} controllers  remote = flicked on a friend's device
    */
   constructor(rules, controllers) {
     this.rules = rules;
@@ -36,6 +36,23 @@ export class MatchRules {
 
   isAi(side) {
     return this.controllers[side] === 'ai';
+  }
+
+  /** Only a human side on this device may be aimed; AI and remote sides are driven by code. */
+  isHuman(side) {
+    return this.controllers[side] === 'human';
+  }
+
+  /** Everything a message match needs to hand the table over mid-game. */
+  snapshot() {
+    return { phase: this.phase, turn: this.turn, scores: { ...this.scores }, flicksUsed: { ...this.flicksUsed },
+      lastScorer: this.lastScorer, tiebreak: this.tiebreak, tiebreakBonus: { ...this.tiebreakBonus } };
+  }
+
+  /** Adopt a snapshot (from the other device) without replaying its events. */
+  restore(snap) {
+    Object.assign(this, { phase: snap.phase, turn: snap.turn, scores: { ...snap.scores }, flicksUsed: { ...snap.flicksUsed },
+      lastScorer: snap.lastScorer, tiebreak: snap.tiebreak, tiebreakBonus: { ...snap.tiebreakBonus } });
   }
 
   /** Flick allowance for one side; `awayFlickLimit: 0` makes a solo challenge against still caps. */

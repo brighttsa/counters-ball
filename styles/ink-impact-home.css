@@ -35,6 +35,9 @@
 .friend-card .card-actions .btn-primary { grid-column: 1 / -1; }
 .friend-card .btn { min-width: 0; }
 .friend-card .results-share-status { min-height: 1.4em; margin: 0 0 12px; color: var(--yellow); }
+/* Message Match: the friend's chalked line, and the field to chalk one back. */
+.letter-taunt { margin: 4px 0 8px; font: 700 var(--text-lg)/1.25 var(--font-chalk); color: var(--yellow); overflow-wrap: anywhere; }
+.letter-taunt-field { display: grid; gap: 4px; margin-top: 12px; }
 .title-stars { align-self: start; margin: 4px 0; font: var(--text-xs)/1.4 var(--font-body); color: var(--paper); }
 .home-utilities { display: flex; gap: 8px; width: 340px; max-width: 100%; margin-top: 2px; }
 .home-utilities button { flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82); color: var(--paper); cursor: pointer; font: 700 var(--text-sm) var(--font-body); text-transform: uppercase; }

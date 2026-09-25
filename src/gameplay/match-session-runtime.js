@@ -59,7 +59,7 @@ export class MatchSession {
 
     this.input = new HumanDragAimInput({
       camera: ctx.camera, domElement: ctx.canvas, visuals: this.visuals, juice: this.juice, ballBody: this.ballBody,
-      canControl: (side) => !this.paused && !this.rules.isAi(side) && this.rules.canFlick(side) && !this.mechanic?.busy,
+      canControl: (side) => !this.paused && this.rules.isHuman(side) && this.rules.canFlick(side) && !this.mechanic?.busy,
       onFlick: (entry, velocity, gesture) => this.flick(entry, velocity, gesture),
       onAimStart: () => { this.cameraDirector.setAimLocked(true); this.hud.hideTutorial(); this.sound.event?.('aimStart'); },
       onAimEnd: () => this.cameraDirector.setAimLocked(false),
