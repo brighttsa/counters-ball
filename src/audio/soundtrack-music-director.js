@@ -12,6 +12,7 @@ import { bakeLoopSeam } from './soundtrack-loop-seam.js';
 
 const DECODE_RATE = 32000;
 const MUSIC_BASE_LEVEL = 0.32;   // loud masters (about −14.5 LUFS) sit well under the flicks and contacts
+const FIRST_PLAY_FADE = 0.6;     // seconds: quick fade-in on the very first play so sound feels immediate
 const SWITCH_FADE = 1.2;         // seconds: one track hands over to the next
 const RESULTS_DIP = 0.63;        // about −4 dB under the results card
 const GOAL_DIP = 0.5;            // about −6 dB while the whistle, the net and the slow motion play
@@ -45,8 +46,16 @@ export class SoundtrackDirector {
     this.wanted = null;     // { id, dip } most recently asked for
     this.voice = null;      // { id, source, gain } playing (or fading in)
     this.decoded = new Map(); // id → Promise<AudioBuffer>, most recently used last
+    this.prefetched = new Map(); // id → Promise<ArrayBuffer>, raw bytes fetched before unlock
     this.token = 0;
     this.warned = false;
+  }
+
+  /** Start fetching a track's MP3 bytes on page load, before any user gesture or AudioContext. */
+  prefetch(id) {
+    const track = id && this.tracks[id];
+    if (!track || this.prefetched.has(id)) return;
+    this.prefetched.set(id, this.fetchBytes(track.url).catch(() => null));
   }
 
   /** Called once the sound board has an unlocked AudioContext (a user gesture). */
@@ -94,7 +103,7 @@ export class SoundtrackDirector {
       if (token !== this.token || !this.ctx) return;
       const source = this.ctx.createBufferSource(), gain = this.ctx.createGain();
       Object.assign(source, { buffer, loop: true, loopStart: track.loopStart, loopEnd: track.loopEnd });
-      const fadeIn = this.firstPlay ? 2.0 : SWITCH_FADE;
+      const fadeIn = this.firstPlay ? FIRST_PLAY_FADE : SWITCH_FADE;
       this.firstPlay = false;
       gain.gain.setValueAtTime(0, this.ctx.currentTime);
       gain.gain.linearRampToValueAtTime(track.trim ?? 1, this.ctx.currentTime + fadeIn);
@@ -122,7 +131,9 @@ export class SoundtrackDirector {
     const cached = this.decoded.get(id);
     if (cached) { this.decoded.delete(id); this.decoded.set(id, cached); return cached; }
     const track = this.tracks[id];
-    const pending = this.fetchBytes(track.url).then((bytes) => this.decode(bytes, this.ctx)).then((buffer) => {
+    const bytesPromise = this.prefetched.get(id)?.then((b) => b || this.fetchBytes(track.url)) ?? this.fetchBytes(track.url);
+    this.prefetched.delete(id);
+    const pending = bytesPromise.then((bytes) => this.decode(bytes, this.ctx)).then((buffer) => {
       const channels = Array.from({ length: buffer.numberOfChannels }, (_, c) => buffer.getChannelData(c));
       bakeLoopSeam(channels, buffer.sampleRate, track.loopStart, track.loopEnd);
       return buffer;

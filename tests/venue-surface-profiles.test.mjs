@@ -8,11 +8,14 @@ import { getVenueVisualProfile } from '../src/scene/venue-visual-profiles.js';
 import { createSeededRandom } from '../src/core/seeded-random-number-generator.js';
 import { CAMPAIGN_LEVELS, ATTRACT_MODE_LEVEL } from '../src/levels/campaign-level-definitions.js';
 
+// Node has no Path2D; the maker's signature is vector paths, so keep the path data for the digests.
+globalThis.Path2D ??= class Path2D { constructor(d) { this.d = d; } };
+
 // Record Canvas API calls to test determinism and geometry, not rendered quality.
 function recordingContext() {
   const calls = [], state = {}, stack = [];
   const methods = Object.fromEntries(['fillRect', 'strokeRect', 'beginPath', 'moveTo', 'lineTo',
-    'quadraticCurveTo', 'stroke', 'fill', 'arc', 'ellipse', 'translate', 'rotate', 'strokeText', 'fillText']
+    'quadraticCurveTo', 'stroke', 'fill', 'arc', 'ellipse', 'translate', 'rotate', 'scale', 'strokeText', 'fillText']
     .map(name => [name, (...args) => calls.push([name, args, { ...state }])]));
   Object.assign(methods, {
     save() { stack.push({ ...state }); },

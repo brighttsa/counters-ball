@@ -61,6 +61,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.effectsOff = Boolean(off);
     this.applyMasterLevel();
     this.venueEvents.setPaused(Boolean(off));
+    this.momentum.setPaused(Boolean(off));
   }
 
   applyMasterLevel() {

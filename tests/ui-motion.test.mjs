@@ -19,7 +19,7 @@ test('replacement preserves current callout opacity and position', () => {
   assert.equal(callout.event('LOW', { priority: 1 }), false);
   callout.update(.2);
   assert.equal(root.style.opacity, '1');
-  assert.equal(root.style.transform, 'translateX(0px)');
+  assert.equal(root.style.transform, 'translateX(0px) translateY(0px) scale(1)');
 });
 
 test('reduced-motion callouts fade without travel and clear on time', () => {
@@ -28,7 +28,7 @@ test('reduced-motion callouts fade without travel and clear on time', () => {
   assert.equal(root.style.opacity, '0');
   callout.update(.07);
   assert.equal(Number(root.style.opacity), .5);
-  assert.equal(root.style.transform, 'translateX(0px)');
+  assert.equal(root.style.transform, 'translateX(0px) translateY(0px) scale(1)');
   callout.update(.85);
   assert.ok(Number(root.style.opacity) < 1);
   callout.update(.1);

@@ -49,6 +49,13 @@ export class PlayerCameraController {
     this.ui.root.querySelector('#camera-zoom').value = String(
       100 * (this.controls.maxDistance - distance) / (this.controls.maxDistance - this.controls.minDistance));
   }
+  /** From Settings outside a match: every seat starts the next match in this view. */
+  prefer(mode) {
+    if (!CAMERA_MODES.includes(mode)) return;
+    this.preferences.home = this.preferences.away = this.mode = mode;
+    try { this.storage?.setItem(CAMERA_PREFERENCE_KEY, JSON.stringify(this.preferences)); } catch { /* storage is optional */ }
+  }
+
   select(mode, save = true) {
     if (!CAMERA_MODES.includes(mode) || !this.active) return;
     this.cancelAim(); this.peeking = false; this.mode = mode;
