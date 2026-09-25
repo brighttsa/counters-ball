@@ -75,6 +75,21 @@ body.is-loading #game-canvas { opacity: 0; }
   text-transform: uppercase;
 }
 body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-events: none; }
+/* Loaded: the loading bar and caption give way to the start prompt (browsers stay silent until a first tap). */
+.awaiting-start .boot-screen { cursor: pointer; }
+.awaiting-start .boot-screen::after, .awaiting-start .boot-screen p { display: none; }
+.boot-start {
+  display: grid; justify-items: center; gap: 6px; margin-top: 8px; min-height: 56px; padding: 14px 34px 12px;
+  color: var(--ink); background: var(--yellow); border: 0; cursor: pointer; touch-action: manipulation;
+  font: 400 var(--text-2xl)/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase;
+  clip-path: polygon(1% 4%, 97% 0, 100% 91%, 3% 100%, 0 32%);
+  animation: boot-start-pulse 1.6s ease-in-out infinite;
+}
+.boot-start[hidden] { display: none; }
+.boot-start small { font: 700 var(--text-xs)/1 var(--font-body); letter-spacing: .08em; opacity: .7; }
+.boot-start:focus-visible { outline: 3px solid var(--paper); outline-offset: 4px; }
+@media (hover: none), (pointer: coarse) { .boot-start small { display: none; } }
+@keyframes boot-start-pulse { 50% { transform: scale(1.04); } }
 /* Core control scale: every fixed utility control reads from the same viewport-aware rhythm. */
 :root {
   --control-size: clamp(44px, 5.2vw, 54px);
@@ -225,6 +240,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
   80%, 100% { transform: translate(-84px, 34px); opacity: 0; }
 }
 @keyframes boot-pulse { 50% { transform: scaleX(.65); opacity: .65; } }
+@media (prefers-reduced-motion: reduce) { .boot-start { animation: none; } }
 @keyframes low-attention { 40% { background: var(--warning-flash); } }
 @keyframes score-confirm { 40% { color: var(--yellow); } }
 

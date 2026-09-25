@@ -19,6 +19,7 @@ import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-inv
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js';
+import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
@@ -63,8 +64,7 @@ const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress)
 
 function finishBoot() {
   requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.body.classList.remove('is-loading');
-    bootScreen?.setAttribute('aria-hidden', 'true');
+    openTapToPlayGate(bootScreen, () => { sound.unlock(); sound.uiSelect(); });
   }));
 }
 
