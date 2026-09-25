@@ -4,8 +4,8 @@ import { markChoice } from '../ui/pause-card-faces-and-setting-chips.js';
 function readViewportSize() {
   const viewport = window.visualViewport;
   return {
-    width: document.documentElement?.clientWidth || viewport?.width || window.innerWidth,
-    height: document.documentElement?.clientHeight || viewport?.height || window.innerHeight,
+    width: window.innerWidth || viewport?.width || document.documentElement?.clientWidth,
+    height: window.innerHeight || viewport?.height || document.documentElement?.clientHeight,
   };
 }
 
