@@ -39,6 +39,12 @@ export function fullTimeTitle({ winner }, level, mode, names) {
   return resultTitle(winner, mode, names, level.opponent.kid);
 }
 
+function replayLabel(winner, versus, rematchLabel) {
+  if (versus) return rematchLabel;
+  if (winner === null) return RESULTS_COPY.settleIt;
+  return winner === SIDE_HOME ? RESULTS_COPY.playAgain : RESULTS_COPY.runItBack;
+}
+
 export class FullTimeResultsCard {
   constructor() {
     this.timers = [];
@@ -96,7 +102,7 @@ export class FullTimeResultsCard {
     // the next table; after a loss or a draw (or with nothing next) Play again leads, and the menu focuses it.
     const replay = $('btn-replay');
     const nextLeads = !versus && hasNext && title.dataset.outcome === 'win';
-    replay.textContent = versus ? rematchLabel : RESULTS_COPY.playAgain;
+    replay.textContent = replayLabel(winner, versus, rematchLabel);
     replay.classList.toggle('btn-primary', !nextLeads);
     $('btn-next').classList.toggle('btn-primary', nextLeads);
     $('btn-next').hidden = !hasNext;

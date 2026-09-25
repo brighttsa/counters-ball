@@ -1,9 +1,11 @@
 # Street Legends flow recovery
 
 ## Implemented
-- Each venue's solo Act 1 shows one mechanic-specific NEXT FLICK cue after the
-  first non-scoring flick settles. It does not reveal an exact aim or repeat
-  after every shot.
+- Historical note: this report was written when Act 1s were solo discovery
+  tables. Street Legends now uses live rookie rivals in every act; Kwame's
+  Corner is the dedicated solo practice lane.
+- The mechanic-specific NEXT FLICK cue remains available only for legacy solo
+  tables. It does not reveal an exact aim or repeat after every shot.
 - An Act 2 loss or draw gives one venue-specific next-try decision on the
   full-time card. Wins, Act 3 results, Classic and 2-Player copy are unchanged.
 - No flick budgets, collision rules, AI tactics, unlocks or tiebreaks changed.

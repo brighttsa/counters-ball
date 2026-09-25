@@ -4,7 +4,7 @@
 //
 // An enamel change dish stands around each goal mouth, covering part of it,
 // and turns one notch each time its attacker starts a turn. Find the gap.
-//   1 DISCOVER  Solo. Esi's keeper stands still; only the dish turns.
+//   1 DISCOVER  An active rookie with three caps; learn the mechanic in a match.
 //   2 MASTER    Esi plays, and she waits for the gap to face her.
 //   3 SHOWDOWN  First to two at closing time.
 import { CAMPAIGN_LEVELS } from './campaign-level-definitions.js';
@@ -31,15 +31,15 @@ export const KIOSK_CHANGE_DISH_ACTS = [
     blurb: 'Kofi\'s change dish guards the goal. It turns every flick. Find the gap.',
     objective: 'Score through the gap in the dish',
     introLines: [
-      'Solo challenge · score 1 goal in 10 flicks',
+      'First to 1 · 10 flicks each · rookie rival',
       'The dish turns every flick: open left, open edges, open right, open edges',
-      'The chalk arc shows where it covers next',
+      'Watch the dish turn between turns; prepare for its next gap',
       'Score when only the edges are open for EXACT CHANGE',
     ],
-    rules: { goalsToWin: 1, flickLimit: 10, awayFlickLimit: 0, threeStarFlicks: 3 },
-    awaySlots: [0],
+    rules: { goalsToWin: 1, flickLimit: 10, threeStarFlicks: 5 },
+    awaySlots: [0, 3, 4], // keeper and two forwards: a live rival with room to learn
     ballStart: [0.8, 0.3],
-    opponent: { ...ESI, difficulty: 'easy' },
+    opponent: { ...ESI, difficulty: 'rookie' },
   }),
   act(2, {
     id: 'legends-kiosk-act-2',

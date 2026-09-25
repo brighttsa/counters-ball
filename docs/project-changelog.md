@@ -1,5 +1,17 @@
 # Project Changelog
 
+## 2026-09-25 — Street Legends active-rival challenge pass
+
+### Changed
+- **Street Legends is now rivalry-first**: every one of the 18 acts hands play to an active AI rival.
+  Act 1 remains approachable, but it is no longer passive target practice; each opener uses a rookie rival,
+  a smaller away formation and forgiving flick limits.
+- The AI now values leaving itself a playable support touch behind the ball, so lower difficulties are less
+  likely to waste turns on aimless sideways flicks when a setup would keep pressure on the table.
+- Home's main Street Legends button now reads as progression (`Start Street Legends` / `Continue Street Legends`)
+  rather than another generic venue button. Results use clearer next-action labels: wins can go to the next act,
+  losses say `Run it back`, and draws say `Settle it`.
+
 ## 2026-09-24 — Soundtrack: the owner's three original recordings
 
 ### Added

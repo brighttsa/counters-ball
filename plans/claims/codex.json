@@ -2,14 +2,17 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Street Legends card compact viewport fit",
+  "task": "Active rivals and progressive Street Legends difficulty",
   "status": "released",
   "paths": [
-    "styles/circuit-venue-preview.css",
-    "index.html",
+    "src/levels/",
+    "src/gameplay/ai-opponent-shot-planner.js",
+    "src/gameplay/ai-positional-shot-evaluation.js",
+    "tests/active-rival-difficulty.test.mjs",
+    "plans/reports/active-rival-difficulty.md",
     "plans/agent-handoff-board.md",
-    "plans/claims/codex.json"
+    "tests/menu-and-results-copy.test.mjs"
   ],
-  "updatedAt": "2026-09-25T16:29:32Z",
-  "head": "8ad5a73b1cad37e2ee8b7e077874c42216cfcd34"
+  "updatedAt": "2026-09-25T17:22:05Z",
+  "head": "795fd7e86f82dd81f35464dd08bfe75ea672311b"
 }

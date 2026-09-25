@@ -4,7 +4,7 @@
 //
 // Both goals are padlocked. Strike your three coin stacks in beam order (ball
 // or your own cap) to light the bulb and drop the padlock, then score.
-//   1 DISCOVER  Solo. Magic's keeper stands still; light the chain, then score.
+//   1 DISCOVER  An active rookie with three caps; learn the mechanic in a match.
 //   2 MASTER    Magic plays, and he lights his chain two turns ahead.
 //   3 SHOWDOWN  First to two: the bulb goes out after every goal.
 import { CAMPAIGN_LEVELS } from './campaign-level-definitions.js';
@@ -32,15 +32,15 @@ export const LIGHTS_OUT_COIN_STACK_ACTS = [
     blurb: 'Magic padlocked his goal. Light three coin stacks in the beam to open it.',
     objective: 'Light all three stacks, then score',
     introLines: [
-      'Solo challenge · light the chain and score in 14 flicks',
+      'First to 1 · 16 flicks each · light your chain to score',
       'Strike the stack in the beam with the ball or your own cap',
       'Three stacks lit: LIGHTS ON, the padlock drops',
       'Light the last stack and score on the same flick for the hero goal',
     ],
-    rules: { goalsToWin: 1, flickLimit: 14, awayFlickLimit: 0, threeStarFlicks: 7 },
-    awaySlots: [0],
+    rules: { goalsToWin: 1, flickLimit: 16, threeStarFlicks: 9 },
+    awaySlots: [0, 3, 4], // keeper and two forwards: a live rival with room to learn
     ballStart: [0.85, 0], // between stacks two and three: one strike can light both
-    opponent: { ...MAGIC, difficulty: 'easy' },
+    opponent: { ...MAGIC, difficulty: 'rookie' },
   }),
   act(2, {
     id: 'legends-nightbulb-act-2',
