@@ -185,19 +185,20 @@ export class MenuScreens {
     lines.unshift(...extraLines);
     const rivalry = this.rivalryFor?.(this.readPlayerNames());
     if (rivalry) lines.push(rivalry);
-    const list = $('intro-rules');
-    list.replaceChildren(...lines.map((text) => {
+    // One rule line stays in view; the rest waits behind "How it works" so the story line and Kick off lead.
+    const toItem = (text) => {
       const li = document.createElement('li');
-      const isStar = starGoalTexts.includes(text);
-      if (isStar) {
-        li.innerHTML = `${STAR_SVG} ${text}`;
-        li.className = 'star-goal';
-      } else {
-        li.textContent = text;
-      }
+      if (starGoalTexts.includes(text)) { li.innerHTML = `${STAR_SVG} ${text}`; li.className = 'star-goal'; } else li.textContent = text;
       if (text === rivalry) li.className = 'rivalry-line';
       return li;
-    }));
-    this.rivalryItem = rivalry ? list.querySelector('.rivalry-line') : null;
+    };
+    const ruleLines = lines.filter((text) => text !== rivalry && !extraLines.includes(text) && text !== memory);
+    const [headline, ...details] = ruleLines;
+    const visible = lines.filter((text) => !details.includes(text));
+    $('intro-rules').replaceChildren(...visible.map(toItem));
+    $('intro-rules-more').replaceChildren(...details.map(toItem));
+    $('intro-more').hidden = details.every((text) => starGoalTexts.includes(text)); // star goals are hidden on this card
+    $('intro-more').open = false;
+    this.rivalryItem = rivalry ? $('intro-rules').querySelector('.rivalry-line') : null;
   }
 }

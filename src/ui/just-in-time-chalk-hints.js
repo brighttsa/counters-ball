@@ -12,8 +12,8 @@ const HINT_SECONDS = 9;
 const fine = () => globalThis.matchMedia?.('(hover: hover) and (pointer: fine)')?.matches ?? false;
 const COPY = {
   bank: () => 'Blocked? Bank it off the rail',
-  street: () => (fine() ? 'Something in the way? Get low: Street view · 3' : 'Something in the way? Get low: Camera → Street Level'),
-  peek: () => 'A cap is hidden. Hold Tactical peek to see the whole table',
+  street: () => (fine() ? 'In the way? Street view · 3' : 'In the way? Camera → Street Level'),
+  peek: () => 'Cap hidden? Hold Tactical peek',
 };
 
 export class JustInTimeChalkHints {
