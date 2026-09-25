@@ -5,8 +5,8 @@ import { preferredShadowSize } from '../fx/adaptive-render-quality.js';
 
 export function readViewportSize() {
   const viewport = window.visualViewport;
-  const width = document.documentElement?.clientWidth || viewport?.width || window.innerWidth;
-  const height = document.documentElement?.clientHeight || viewport?.height || window.innerHeight;
+  const width = window.innerWidth || viewport?.width || document.documentElement?.clientWidth;
+  const height = window.innerHeight || viewport?.height || document.documentElement?.clientHeight;
   return { width, height };
 }
 
