@@ -30,6 +30,24 @@ const CUES = {
     [523, 659, 784, 1047].forEach((f, i) => bottleTap(board, f, { gain: 0.08, delay: i * 0.11, ring: 0.6 }));
     coinRing(board, 2100, { gain: 0.05, delay: 0.46 });
   },
+  // Two caps placed on the table: the match is set.
+  matchStart: (board) => {
+    tableKnock(board, 200, { gain: 0.06 });
+    tableKnock(board, 220, { gain: 0.07, delay: 0.12 });
+  },
+  // Control passes: a soft knock whose weight follows the pace of play.
+  turnChange: (board, s) => tableKnock(board, 150 + s * 40, { gain: 0.02 + s * 0.04 }),
+  // Opponent wins: one deep table thump. Understated, dignified.
+  loss: (board) => tableKnock(board, 90, { gain: 0.14 }),
+  // The ball just missed the goal: a quiet low whoosh of relief.
+  nearMiss: (board) => board.noise({ duration: 0.3, freq: 300, to: 800, q: 1, gain: 0.06, attack: 0.06 }),
+  // A cap stopped the ball right on the goal line: the keeper bottle rings.
+  goalLineSave: (board, s) => bottleTap(board, 1200 + s * 300, { gain: 0.04 + s * 0.06, ring: 0.3 }),
+  // Menu screen change: a paper notice being flipped.
+  screenTransition: (board) => {
+    board.noise({ duration: 0.04, filter: 'highpass', freq: 3600 + Math.random() * 1800, gain: 0.04 });
+    board.noise({ duration: 0.025, filter: 'highpass', freq: 4000 + Math.random() * 2000, gain: 0.03, delay: 0.02 });
+  },
 };
 
 // Older names still used by callers for plain contact sounds.

@@ -17,6 +17,8 @@ const RESULTS_DIP = 0.63;        // about −4 dB under the results card
 const GOAL_DIP = 0.5;            // about −6 dB while the whistle, the net and the slow motion play
 const GOAL_DIP_SECONDS = 2.5;
 const KEEP_DECODED = 2;
+const HIDE_FADE = 0.4;           // seconds: music fades to silence before tab suspends
+const SHOW_FADE = 0.8;           // seconds: music fades back in after tab resumes
 
 function defaultDecode(bytes, ctx) {
   const Offline = globalThis.OfflineAudioContext || globalThis.webkitOfflineAudioContext;
@@ -55,6 +57,7 @@ export class SoundtrackDirector {
     this.dip = ctx.createGain();
     this.level.connect(this.dip).connect(ctx.destination);
     this.applyLevel(0);
+    this.firstPlay = true;
     if (this.wanted) this.start(this.wanted.id, this.wanted.dip);
   }
 
@@ -88,11 +91,13 @@ export class SoundtrackDirector {
     const track = id && this.tracks[id];
     if (!track) return;
     this.load(id).then((buffer) => {
-      if (token !== this.token || !this.ctx) return; // the player moved on while it loaded
+      if (token !== this.token || !this.ctx) return;
       const source = this.ctx.createBufferSource(), gain = this.ctx.createGain();
       Object.assign(source, { buffer, loop: true, loopStart: track.loopStart, loopEnd: track.loopEnd });
+      const fadeIn = this.firstPlay ? 2.0 : SWITCH_FADE;
+      this.firstPlay = false;
       gain.gain.setValueAtTime(0, this.ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(track.trim ?? 1, this.ctx.currentTime + SWITCH_FADE);
+      gain.gain.linearRampToValueAtTime(track.trim ?? 1, this.ctx.currentTime + fadeIn);
       source.connect(gain).connect(this.level);
       source.start();
       this.voice = { id, source, gain };
@@ -132,6 +137,21 @@ export class SoundtrackDirector {
     const now = this.ctx.currentTime;
     this.dip.gain.cancelScheduledValues(now);
     this.dip.gain.setTargetAtTime(value, now, seconds / 3);
+  }
+
+  /** Fade the music bus gracefully for tab hide/show (the effects bus handles its own). */
+  setHidden(hidden) {
+    if (!this.ctx || !this.level) return;
+    const now = this.ctx.currentTime;
+    this.level.gain.cancelScheduledValues(now);
+    if (hidden) {
+      this.level.gain.setValueAtTime(this.level.gain.value, now);
+      this.level.gain.linearRampToValueAtTime(0, now + HIDE_FADE);
+    } else {
+      this.level.gain.setValueAtTime(0, now);
+      const target = this.muted ? 0 : this.volume * MUSIC_BASE_LEVEL;
+      this.level.gain.linearRampToValueAtTime(target, now + SHOW_FADE);
+    }
   }
 
   /** A goal: dip under the whistle and the net, then come back up. */

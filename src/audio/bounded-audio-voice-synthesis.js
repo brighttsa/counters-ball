@@ -1,7 +1,11 @@
+const HIDE_FADE = 0.4;      // seconds: music fades out before the context suspends
+const SHOW_FADE = 0.8;      // seconds: music fades back in after the context resumes
+const HIDE_LPF_END = 200;   // Hz: low-pass cutoff at the end of the hide fade ("going to sleep")
+
 // Sources are single-use Web Audio nodes; reusable buffers and a hard voice
 // limit bound allocation, and every ended voice disconnects its entire chain.
 export class BoundedAudioVoiceSynthesis {
-  constructor() { this.voices = new Set(); this.paused = false; this.hidden = false; }
+  constructor() { this.voices = new Set(); this.paused = false; this.hidden = false; this._hideTimer = null; }
 
   track(source, nodes) {
     const voice = { source, nodes };
@@ -61,24 +65,78 @@ export class BoundedAudioVoiceSynthesis {
     src.stop(t0 + attack + duration + 0.05);
   }
 
-  setPaused(paused) {
-    this.paused = Boolean(paused);
-    this.applySuspension();
-  }
-
-  /** A hidden tab goes quiet (music included) and picks up where it was when shown again. */
+  /** A hidden tab fades out gracefully, then suspends; a visible tab resumes and fades back in. */
   setHidden(hidden) {
     this.hidden = Boolean(hidden);
-    this.applySuspension();
+    clearTimeout(this._hideTimer);
+    if (!this.ctx) return;
+    if (this.hidden) {
+      this._fadeForHide();
+    } else if (!this.paused) {
+      this.ctx.resume()?.catch(() => {});
+      this._fadeForShow();
+    }
   }
 
-  applySuspension() {
+  setPaused(paused) {
+    this.paused = Boolean(paused);
     if (!this.ctx) return;
-    const action = this.paused || this.hidden ? this.ctx.suspend() : this.ctx.resume();
-    action?.catch(() => {});
+    if (this.paused || this.hidden) {
+      this.ctx.suspend()?.catch(() => {});
+    } else {
+      this.ctx.resume()?.catch(() => {});
+    }
+  }
+
+  _ensureHideFilter() {
+    if (this._hideLpf) return this._hideLpf;
+    if (!this.ctx || !this.compressor) return null;
+    const lpf = this.ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = this.ctx.sampleRate / 2;
+    lpf.Q.value = 0.7;
+    this.compressor.disconnect();
+    this.compressor.connect(lpf).connect(this.ctx.destination);
+    this._hideLpf = lpf;
+    return lpf;
+  }
+
+  _fadeForHide() {
+    const lpf = this._ensureHideFilter();
+    const now = this.ctx.currentTime;
+    if (this.master) {
+      this.master.gain.cancelScheduledValues(now);
+      this.master.gain.setValueAtTime(this.master.gain.value, now);
+      this.master.gain.linearRampToValueAtTime(0, now + HIDE_FADE);
+    }
+    if (lpf) {
+      lpf.frequency.cancelScheduledValues(now);
+      lpf.frequency.setValueAtTime(lpf.frequency.value, now);
+      lpf.frequency.exponentialRampToValueAtTime(HIDE_LPF_END, now + HIDE_FADE);
+    }
+    this._hideTimer = setTimeout(() => {
+      this.ctx?.suspend()?.catch(() => {});
+    }, HIDE_FADE * 1000 + 50);
+  }
+
+  _fadeForShow() {
+    const lpf = this._hideLpf;
+    const now = this.ctx.currentTime;
+    const level = this.muted || this.effectsOff ? 0 : 0.9;
+    if (this.master) {
+      this.master.gain.cancelScheduledValues(now);
+      this.master.gain.setValueAtTime(0.0001, now);
+      this.master.gain.linearRampToValueAtTime(level, now + SHOW_FADE);
+    }
+    if (lpf) {
+      lpf.frequency.cancelScheduledValues(now);
+      lpf.frequency.setValueAtTime(HIDE_LPF_END, now);
+      lpf.frequency.exponentialRampToValueAtTime(this.ctx.sampleRate / 2, now + SHOW_FADE);
+    }
   }
 
   dispose() {
+    clearTimeout(this._hideTimer);
     this.ambience.stop();
     for (const { source, nodes } of this.voices) {
       source.onended = null;
@@ -87,6 +145,7 @@ export class BoundedAudioVoiceSynthesis {
     }
     this.voices.clear();
     this.master?.disconnect();
+    this._hideLpf?.disconnect();
     this.compressor?.disconnect();
     this.ctx?.close()?.catch(() => {});
     this.ctx = null;
@@ -95,6 +154,7 @@ export class BoundedAudioVoiceSynthesis {
     this.ambience.noiseBuffer = null;
     this.master = null;
     this.compressor = null;
+    this._hideLpf = null;
     this.noiseBuffer = null;
     this.last = {};
   }

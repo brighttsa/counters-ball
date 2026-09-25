@@ -164,4 +164,15 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     if (!this.can('ui', 40)) return;
     cardboardTap(this);
   }
+
+  uiSelect() {
+    if (!this.can('ui', 40)) return;
+    cardboardTap(this, 1.4);
+  }
+
+  uiLocked() {
+    if (!this.can('ui', 40)) return;
+    this.tone({ freq: 140, to: 90, duration: 0.06, gain: 0.08 });
+    this.noise({ duration: 0.018, filter: 'lowpass', freq: 800, gain: 0.06 });
+  }
 }
