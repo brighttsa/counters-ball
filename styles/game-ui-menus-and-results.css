@@ -1,6 +1,6 @@
 /* KONK! — screen shell, headings and the intro, pause and results cards. */
 .screen {
-  position: fixed; inset: 0; z-index: 20; display: none; place-items: center; overflow-y: auto;
+  position: fixed; inset: 0; z-index: 20; display: none; place-items: center; height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain;
   padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(84px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
 }
 .screen.is-active { display: grid; animation: screen-in 200ms cubic-bezier(0.23, 1, 0.32, 1) both; }
@@ -23,6 +23,10 @@
   color: var(--paper); background: none; border-radius: 0; box-shadow: var(--shadow-card);
 }
 .intro-card, .results-card, .menu-card { max-height: calc(100dvh - 48px); overflow-y: auto; }
+@supports not (height: 100dvh) {
+  .screen { height: 100vh; }
+  .intro-card, .results-card, .menu-card { max-height: calc(100vh - 48px); }
+}
 .tape { display: none; }
 .card-kicker { margin: 0 0 4px; font: var(--text-xs) var(--font-body); letter-spacing: 0; text-transform: uppercase; color: var(--yellow); }
 .card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; }
