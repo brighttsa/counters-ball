@@ -49,6 +49,23 @@ test('own goal credits goal direction rather than flick owner', () => {
   assert.deepEqual(rules.result.starFlags, [false, false, false]);
 });
 
+test('online minimum contest keeps an early goal from ending the match', () => {
+  const rules = create({ goalsToWin: 3, flickLimit: 10, minimumFlicksEach: 3 });
+  rules.start();
+  rules.registerFlick('home');
+  rules.registerGoal(1);
+  rules.finishGoalCelebration();
+  assert.equal(rules.phase, 'aiming');
+  assert.deepEqual(rules.scores, { home: 1, away: 0 });
+  rules.flicksUsed = { home: 3, away: 3 };
+  rules.scores.home = 2;
+  rules.turn = 'home';
+  rules.registerFlick('home');
+  rules.registerGoal(1);
+  rules.finishGoalCelebration();
+  assert.equal(rules.phase, 'ended');
+});
+
 test('exhausted side is skipped, and both sides exhausted level goes to a golden flick first', () => {
   const rules = create({ flickLimit: 1 });
   rules.start();

@@ -32,8 +32,9 @@ export function createMessageMatchFlow(deps) {
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
   const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
 
-  function openTable(index, mySide, names, seq) {
-    const level = CAMPAIGN_LEVELS[index];
+  function openTable(index, mySide, names, seq, online = false) {
+    const source = CAMPAIGN_LEVELS[index];
+    const level = online ? { ...source, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3 } } : source;
     Object.assign(app, { mode: 'versus', levelIndex: index });
     result = null;
     outgoing = null;
@@ -91,7 +92,7 @@ export function createMessageMatchFlow(deps) {
   return {
     async startRoom(index, id, mySide, names) {
       clearInterval(roomTimer);
-      const letters = openTable(index, mySide, names, 0);
+      const letters = openTable(index, mySide, names, 0, true);
       hud.event('LIVE MATCH', { priority: 6, duration: 2.2, detail: mySide === 'home' ? 'You are HOME' : 'You are AWAY' });
       let seen = 0;
       const onLetter = letters.onLetter;
