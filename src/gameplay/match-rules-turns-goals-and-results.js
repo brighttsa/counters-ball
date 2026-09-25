@@ -94,7 +94,9 @@ export class MatchRules {
   finishGoalCelebration() {
     if (this.phase !== 'goal') return;
     // A golden-flick goal ends it outright, even below goalsToWin: regulation already failed to decide it.
-    if (this.tiebreak === 'golden' || this.scores[this.lastScorer] >= this.rules.goalsToWin) {
+    const enoughContest = !this.rules.minimumFlicksEach
+      || (this.flicksUsed.home >= this.rules.minimumFlicksEach && this.flicksUsed.away >= this.rules.minimumFlicksEach);
+    if (this.tiebreak === 'golden' || (enoughContest && this.scores[this.lastScorer] >= this.rules.goalsToWin)) {
       this.end();
       return;
     }

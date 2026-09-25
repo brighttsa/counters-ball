@@ -4,7 +4,7 @@
 // every Street Legends venue shares this card.
 import { SIDE_HOME } from '../core/pitch-dimensions-and-constants.js';
 import { streetLegendRetryCue } from '../levels/street-legends-flow-retry-cues.js';
-import { RESULTS_COPY, resultTitle, starGoals } from './konk-interface-copy.js?v=2';
+import { RESULTS_COPY, resultTitle, shotStory, starGoals } from './konk-interface-copy.js?v=3';
 
 const $ = (id) => document.getElementById(id);
 const STAR_REVEAL_DELAY_MS = 650;
@@ -93,7 +93,11 @@ export class FullTimeResultsCard {
     }
 
     $('results-note').textContent = fullTimeNote(result, level, mode, { improved, isFinalVenue });
-    $('results-lines').replaceChildren(...lines.map((text) => {
+    const story = shotStory(result.shotStory, winner);
+    const storyLine = document.createElement('li');
+    storyLine.className = 'results-shot-story';
+    storyLine.textContent = `Decisive shot · ${story}`;
+    $('results-lines').replaceChildren(storyLine, ...lines.map((text) => {
       const li = document.createElement('li');
       li.textContent = text;
       return li;

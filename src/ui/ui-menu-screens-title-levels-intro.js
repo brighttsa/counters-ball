@@ -3,10 +3,10 @@
 // click handler routes every [data-action] button to the app.
 import { totalStars } from '../core/save-progress-local-storage.js';
 import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
-import { fillVenuePreview } from './ui-circuit-venue-preview.js';
+import { fillVenuePreview } from './ui-circuit-venue-preview.js?v=2';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
-import { featuredActCopy } from '../levels/featured-home-legends-act.js?v=2';
-import { MENU_COPY, STAR_SVG, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js?v=2';
+import { featuredActCopy } from '../levels/featured-home-legends-act.js?v=3';
+import { MENU_COPY, STAR_SVG, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js?v=3';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -50,13 +50,13 @@ export class MenuScreens {
   /** A friend's "beat me" link, shown before the table it names. */
   fillChallenge(level, inviteLine) {
     $('challenge-title').textContent = 'Beat this mark';
-    $('challenge-venue').textContent = `${level.legend ? `${level.name} · Act ${level.legend.act}: ${level.actTitle}` : level.name} · ${level.place}`;
+    $('challenge-venue').textContent = `${level.legend ? `${level.place} · ${level.name} · Act ${level.legend.act}: ${level.actTitle}` : `${level.place} · ${level.name}`}`;
     $('challenge-mark').textContent = inviteLine;
   }
 
   fillFriendMatch(level, line, incoming = false) {
     $('friend-title').textContent = incoming ? 'You have been called out' : 'Call someone to the table';
-    $('friend-venue').textContent = `${level.legend ? `${level.name} · Act ${level.legend.act}: ${level.actTitle}` : level.name} · ${level.place}`;
+    $('friend-venue').textContent = `${level.legend ? `${level.place} · ${level.name} · Act ${level.legend.act}: ${level.actTitle}` : `${level.place} · ${level.name}`}`;
     $('friend-mark').textContent = line;
     document.querySelector('[data-action="friend-share"]').hidden = incoming;
     document.querySelector('[data-action="friend-copy"]').hidden = incoming;
@@ -123,7 +123,7 @@ export class MenuScreens {
       const stars = progress.stars[level.id] ?? 0;
       const starRow = versus ? '' : `<span class="level-stars" aria-label="${stars} of 3 stars">${
         [0, 1, 2].map((n) => `<svg class="star-svg ${n < stars ? 'on' : ''}" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg>`).join('')}</span>`;
-      const group = level.legend?.act === 1 ? `<span class="level-group">${escapeHtml(level.name)}</span>` : '';
+      const group = level.legend?.act === 1 ? `<span class="level-group">${escapeHtml(level.place)} <small>· ${escapeHtml(level.name)}</small></span>` : '';
       return `${group}<button class="level-card${unlocked ? '' : ' locked'}" data-action="preview-level" data-index="${i}"
         aria-pressed="false" style="--accent:${level.opponent.team.hudColor}">
         <span class="level-number">${level.legend?.act ?? i + 1}</span>
@@ -152,10 +152,10 @@ export class MenuScreens {
     const { rules, opponent } = level;
     const legend = level.legend;
     $('intro-number').textContent = level.practice ? `${level.name} / Practice`
-      : legend ? `Street Legends / ${level.name} / Act ${legend.act} of ${legend.acts}`
+      : legend ? `Street Legends / ${level.place} / Act ${legend.act} of ${legend.acts}`
       : `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
     $('intro-title').textContent = legend ? level.actTitle : level.name;
-    $('intro-place').textContent = level.place;
+    $('intro-place').textContent = legend ? `${level.name} · ${level.place}` : level.place;
     $('intro-blurb').textContent = versus ? MENU_COPY.localIntro : level.blurb;
 
     const home = $('intro-home'), away = $('intro-away');

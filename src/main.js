@@ -12,10 +12,10 @@ import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
-import { MatchSession } from './gameplay/match-session-runtime.js?v=2';
-import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=2';
+import { MatchSession } from './gameplay/match-session-runtime.js?v=5';
+import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=3';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js';
-import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=2';
+import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
@@ -64,7 +64,9 @@ const attractHud = createAttractHud(attractCallout); // the title-screen match o
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
 const liveRoom = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: `${location.origin}${location.pathname}`, showTitle,
-  onStart: (roomId, seat) => messageMatch.startRoom(0, roomId, seat, { home: 'Player 1', away: 'Player 2' }) });
+  onStart: (roomId, seat, seats) => messageMatch.startRoom(0, roomId, seat, {
+    home: seats.home?.name ?? 'Player 1', away: seats.away?.name ?? 'Player 2',
+  }) });
 const orientation = createMatchOrientationPrompt();
 new PlayerCameraController(app, cameraDirector);
 const challengeFor = (level) => challengeForLevel(app.challenge, level);

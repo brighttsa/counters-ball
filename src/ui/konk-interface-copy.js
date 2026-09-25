@@ -20,6 +20,22 @@ export const RESULTS_COPY = Object.freeze({
   shareSoloFooter: 'Same table. Your move.',
 });
 
+export const shotStory = (label, winner) => {
+  if (!label || label === 'GOAL') return winner === null ? 'The table stayed level.' : 'The deciding angle found the net.';
+  return ({
+    'RULER BANK': 'The ruler bank decided it.',
+    'OFF THE DISH': 'The dish opened. You found it.',
+    'OFF THE POT': 'The pot turned the match.',
+    'THROUGH THE TOLL': 'The green lane paid out.',
+    'CAUGHT THE LORRY': 'You caught the moving goal.',
+    'LIGHTS ON': 'You lit the way to goal.',
+    'BANK GOAL': 'The bank angle did the damage.',
+    'COUNTER GOAL': 'The counter landed clean.',
+    'STREET PLAY': 'That was a proper street move.',
+    'SWEET SPOT': 'You found the sweet spot.',
+  }[label] || `${label}.`);
+};
+
 export const starGoals = (flicks) => ['Win', 'Concede no goals', `Win in ${flicks} flicks or fewer`];
 export const STAR_SVG = '<svg class="star-svg" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg>';
 export const starRules = (flicks) => starGoals(flicks);

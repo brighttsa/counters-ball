@@ -7,10 +7,10 @@ export function fillVenuePreview(level, index, unlocked, mode, stars) {
   const versus = mode === 'versus';
   const canEnter = unlocked || versus;
   const legend = level.legend; // Street Legends act: show the act, not the circuit match
-  $('circuit-match-number').textContent = legend ? `Street Legends / ${level.name} / Act ${legend.act} of ${legend.acts}`
+  $('circuit-match-number').textContent = legend ? `Street Legends / ${level.place} / Act ${legend.act} of ${legend.acts}`
     : `Ghana / Match ${String(index + 1).padStart(2, '0')}`;
   $('circuit-venue-name').textContent = legend ? level.actTitle : level.name;
-  $('circuit-venue-place').textContent = level.place;
+  $('circuit-venue-place').textContent = legend ? `${level.name} · ${level.place}` : level.place;
   const terms = legend ? level.introLines[0] : `First to ${level.rules.goalsToWin} · ${level.rules.flickLimit} flicks each`;
   $('circuit-venue-opponent').textContent = versus ? `Accra Reds vs ${level.opponent.team.name} · ${terms}`
     : `vs ${level.opponent.kid} · ${capitalize(level.opponent.difficulty)} · ${terms}`;

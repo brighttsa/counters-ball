@@ -21,8 +21,8 @@ export function featuredActCopy(level) {
   const opener = level.id === FIRST_VISIT_ACT_ID && level.legend.act === 1;
   return {
     kicker: `ACT ${level.legend.act} / ${level.legend.acts}`,
-    venue: level.name,
-    actTitle: level.actTitle,
+    venue: level.place,
+    actTitle: `${level.name} · ${level.actTitle}`,
     button: opener ? 'Start Street Legends' : 'Continue Street Legends',
   };
 }

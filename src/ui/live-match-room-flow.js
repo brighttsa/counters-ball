@@ -22,7 +22,7 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     const ready = document.querySelector('[data-action="live-room-ready"]');
     ready.hidden = !seat || !room.seats[other(seat)] || room.phase === 'ready';
     ready.textContent = room.seats[seat]?.ready ? 'Cancel ready' : 'Ready up';
-    if (room.phase === 'ready') { status('Both players are ready. Kickoff is next.'); if (!started) { started = true; onStart?.(roomId, seat); } }
+    if (room.phase === 'ready') { status('Both players are ready. Kickoff is next.'); if (!started) { started = true; onStart?.(roomId, seat, room.seats); } }
   };
   const poll = async () => {
     if (!roomId) return;

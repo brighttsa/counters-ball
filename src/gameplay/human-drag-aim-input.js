@@ -33,6 +33,13 @@ export class HumanDragAimInput {
       this.selectionNotice.className = 'touch-selection-status';
       this.selectionNotice.setAttribute('aria-live', 'polite');
       document.body.append(this.selectionNotice);
+      this.cancelButton = document.createElement('button');
+      this.cancelButton.type = 'button';
+      this.cancelButton.className = 'aim-cancel-button';
+      this.cancelButton.textContent = 'Cancel aim';
+      this.cancelButton.hidden = true;
+      this.cancelButton.addEventListener('click', () => this.cancel());
+      document.body.append(this.cancelButton);
     }
 
     this.listeners = {
@@ -84,7 +91,14 @@ export class HumanDragAimInput {
 
   onDown(e) {
     if (this.keyboard.aiming && e.button === 0) this.cancel(); // a click takes over from the keyboard
-    if (this.selected || e.button !== 0) return; // a second finger must not hijack the drag
+    if (e.button !== 0) return;
+    if (this.selected) {
+      if (e.pointerId !== this.pointerId) return; // a second finger must not hijack the drag
+      const entry = this.pickEntry(e);
+      if (entry === this.selected) this.cancel(); // tapping the held cap puts it down
+      else if (entry && this.canControl(entry.side)) { this.cancel(); this.onDown(e); } // switch caps directly
+      return;
+    }
     if (this.selectionNotice) this.selectionNotice.textContent = '';
     const entry = this.pickEntry(e);
     if (!entry || !this.canControl(entry.side)) return;
@@ -98,6 +112,7 @@ export class HumanDragAimInput {
     try { this.domElement.setPointerCapture(e.pointerId); } catch { /* synthetic events */ }
     this.pull.set(0, 0);
     this.domElement.classList.add('aiming');
+    if (this.cancelButton) this.cancelButton.hidden = false;
     this.visuals.show(entry.body, this.pull);
     if (this.selectionNotice && e.pointerType === 'touch') this.selectionNotice.textContent = 'Cap selected';
     this.onAimStart?.(entry);
@@ -160,6 +175,7 @@ export class HumanDragAimInput {
     this.visuals.hide();
     if (this.selectionNotice) this.selectionNotice.textContent = '';
     this.domElement.classList.remove('aiming');
+    if (this.cancelButton) this.cancelButton.hidden = true;
     if (wasAiming) this.onAimEnd?.();
   }
 
@@ -170,6 +186,7 @@ export class HumanDragAimInput {
     window.removeEventListener('blur', this.cancelGesture);
     window.removeEventListener('resize', this.cancelGesture);
     this.selectionNotice?.remove();
+    this.cancelButton?.remove();
     this.keyboard.dispose();
   }
 }

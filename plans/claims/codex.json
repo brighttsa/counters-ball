@@ -2,8 +2,8 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Live multiplayer room protocol",
-  "status": "active",
+  "task": "Live multiplayer room protocol; peak-end match feedback and decisive results",
+  "status": "released",
   "paths": [
     "match-server/src/live-match-room-rules.js",
     "match-server/src/konk-match-worker-and-durable-object.js",
@@ -17,8 +17,14 @@
     "index.html",
     "src/main.js",
     "plans/agent-handoff-board.md",
-    "plans/claims/codex.json"
+    "plans/claims/codex.json",
+    "src/gameplay/match-session-feedback-hooks.js",
+    "src/ui/ui-full-time-results-card.js",
+    "src/ui/full-time-results-presentation.js",
+    "src/ui/konk-interface-copy.js",
+    "src/gameplay/goal-line-crossing-detection.js",
+    "styles/game-ui-menus-and-results.css"
   ],
-  "updatedAt": "2026-09-25T18:55:10Z",
-  "head": "b33a5a6"
+  "updatedAt": "2026-09-25T19:18:00Z",
+  "head": "3abf88f"
 }
