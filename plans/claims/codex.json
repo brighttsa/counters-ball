@@ -6,6 +6,7 @@
   "status": "released",
   "paths": [
     "styles/ink-impact-home.css",
+    "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
