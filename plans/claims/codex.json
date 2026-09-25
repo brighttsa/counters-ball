@@ -2,14 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Street Legends symbolic table cues",
+  "task": "Graphics readability and accessibility pass",
   "status": "released",
   "paths": [
-    "src/gameplay",
-    "src/scene/venue-rule-chalk-notes.js",
-    "tests/venue-rule-chalk-notes.test.mjs",
+    "src/fx/post-processing-bloom-grain-haze.js",
+    "src/scene/lighting-presets-by-time-of-day.js",
+    "styles",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-25T00:46:21Z",
-  "head": "e2b019bcfc8ff46057d0a3a4cc63271990e91939"
+  "updatedAt": "2026-09-25T00:53:34Z",
+  "head": "8ff59493090219375df21e7b79a53aaf9032a412"
 }

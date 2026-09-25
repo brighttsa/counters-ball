@@ -12,8 +12,8 @@ const FilmGrainWarmHazeShader = {
   uniforms: {
     tDiffuse: { value: null },
     uTime: { value: 0 },
-    uGrain: { value: 0.055 },
-    uHaze: { value: 0.085 },
+    uGrain: { value: 0.045 },
+    uHaze: { value: 0.07 },
     uHazeColor: { value: new THREE.Vector3(1.0, 0.82, 0.6) },
   },
   vertexShader: /* glsl */`
@@ -27,11 +27,12 @@ const FilmGrainWarmHazeShader = {
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7)) + uTime * 43.0) * 43758.5453); }
     void main() {
       vec3 col = texture2D(tDiffuse, vUv).rgb;
-      float haze = smoothstep(0.2, 1.15, 1.0 - distance(vUv, vec2(0.12, 0.92))); // strongest toward the light
+      float haze = smoothstep(0.18, 1.12, 1.0 - distance(vUv, vec2(0.12, 0.92))); // strongest toward the light
       col = mix(col, uHazeColor, haze * uHaze);
-      col *= vec3(1.03, 0.99, 0.94);                                              // gentle warm grade
+      col *= vec3(1.035, 1.005, 0.965);                                           // warm, but not brown
+      col = mix(vec3(dot(col, vec3(0.2126, 0.7152, 0.0722))), col, 1.08);          // preserve venue colour separation
       col += (hash(vUv * vec2(1920.0, 1080.0)) - 0.5) * uGrain;                   // 35mm grain
-      col *= mix(0.72, 1.0, smoothstep(0.95, 0.35, distance(vUv, vec2(0.5))));    // vignette
+      col *= mix(0.8, 1.03, smoothstep(0.95, 0.34, distance(vUv, vec2(0.5))));    // readable centre, softer edge
       gl_FragColor = vec4(col, 1.0);
     }`,
 };
@@ -49,7 +50,7 @@ export function createPostProcessing(renderer, scene, camera) {
     .replace('float factor = ( focus + viewZ );', 'float delta = focus + viewZ;\n\t\t\tfloat factor = sign( delta ) * max( abs( delta ) - sharpZone, 0.0 );');
   bokeh.materialBokeh.needsUpdate = true;
   composer.addPass(bokeh);
-  const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.22, 0.6, 0.93);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.18, 0.48, 0.95);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
   const grain = new ShaderPass(FilmGrainWarmHazeShader);
@@ -67,10 +68,10 @@ export function createPostProcessing(renderer, scene, camera) {
     },
 
     applyPreset(preset) {
-      grain.uniforms.uGrain.value = preset.grain;
-      grain.uniforms.uHaze.value = preset.haze.amount;
+      grain.uniforms.uGrain.value = preset.grain * 0.78;
+      grain.uniforms.uHaze.value = preset.haze.amount * 0.82;
       grain.uniforms.uHazeColor.value.set(...preset.haze.color);
-      bloomBase = preset.bulb ? 0.32 : 0.22;
+      bloomBase = preset.bulb ? 0.26 : 0.18;
     },
 
     setFocus(distance) {

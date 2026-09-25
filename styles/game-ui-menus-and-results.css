@@ -25,14 +25,14 @@
 .card-kicker { margin: 0 0 4px; font: var(--text-xs) var(--font-body); letter-spacing: 0; text-transform: uppercase; color: var(--yellow); }
 .card-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; }
 
-.intro-card { width: min(570px, 100%); padding: 24px; background: var(--ink); border-left: 7px solid var(--yellow); }
+.intro-card { width: min(570px, 100%); padding: 24px; background: rgb(var(--ink-rgb) / .96); border: 1px solid rgb(var(--paper-rgb) / .14); border-left: 7px solid var(--yellow); }
 .intro-card .card-title { color: var(--yellow); font-size: var(--text-3xl); }
 .intro-place { margin: 4px 0 8px; font-size: var(--text-md); color: var(--paper); }
 .intro-blurb { margin: 0 0 16px; max-width: 40ch; font: var(--text-md)/1.4 var(--font-body); }
 .intro-versus { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 .team-chip {
   padding: 4px 8px; font: 700 var(--text-sm) var(--font-body); letter-spacing: 0; color: var(--paper);
-  background: var(--ink-raised); border-radius: 0; border-left: 3px solid var(--chip); border-bottom: 3px solid var(--chip);
+  background: var(--ink-raised); border-radius: 0; border: 1px solid rgb(var(--paper-rgb) / .14); border-left: 3px solid var(--chip); border-bottom: 3px solid var(--chip);
 }
 .vs { font-family: var(--font-chalk); font-size: var(--text-lg); }
 .intro-rules { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 4px; font: var(--text-sm)/1.5 var(--font-body); }
@@ -45,14 +45,14 @@
 .name-field { display: grid; gap: 4px; flex: 1 1 140px; min-width: 0; font: 700 var(--text-xs) var(--font-body); text-transform: uppercase; color: var(--paper-muted); }
 .name-field input {
   width: 100%; min-height: 44px; padding: 8px 12px; font: 700 var(--text-md) var(--font-body); color: var(--paper);
-  background: var(--ink-raised); border: 0; border-left: 3px solid var(--chip); border-bottom: 3px solid var(--chip); border-radius: 0;
+  background: var(--ink-raised); border: 1px solid rgb(var(--paper-rgb) / .14); border-left: 3px solid var(--chip); border-bottom: 3px solid var(--chip); border-radius: 0;
 }
 .name-field input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .intro-names .vs { padding-bottom: 8px; }
 
 .screen-challenge { background: var(--scrim); }
 
-.menu-card { max-width: 400px; text-align: center; background: var(--ink); border-top: 6px solid var(--yellow); }
+.menu-card { max-width: 400px; text-align: center; background: rgb(var(--ink-rgb) / .96); border: 1px solid rgb(var(--paper-rgb) / .14); border-top: 6px solid var(--yellow); }
 .menu-card .card-title { margin-bottom: 16px; }
 /* Pause card: the front holds four actions; "Settings" turns it over to chalk chips on the back. */
 .pause-face:not([hidden]) { animation: pause-card-turn 220ms var(--ease-out) both; }
@@ -74,7 +74,7 @@
 .chip {
   flex: 1 1 0; min-width: 0; min-height: 44px; padding: 6px 8px; cursor: pointer;
   font: 700 var(--text-sm) var(--font-body); color: var(--paper); background: var(--ink-raised);
-  border: 2px solid transparent; border-radius: 0; clip-path: polygon(2% 6%, 98% 0, 100% 90%, 0 100%);
+  border: 2px solid rgb(var(--paper-rgb) / .14); border-radius: 0; clip-path: polygon(2% 6%, 98% 0, 100% 90%, 0 100%);
 }
 .chip:hover { background: var(--ink-pressed); }
 .chip[aria-pressed='true'] { color: var(--ink); background: var(--yellow); }
@@ -84,7 +84,7 @@
 @keyframes pause-card-turn { from { opacity: 0; transform: perspective(700px) rotateY(-70deg); } }
 @media (prefers-reduced-motion: reduce) { .pause-face:not([hidden]) { animation: none; } }
 
-.results-card { max-width: 520px; width: min(720px, 100%); padding: 24px; text-align: center; background: var(--ink); border-top: 6px solid var(--yellow); }
+.results-card { max-width: 520px; width: min(720px, 100%); padding: 24px; text-align: center; background: rgb(var(--ink-rgb) / .96); border: 1px solid rgb(var(--paper-rgb) / .14); border-top: 6px solid var(--yellow); }
 .results-card .card-actions { justify-content: center; }
 .results-card .results-title { font-size: var(--text-3xl); color: var(--paper); }
 /* Full-time score in the same team-tinted chalk as the table. */
