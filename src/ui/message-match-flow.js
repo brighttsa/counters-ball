@@ -97,6 +97,7 @@ export function createMessageMatchFlow(deps) {
       const onLetter = letters.onLetter;
       letters.onLetter = async (letter) => {
         const packed = packLetter(letter);
+        hud.event('YOUR FLICK IS IN', { priority: 5, duration: 1.4, detail: `${names[mySide]} · waiting for the answer` });
         await sendLiveRoomTurn(api, id, packed);
         seen = letter.seq;
       };
