@@ -44,7 +44,11 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     async create() { status('Creating your room…'); try { open(await createLiveRoom(api, { levelId: level.id, homeName: $('live-room-name').value })); status('Room ready. Send the invite code.'); } catch { status('Could not create a room. Check your connection.'); } },
     async join() { const id = $('live-room-code').value.trim(); if (!id) return status('Paste a room code first.'); status('Joining room…'); try { open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { status(error.status === 409 ? 'That room is full.' : 'Could not join that room.'); } },
     async ready() { const room = await readLiveRoom(api, roomId); const next = !room.room.seats[seat].ready; await setLiveRoomReady(api, roomId, seat, next); render((await readLiveRoom(api, roomId)).room); },
-    async copy() { try { await navigator.clipboard.writeText(invite); status('Invite copied. Your friend can join the room.'); } catch { status(invite); } },
+    async copy() {
+      const message = `Join me for a live KONK! match at ${level.name}. Tap this invite, choose your name, and ready up: ${invite}`;
+      try { await navigator.clipboard.writeText(message); status('Live match invite copied. Send it to your opponent.'); }
+      catch { status(message); }
+    },
     back() { clearInterval(timer); roomId = null; seat = null; showTitle(); },
   };
 }
