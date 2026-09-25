@@ -41,6 +41,14 @@ export function heartbeatLiveRoom(base, id, seat, fetchImpl) {
   return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat }) }, fetchImpl);
 }
 
+export function sendLiveRoomTurn(base, id, letter, fetchImpl) {
+  return call(base, `/rooms/${id}/turn`, { method: 'POST', body: JSON.stringify({ letter }) }, fetchImpl);
+}
+
+export function readLiveRoomTurn(base, id, fetchImpl) {
+  return call(base, `/rooms/${id}/turn`, {}, fetchImpl);
+}
+
 export function roomLink(baseUrl, id) {
   return ROOM_ID.test(id ?? '') ? `${baseUrl}?room=${id}` : '';
 }

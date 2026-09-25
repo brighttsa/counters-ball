@@ -22,6 +22,7 @@ export class KonkMatch extends DurableObject {
     if (pathname === '/room/join') return this.roomJoin(request);
     if (pathname === '/room/ready') return this.roomReady(request);
     if (pathname === '/room/heartbeat') return this.roomHeartbeat(request);
+    if (pathname === '/room/turn') return this.roomTurn(request);
     const latest = await this.ctx.storage.get('latest');
     if (request.method === 'GET') return latest ? json({ letter: latest, seq: latest.k }) : json({ error: 'no such match' }, 404);
 
@@ -80,6 +81,22 @@ export class KonkMatch extends DurableObject {
     return json({ room: publicRoom(room) });
   }
 
+  async roomTurn(request) {
+    if (request.method === 'GET') {
+      const letter = await this.ctx.storage.get('room:letter');
+      return letter ? json({ letter, seq: letter.k }) : json({ error: 'match has not started' }, 404);
+    }
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const body = await request.json();
+    const previous = await this.ctx.storage.get('room:letter');
+    const verdict = previous ? checkNextLetter(previous, body.letter) : checkOpeningLetter(body.letter);
+    if (!verdict.ok) return json({ error: verdict.error, ...(previous ? { letter: previous, seq: previous.k } : {}) }, verdict.status);
+    await this.ctx.storage.put('room:letter', body.letter);
+    const room = await this.ctx.storage.get('room');
+    if (room) { room.phase = body.letter.ra[0] === 1 ? 'ended' : 'playing'; room.updatedAt = Date.now(); await this.ctx.storage.put('room', room); }
+    return json({ seq: body.letter.k }, previous ? 200 : 201);
+  }
+
   async subscribe(latest, { side, subscription, id }) {
     const clean = cleanSubscription(subscription);
     if (!latest) return json({ error: 'no such match' }, 404);
@@ -128,9 +145,10 @@ async function route(request, env) {
 
   if (parts[0] === 'rooms') {
     if (!id || !ROOM_ID.test(id)) return json({ error: 'room not found' }, 404);
-    const target = action === 'join' ? '/room/join' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : '/room';
+    const target = action === 'join' ? '/room/join' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
     if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
-    if (request.method === 'POST' && ['join', 'ready', 'heartbeat'].includes(action)) return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: await request.text() });
+    if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch('https://match/room/turn');
+    if (request.method === 'POST' && ['join', 'ready', 'heartbeat', 'turn'].includes(action)) return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: await request.text() });
     return json({ error: 'not found' }, 404);
   }
 
