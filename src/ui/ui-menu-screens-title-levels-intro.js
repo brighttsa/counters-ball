@@ -6,7 +6,7 @@ import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
 import { featuredActCopy } from '../levels/featured-home-legends-act.js?v=2';
-import { MENU_COPY, STAR_SVG, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js?v=2';
+import { MENU_COPY, STAR_SVG, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js?v=3';
 
 const $ = (id) => document.getElementById(id);
 const ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };

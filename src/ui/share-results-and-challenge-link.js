@@ -5,7 +5,7 @@
 import { SIDE_HOME } from '../core/pitch-dimensions-and-constants.js';
 import { encodeChallenge, markText } from '../core/challenge-link-codec-and-comparison.js';
 import { drawResultsShareCard, loadShareCardFonts } from './results-share-card-canvas.js';
-import { RESULTS_COPY } from './konk-interface-copy.js';
+import { RESULTS_COPY } from './konk-interface-copy.js?v=3';
 
 const venueOf = (level) => (level.legend ? `${level.name}, Act ${level.legend.act}` : level.name);
 

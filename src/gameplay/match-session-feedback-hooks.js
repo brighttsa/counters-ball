@@ -82,6 +82,12 @@ export function wireMatchFeedback(session) {
   };
 
   physics.onGoalScored = (sign) => rules.registerGoal(sign);
+  physics.onGoalDenied = () => {
+    const hint = session.mechanic?.hint;
+    if (!hint || options.isAttract) return;
+    hud.event('NOT YET', { priority: 7, duration: 1.6, detail: hint.label });
+    session.schedule(1.6, () => hud.event(hint.label, { priority: 2, duration: 1.8, detail: hint.detail }));
+  };
   physics.onStep = (dt) => {
     if (rules.phase === 'moving') session.presentation.skills.update(dt, session.ballBody);
     if (rules.phase === 'moving') session.mechanic?.observe(session.ballBody);
@@ -135,6 +141,7 @@ export function wireMatchFeedback(session) {
     if (venueLabel) session.presentation.highlight = { ...session.presentation.highlight, label: venueLabel,
       replay: true, direction: scorer === SIDE_HOME ? 1 : -1 };
     const highlight = venueLabel || skillLabel;
+    session.lastShotStory = highlight || 'GOAL';
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
     sound.netCatch?.(screenPan(session.camera, goalX, 0)); // the ball settling in the net, under the whistle
     sound.whistle();
@@ -165,6 +172,7 @@ export function wireMatchFeedback(session) {
   });
 
   rules.on('end', (result) => {
+    result.shotStory = session.lastShotStory || '';
     shotMemory.finish(result);
     session.ai.cancel();
     session.input.cancel();
