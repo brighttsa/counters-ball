@@ -75,6 +75,19 @@ body.is-loading #game-canvas { opacity: 0; }
   text-transform: uppercase;
 }
 body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-events: none; }
+/* Core control scale: every fixed utility control reads from the same viewport-aware rhythm. */
+:root {
+  --control-size: clamp(44px, 5.2vw, 54px);
+  --control-icon-size: clamp(20px, 2.4vw, 24px);
+  --control-edge-pad: clamp(12px, 2vw, 18px);
+}
+@media (orientation: landscape) and (max-height: 360px) {
+  :root {
+    --control-size: 44px;
+    --control-icon-size: 20px;
+    --control-edge-pad: 10px;
+  }
+}
 .noscript { position: fixed; inset: auto 0 40% 0; text-align: center; font-size: var(--text-xl); }
 
 /* ---- Buttons: slanted ink tags ---- */
@@ -105,7 +118,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 }
 
 .icon-btn {
-  pointer-events: auto; box-sizing: border-box; width: 46px; height: 46px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  pointer-events: auto; box-sizing: border-box; width: var(--control-size); height: var(--control-size); padding: 0; display: grid; place-items: center; cursor: pointer;
   border-radius: 0; border: 2px solid var(--paper); background: rgb(var(--ink-rgb) / .88); color: var(--paper);
   box-shadow: 0 8px 18px rgb(var(--ink-rgb) / .28);
   font-family: var(--font-display); font-size: var(--text-md); backdrop-filter: blur(6px);
@@ -113,13 +126,13 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 }
 .icon-btn:active { transform: scale(0.92); }
 .icon-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; box-shadow: 0 0 0 5px rgb(var(--ink-rgb) / .8); }
-.icon-btn svg { width: 1em; height: 1em; }
+.icon-btn svg { width: var(--control-icon-size); height: var(--control-icon-size); }
 .sound-btn {
-  position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
-  width: 54px; height: 54px; border: 2px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82);
+  position: fixed; z-index: 40; right: max(var(--control-edge-pad), env(safe-area-inset-right)); bottom: max(var(--control-edge-pad), env(safe-area-inset-bottom));
+  border: 2px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82);
 }
 .sound-btn:hover { border-color: var(--yellow); color: var(--yellow); }
-.sound-btn .sound-icon { width: 24px; height: 24px; }
+.sound-btn .sound-icon { width: var(--control-icon-size); height: var(--control-icon-size); }
 .sound-btn.muted { opacity: 0.55; }
 .sound-btn.muted .sound-icon { opacity: 0.5; }
 
@@ -156,7 +169,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 .flick-meter b { font: 700 var(--text-sm) var(--font-body); color: var(--paper); min-width: 2ch; text-align: center; }
 .flick-meter b.low { color: var(--warning); }
 .flick-meter b.low-attention { animation: low-attention 600ms ease-out; }
-.pause-btn { position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); }
+.pause-btn { position: absolute; top: max(var(--control-edge-pad), env(safe-area-inset-top)); right: max(var(--control-edge-pad), env(safe-area-inset-right)); }
 
 .turn-banner {
   position: absolute; bottom: max(20px, env(safe-area-inset-bottom)); left: 16px;
@@ -218,7 +231,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 @media (max-width: 640px), (pointer: coarse) and (max-height: 500px) {
   .scoreboard { min-height: 52px; }
   .flick-meter { white-space: nowrap; }
-  .icon-btn { width: 48px; height: 48px; touch-action: manipulation; }
+  .icon-btn { touch-action: manipulation; }
 }
 @media (max-width: 560px) {
   .scoreboard, .flick-meter { left: 12px; transform: none; width: calc(100% - 78px); }

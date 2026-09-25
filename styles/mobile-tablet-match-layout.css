@@ -18,8 +18,8 @@
 
 /* Reserve the perimeter for controls; the pitch stays a single touch surface. */
 @media (max-width: 1100px), (pointer: coarse) {
-  .ink-game .hud-layer .pause-btn { top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); bottom: auto; left: auto; width: 48px; height: 48px; }
-  .ink-game .sound-btn { bottom: max(12px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); width: 48px; height: 48px; }
+  .ink-game .hud-layer .pause-btn { top: max(var(--control-edge-pad), env(safe-area-inset-top)); right: max(var(--control-edge-pad), env(safe-area-inset-right)); bottom: auto; left: auto; }
+  .ink-game .sound-btn { bottom: max(var(--control-edge-pad), env(safe-area-inset-bottom)); right: max(var(--control-edge-pad), env(safe-area-inset-right)); }
   .ink-game .hud-layer .turn-banner { top: auto; bottom: max(12px, env(safe-area-inset-bottom)); left: max(12px, env(safe-area-inset-left)); right: auto; width: fit-content; max-width: calc(100% - 84px); min-height: 48px; display: flex; align-items: center; padding: 8px 12px; transform: none; }
   body:has(canvas.aiming) .legend-objective,
   body:has(canvas.aiming) #tutorial-hand { visibility: hidden; }
@@ -86,7 +86,10 @@
   .ink-game .turn-dot { grid-row: 1 / span 2; width: 5px; height: 100%; min-height: 34px; border-radius: 999px; }
   .ink-game .turn-dot.home { grid-column: 1; }
   .ink-game .turn-dot.away { grid-column: 5; }
-  .ink-game .flick-meter { top: calc(max(var(--mobile-landscape-edge-pad), env(safe-area-inset-top)) + 50px); height: 24px; padding: 4px 10px; gap: 8px; }
+  .ink-game .flick-meter {
+    top: calc(max(var(--mobile-landscape-edge-pad), env(safe-area-inset-top)) + 50px);
+    height: 26px; align-items: center; padding: 3px 10px 5px; gap: 8px; line-height: 1;
+  }
   .ink-game .legend-objective { top: max(var(--mobile-landscape-edge-pad), env(safe-area-inset-top)); bottom: auto; left: calc(max(var(--mobile-landscape-edge-pad), env(safe-area-inset-left)) + clamp(244px, 38vw, 330px) + 10px); right: max(76px, calc(env(safe-area-inset-right) + 64px)); transform: none; width: auto; padding: 4px 8px; }
   .ink-game .hud-layer .pause-btn { top: max(var(--mobile-landscape-edge-pad), env(safe-area-inset-top)); right: max(var(--mobile-landscape-edge-pad), env(safe-area-inset-right)); }
   .player-camera { bottom: max(var(--mobile-landscape-edge-pad), env(safe-area-inset-bottom)); right: max(78px, calc(env(safe-area-inset-right) + 66px)); width: 250px; }
@@ -101,7 +104,10 @@
   .ink-game .scoreboard { min-height: 48px; box-shadow: 0 2px 0 var(--yellow); }
   .ink-game .score-digits { font-size: var(--text-lg); min-width: 54px; }
   .ink-game .team-name { font-size: 9px; }
-  .ink-game .flick-meter { top: calc(max(var(--mobile-landscape-edge-pad), env(safe-area-inset-top)) + 48px); height: 22px; font-size: 11px; }
+  .ink-game .flick-meter {
+    top: calc(max(var(--mobile-landscape-edge-pad), env(safe-area-inset-top)) + 48px);
+    height: 24px; align-items: center; padding-block: 3px 5px; font-size: 11px; line-height: 1;
+  }
   .ink-game .legend-objective { max-height: 42px; overflow: hidden; }
   .ink-game .goal-banner { left: max(var(--mobile-landscape-edge-pad), env(safe-area-inset-left)); bottom: 70px; max-width: calc(100% - 92px); padding: 6px 10px; gap: 2px; }
   .ink-game .goal-word { font-size: var(--text-xl); line-height: 1; }

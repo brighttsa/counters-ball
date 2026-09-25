@@ -2,15 +2,18 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Non-scrolling levels landscape fit",
+  "task": "Adaptive viewport controls and non-scrolling settings",
   "status": "released",
   "paths": [
-    "styles/circuit-venue-preview.css",
+    "styles/game-ui-base-and-hud.css",
+    "styles/mobile-tablet-match-layout.css",
+    "styles/match-hud-one-frame-and-aim-fade.css",
     "styles/ink-impact-home.css",
+    "styles/game-ui-menus-and-results.css",
     "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T10:58:00Z",
-  "head": "229e6c241d5370c3d9df487f3282308079025a01"
+  "updatedAt": "2026-09-25T11:21:00Z",
+  "head": "4631c9a7b470e24284f3ed42bd50e0ab0b53f4f6"
 }

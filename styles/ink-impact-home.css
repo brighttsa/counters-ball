@@ -176,7 +176,7 @@
     row-gap: 5px;
     padding:
       max(12px, calc(env(safe-area-inset-top) + 8px))
-      max(72px, calc(env(safe-area-inset-right) + 14px))
+      max(calc(var(--control-size) + 18px), calc(env(safe-area-inset-right) + var(--control-size) + 14px))
       max(12px, calc(env(safe-area-inset-bottom) + 8px))
       max(clamp(34px, 5vw, 62px), calc(env(safe-area-inset-left) + 14px));
   }
@@ -215,7 +215,7 @@
   .home-secondary .btn {
     min-height: 40px;
     padding: 7px 6px;
-    font-size: 11px;
+    font-size: clamp(10px, 1.55vw, 12px);
     line-height: 1.05;
     white-space: nowrap;
   }
@@ -243,7 +243,7 @@
     grid-template-columns: minmax(116px, 32vw) minmax(0, 1fr);
     column-gap: 10px;
     padding-top: max(8px, calc(env(safe-area-inset-top) + 6px));
-    padding-right: max(64px, calc(env(safe-area-inset-right) + 12px));
+    padding-right: max(calc(var(--control-size) + 18px), calc(env(safe-area-inset-right) + var(--control-size) + 12px));
     padding-bottom: max(8px, calc(env(safe-area-inset-bottom) + 6px));
     padding-left: max(46px, calc(env(safe-area-inset-left) + 12px));
     row-gap: 3px;
@@ -280,7 +280,7 @@
     column-gap: 14px;
     row-gap: 4px;
     padding-left: max(24px, calc(env(safe-area-inset-left) + 12px));
-    padding-right: max(64px, calc(env(safe-area-inset-right) + 12px));
+    padding-right: max(calc(var(--control-size) + 18px), calc(env(safe-area-inset-right) + var(--control-size) + 12px));
   }
   .home-logo { width: min(100%, clamp(158px, 28vw, 210px)); }
   .home-location { gap: 7px; font-size: 12px; }
