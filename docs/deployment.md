@@ -53,6 +53,8 @@ Live at `https://konk-match-server.konk-match-server.workers.dev` (Cloudflare ac
   nameservers `fay.ns.cloudflare.com` and `milan.ns.cloudflare.com` (set as Custom DNS at Namecheap).
 - Records (proxied): apex A `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (GitHub Pages);
   `www` CNAME `brighttsa.github.io`. SSL/TLS mode: Automatic (Full / Full strict to GitHub Pages).
+- Caching → Browser Cache TTL: **Respect Existing Headers** (GitHub's `max-age=600`). Cloudflare's default 4 h
+  kept returning players on old modules for hours after a deploy.
 - The old Namecheap email-forwarding MX/TXT records were imported but Namecheap forwarding no longer runs while DNS is
   on Cloudflare; use Cloudflare Email Routing if @konk.world mail is needed.
 - Cloudflare serves every request; only `konk.world/m/*` goes to the match server Worker (link previews), the rest is
