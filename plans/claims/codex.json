@@ -2,15 +2,13 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Remove readable table words",
+  "task": "Home secondary buttons spacing",
   "status": "released",
   "paths": [
-    "src/scene/table-surface-texture-painters.js",
-    "src/scene/table-surface-material-wear-painter.js",
-    "src/scene/ruler-seesaw-and-chalk-telegraph.js",
-    "tests/venue-surface-profiles.test.mjs",
-    "plans/agent-handoff-board.md"
+    "styles/ink-impact-home.css",
+    "plans/agent-handoff-board.md",
+    "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T01:03:19Z",
+  "updatedAt": "2026-09-25T01:56:00Z",
   "head": "36ef6b32f35cb2b4e6ea6864d959fe2119dd4b3e"
 }
