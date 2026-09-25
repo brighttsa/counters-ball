@@ -2,19 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Mobile landscape safe padding balance",
+  "task": "Non-scrolling levels landscape fit",
   "status": "released",
   "paths": [
-    "styles/game-ui-base-and-hud.css",
-    "styles/game-ui-menus-and-results.css",
+    "styles/circuit-venue-preview.css",
     "styles/ink-impact-home.css",
-    "styles/mobile-tablet-match-layout.css",
-    "styles/match-hud-one-frame-and-aim-fade.css",
-    "src/ui/menu-button-action-routes.js",
     "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T10:33:00Z",
-  "head": "6c3e8fda30dc7670376b60b6ba14b84b3335c391"
+  "updatedAt": "2026-09-25T10:58:00Z",
+  "head": "229e6c241d5370c3d9df487f3282308079025a01"
 }
