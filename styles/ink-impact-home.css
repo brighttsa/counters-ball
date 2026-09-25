@@ -26,6 +26,8 @@
 .home-live .play-arrow { grid-column: 2; grid-row: 1 / span 2; }
 @media (hover: hover) {
   .screen-title .home-live:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); transform: translateY(-1px); box-shadow: 0 8px 18px rgb(var(--ink-rgb) / .24); }
+  .screen-title .home-live:hover span,
+  .screen-title .home-live:hover small { color: var(--ink); }
 }
 .screen-title .home-live:focus-visible { position: relative; z-index: 2; }
 .home-secondary {
