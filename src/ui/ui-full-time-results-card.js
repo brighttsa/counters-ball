@@ -4,7 +4,7 @@
 // every Street Legends venue shares this card.
 import { SIDE_HOME } from '../core/pitch-dimensions-and-constants.js';
 import { streetLegendRetryCue } from '../levels/street-legends-flow-retry-cues.js';
-import { RESULTS_COPY, resultTitle, starGoals } from './konk-interface-copy.js';
+import { RESULTS_COPY, resultTitle, starGoals } from './konk-interface-copy.js?v=2';
 
 const $ = (id) => document.getElementById(id);
 const STAR_REVEAL_DELAY_MS = 650;
