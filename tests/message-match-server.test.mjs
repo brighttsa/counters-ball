@@ -120,3 +120,11 @@ test('push availability: ask, already on, blocked, unsupported, or install to Ho
   assert.equal(pushAvailability(win({ push: false, ua: iphone })), 'install', 'Safari tab on iPhone');
   assert.equal(pushAvailability(win({ ua: iphone, standalone: true })), 'ready', 'installed Home Screen app');
 });
+
+test('Apple devices share the bare link so iMessage builds a preview; others keep the text', async () => {
+  const { prefersBareLinks } = await import('../src/ui/friend-match-invite-share.js');
+  assert.equal(prefersBareLinks({ userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Safari' }), true);
+  assert.equal(prefersBareLinks({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari' }), true);
+  assert.equal(prefersBareLinks({ userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) Chrome' }), false);
+  assert.equal(prefersBareLinks({ userAgent: 'Mozilla/5.0 (Windows NT 10.0) Chrome' }), false);
+});

@@ -10,6 +10,13 @@ export function buildFriendInvite(level, mode, baseUrl) {
   };
 }
 
+// iMessage only builds a rich link preview when the message is the link alone, so Apple devices share and
+// copy the bare link; elsewhere (WhatsApp, Telegram…) the line of text rides along above the preview.
+export function prefersBareLinks(nav = globalThis.navigator) {
+  const ua = nav?.userAgent ?? '';
+  return /iPhone|iPad|iPod|Macintosh/.test(ua) && !/Android/.test(ua);
+}
+
 export class FriendMatchInviteShare {
   constructor(statusEl, copy = { shared: 'Invite shared.', copied: 'Invite copied. Send it before your friend starts talking.' }) {
     this.status = statusEl;
@@ -27,7 +34,7 @@ export class FriendMatchInviteShare {
     const { text, url } = this.pending;
     try {
       if (navigator.share) {
-        await navigator.share({ text, url });
+        await navigator.share(prefersBareLinks() ? { url } : { text, url });
         this.report(this.copyText.shared);
       } else await this.copy();
     } catch (error) {
@@ -37,7 +44,7 @@ export class FriendMatchInviteShare {
 
   async copy() {
     if (!this.pending) return;
-    const message = `${this.pending.text} ${this.pending.url}`;
+    const message = prefersBareLinks() ? this.pending.url : `${this.pending.text} ${this.pending.url}`;
     try {
       await navigator.clipboard.writeText(message);
       this.report(this.copyText.copied);
