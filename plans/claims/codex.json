@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Premium game UI feel pass",
+  "task": "Premium mobile UI follow-up audit",
   "status": "released",
   "paths": [
     "styles/game-ui-base-and-hud.css",
@@ -15,6 +15,6 @@
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T02:50:00Z",
+  "updatedAt": "2026-09-25T03:14:00Z",
   "head": "36ef6b32f35cb2b4e6ea6864d959fe2119dd4b3e"
 }
