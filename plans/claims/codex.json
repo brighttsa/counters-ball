@@ -2,18 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Adaptive viewport controls and non-scrolling settings",
+  "task": "Friend Match landscape button fit",
   "status": "released",
   "paths": [
-    "styles/game-ui-base-and-hud.css",
-    "styles/mobile-tablet-match-layout.css",
-    "styles/match-hud-one-frame-and-aim-fade.css",
-    "styles/ink-impact-home.css",
     "styles/game-ui-menus-and-results.css",
     "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T11:21:00Z",
-  "head": "4631c9a7b470e24284f3ed42bd50e0ab0b53f4f6"
+  "updatedAt": "2026-09-25T16:14:00Z",
+  "head": "ae1f12299f1e229af36af1e7193b82ed10d3b417"
 }
