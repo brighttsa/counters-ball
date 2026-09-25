@@ -18,6 +18,7 @@ export class MatchMomentumLayer {
     this.heat = 0;
     this.tension = false;
     this.active = false;
+    this.paused = false;
     this.pulseTimer = null;
     this.droneNodes = null;
   }
@@ -40,6 +41,10 @@ export class MatchMomentumLayer {
     this.stopDrone();
   }
 
+  setPaused(paused) {
+    this.paused = paused;
+  }
+
   setHeat(value) {
     this.heat = Math.max(0, Math.min(1, value));
     if (this.active && this.heat > 0.15 && !this.pulseTimer) this.schedulePulse();
@@ -55,7 +60,7 @@ export class MatchMomentumLayer {
 
   schedulePulse() {
     if (!this.active || !this.ctx) return;
-    if (this.heat < 0.1) {
+    if (this.paused || this.heat < 0.1) {
       this.pulseTimer = setTimeout(() => this.schedulePulse(), 800);
       return;
     }

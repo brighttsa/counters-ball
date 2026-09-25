@@ -2,7 +2,9 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { isAbsolute, relative, resolve, sep } from 'node:path';
 
-export const GIT = '/Library/Developer/CommandLineTools/usr/bin/git';
+// Pinned to Apple's Command Line Tools git on the Mac; CI runners (Linux) have git on PATH instead.
+const MAC_GIT = '/Library/Developer/CommandLineTools/usr/bin/git';
+export const GIT = existsSync(MAC_GIT) ? MAC_GIT : 'git';
 export function git(cwd, args) {
   const output = execFileSync(GIT, ['-C', cwd, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   return args.includes('-z') ? output : output.trim();

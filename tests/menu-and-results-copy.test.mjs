@@ -15,7 +15,8 @@ function element() {
       this.children = nodes;
       this.textContent = nodes.map((n) => (typeof n === 'string' ? n : n.textContent)).join('');
     },
-    set innerHTML(_) { this.lastChild = element(); },
+    set innerHTML(html) { this.html = html; this.lastChild = element(); },
+    get innerHTML() { return this.html ?? ''; },
   };
 }
 const elements = new Map();
@@ -79,6 +80,8 @@ test('the venue panel names the opponent and the terms on one line, and shows st
   const line = document.getElementById('circuit-venue-opponent').textContent;
   assert.equal(line, `vs ${level.opponent.kid} · Medium · ${level.introLines[0]}`);
   const stars = document.getElementById('circuit-venue-stars');
-  assert.equal(stars.textContent, '★★☆');
+  // Inline SVG stars (Unicode glyphs render inconsistently across platforms): 2 lit of 3.
+  assert.equal((stars.innerHTML.match(/class="star-svg/g) ?? []).length, 3);
+  assert.equal((stars.innerHTML.match(/class="star-svg on"/g) ?? []).length, 2);
   assert.equal(stars.getAttribute('aria-label'), '2 of 3 stars earned');
 });

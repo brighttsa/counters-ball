@@ -17,7 +17,7 @@ const WALL_RESTITUTION_FACTOR = 1 + RAIL_RESTITUTION;
 
 export function wireMatchFeedback(session) {
   const { physics, rules, sound, particles, juice, time, cameraDirector, post, hud, options, level } = session;
-  const versus = options.controllers.home === 'human' && options.controllers.away === 'human';
+  const versus = options.controllers.home !== 'ai' && options.controllers.away !== 'ai'; // hot-seat or by message
   const tableSurface = level.surface?.kind ?? 'cardboard';
   const shotMemory = createSchoolyardShotMemory(level, options);
   const entryByBody = new Map(session.entries.map((e) => [e.body, e]));
@@ -110,13 +110,13 @@ export function wireMatchFeedback(session) {
         hud.event(`${nameOf(side).toUpperCase()}'S FLICK`, { priority: 2, duration: 1.1, detail: MATCH_COPY.handover });
       }
       lastHumanSide = side;
-      if (!options.isAttract && (level.tutorial || needsFirstShotGuidance())) session.showTutorial();
+      if (!options.isAttract && rules.isHuman(side) && (level.tutorial || needsFirstShotGuidance())) session.showTutorial();
     }
   });
 
   rules.on('flick', ({ side }) => {
     syncFlicks();
-    if (!options.isAttract && !rules.isAi(side)) completeFirstShotGuidance();
+    if (!options.isAttract && rules.isHuman(side)) completeFirstShotGuidance();
     session.hideTutorial();
   });
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { existsSync, mkdirSync, openSync, closeSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { context, git, readClaim, normalizePaths, conflicts, changedFiles, ensureClean, claimPath } from './collaboration-state.mjs';
+import { GIT, context, git, readClaim, normalizePaths, conflicts, changedFiles, ensureClean, claimPath } from './collaboration-state.mjs';
 
 const quote = value => `'${value.replaceAll("'", "'\\''")}'`;
 const emit = text => process.stdout.write(`${text}\n`);
@@ -70,7 +70,7 @@ function handoff(ctx) {
   emit(`Working tree: ${dirty.length ? 'WIP remains; only the commit above is handed off' : 'clean'}`);
   emit(git(ctx.root, ['log', '-5', '--oneline']));
   if (ctx.owner === 'codex') {
-    emit(`\nClaude: review and integrate this exact commit, not a moving branch tip:\ncd ${quote(ctx.peer)}\n/Library/Developer/CommandLineTools/usr/bin/git fetch codex\n/Library/Developer/CommandLineTools/usr/bin/git show --stat ${head}\n/Library/Developer/CommandLineTools/usr/bin/git merge --no-edit ${head}`);
+    emit(`\nClaude: review and integrate this exact commit, not a moving branch tip:\ncd ${quote(ctx.peer)}\n${GIT} fetch codex\n${GIT} show --stat ${head}\n${GIT} merge --no-edit ${head}`);
   } else emit('\nCodex: node scripts/collaboration-workflow.mjs sync');
   emit('\nInclude test evidence, preview URL, remaining work and ownership release before sending.');
 }

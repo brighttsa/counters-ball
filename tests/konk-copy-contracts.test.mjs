@@ -9,7 +9,7 @@ import { STREET_LEGENDS_ACTS } from '../src/levels/street-legends-acts-and-unloc
 test('condition copy distinguishes fixed obstacles from an empty obstacle list', () => {
   assert.equal(conditionObstacleCopy(0), MENU_COPY.noObstacles);
   assert.equal(conditionObstacleCopy(3), '3 fixed obstacles');
-  assert.equal(titleStarsCopy(2, 54), '★ 2/54 stars');
+  assert.equal(titleStarsCopy(2, 54), '2/54 stars'); // the star itself is an inline SVG (setTitleStars), not a glyph
   assert.equal(titleStarsCopy(0, 54), 'Six pitches. Six stories to settle.');
 });
 

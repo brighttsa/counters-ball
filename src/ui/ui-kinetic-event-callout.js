@@ -13,7 +13,8 @@ export class KineticEventCallout {
     this.active = { priority, direction: direction < 0 ? -1 : 1,
       fromOpacity: this.active ? this.opacity : 0,
       fromOffset: this.active ? this.offset : (direction < 0 ? 32 : -32),
-      fromScale: this.active ? 1 : 0.97, fromLift: this.active ? 0 : 6,
+      // A replacement starts from wherever the current callout is, so an interruption never snaps.
+      fromScale: this.active ? this.scale : 0.97, fromLift: this.active ? this.lift : 6,
       duration: Math.max(0.2, Number.isFinite(duration) ? duration : 0.9), elapsed: 0 };
     this.word.textContent = label;
     this.sub.textContent = detail;
@@ -35,16 +36,18 @@ export class KineticEventCallout {
     const exit = Math.max(0, 1 - (duration - elapsed) / Math.min(0.16, duration / 3));
     this.offset = this.motion.matches ? 0 : fromOffset * (1 - enter) + direction * exit * 32;
     this.opacity = Math.min(fromOpacity + (1 - fromOpacity) * enter, 1 - exit);
-    const scale = this.motion.matches ? 1 : fromScale + (1 - fromScale) * enter;
-    const lift = this.motion.matches ? 0 : fromLift * (1 - enter);
+    this.scale = this.motion.matches ? 1 : fromScale + (1 - fromScale) * enter;
+    this.lift = this.motion.matches ? 0 : fromLift * (1 - enter);
     this.root.style.opacity = String(this.opacity);
-    this.root.style.transform = `translateX(${this.offset}px) translateY(${lift}px) scale(${scale})`;
+    this.root.style.transform = `translateX(${this.offset}px) translateY(${this.lift}px) scale(${this.scale})`;
   }
 
   clear() {
     this.active = null;
     this.offset = 0;
     this.opacity = 0;
+    this.scale = 1;
+    this.lift = 0;
     this.root.hidden = true;
     this.word.textContent = '';
     this.sub.textContent = '';

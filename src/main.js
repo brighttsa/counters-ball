@@ -19,6 +19,8 @@ import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js';
 import { createMenuActions } from './ui/menu-button-action-routes.js';
+import { createMessageMatchFlow } from './ui/message-match-flow.js';
+import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
@@ -45,6 +47,7 @@ const cameraDirector = new CameraDirector(camera, scene);
 const progress = loadProgress();
 const sound = new ProceduralSoundBoard({ muted: progress.muted });
 const music = new SoundtrackDirector();
+music.prefetch('home');
 const hud = new MatchHud();
 const resultsCard = new FullTimeResultsCard();
 const resultsShare = new ResultsShare(document.getElementById('results-share-status'));
@@ -155,6 +158,15 @@ function previewLevel(index) {
   menus.previewLevel(level, index, unlockedIn(app.mode, index), app.mode);
 }
 
+/** A real match table with the full HUD: shared by solo, 2-Player and Message Match. */
+function openMatchTable(level, sessionOptions, versus) {
+  replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, ...sessionOptions }, hud);
+  sound.setSfxLevel(1);
+  sound.setAmbience(level.backdrop);
+  hud.attachTableChalk(createChalkTableScoreboard(app.session.stage.group, HOME_TEAM.hudColor, level.opponent.team.hudColor));
+  hud.reset(level, HOME_TEAM, level.opponent.team, versus);
+}
+
 /** @param rematch 2-Player Rematch: same table, next game of the series, straight to kick-off */
 function prepareMatch(index, { rematch = false } = {}) {
   const track = trackFor(app.mode);
@@ -164,16 +176,11 @@ function prepareMatch(index, { rematch = false } = {}) {
   const versus = app.mode === 'versus';
   app.levelIndex = index;
   if (app.mode === 'legends') { progress.lastLegendAct = level.id; saveProgress(progress); }
-  replaceSession({
-    level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team,
+  openMatchTable(level, {
     controllers: { home: 'human', away: versus ? 'human' : 'ai' },
     playerNames: versus ? hotSeat.names : undefined,
     onEnd: (result) => showResults(result),
-  }, hud);
-  sound.setSfxLevel(1);
-  sound.setAmbience(level.backdrop);
-  hud.attachTableChalk(createChalkTableScoreboard(app.session.stage.group, HOME_TEAM.hudColor, level.opponent.team.hudColor));
-  hud.reset(level, HOME_TEAM, level.opponent.team, versus);
+  }, versus);
   cameraDirector.playIntro(2.8);
   if (level.practice) app.practice = new KwameCornerCoach(app.session, { onComplete: finishPractice });
   const challenge = challengeFor(level);
@@ -236,9 +243,11 @@ const menus = new MenuScreens((action, el) => {
   actions[action]?.(el);
 });
 const chalkHints = new JustInTimeChalkHints();
+const messageMatch = createMessageMatchFlow({ app, openMatchTable, menus, hud, sound, cameraDirector, showResults, showTitle,
+  baseUrl: `${location.origin}${location.pathname}` });
 const actions = createMenuActions({
   app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints: chalkHints,
-  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch },
+  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch,
 });
 
 window.addEventListener('pointerdown', () => sound.unlock());
@@ -253,9 +262,11 @@ window.addEventListener('keydown', (e) => {
 
 wireSoundtrack({ app, sound, music, menus, progress });
 hud.setStyle(progress.hudStyle);
-app.challenge = takeChallengeFromUrl();
-app.friendInvite = app.challenge ? null : takeFriendInviteFromUrl();
-if (app.challenge) showChallenge(); else if (app.friendInvite) showFriendMatch({ incoming: true }); else showTitle();
+const letter = takeLetterFromUrl();
+app.challenge = letter ? null : takeChallengeFromUrl();
+app.friendInvite = letter || app.challenge ? null : takeFriendInviteFromUrl();
+if (letter) { ensureAttractMode(); if (!messageMatch.open(letter)) showTitle(); } // the match waits for a tap: audio needs a gesture
+else if (app.challenge) showChallenge(); else if (app.friendInvite) showFriendMatch({ incoming: true }); else showTitle();
 startGameRenderLoop({ app, camera, cameraDirector, renderer, post, adaptiveQuality,
   onFrame: (dt) => {
     chalkHints.update(app.session, camera, cameraDirector.playerControl, dt);

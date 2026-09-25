@@ -7,7 +7,8 @@ import { selectSettingsSection } from '../src/ui/pause-card-faces-and-setting-ch
 // The routing table with stand-ins that record what each route asked for.
 function routes() {
   const calls = [], saved = [];
-  const control = { mode: 'broadcast', select(mode) { this.mode = mode; calls.push(['select', mode]); } };
+  const control = { mode: 'broadcast', select(mode) { this.mode = mode; calls.push(['select', mode]); },
+    prefer(mode) { this.mode = mode; calls.push(['prefer', mode]); } };
   const actions = createMenuActions({
     app: { mode: 'legends', session: null }, progress: { stars: {} }, save: (p) => saved.push({ ...p }),
     flow: { prepareMatch: (i) => calls.push(['prepareMatch', i]), featuredIndex: () => 4, setPaused: () => {}, showLevels: () => {} },

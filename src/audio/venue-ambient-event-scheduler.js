@@ -36,7 +36,7 @@ export class VenueAmbientEventScheduler {
   constructor() {
     this.ctx = null;
     this.dest = null;
-    this.timers = [];
+    this.timers = new Set();
     this.venue = null;
     this.paused = false;
   }
@@ -64,12 +64,13 @@ export class VenueAmbientEventScheduler {
   scheduleOne(event) {
     const delay = (event.minGap + Math.random() * (event.maxGap - event.minGap)) * 1000;
     const timer = setTimeout(() => {
+      this.timers.delete(timer);
       if (this.paused || !this.ctx) return;
       const recipe = AMBIENT_RECIPES[event.recipe];
       if (recipe) recipe(this.ctx, this.dest, event.gain);
       this.scheduleOne(event);
     }, delay);
-    this.timers.push(timer);
+    this.timers.add(timer);
   }
 
   setPaused(paused) {
@@ -78,7 +79,7 @@ export class VenueAmbientEventScheduler {
 
   stop() {
     for (const t of this.timers) clearTimeout(t);
-    this.timers = [];
+    this.timers.clear();
   }
 
   dispose() {

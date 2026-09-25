@@ -11,8 +11,9 @@ export function buildFriendInvite(level, mode, baseUrl) {
 }
 
 export class FriendMatchInviteShare {
-  constructor(statusEl) {
+  constructor(statusEl, copy = { shared: 'Invite shared.', copied: 'Invite copied. Send it before your friend starts talking.' }) {
     this.status = statusEl;
+    this.copyText = copy;
     this.pending = null;
   }
 
@@ -27,7 +28,7 @@ export class FriendMatchInviteShare {
     try {
       if (navigator.share) {
         await navigator.share({ text, url });
-        this.report('Invite shared.');
+        this.report(this.copyText.shared);
       } else await this.copy();
     } catch (error) {
       if (error?.name !== 'AbortError') await this.copy();
@@ -39,7 +40,7 @@ export class FriendMatchInviteShare {
     const message = `${this.pending.text} ${this.pending.url}`;
     try {
       await navigator.clipboard.writeText(message);
-      this.report('Invite copied. Send it before your friend starts talking.');
+      this.report(this.copyText.copied);
     } catch {
       this.report(`Send this link: ${this.pending.url}`);
     }

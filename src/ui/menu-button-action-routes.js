@@ -12,7 +12,7 @@ const ARM_SECONDS = 4;
  */
 const VIEWS = ['tactical', 'broadcast', 'street', 'free'];
 
-export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints }) {
+export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, menus, hints, messageMatch }) {
   const audio = () => { save(progress); applyAudioSettings({ progress, sound, music, menus }); };
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
   // The chips on the back of the pause card. Unknown values are ignored, so a stale chip can't save junk.
@@ -28,8 +28,10 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     effects: (value) => { progress.effectsOff = value === 'off'; progress.muted = false; audio(); },
     view: (value) => {
       if (!VIEWS.includes(value)) return;
-      cameraDirector.playerControl.select(value); // the match shows the new view on Resume
-      markChoice('view', cameraDirector.playerControl.mode);
+      const pc = cameraDirector.playerControl;
+      if (pc.active) pc.select(value);
+      else pc.prefer(value);
+      markChoice('view', pc.mode);
     },
     motion: (value) => {
       cameraDirector.setMotion(value === 'on');
@@ -60,7 +62,6 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     el.dataset.label = el.textContent;
     el.textContent = prompt;
     el.disarmTimer = setTimeout(() => disarm(el), ARM_SECONDS * 1000);
-    el.disarmTimer?.unref?.();
     armed.add(el);
     return false;
   };
@@ -145,6 +146,12 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
       flow.prepareMatch(app.challenge.index);
     },
     'challenge-decline': () => flow.showTitle(),
+    'letter-start': () => messageMatch.start(app.levelIndex),
+    'letter-watch': () => messageMatch.watch(),
+    'letter-send': () => messageMatch.send(),
+    'letter-copy': () => messageMatch.copy(),
+    'letter-full-time': () => messageMatch.fullTime(),
+    'letter-home': () => messageMatch.home(),
     'next-level': () => flow.prepareMatch(app.levelIndex + 1),
     'toggle-sound': () => { progress.muted = !progress.muted; audio(); },
   };
