@@ -24,7 +24,29 @@ The workflow takes about 1–2 min (`gh run watch`). Verify: a changed runtime f
 and the live site keeps the previous version. Re-run without a push: `gh workflow run "Deploy game to GitHub Pages"`.
 
 ## Environment variables
-None.
+None for the site.
+
+## Match server (Play by message)
+Cloudflare Worker `konk-match-server` in `match-server/` with one Durable Object (`KonkMatch`) per match;
+free Workers plan (SQLite-backed Durable Objects). It stores each move and accepts a new one only if it continues
+exactly from the stored move, so matches cannot fork. Untouched matches are deleted after 30 days.
+Live at `https://konk-match-server.konk-match-server.workers.dev` (Cloudflare account `4759bac2606b5ee34a3b5deadcd5fd44`).
+
+- API: `POST /matches` (opening move) · `POST /matches/:id/turns` (next move, 409 if the match moved on) · `GET /matches/:id` (latest move).
+- CORS origins: `ALLOWED_ORIGINS` in `match-server/wrangler.toml` (`https://konk.world`, `http://localhost:4180`).
+- The game finds the server via `PRODUCTION_API` in `src/core/message-match-server-transport.js`; on `localhost`
+  it uses `http://localhost:8787`. Empty or unreachable → Play by message falls back to self-contained letter links.
+- Local: `cd match-server && npm install && npm run dev`, then play on `http://localhost:4180`.
+- Deploy: `cd match-server && npx wrangler login` (once) `&& npm run deploy`; put the printed `https://konk-match-server.<account>.workers.dev`
+  URL into `PRODUCTION_API`, then push the site.
+- Push notifications (Web Push, no third-party service): after a move lands, the Worker notifies the player whose turn
+  it now is, if they tapped "Notify me" (`POST /matches/:id/subscribe`). VAPID public key: `VAPID_PUBLIC_KEY` in
+  `wrangler.toml` and `src/core/message-match-push-subscription.js` (must match). Private key: Worker secret
+  `VAPID_PRIVATE_JWK` (never committed). Rotating it means `npx wrangler secret put VAPID_PRIVATE_JWK` plus the new
+  public key in both files; old subscriptions then stop receiving until players tap "Notify me" again.
+- The site ships `sw.js` (shows notifications, caches nothing) and `manifest.webmanifest` (Home Screen install).
+  iPhone/iPad receive web push only when KONK! is opened from the Home Screen (iOS 16.4+).
+- Rollback: `npx wrangler rollback` inside `match-server/`; or set `PRODUCTION_API` to `''` and push to go back to letter links.
 
 ## Custom domain (konk.world)
 - Registrar and DNS: Namecheap (BasicDNS, `dns1/dns2.registrar-servers.com`). Registered 2026-09-24.

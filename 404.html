@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8" />
+<title>KONK!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<script>
+  // Match links (konk.world/m/<id>) are answered by the match server once konk.world's DNS runs through
+  // Cloudflare; until then (or if it is down) GitHub Pages lands here, so forward the match into the game.
+  (function () {
+    var m = location.pathname.match(/^\/m\/([a-km-np-zA-HJ-NP-Z2-9]{10})\/?$/);
+    location.replace(m ? '/?m=' + m[1] : '/');
+  })();
+</script>
+</head><body style="background:#141312;color:#ece1c6;font-family:sans-serif">
+<p><a href="/" style="color:#f5d84a">Go to KONK!</a></p>
+</body></html>
