@@ -55,6 +55,12 @@
 .screen-challenge { background: var(--scrim); }
 
 .menu-card { max-width: 400px; text-align: center; background: rgb(var(--ink-rgb) / .96); border: 1px solid rgb(var(--paper-rgb) / .14); border-top: 6px solid var(--yellow); }
+.menu-card::before,
+.results-card::before,
+.intro-card::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(var(--paper-rgb) / .38), transparent);
+}
 .menu-card .card-title { margin-bottom: 16px; }
 /* Pause card: the front holds four actions; "Settings" turns it over to chalk chips on the back. */
 .pause-face:not([hidden]) { animation: pause-card-turn 220ms var(--ease-out) both; }
