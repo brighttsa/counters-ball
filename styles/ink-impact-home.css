@@ -20,10 +20,14 @@
 .play-arrow { width: 1em; height: 1em; flex-shrink: 0; }
 @media (hover: hover) { .screen-title .btn:hover { background: var(--paper); color: var(--ink); } }
 .screen-title .home-venues { text-align: left; padding: 12px 20px; }
-.screen-title .home-live { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px 12px; min-height: 54px; padding: 10px 20px; background: rgb(var(--paper-rgb) / .12); border: 1px solid rgb(var(--yellow-rgb) / .65); color: var(--paper); text-align: left; }
+.screen-title .home-live { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px 12px; min-height: 54px; width: 100%; padding: 10px 20px; background: rgb(var(--paper-rgb) / .12); border: 1px solid rgb(var(--yellow-rgb) / .65); color: var(--paper); text-align: left; touch-action: manipulation; }
 .home-live span { font: 800 var(--text-lg)/1 var(--font-display); color: var(--yellow); }
 .home-live small { grid-column: 1; margin-top: -4px; font: var(--text-xs)/1.1 var(--font-body); color: var(--paper-muted); }
 .home-live .play-arrow { grid-column: 2; grid-row: 1 / span 2; }
+@media (hover: hover) {
+  .screen-title .home-live:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); transform: translateY(-1px); box-shadow: 0 8px 18px rgb(var(--ink-rgb) / .24); }
+}
+.screen-title .home-live:focus-visible { position: relative; z-index: 2; }
 .home-secondary {
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
 }
