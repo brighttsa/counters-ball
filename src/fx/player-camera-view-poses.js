@@ -100,6 +100,14 @@ function viewBounds(top, bottom) {
   return { x: .95, top: Math.max(.15, 1 - 2 * topPx / height), bottom: -Math.max(.15, 1 - 2 * bottomPx / height) };
 }
 
+export function tacticalViewBounds() {
+  const viewport = typeof window !== 'undefined' ? window : null;
+  if (viewport?.innerWidth / viewport?.innerHeight > .95 && viewport.innerHeight <= 600) {
+    return { x: .98, top: .82, bottom: -.82 };
+  }
+  return viewBounds();
+}
+
 // Broadcast is a TV-style side-on view fitted as tight as the screen allows around both goals (the
 // lorries that carry them on lorry acts) and the table's full width, between the scoreboard and the
 // bottom controls. The table fills the frame; the rail ends behind the goals and the room around them
@@ -176,5 +184,5 @@ export function playerCameraPose(camera, mode, session, selected, viewer = sessi
   // screen "up". Every view keeps its sideways offset at zero: any small sideways component rolls or
   // skews the table on screen, and the rails stop running square to the screen edges.
   const direction = portrait ? new THREE.Vector3(-.09, 1, 0) : new THREE.Vector3(0, 1, .09);
-  return centredPitchPose(camera, direction, pitchFramePoints(session), viewBounds());
+  return centredPitchPose(camera, direction, pitchFramePoints(session), tacticalViewBounds());
 }

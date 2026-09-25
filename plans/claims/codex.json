@@ -2,16 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Cohesive mobile landscape and closer table framing",
+  "task": "Closer Tactical camera on mobile landscape",
   "status": "released",
   "paths": [
-    "styles/ink-impact-home.css",
-    "styles/mobile-tablet-match-layout.css",
     "src/fx/player-camera-view-poses.js",
     "tests/mobile-shot-confidence.test.mjs",
     "tests/player-camera-system.test.mjs",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-24T23:57:20Z",
-  "head": "57f9552dd8b4739b4ea37f04d0c6f6da5686540c"
+  "updatedAt": "2026-09-25T00:15:40Z",
+  "head": "a75fc2c4d95cf56989de21fcbf5f8e1014b1c789"
 }
