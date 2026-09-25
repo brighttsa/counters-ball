@@ -2,10 +2,18 @@
 // (low sun + sky bounce + fill, and a warm bulb for night venues).
 import * as THREE from 'three';
 
+export function readViewportSize() {
+  const viewport = window.visualViewport;
+  const width = viewport?.width || document.documentElement.clientWidth || window.innerWidth;
+  const height = viewport?.height || document.documentElement.clientHeight || window.innerHeight;
+  return { width, height };
+}
+
 export function createRendererSceneCamera(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  const { width, height } = readViewportSize();
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(width, height);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -15,7 +23,7 @@ export function createRendererSceneCamera(canvas) {
   scene.background = new THREE.Color(0xd99e63);
   scene.fog = new THREE.Fog(0xd99e63, 5.5, 13.0); // range set by the camera director
 
-  const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 40);
+  const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 40);
   return { renderer, scene, camera };
 }
 

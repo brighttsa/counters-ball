@@ -1,6 +1,14 @@
 // One presentation clock freezes with pause; simulation retains its fixed-step clock.
 import { markChoice } from '../ui/pause-card-faces-and-setting-chips.js';
 
+function readViewportSize() {
+  const viewport = window.visualViewport;
+  return {
+    width: viewport?.width || document.documentElement?.clientWidth || window.innerWidth,
+    height: viewport?.height || document.documentElement?.clientHeight || window.innerHeight,
+  };
+}
+
 /** @param onFrame (dt) => void, after the camera has settled for this frame and before it is drawn */
 export function startGameRenderLoop({ app, camera, cameraDirector, renderer, post, onFrame }) {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -13,19 +21,20 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
   };
   motion.addEventListener('change', syncMotion);
   syncMotion();
-  const hasViewport = () => Number.isFinite(window.innerWidth) && window.innerWidth > 0
-    && Number.isFinite(window.innerHeight) && window.innerHeight > 0;
+  const size = () => readViewportSize();
+  const hasViewport = () => { const { width, height } = size(); return Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0; };
   let suspended = !hasViewport();
   window.addEventListener('resize', () => {
     if (!hasViewport()) {
       suspended = true;
       return;
     }
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const { width, height } = size();
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    post.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(width, height);
+    post.setSize(width, height);
     cameraDirector.fitToViewport();
   });
   let lastFrame = performance.now(), time = 0;
