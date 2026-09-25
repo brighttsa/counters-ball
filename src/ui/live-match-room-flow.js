@@ -35,6 +35,9 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     roomId = result.id ?? roomId; seat = result.seat ?? seat; invite = roomLink(`${baseUrl}`, roomId);
     $('live-room-code').value = roomId; $('live-room-code').readOnly = true;
     $('live-room-name').readOnly = true; $('live-room-venue').textContent = currentLevel.name;
+    $('live-room-line').textContent = seat === 'home'
+      ? 'You are hosting this table. Send the invite, then ready up together.'
+      : 'You joined as the challenger. Confirm your name, then ready up.';
     document.querySelector('[data-action="live-room-create"]').disabled = true;
     document.querySelector('[data-action="live-room-join"]').disabled = true;
     document.querySelector('[data-action="live-room-copy"]').hidden = false;
@@ -42,7 +45,7 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     render(result.room); startPolling();
   };
   return {
-    show(nextLevel = currentLevel) { currentLevel = nextLevel; started = false; document.querySelectorAll('[data-screen]').forEach((screen) => screen.classList.toggle('is-active', screen.dataset.screen === 'live-room')); $('live-room-venue').textContent = currentLevel.name; $('live-room-name').readOnly = false; $('live-room-code').readOnly = false; $('live-room-code').value = ''; $('live-room-status').textContent = ''; document.querySelector('[data-action="live-room-create"]').disabled = false; document.querySelector('[data-action="live-room-join"]').disabled = false; document.body.dataset.screen = 'live-room'; },
+    show(nextLevel = currentLevel) { currentLevel = nextLevel; started = false; document.querySelectorAll('[data-screen]').forEach((screen) => screen.classList.toggle('is-active', screen.dataset.screen === 'live-room')); $('live-room-venue').textContent = currentLevel.name; $('live-room-line').textContent = 'Host the table or join a rival with a code. You will each see your own side during the match.'; $('live-room-name').readOnly = false; $('live-room-code').readOnly = false; $('live-room-code').value = ''; $('live-room-status').textContent = ''; document.querySelector('[data-action="live-room-create"]').disabled = false; document.querySelector('[data-action="live-room-join"]').disabled = false; document.body.dataset.screen = 'live-room'; },
     open(id) { this.show(); $('live-room-code').value = id; this.join(); },
     async create() { status('Creating your room…'); try { const result = await createLiveRoom(api, { levelId: currentLevel.id, homeName: $('live-room-name').value }); open(result); status(`Room created. Your code is ${result.id}. Send the invite.`); } catch { status('Could not create a room. Check your connection.'); } },
     async join() { const id = $('live-room-code').value.trim(); if (!id) return status('Paste a room code first.'); status('Joining room…'); try { open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { status(error.status === 409 ? 'That room is full. Ask the host for a fresh invite.' : 'Could not join that room. Check the code and your connection.'); } },
