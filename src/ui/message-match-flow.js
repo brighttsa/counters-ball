@@ -149,7 +149,7 @@ export function createMessageMatchFlow(deps) {
       try {
         const letter = { ...outgoing, taunt: card.readTaunt() };
         const url = sentUrl ?? await upload(packLetter(letter)) ?? encodeLetterLink(letter, deps.baseUrl);
-        if (url.includes('?m=')) sentUrl = url;
+        if (url.includes('/m/')) sentUrl = url; // a short match link: resending reuses it
         card.prepare(letter, url);
         await card.share.share();
         if (sentUrl && letter.rulesAfter.phase !== 'ended') offerNotifications(letter.by, letter.names[other(letter.by)]);
@@ -166,7 +166,7 @@ export function createMessageMatchFlow(deps) {
       const letter = { ...outgoing, taunt: card.readTaunt() };
       try {
         const url = sentUrl ?? await upload(packLetter(letter)) ?? encodeLetterLink(letter, deps.baseUrl);
-        if (url.includes('?m=')) sentUrl = url;
+        if (url.includes('/m/')) sentUrl = url; // a short match link: resending reuses it
         card.prepare(letter, url);
         await card.share.copy();
         if (sentUrl && letter.rulesAfter.phase !== 'ended') offerNotifications(letter.by, letter.names[other(letter.by)]);

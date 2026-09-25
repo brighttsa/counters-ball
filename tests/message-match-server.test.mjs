@@ -69,7 +69,7 @@ test('the client talks to the server and surfaces conflicts with the latest move
 });
 
 test('short links carry only the match id and are stripped on open', () => {
-  assert.equal(shortMatchLink('https://konk.world/', 'abcdefghij'), 'https://konk.world/?m=abcdefghij');
+  assert.equal(shortMatchLink('https://konk.world/', 'abcdefghij'), 'https://konk.world/m/abcdefghij');
   let replaced = null;
   const hist = { replaceState: (_s, _t, url) => { replaced = url; } };
   assert.equal(takeMatchIdFromUrl({ search: '?m=abcdefghij', href: 'https://konk.world/?m=abcdefghij' }, hist), 'abcdefghij');

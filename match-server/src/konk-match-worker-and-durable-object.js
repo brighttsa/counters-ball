@@ -3,10 +3,14 @@
 //   POST /matches/:id/turns  { letter }  → 200 { seq } | 409      appends the next move, strictly in order
 //   GET  /matches/:id                    → 200 { letter, seq }    the latest move (what a short link opens)
 //   POST /matches/:id/subscribe { side, subscription } → 204        Web Push for that side's "your move"
+//   GET  /m/:id           → preview page (Open Graph tags + redirect into the game)
+//   GET  /m/:id/card.png  → the score card chat apps show for that link
 // The Durable Object handles one request at a time, so two replies to the same move can never both land.
 import { DurableObject } from 'cloudflare:workers';
 import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMatchId, pushMessageFor } from './match-turn-ledger-rules.js';
 import { cleanSubscription, sendPush } from './web-push-vapid-and-aes128gcm.js';
+import { describeMatch, previewPageHtml, scoreCardSvg } from './match-link-preview-card-and-page.js';
+import { renderScoreCardPng } from './score-card-png-renderer.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
@@ -65,6 +69,7 @@ export default {
 
 async function route(request, env) {
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
+  if (parts[0] === 'm' && request.method === 'GET') return preview(request, env, parts[1], parts[2]);
   if (parts[0] !== 'matches') return json({ error: 'not found' }, 404);
   const [, id, action] = parts;
 
@@ -91,6 +96,27 @@ async function route(request, env) {
     return stub(env, id).fetch('https://match/turns', { method: 'POST', body });
   }
   return json({ error: 'not found' }, 404);
+}
+
+/** konk.world/m/<id>: a preview page, or its score card image. Unknown matches go to the game's home. */
+async function preview(request, env, id, asset) {
+  const site = env.SITE_URL;
+  if (!MATCH_ID.test(id ?? '') || (asset && asset !== 'card.png')) return Response.redirect(site, 302);
+  const cache = caches.default;
+  const cached = asset ? await cache.match(request) : null;
+  if (cached) return cached;
+  const res = await stub(env, id).fetch('https://match/latest');
+  if (!res.ok) return Response.redirect(site, 302);
+  const { letter, seq } = await res.json();
+  const match = describeMatch(letter);
+  if (!asset) {
+    return new Response(previewPageHtml(match, { siteUrl: site, matchId: id, seq }), { headers: {
+      'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
+  }
+  const png = new Response(await renderScoreCardPng(scoreCardSvg(match)), { headers: {
+    'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' } }); // ?s=<move> changes with every move
+  await cache.put(request, png.clone());
+  return png;
 }
 
 /** VAPID signing key (Worker secret VAPID_PRIVATE_JWK) plus its public half; null until both are configured. */

@@ -3,6 +3,12 @@ name = "konk-match-server"
 main = "src/konk-match-worker-and-durable-object.js"
 compatibility_date = "2026-09-01"
 
+# Fonts for the score card image are bundled as raw bytes.
+[[rules]]
+type = "Data"
+globs = ["**/*.ttf"]
+fallthrough = true
+
 [vars]
 # Pages that may call the API from the browser.
 ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180"

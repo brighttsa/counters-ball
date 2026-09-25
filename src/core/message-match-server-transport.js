@@ -45,7 +45,8 @@ export const sendServerTurn = (base, id, packed, fetchImpl) =>
 
 export const fetchLatestLetter = (base, id, fetchImpl) => call(base, `/matches/${id}`, {}, fetchImpl);
 
-export const shortMatchLink = (baseUrl, id) => `${baseUrl}?${MATCH_PARAM}=${id}`;
+// konk.world/m/<id> shows a score preview in chats (match server) and forwards into the game (?m=<id>).
+export const shortMatchLink = (baseUrl, id) => `${baseUrl}m/${id}`;
 
 /** Reads ?m=<id> and strips it, so a reload lands on the title. */
 export function takeMatchIdFromUrl(loc = location, hist = history) {

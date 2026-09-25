@@ -40,7 +40,7 @@ jobs:
       - name: Collect runtime files only
         run: |
           mkdir _site
-          cp -R index.html manifest.webmanifest sw.js assets src styles CNAME _site/
+          cp -R index.html 404.html manifest.webmanifest sw.js assets src styles CNAME _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
