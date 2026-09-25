@@ -25,7 +25,9 @@ export function loadProgress() {
     return {
       stars: parsed?.stars && typeof parsed.stars === 'object' && !Array.isArray(parsed.stars)
         ? Object.fromEntries(Object.entries(parsed.stars).filter(([, value]) => Number.isInteger(value) && value >= 0 && value <= 3)) : {},
-      muted: Boolean(parsed?.muted), // a fresh save starts with sound on; a chosen mute is respected
+      // ♪ mutes for this visit only: every visit starts with sound on. A saved mute (often a tap on ♪ by a
+      // player who heard nothing yet because audio was still locked) would otherwise silence every return.
+      muted: false,
       ...(MUSIC_VOLUMES.includes(parsed?.musicVolume) && { musicVolume: parsed.musicVolume }), // Medium when unset
       ...(parsed?.effectsOff === true && { effectsOff: true }),
       ...(typeof parsed?.lastLegendAct === 'string' && { lastLegendAct: parsed.lastLegendAct }),
