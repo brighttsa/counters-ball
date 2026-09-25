@@ -4,8 +4,8 @@ import * as THREE from 'three';
 
 export function readViewportSize() {
   const viewport = window.visualViewport;
-  const width = viewport?.width || document.documentElement.clientWidth || window.innerWidth;
-  const height = viewport?.height || document.documentElement.clientHeight || window.innerHeight;
+  const width = document.documentElement?.clientWidth || viewport?.width || window.innerWidth;
+  const height = document.documentElement?.clientHeight || viewport?.height || window.innerHeight;
   return { width, height };
 }
 
