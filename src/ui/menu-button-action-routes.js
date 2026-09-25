@@ -73,7 +73,6 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'play-featured': () => { app.mode = 'legends'; flow.prepareMatch(flow.featuredIndex()); },
     'play-campaign': () => flow.showLevels('campaign'),
     'play-practice': () => { app.mode = 'practice'; flow.prepareMatch(0); },
-    'play-versus': () => flow.showLevels('versus'),
     'play-friend': () => liveRoom.show(levels[featuredIndex()]),
     'play-legends': () => flow.showLevels('legends'),
     'back-to-title': () => flow.showTitle(),
