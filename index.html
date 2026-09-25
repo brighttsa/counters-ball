@@ -32,8 +32,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin+Sketch:wght@700&family=Lilita+One&family=Patrick+Hand&display=swap" />
 <link rel="stylesheet" href="styles/game-ui-base-and-hud.css?v=5" />
-<link rel="stylesheet" href="styles/game-ui-menus-and-results.css?v=6" />
-<link rel="stylesheet" href="styles/circuit-venue-preview.css?v=3" />
+<link rel="stylesheet" href="styles/game-ui-menus-and-results.css?v=7" />
+<link rel="stylesheet" href="styles/circuit-venue-preview.css?v=4" />
 <link rel="stylesheet" href="styles/street-legends-mode.css?v=2" />
 <link rel="stylesheet" href="styles/ink-impact-home.css?v=7" />
 <link rel="stylesheet" href="styles/player-camera-controls.css?v=3" />
@@ -51,7 +51,8 @@
 <body class="is-loading">
   <div id="boot-screen" class="boot-screen" role="status" aria-live="polite" aria-label="Loading KONK!">
     <img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK!" />
-    <p>Setting the caps...</p>
+    <p>Setting the caps…</p>
+    <button type="button" class="boot-start" id="boot-start" hidden>Tap to play<small>or press any key</small></button>
   </div>
   <canvas id="game-canvas" aria-label="Tabletop football pitch"></canvas>
   <div id="film-frame"></div>

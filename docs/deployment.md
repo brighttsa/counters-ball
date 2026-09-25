@@ -49,10 +49,14 @@ Live at `https://konk-match-server.konk-match-server.workers.dev` (Cloudflare ac
 - Rollback: `npx wrangler rollback` inside `match-server/`; or set `PRODUCTION_API` to `''` and push to go back to letter links.
 
 ## Custom domain (konk.world)
-- Registrar and DNS: Namecheap (BasicDNS, `dns1/dns2.registrar-servers.com`). Registered 2026-09-24.
-- Apex A records point at GitHub Pages: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`.
-  `www` is a CNAME to `brighttsa.github.io`. The locked email-forwarding SPF TXT record stays.
-- The repo's `CNAME` file must keep the single line `konk.world`; deleting it detaches the domain.
+- Registrar: Namecheap. DNS: Cloudflare (zone `57b66f64b399d0a05453c897693df332`, Free plan, active since 2026-09-25),
+  nameservers `fay.ns.cloudflare.com` and `milan.ns.cloudflare.com` (set as Custom DNS at Namecheap).
+- Records (proxied): apex A `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (GitHub Pages);
+  `www` CNAME `brighttsa.github.io`. SSL/TLS mode: Automatic (Full / Full strict to GitHub Pages).
+- The old Namecheap email-forwarding MX/TXT records were imported but Namecheap forwarding no longer runs while DNS is
+  on Cloudflare; use Cloudflare Email Routing if @konk.world mail is needed.
+- Cloudflare serves every request; only `konk.world/m/*` goes to the match server Worker (link previews), the rest is
+  passed through to GitHub Pages. The repo's `CNAME` file must keep the single line `konk.world`.
 - Share previews (`og:image` in `index.html`) load from `https://konk.world/assets/`, never a third-party host.
 
 ## Rollback

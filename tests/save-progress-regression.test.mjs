@@ -24,10 +24,10 @@ function storage(t, raw = null) {
   return { writes };
 }
 
-test('existing v1 saves round-trip all six stable venue IDs and muted preference', t => {
+test('existing v1 saves round-trip all six stable venue IDs; a saved mute never outlives the visit', t => {
   const ids = ['schoolyard', 'kiosk', 'veranda', 'roadside', 'harmattan', 'nightbulb'];
   assert.deepEqual(CAMPAIGN_LEVELS.map(level => level.id), ids);
-  const expected = { stars: Object.fromEntries(ids.map((id, i) => [id, i % 4])), muted: true };
+  const expected = { stars: Object.fromEntries(ids.map((id, i) => [id, i % 4])), muted: false };
   const { writes } = storage(t, JSON.stringify(expected));
   assert.deepEqual(loadProgress(), expected);
   saveProgress(expected);
@@ -78,13 +78,13 @@ test('null stars in valid JSON must recover to a usable empty map', t => {
   storage(t, '{"stars":null,"muted":true}');
   const progress = loadProgress();
   assert.equal(totalStars(progress), 0);
-  assert.deepEqual(progress, { stars: {}, muted: true });
+  assert.deepEqual(progress, { stars: {}, muted: false });
 });
 
 for (const stars of [[1, 2, 3], '3', 3, false]) {
   test(`invalid stars container ${JSON.stringify(stars)} becomes empty`, t => {
     storage(t, JSON.stringify({ stars, muted: true }));
-    assert.deepEqual(loadProgress(), { stars: {}, muted: true });
+    assert.deepEqual(loadProgress(), { stars: {}, muted: false });
   });
 }
 
@@ -100,4 +100,13 @@ test('invalid star values are discarded while valid integers and venue IDs survi
   assert.equal(isLevelUnlocked(progress, CAMPAIGN_LEVELS, 1), false);
   saveProgress(progress);
   assert.deepEqual(loadProgress(), progress);
+});
+
+test('a mute saved by an earlier visit loads as sound on, keeping everything else', t => {
+  storage(t, JSON.stringify({ stars: { kiosk: 2 }, muted: true, musicVolume: 0.35, effectsOff: true }));
+  const progress = loadProgress();
+  assert.equal(progress.muted, false);
+  assert.deepEqual(progress.stars, { kiosk: 2 });
+  assert.equal(progress.musicVolume, 0.35, 'the Music level still carries over');
+  assert.equal(progress.effectsOff, true, 'Effects off still carries over');
 });

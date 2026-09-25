@@ -31,7 +31,16 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
       if (!this.ctx) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
+        // iPhone silent switch mutes Web Audio as "ambient" sound; as "playback" the game is heard like a video.
+        try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* older Safari */ }
         this.ctx = new AudioCtx();
+        // A call, alarm or another app can interrupt the context; resume as soon as the browser allows,
+        // unless the game itself paused or hid the tab.
+        this.ctx.onstatechange = () => {
+          if (this.ctx && this.ctx.state !== 'running' && this.ctx.state !== 'closed' && !this.paused && !this.hidden) {
+            this.ctx.resume()?.catch(() => {});
+          }
+        };
         this.master = this.ctx.createGain();
         this.master.gain.value = this.muted || this.effectsOff ? 0 : MASTER_LEVEL;
         this.compressor = this.ctx.createDynamicsCompressor();

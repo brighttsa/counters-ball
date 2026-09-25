@@ -7,8 +7,10 @@ const PULSE_INTERVAL_HIGH = 0.42;  // seconds between taps at max heat
 const PULSE_INTERVAL_LOW = 0.9;    // seconds between taps at low heat
 const PULSE_BASE_GAIN = 0.012;
 const PULSE_HEAT_GAIN = 0.025;
-const TENSION_DRONE_FREQ = 55;
-const TENSION_DRONE_GAIN = 0.04;
+// 110 Hz, not 55: phone speakers cannot play 55 Hz and turn it into a rattle. Quiet, and never held for long.
+const TENSION_DRONE_FREQ = 110;
+const TENSION_DRONE_GAIN = 0.018;
+const TENSION_DRONE_MAX_SECONDS = 8;
 const TENSION_FADE = 1.2;
 
 export class MatchMomentumLayer {
@@ -111,8 +113,16 @@ export class MatchMomentumLayer {
     osc.frequency.value = TENSION_DRONE_FREQ;
     g.gain.setValueAtTime(0, now);
     g.gain.linearRampToValueAtTime(TENSION_DRONE_GAIN, now + TENSION_FADE);
+    g.gain.setValueAtTime(TENSION_DRONE_GAIN, now + TENSION_DRONE_MAX_SECONDS - TENSION_FADE);
+    g.gain.linearRampToValueAtTime(0, now + TENSION_DRONE_MAX_SECONDS);
     osc.connect(g).connect(this.dest);
     osc.start(now);
+    osc.stop(now + TENSION_DRONE_MAX_SECONDS + 0.05);
+    osc.onended = () => { // timed out on its own: free the slot so the next match point can hum again
+      if (this.droneNodes?.osc === osc) this.droneNodes = null;
+      osc.disconnect();
+      g.disconnect();
+    };
     this.droneNodes = { osc, gain: g };
   }
 

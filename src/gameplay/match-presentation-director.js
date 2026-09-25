@@ -33,7 +33,10 @@ export class MatchPresentationDirector {
     const { rules, cameraDirector, hud, sound } = this.session;
     const critical = rules.scores[side] === rules.rules.goalsToWin - 1;
     cameraDirector.setTension(critical ? 1 : 0);
-    sound.setTension?.(critical);
+    // Heard tension only once it means something: after a goal, or on a side's last three flicks.
+    // (A first-to-1 table is "critical" from flick one; a hum all match is noise, not drama.)
+    const late = rules.scores.home + rules.scores.away > 0 || rules.flicksLeft(side) <= 3;
+    sound.setTension?.(critical && late);
     const key = `${side}:${rules.scores.home}:${rules.scores.away}`;
     // On a first-to-1 table every flick is match point, so saying it would only shout over each kickoff.
     if (critical && rules.rules.goalsToWin > 1 && key !== this.matchPointKey) {

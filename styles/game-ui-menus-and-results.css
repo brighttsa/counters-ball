@@ -222,6 +222,71 @@
   .friend-card .friend-actions { margin: 0; }
   .friend-card .results-share-status { min-height: 0; margin: 0; font-size: var(--text-xs); }
 }
+@media (orientation: landscape) and (max-height: 420px) {
+  .screen-friend-match {
+    overflow: hidden;
+    padding-block: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-bottom));
+    padding-inline: max(18px, env(safe-area-inset-left)) max(calc(var(--control-size) + 26px), calc(env(safe-area-inset-right) + var(--control-size) + 18px));
+  }
+  .friend-card {
+    width: min(760px, 100%);
+    max-height: calc(100dvh - 20px);
+    overflow: hidden;
+    padding: 14px 18px;
+    grid-template-columns: minmax(0, 1fr) minmax(248px, .86fr);
+    gap: 6px 16px;
+    align-items: start;
+  }
+  .friend-card .card-title {
+    font-size: clamp(30px, 7.5vh, 42px);
+    line-height: .96;
+  }
+  .friend-card .intro-place {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.24;
+  }
+  .friend-card .intro-blurb {
+    display: -webkit-box;
+    max-width: 42ch;
+    margin: 2px 0 0;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-size: var(--text-sm);
+    line-height: 1.28;
+  }
+  .friend-card .friend-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    align-self: end;
+  }
+  .friend-card .friend-actions .btn,
+  .friend-card .card-actions .btn {
+    min-height: 46px;
+    padding: 8px 10px;
+    font-size: var(--text-sm);
+    line-height: 1.05;
+  }
+  .friend-card .results-share-status {
+    min-height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+  .friend-card .card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+    gap: 8px;
+    align-self: end;
+  }
+  .friend-card .card-actions .btn-primary {
+    grid-column: 1 / -1;
+  }
+}
 @media (min-width: 701px) and (max-height: 500px) {
   .pause-face[data-face-panel='settings']:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
   .pause-face[data-face-panel='settings'] > :not(.setting-group) { grid-column: 1 / -1; }
