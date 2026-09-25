@@ -314,3 +314,19 @@
 .screen-title .home-learn-label { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .screen-title .home-learn small { font: 700 var(--text-xs)/1 var(--font-body); letter-spacing: .04em; text-transform: uppercase; opacity: .7; }
 .screen-title .home-just-play { text-align: left; padding: 10px 20px; font-size: var(--text-sm); }
+
+/* Goal callout for the AI match behind the title screen: chalk on a dark strip, top centre, never clickable. */
+.attract-callout {
+  position: fixed; top: max(16px, env(safe-area-inset-top)); left: 50%; z-index: 21; /* just above the title screen (20) */
+  max-width: calc(100vw - 32px); margin: 0; padding: 6px 14px;
+  background: rgb(var(--ink-rgb) / .78); color: var(--yellow);
+  font: var(--text-lg)/1.2 var(--font-chalk); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  pointer-events: none; transform: translateX(-50%);
+  animation: attract-callout-in 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.attract-callout[hidden] { display: none; }
+.attract-callout.attract-callout-exit { opacity: 0; transition: opacity 300ms ease; }
+@keyframes attract-callout-in { from { opacity: 0; transform: translate(-50%, -8px) scale(.97); } }
+@media (prefers-reduced-motion: reduce) {
+  @keyframes attract-callout-in { from { opacity: 0; } }
+}

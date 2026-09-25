@@ -4,6 +4,7 @@
 // camera director and audio; one MatchSession per venue.
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
+import { AttractModeCallout, createAttractHud } from './ui/attract-mode-callout.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
@@ -53,7 +54,9 @@ const resultsCard = new FullTimeResultsCard();
 const resultsShare = new ResultsShare(document.getElementById('results-share-status'));
 const friendShare = new FriendMatchInviteShare(document.getElementById('friend-share-status'));
 const hotSeat = new HotSeatRivalry(progress, saveProgress);
-const silentHud = new Proxy({}, { get: () => () => {} }); // the attract match talks to nobody
+const silentHud = new Proxy({}, { get: () => () => {} }); // table previews talk to nobody
+const attractCallout = new AttractModeCallout();
+const attractHud = createAttractHud(attractCallout); // the title-screen match only announces goals
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
 const orientation = createMatchOrientationPrompt();
@@ -69,6 +72,7 @@ function finishBoot() {
 }
 
 function replaceSession(options, sessionHud) {
+  attractCallout.hide();
   resultsCard.cancelReveal();
   app.practice?.dispose();
   app.practice = null;
@@ -97,7 +101,7 @@ function ensureAttractMode() {
       app.session = null;
       ensureAttractMode();
     },
-  }, silentHud);
+  }, attractHud);
   hud.show(false);
   sound.setSfxLevel(0.35);
   sound.setAmbience('day');
