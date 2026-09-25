@@ -5,6 +5,7 @@ import { KWAME_CORNER_TABLE } from './kwame-corner-practice-table.js';
 import { STREET_LEGENDS_ACTS, isLegendActUnlocked } from './street-legends-acts-and-unlocks.js';
 import { isLevelUnlocked } from '../core/save-progress-local-storage.js';
 import { decodeChallenge, stripChallengeParams } from '../core/challenge-link-codec-and-comparison.js';
+import { decodeFriendInvite, stripFriendInviteParams } from '../core/friend-match-invite-links.js';
 
 /** Street Legends has its own 18 acts; the Classic Campaign and the 2-Player Table share the six venues. */
 export const trackFor = (mode) => (mode === 'legends' ? STREET_LEGENDS_ACTS : mode === 'practice' ? [KWAME_CORNER_TABLE] : CAMPAIGN_LEVELS);
@@ -29,4 +30,14 @@ export function takeChallengeFromUrl(loc = location, hist = history) {
   hist.replaceState(null, '', stripChallengeParams(loc.href));
   const index = challenge ? trackFor(challenge.mode).findIndex((level) => level.id === challenge.levelId) : -1;
   return index < 0 ? null : { ...challenge, index };
+}
+
+/** Reads a Friend Match Lite invite from the URL and strips it after resolving the table. */
+export function takeFriendInviteFromUrl(loc = location, hist = history) {
+  if (!loc.search) return null;
+  const invite = decodeFriendInvite(loc.search);
+  if (!invite) return null;
+  hist.replaceState(null, '', stripFriendInviteParams(loc.href));
+  const index = trackFor(invite.mode).findIndex((level) => level.id === invite.levelId);
+  return index < 0 ? null : { ...invite, index };
 }

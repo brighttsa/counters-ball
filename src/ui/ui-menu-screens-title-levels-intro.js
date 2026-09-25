@@ -54,6 +54,13 @@ export class MenuScreens {
     $('challenge-mark').textContent = inviteLine;
   }
 
+  fillFriendMatch(level, line, incoming = false) {
+    $('friend-title').textContent = incoming ? 'You have been called out' : 'Call someone to the table';
+    $('friend-venue').textContent = `${level.legend ? `${level.name} · Act ${level.legend.act}: ${level.actTitle}` : level.name} · ${level.place}`;
+    $('friend-mark').textContent = line;
+    document.querySelector('[data-action="friend-share"]').hidden = incoming;
+    document.querySelector('[data-action="friend-copy"]').hidden = incoming;
+  }
 
   show(name) {
     document.body.dataset.screen = name ?? 'match';

@@ -56,7 +56,8 @@
       <button class="btn home-venues" data-action="play-legends">See all 18 acts</button>
       <div class="home-secondary"><button class="btn" data-action="play-practice">Practice with Kwame</button>
       <button class="btn" data-action="play-campaign">Classic Campaign</button>
-      <button class="btn" data-action="play-versus">2-Player Table</button></div>
+      <button class="btn" data-action="play-versus">2-Player Table</button>
+      <button class="btn" data-action="play-friend">Play a Friend</button></div>
     </nav>
     <p class="title-stars" id="title-stars"></p>
     <nav class="home-utilities" aria-label="Game information">
@@ -134,6 +135,24 @@
       <div class="card-actions">
         <button class="btn btn-small" data-action="challenge-decline">Later</button>
         <button class="btn btn-primary" data-action="challenge-accept">Play their table</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="screen screen-challenge screen-friend-match" data-screen="friend-match">
+    <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="friend-title">
+      <p class="card-kicker">Friend Match Lite</p>
+      <h2 class="card-title" id="friend-title">Call someone to the table</h2>
+      <p class="intro-place" id="friend-venue"></p>
+      <p class="intro-blurb" id="friend-mark"></p>
+      <div class="friend-actions">
+        <button class="btn btn-primary" data-action="friend-share">Share invite</button>
+        <button class="btn" data-action="friend-copy">Copy link</button>
+      </div>
+      <p class="results-share-status" id="friend-share-status" aria-live="polite"></p>
+      <div class="card-actions">
+        <button class="btn btn-small" data-action="friend-pick-table">See all acts</button>
+        <button class="btn btn-primary" data-action="friend-play">Play this table</button>
       </div>
     </article>
   </section>

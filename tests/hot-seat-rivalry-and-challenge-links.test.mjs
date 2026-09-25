@@ -7,6 +7,10 @@ import {
 import {
   encodeChallenge, decodeChallenge, stripChallengeParams, compareToChallenge, markText, challengeVerdictLine,
 } from '../src/core/challenge-link-codec-and-comparison.js';
+import {
+  encodeFriendInvite, decodeFriendInvite, stripFriendInviteParams, friendInviteLine,
+} from '../src/core/friend-match-invite-links.js';
+import { buildFriendInvite } from '../src/ui/friend-match-invite-share.js';
 import { buildResultShare } from '../src/ui/share-results-and-challenge-link.js';
 import { fullTimeTitle } from '../src/ui/ui-full-time-results-card.js';
 import { CAMPAIGN_LEVELS } from '../src/levels/campaign-level-definitions.js';
@@ -102,6 +106,18 @@ test('a challenge link round-trips and rejects anything malformed', () => {
   assert.equal(stripChallengeParams('http://x.test/?beat=kiosk&m=campaign&s=1-0&f=3&debug=1'), 'http://x.test/?debug=1');
 });
 
+test('a Friend Match Lite invite names a table without faking a score', () => {
+  const level = STREET_LEGENDS_ACTS.find((act) => act.id === 'legends-schoolyard-act-2');
+  const query = encodeFriendInvite({ levelId: level.id, mode: 'legends' });
+  assert.deepEqual(decodeFriendInvite(query), { levelId: level.id, mode: 'legends' });
+  assert.equal(decodeFriendInvite('?friend=legends-schoolyard-act-2&fm=versus'), null);
+  assert.equal(stripFriendInviteParams(`http://x.test/${query}&debug=1`), 'http://x.test/?debug=1');
+  assert.match(friendInviteLine(level), /Your friend called you to/);
+  const invite = buildFriendInvite(level, 'legends', 'http://x.test/');
+  assert.equal(new URL(invite.url).search, query);
+  assert.match(invite.text, /Play it, send your mark back/);
+});
+
 test('a result beats a mark by outcome, then goal difference, then fewer flicks', () => {
   const mark = { scores: { home: 2, away: 1 }, flicks: 6 };
   assert.equal(compareToChallenge(result(1, 0, 9), mark), 'short', 'same margin, more flicks');
@@ -162,7 +178,7 @@ test('a friend\'s link opens its own table and no other; 2-Player tables are alw
 });
 
 test('reading a challenge from the URL strips it and resolves its table', async () => {
-  const { takeChallengeFromUrl } = await import('../src/levels/level-tracks-and-challenge-unlocks.js');
+  const { takeChallengeFromUrl, takeFriendInviteFromUrl } = await import('../src/levels/level-tracks-and-challenge-unlocks.js');
   const replaced = [];
   const hist = { replaceState: (_, __, url) => replaced.push(url) };
   const at = (href) => ({ href, search: new URL(href).search });
@@ -170,7 +186,11 @@ test('reading a challenge from the URL strips it and resolves its table', async 
   assert.deepEqual(found, { levelId: 'kiosk', mode: 'campaign', scores: { home: 2, away: 0 }, flicks: 5, index: 1 });
   assert.equal(takeChallengeFromUrl(at('http://x.test/?beat=nowhere&m=campaign&s=2-0&f=5'), hist), null);
   assert.equal(takeChallengeFromUrl(at('http://x.test/'), hist), null);
-  assert.deepEqual(replaced, ['http://x.test/', 'http://x.test/']);
+  const invite = takeFriendInviteFromUrl(at('http://x.test/?friend=legends-roadside-act-1&fm=legends'), hist);
+  const roadside = STREET_LEGENDS_ACTS.findIndex((act) => act.id === 'legends-roadside-act-1');
+  assert.deepEqual(invite, { levelId: 'legends-roadside-act-1', mode: 'legends', index: roadside });
+  assert.equal(takeFriendInviteFromUrl(at('http://x.test/?friend=nowhere&fm=legends'), hist), null);
+  assert.deepEqual(replaced, ['http://x.test/', 'http://x.test/', 'http://x.test/', 'http://x.test/']);
 });
 
 test('every [data-action] button in index.html has a route', async () => {

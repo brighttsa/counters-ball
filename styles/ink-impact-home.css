@@ -22,6 +22,8 @@
 .screen-title .home-venues { text-align: left; padding: 12px 20px; }
 .home-secondary { display: flex; gap: 8px; }
 .home-secondary .btn { flex: 1; font-size: var(--text-xs); padding: 8px; }
+.friend-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 16px 0 6px; }
+.friend-card .results-share-status { min-height: 1.4em; margin: 0 0 12px; color: var(--yellow); }
 .title-stars { align-self: start; margin: 4px 0; font: var(--text-xs)/1.4 var(--font-body); color: var(--paper); }
 .home-utilities { display: flex; gap: 8px; width: 340px; max-width: 100%; margin-top: 2px; }
 .home-utilities button { flex: 1; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82); color: var(--paper); cursor: pointer; font: 700 var(--text-sm) var(--font-body); text-transform: uppercase; }
@@ -91,7 +93,7 @@
   }
   .home-secondary {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
   }
   .home-secondary .btn {
@@ -189,7 +191,7 @@
   .home-secondary .btn {
     min-height: 42px;
     padding: 7px 9px;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.1;
   }
   .title-stars { display: none; }
