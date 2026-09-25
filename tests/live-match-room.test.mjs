@@ -37,7 +37,7 @@ test('browser transport keeps room actions small and addressable', async () => {
     return { ok: true, status: 200, json: async () => ({ room: { phase: 'lobby' } }) };
   };
   assert.equal(roomApiBase({ hostname: 'localhost' }), 'http://localhost:8787');
-  assert.equal(roomLink('https://konk.world/', 'abcdefghij'), 'https://konk.world/room/abcdefghij');
+  assert.equal(roomLink('https://konk.world/', 'abcdefghij'), 'https://konk.world/?room=abcdefghij');
   await createLiveRoom('https://api', { levelId: 'kiosk', homeName: 'Ama' }, fake);
   await joinLiveRoom('https://api', 'abcdefghij', 'Kofi', fake);
   await setLiveRoomReady('https://api', 'abcdefghij', 'away', true, fake);

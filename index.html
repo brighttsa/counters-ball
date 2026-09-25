@@ -172,6 +172,33 @@
     </article>
   </section>
 
+  <section class="screen screen-challenge screen-live-room" data-screen="live-room">
+    <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="live-room-title">
+      <p class="card-kicker">Live Match Room</p>
+      <h2 class="card-title" id="live-room-title">Play someone live</h2>
+      <p class="intro-place" id="live-room-venue"></p>
+      <p class="intro-blurb" id="live-room-line">Create a room, invite a friend, then ready up together.</p>
+      <div class="room-fields">
+        <label class="name-field"><span>Your name</span><input id="live-room-name" maxlength="22" autocomplete="nickname" placeholder="Player 1"></label>
+        <label class="name-field"><span>Room code</span><input id="live-room-code" maxlength="10" autocapitalize="characters" placeholder="Paste a room code"></label>
+      </div>
+      <div class="friend-actions">
+        <button class="btn btn-primary" data-action="live-room-create">Create room</button>
+        <button class="btn" data-action="live-room-join">Join room</button>
+      </div>
+      <p class="results-share-status" id="live-room-status" aria-live="polite"></p>
+      <div class="room-seats" id="live-room-seats" hidden>
+        <p><b id="live-room-home">Player 1</b><span id="live-room-home-state">Waiting</span></p>
+        <p><b id="live-room-away">Waiting for a friend</b><span id="live-room-away-state">Not joined</span></p>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" data-action="live-room-ready" hidden>Ready up</button>
+        <button class="btn btn-small" data-action="live-room-copy" hidden>Copy invite</button>
+        <button class="btn btn-small" data-action="live-room-back">Back home</button>
+      </div>
+    </article>
+  </section>
+
   <section class="screen screen-challenge screen-letter" data-screen="letter">
     <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="letter-title">
       <p class="card-kicker" id="letter-kicker">Message Match</p>
@@ -334,6 +361,6 @@
 
   <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true"><svg class="sound-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
   <noscript><p class="noscript">KONK! needs JavaScript and WebGL to run.</p></noscript>
-  <script type="module" src="./src/main.js?v=5"></script>
+  <script type="module" src="./src/main.js?v=6"></script>
 </body>
 </html>

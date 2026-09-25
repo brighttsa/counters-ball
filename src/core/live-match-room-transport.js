@@ -42,5 +42,15 @@ export function heartbeatLiveRoom(base, id, seat, fetchImpl) {
 }
 
 export function roomLink(baseUrl, id) {
-  return ROOM_ID.test(id ?? '') ? `${baseUrl}room/${id}` : '';
+  return ROOM_ID.test(id ?? '') ? `${baseUrl}?room=${id}` : '';
+}
+
+export function takeRoomIdFromUrl(loc = globalThis.location, hist = globalThis.history) {
+  const params = new URLSearchParams(loc.search);
+  const id = params.get('room');
+  if (!ROOM_ID.test(id ?? '')) return null;
+  const url = new URL(loc.href);
+  url.searchParams.delete('room');
+  hist.replaceState(null, '', url.toString());
+  return id;
 }
