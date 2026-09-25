@@ -18,6 +18,7 @@ const WALL_RESTITUTION_FACTOR = 1 + RAIL_RESTITUTION;
 export function wireMatchFeedback(session) {
   const { physics, rules, sound, particles, juice, time, cameraDirector, post, hud, options, level } = session;
   const versus = options.controllers.home === 'human' && options.controllers.away === 'human';
+  const tableSurface = level.surface?.kind ?? 'cardboard';
   const shotMemory = createSchoolyardShotMemory(level, options);
   const entryByBody = new Map(session.entries.map((e) => [e.body, e]));
   // 2-Player seats go by the names typed on the intro card; the object is read live, so kick-off can fill it.
@@ -40,7 +41,7 @@ export function wireMatchFeedback(session) {
     if (ball) {
       const other = ball === a ? b : a;
       if (other.kind === 'cap') {
-        sound.ballTap(strength, pan);
+        sound.ballTap(strength, pan, tableSurface);
         juice.hopBall(strength);
         if (strength > 0.2) { // the strike: freeze a beat, then let it fly
           time.hitStop(0.02 + strength * 0.065);
@@ -58,7 +59,9 @@ export function wireMatchFeedback(session) {
         cameraDirector.addTrauma(0.12);
       }
     } else {
-      sound[SURFACE_SOUND[a.kind === 'cap' ? b.kind : a.kind]]?.(strength, pan);
+      const otherKind = a.kind === 'cap' ? b.kind : a.kind;
+      if (otherKind === 'cap') sound.capClink?.(strength, pan, tableSurface);
+      else sound[SURFACE_SOUND[otherKind]]?.(strength, pan);
       if (strength > 0.35) cameraDirector.addTrauma(strength * 0.18);
     }
     for (const body of [a, b]) {
@@ -74,7 +77,7 @@ export function wireMatchFeedback(session) {
   physics.onWallHit = (body, impulse, x, z) => {
     const strength = Math.min(1, impulse / (WALL_RESTITUTION_FACTOR * body.mass * MAX_FLICK_SPEED));
     if (rules.phase === 'moving') session.presentation.skills.wall(body, strength);
-    sound.woodKnock(strength * 0.8, screenPan(session.camera, x, z));
+    sound.woodKnock(strength * 0.8, screenPan(session.camera, x, z), tableSurface);
     if (strength > 0.25) particles.dustPuff(x, z, strength * 0.6);
   };
 

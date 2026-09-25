@@ -73,6 +73,7 @@ function replaceSession(options, sessionHud) {
   sound.setPaused?.(false);
   sound.setHeat?.(0);
   sound.setTension?.(false);
+  sound.stopMomentum?.();
   cameraDirector.setVenue(options.level.backdrop);
   cameraDirector.poster = Boolean(options.isAttract && options.level.mechanic?.type === 'toll-gates');
   document.body.classList.add('ink-game');
@@ -196,6 +197,7 @@ function kickOff() {
   menus.show(null);
   hud.show(true);
   sound.whistle();
+  sound.startMomentum?.();
   if (app.mode !== 'versus') return app.session.start();
   const { side, label, detail } = hotSeat.seat(menus.readPlayerNames());
   hud.setNames(hotSeat.names.home, hotSeat.names.away);

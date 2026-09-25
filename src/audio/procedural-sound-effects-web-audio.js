@@ -4,6 +4,8 @@
 // take a strength in 0..1 so a paper ball and a steel cap compare fairly, and
 // a pan in -1..1 so each contact sounds from where it happened on screen.
 import { StreetAmbienceBeds } from './street-ambience-beds-web-audio.js';
+import { VenueAmbientEventScheduler } from './venue-ambient-event-scheduler.js';
+import { MatchMomentumLayer } from './match-momentum-rhythmic-tension-layer.js';
 import { BoundedAudioVoiceSynthesis } from './bounded-audio-voice-synthesis.js';
 import { playSoundEvent, normalizedStrength } from './semantic-sound-event-mapping.js';
 import { bottleTap, cardboardTap, netCatch, paperCrinkle } from './table-object-sound-recipes.js';
@@ -19,6 +21,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.sfxLevel = 1;
     this.last = {};
     this.ambience = new StreetAmbienceBeds();
+    this.venueEvents = new VenueAmbientEventScheduler();
+    this.momentum = new MatchMomentumLayer();
   }
 
   /** Must be called from a user gesture before anything is audible. */
@@ -37,6 +41,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
         this.noiseBuffer = buffer;
         this.ambience.attach(this.ctx, this.master, buffer);
+        this.venueEvents.attach(this.ctx, this.master);
+        this.momentum.attach(this.ctx, this.master);
       }
       this.music?.attach(this.ctx); // the soundtrack shares the context on its own bus
       this.setPaused(this.paused);
@@ -54,6 +60,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   setEffectsOff(off) {
     this.effectsOff = Boolean(off);
     this.applyMasterLevel();
+    this.venueEvents.setPaused(Boolean(off));
   }
 
   applyMasterLevel() {
@@ -66,11 +73,28 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
 
   setAmbience(kind) {
     this.ambience.set(kind);
+    this.venueEvents.set(kind === 'day' ? 'kiosk' : kind);
+  }
+
+  /** Start/stop the momentum layer with the match lifecycle. */
+  startMomentum() { this.momentum.start(); }
+  stopMomentum() { this.momentum.stop(); }
+
+  setPaused(paused) {
+    super.setPaused(paused);
+    this.venueEvents.setPaused(Boolean(paused));
   }
 
   event(name, strength = 0.5) { playSoundEvent(this, name, strength); }
-  setHeat(value) { this.ambience.setHeat(normalizedStrength(value)); }
-  setTension(value) { this.ambience.setTension(Boolean(value)); }
+  setHeat(value) {
+    const v = normalizedStrength(value);
+    this.ambience.setHeat(v);
+    this.momentum.setHeat(v);
+  }
+  setTension(value) {
+    this.ambience.setTension(Boolean(value));
+    this.momentum.setTension(Boolean(value));
+  }
 
   can(key, gapMs = 28) {
     if (!this.available()) return false;
@@ -88,28 +112,41 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.noise({ duration: 0.05 + s * 0.05, filter: 'bandpass', freq: 1800, to: 1200, q: 2, gain: 0.03 + s * 0.05, delay: 0.01 });
   }
 
-  capClink(s, pan = 0) {
+  capClink(s, pan = 0, surface = 'cap') {
     if (!this.can('clink')) return;
-    const g = 0.05 + s * 0.4, base = 1900 + Math.random() * 900;
+    const g = 0.05 + s * 0.4;
+    const base = surface === 'stone' ? 1400 + Math.random() * 400
+      : surface === 'wood' ? 1600 + Math.random() * 600
+      : 1900 + Math.random() * 900;
+    const ring = surface === 'stone' ? 0.08 : surface === 'wood' ? 0.1 : 0.14;
+    const brightness = surface === 'stone' ? 3500 : surface === 'wood' ? 4200 : 5000;
     [1, 2.76, 5.4].forEach((ratio, i) => this.tone({ freq: base * ratio * 0.5 * (1 + (Math.random() - 0.5) * 0.02),
-      duration: 0.14 / (i + 1) + 0.02, gain: g / (i + 1.5), pan }));
-    this.noise({ duration: 0.012, filter: 'highpass', freq: 5000, gain: g * 0.5, pan });
+      duration: ring / (i + 1) + 0.02, gain: g / (i + 1.5), pan }));
+    this.noise({ duration: 0.012, filter: 'highpass', freq: brightness, gain: g * 0.5, pan });
+    if (surface === 'wood') this.tone({ freq: 160 + Math.random() * 40, to: 100, duration: 0.04, gain: g * 0.15, pan });
+    if (surface === 'stone') this.noise({ duration: 0.02, filter: 'bandpass', freq: 1800, q: 3, gain: g * 0.2, pan });
   }
 
   /** Cap into the paper ball: a papery thwack, with the skin crinkling on firmer hits. */
-  ballTap(s, pan = 0) {
+  ballTap(s, pan = 0, surface = 'cardboard') {
     if (!this.can('tap')) return;
     const g = 0.08 + s * 0.5;
-    this.noise({ duration: 0.05, filter: 'lowpass', freq: 800 + s * 2400, gain: g, pan });
-    this.tone({ freq: 210 * (0.94 + Math.random() * 0.12), to: 110, duration: 0.06, gain: g * 0.45, pan });
+    const bodyFreq = surface === 'wood' ? 170 : surface === 'cardboard' ? 210 : 240;
+    const filterFreq = surface === 'wood' ? 600 + s * 2000 : 800 + s * 2400;
+    this.noise({ duration: 0.05, filter: 'lowpass', freq: filterFreq, gain: g, pan });
+    this.tone({ freq: bodyFreq * (0.94 + Math.random() * 0.12), to: bodyFreq * 0.52, duration: 0.06, gain: g * 0.45, pan });
     if (s > 0.3) paperCrinkle(this, s, pan);
+    if (surface === 'wood' && s > 0.4) this.tone({ freq: 120, to: 80, duration: 0.05, gain: g * 0.12, pan });
   }
 
-  woodKnock(s, pan = 0) {
+  woodKnock(s, pan = 0, surface = 'wood') {
     if (!this.can('knock', 40)) return;
     const g = 0.04 + s * 0.4;
-    this.tone({ freq: 190 + Math.random() * 50, to: 120, duration: 0.08, gain: g, pan });
-    this.noise({ duration: 0.025, filter: 'bandpass', freq: 750, q: 3, gain: g * 0.6, pan });
+    const baseFreq = surface === 'cardboard' ? 150 + Math.random() * 30 : 190 + Math.random() * 50;
+    const noiseFreq = surface === 'cardboard' ? 550 : 750;
+    const dur = surface === 'cardboard' ? 0.06 : 0.08;
+    this.tone({ freq: baseFreq, to: baseFreq * 0.63, duration: dur, gain: g, pan });
+    this.noise({ duration: 0.025, filter: 'bandpass', freq: noiseFreq, q: surface === 'cardboard' ? 2 : 3, gain: g * 0.6, pan });
   }
 
   stoneClack(s, pan = 0) {
@@ -174,5 +211,11 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     if (!this.can('ui', 40)) return;
     this.tone({ freq: 140, to: 90, duration: 0.06, gain: 0.08 });
     this.noise({ duration: 0.018, filter: 'lowpass', freq: 800, gain: 0.06 });
+  }
+
+  dispose() {
+    this.venueEvents.dispose();
+    this.momentum.dispose();
+    super.dispose();
   }
 }
