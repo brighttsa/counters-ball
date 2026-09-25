@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="styles/game-ui-menus-and-results.css?v=7" />
 <link rel="stylesheet" href="styles/circuit-venue-preview.css?v=4" />
 <link rel="stylesheet" href="styles/street-legends-mode.css?v=2" />
-<link rel="stylesheet" href="styles/ink-impact-home.css?v=7" />
+<link rel="stylesheet" href="styles/ink-impact-home.css?v=8" />
 <link rel="stylesheet" href="styles/player-camera-controls.css?v=3" />
 <link rel="stylesheet" href="styles/mobile-tablet-match-layout.css?v=6" />
 <link rel="stylesheet" href="styles/match-hud-one-frame-and-aim-fade.css?v=6" />
@@ -66,10 +66,10 @@
       <button class="btn home-just-play" data-action="skip-practice" hidden>I know how to play: just play</button>
       <button class="btn btn-primary home-play home-featured" data-action="play-featured"><span id="home-feature-button">Play Roadside</span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
       <button class="btn home-venues" data-action="play-legends">See all 18 acts</button>
+      <button class="btn home-live" data-action="play-friend" aria-label="Play live online"><span>Play Live</span><small>Create or join a room</small><svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
       <div class="home-secondary"><button class="btn" data-action="play-practice" aria-label="Practice with Kwame">Practice</button>
       <button class="btn" data-action="play-campaign" aria-label="Classic Campaign">Campaign</button>
-      <button class="btn" data-action="play-versus" aria-label="2-Player Table">2-Player</button>
-      <button class="btn" data-action="play-friend" aria-label="Play a Friend">Friend</button></div>
+      <button class="btn" data-action="play-versus" aria-label="2-Player Table">2-Player</button></div>
     </nav>
     <p class="title-stars" id="title-stars"></p>
     <nav class="home-utilities" aria-label="Game information">
@@ -177,7 +177,7 @@
       <p class="card-kicker">Live Match Room</p>
       <h2 class="card-title" id="live-room-title">Play someone live</h2>
       <p class="intro-place" id="live-room-venue"></p>
-      <p class="intro-blurb" id="live-room-line">Create a room, invite a friend, then ready up together.</p>
+      <p class="intro-blurb" id="live-room-line">Create a room or join one with a code. Take turns live on the same table.</p>
       <div class="room-fields">
         <label class="name-field"><span>Your name</span><input id="live-room-name" maxlength="22" autocomplete="nickname" placeholder="Player 1"></label>
         <label class="name-field"><span>Room code to join</span><input id="live-room-code" maxlength="10" autocapitalize="characters" placeholder="Paste a code to join"></label>
