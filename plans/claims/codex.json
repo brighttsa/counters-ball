@@ -2,7 +2,7 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Premium mobile UI follow-up audit",
+  "task": "Mobile landscape safe padding balance",
   "status": "released",
   "paths": [
     "styles/game-ui-base-and-hud.css",
@@ -10,11 +10,11 @@
     "styles/ink-impact-home.css",
     "styles/mobile-tablet-match-layout.css",
     "styles/match-hud-one-frame-and-aim-fade.css",
-    "styles/player-camera-controls.css",
+    "src/ui/menu-button-action-routes.js",
     "index.html",
     "plans/agent-handoff-board.md",
     "plans/claims/codex.json"
   ],
-  "updatedAt": "2026-09-25T03:14:00Z",
-  "head": "36ef6b32f35cb2b4e6ea6864d959fe2119dd4b3e"
+  "updatedAt": "2026-09-25T10:33:00Z",
+  "head": "6c3e8fda30dc7670376b60b6ba14b84b3335c391"
 }

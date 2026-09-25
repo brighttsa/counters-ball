@@ -105,7 +105,7 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 }
 
 .icon-btn {
-  pointer-events: auto; width: 46px; height: 46px; display: grid; place-items: center; cursor: pointer;
+  pointer-events: auto; box-sizing: border-box; width: 46px; height: 46px; padding: 0; display: grid; place-items: center; cursor: pointer;
   border-radius: 0; border: 2px solid var(--paper); background: rgb(var(--ink-rgb) / .88); color: var(--paper);
   box-shadow: 0 8px 18px rgb(var(--ink-rgb) / .28);
   font-family: var(--font-display); font-size: var(--text-md); backdrop-filter: blur(6px);
@@ -116,10 +116,10 @@ body:not(.is-loading) .boot-screen { opacity: 0; visibility: hidden; pointer-eve
 .icon-btn svg { width: 1em; height: 1em; }
 .sound-btn {
   position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
-  font-size: var(--text-lg); border: 1px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82);
+  width: 54px; height: 54px; border: 2px solid var(--line-strong); background: rgb(var(--ink-rgb) / .82);
 }
 .sound-btn:hover { border-color: var(--yellow); color: var(--yellow); }
-.sound-btn .sound-icon { width: 22px; height: 22px; }
+.sound-btn .sound-icon { width: 24px; height: 24px; }
 .sound-btn.muted { opacity: 0.55; }
 .sound-btn.muted .sound-icon { opacity: 0.5; }
 

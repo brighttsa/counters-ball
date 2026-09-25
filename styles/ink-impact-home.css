@@ -31,7 +31,10 @@
   line-height: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   clip-path: polygon(0 6%, 98% 0, 100% 92%, 2% 100%);
 }
-.friend-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 16px 0 6px; }
+.friend-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 16px 0 8px; }
+.friend-card .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: stretch; }
+.friend-card .card-actions .btn-primary { grid-column: 1 / -1; }
+.friend-card .btn { min-width: 0; }
 .friend-card .results-share-status { min-height: 1.4em; margin: 0 0 12px; color: var(--yellow); }
 .title-stars { align-self: start; margin: 4px 0; font: var(--text-xs)/1.4 var(--font-body); color: var(--paper); }
 .home-utilities { display: flex; gap: 8px; width: 340px; max-width: 100%; margin-top: 2px; }
@@ -59,6 +62,13 @@
   .screen-title .menu-stack { width: 100%; gap: 4px; }
   .home-utilities { width: 100%; }
   .screen-title .home-play { min-height: 56px; font-size: var(--text-xl); }
+  .friend-actions, .friend-card .card-actions { grid-template-columns: 1fr; }
+  .friend-card .card-actions .btn-primary { grid-column: auto; }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  .friend-card .friend-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .friend-card .card-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .friend-card .card-actions .btn-primary { grid-column: 1 / -1; }
 }
 @media (max-width: 430px) and (min-height: 680px) {
   .screen-title.is-active {

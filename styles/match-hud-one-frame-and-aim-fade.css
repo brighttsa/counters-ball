@@ -52,10 +52,10 @@ body[data-screen="match"] .sound-btn { display: none; }
   .player-camera { bottom: max(12px, env(safe-area-inset-bottom)); width: auto; }
 }
 @media (orientation: landscape) and (max-height: 600px) {
-  .player-camera { bottom: max(8px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); width: auto; }
+  .player-camera { bottom: max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-bottom)); right: max(78px, calc(env(safe-area-inset-right) + 66px)); width: auto; }
 }
 @media (max-height: 500px) {
-  .player-camera { bottom: max(8px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); }
+  .player-camera { bottom: max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-bottom)); right: max(78px, calc(env(safe-area-inset-right) + 66px)); }
 }
 /* The panel opens above the tray at the width it had before the tray shrank to its buttons. */
 .player-camera #camera-panel { width: min(280px, calc(100vw - 24px)); }
