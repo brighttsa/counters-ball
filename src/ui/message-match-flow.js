@@ -92,6 +92,7 @@ export function createMessageMatchFlow(deps) {
     async startRoom(index, id, mySide, names) {
       clearInterval(roomTimer);
       const letters = openTable(index, mySide, names, 0);
+      hud.event('LIVE MATCH', { priority: 6, duration: 2.2, detail: mySide === 'home' ? 'You are HOME' : 'You are AWAY' });
       let seen = 0;
       const onLetter = letters.onLetter;
       letters.onLetter = async (letter) => {
@@ -106,6 +107,7 @@ export function createMessageMatchFlow(deps) {
           const letter = unpackLetter(packed);
           if (!letter) return;
           seen = letter.seq;
+          hud.event('OPPONENT FLICKED', { priority: 4, duration: 1.6, detail: `${letter.names[letter.by]} · Your move` });
           await letters.replay(letter);
         } catch { /* room polling retries on the next heartbeat */ }
       }, 1200);

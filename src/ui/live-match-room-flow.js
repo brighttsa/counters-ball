@@ -34,15 +34,17 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     roomId = result.id ?? roomId; seat = result.seat ?? seat; invite = roomLink(`${baseUrl}`, roomId);
     $('live-room-code').value = roomId; $('live-room-code').readOnly = true;
     $('live-room-name').readOnly = true; $('live-room-venue').textContent = level.name;
+    document.querySelector('[data-action="live-room-create"]').disabled = true;
+    document.querySelector('[data-action="live-room-join"]').disabled = true;
     document.querySelector('[data-action="live-room-copy"]').hidden = false;
     document.querySelector('[data-action="live-room-ready"]').hidden = false;
     render(result.room); startPolling();
   };
   return {
-    show() { started = false; document.querySelectorAll('[data-screen]').forEach((screen) => screen.classList.toggle('is-active', screen.dataset.screen === 'live-room')); $('live-room-venue').textContent = level.name; $('live-room-name').readOnly = false; $('live-room-code').readOnly = false; document.body.dataset.screen = 'live-room'; },
+    show() { started = false; document.querySelectorAll('[data-screen]').forEach((screen) => screen.classList.toggle('is-active', screen.dataset.screen === 'live-room')); $('live-room-venue').textContent = level.name; $('live-room-name').readOnly = false; $('live-room-code').readOnly = false; $('live-room-code').value = ''; $('live-room-status').textContent = ''; document.querySelector('[data-action="live-room-create"]').disabled = false; document.querySelector('[data-action="live-room-join"]').disabled = false; document.body.dataset.screen = 'live-room'; },
     open(id) { this.show(); $('live-room-code').value = id; this.join(); },
     async create() { status('Creating your room…'); try { open(await createLiveRoom(api, { levelId: level.id, homeName: $('live-room-name').value })); status('Room ready. Send the invite code.'); } catch { status('Could not create a room. Check your connection.'); } },
-    async join() { const id = $('live-room-code').value.trim(); if (!id) return status('Paste a room code first.'); status('Joining room…'); try { open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { status(error.status === 409 ? 'That room is full.' : 'Could not join that room.'); } },
+    async join() { const id = $('live-room-code').value.trim(); if (!id) return status('Paste a room code first.'); status('Joining room…'); try { open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { status(error.status === 409 ? 'That room is full. Ask the host for a fresh invite.' : 'Could not join that room. Check the code and your connection.'); } },
     async ready() { const room = await readLiveRoom(api, roomId); const next = !room.room.seats[seat].ready; await setLiveRoomReady(api, roomId, seat, next); render((await readLiveRoom(api, roomId)).room); },
     async copy() {
       const message = `Join me for a live KONK! match at ${level.name}. Tap this invite, choose your name, and ready up: ${invite}`;
