@@ -1,44 +1,46 @@
 # Deployment
 
 ## Platform
-Vercel (Hobby), project `counters-ball-3d` (`prj_Z0z3Jvo960l7DTZP1bYjLk6Z3dZa`), scope `brighttsa-gmailcoms-projects`.
-Static site, no build step. `.vercelignore` publishes only `index.html`, `assets/`, `src/`, `styles/`.
+GitHub Pages from `brighttsa/counters-ball`, branch `main`, folder `/` (repo root). Static site, no build step.
+HTTPS enforced; certificate issued and renewed by GitHub.
+
+Pages publishes every committed file, not only the runtime (`index.html`, `assets/`, `src/`, `styles/`):
+`AGENTS.md`, `docs/`, `tests/` are publicly readable at konk.world. Keep secrets and private notes out of
+the repo (`plans/` and `promo-video/` stay uncommitted).
 
 ## URLs
-- https://konk.world (primary, custom domain)
-- https://www.konk.world → 308 redirect to https://konk.world
-- https://counters-ball-3d.vercel.app (Vercel alias, keeps working)
+- https://konk.world (primary, custom domain; `CNAME` file in the repo root)
+- https://www.konk.world → redirects to https://konk.world (GitHub Pages)
 
 ## Deploy command
-Only when the owner says "push live". Run the tests first.
-
-Do **not** run `vercel deploy` from the repo root: the repo has a private GitHub remote, the CLI sends
-git metadata, and Vercel Hobby blocks the deployment because the commit author is not the Vercel owner
-(the CLI hangs on "Building…"; the API shows `readyState: BLOCKED`). Deploy a git-free copy instead:
+Only when the owner says "push live". Run the full test suite first (see `tests/README.md`), then:
 
 ```bash
-S=$(mktemp -d) && mkdir -p "$S/.vercel" && cp -R index.html assets src styles .vercelignore "$S/" && cp .vercel/project.json "$S/.vercel/" && (cd "$S" && npx vercel deploy --prod --yes)
+git push https://github.com/brighttsa/counters-ball.git HEAD:main
 ```
 
-Verify: every runtime file byte-identical on the live URL; `plans/`, `tests/`, `AGENTS.md` return 404.
+Pages rebuilds in about 30–60 s. Verify: a changed runtime file returns the new content at
+`https://konk.world/<path>`; `gh api repos/brighttsa/counters-ball/pages --jq .status` reads `built`.
 
 ## Environment variables
 None.
 
 ## Custom domain (konk.world)
 - Registrar and DNS: Namecheap (BasicDNS, `dns1/dns2.registrar-servers.com`). Registered 2026-09-24.
-- Records (Advanced DNS): `A @ 76.76.21.21`, `A www 76.76.21.21`. Namecheap's parking CNAME and URL redirect were removed.
-  The locked email-forwarding SPF TXT record stays.
-- Both domains are attached to the Vercel project; `www` redirects to the apex (308).
-- TLS: Let's Encrypt certificates issued by Vercel, auto-renewing.
-- Vercel lists newer A values (`216.198.79.1`, `64.29.17.1`) or CNAME `d0a292df82bd349f.vercel-dns-017.com` as
-  preferred; this is optional because the current records are valid.
+- Apex A records point at GitHub Pages: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`.
+  `www` is a CNAME to `brighttsa.github.io`. The locked email-forwarding SPF TXT record stays.
+- The repo's `CNAME` file must keep the single line `konk.world`; deleting it detaches the domain.
+- Share previews (`og:image` in `index.html`) load from `https://konk.world/assets/`, never a third-party host.
 
 ## Rollback
-`npx vercel ls counters-ball-3d` to find the previous Ready production deployment, then
-`npx vercel promote <deployment-url>` (or "Promote to Production" in the Vercel dashboard).
+Revert the bad commit and push: `git revert <sha> && git push https://github.com/brighttsa/counters-ball.git HEAD:main`.
+
+## History
+Until 2026-09-25 the site was also deployed to Vercel (project `counters-ball-3d`); that project was removed
+so konk.world has a single host.
 
 ## Troubleshooting
-- **CLI stuck on "Building…"**: the deployment is BLOCKED (see Deploy command). Kill the CLI and redeploy from a git-free copy.
+- **Old version still showing**: Pages CDN caches for up to 10 min; check with `curl -s "https://konk.world/<path>?t=$(date +%s)"`.
+- **Domain shows GitHub 404**: the `CNAME` file was removed or changed; restore it and push.
 - **New domain not resolving**: a new `.world` domain appears only after the registry publishes its zone.
   Resolvers that looked it up earlier keep a "no such domain" answer for up to 1 hour (`.world` negative-cache TTL 3600 s).
