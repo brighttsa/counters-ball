@@ -24,6 +24,8 @@
 <link rel="canonical" href="https://konk.world/" />
 <meta name="theme-color" content="#191b1b" />
 <link rel="icon" type="image/svg+xml" href="assets/konk-favicon.svg" />
+<!-- The logo is the first thing painted: fetch it ahead of the stylesheets and fonts. -->
+<link rel="preload" as="image" href="assets/konk-logo.svg" fetchpriority="high" />
 <link rel="apple-touch-icon" href="assets/konk-app-icon-180.png" />
 <link rel="manifest" href="manifest.webmanifest" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -50,7 +52,7 @@
 </head>
 <body class="is-loading">
   <div id="boot-screen" class="boot-screen" role="status" aria-live="polite" aria-label="Loading KONK!">
-    <img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK!" />
+    <img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK!" fetchpriority="high" />
     <p>Setting the caps…</p>
     <button type="button" class="boot-start" id="boot-start" hidden>Tap to play<small>or press any key</small></button>
   </div>
@@ -377,6 +379,6 @@
 
   <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true"><svg class="sound-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
   <noscript><p class="noscript">KONK! needs JavaScript and WebGL to run.</p></noscript>
-<script type="module" src="./src/main.js?v=20"></script>
+<script type="module" src="./src/main.js?v=21"></script>
 </body>
 </html>

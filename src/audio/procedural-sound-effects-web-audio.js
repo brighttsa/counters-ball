@@ -25,7 +25,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.momentum = new MatchMomentumLayer();
   }
 
-  /** Must be called from a user gesture before anything is audible. */
+  /** Builds the audio graph (it may start suspended) and resumes it; call again from a user gesture to make it audible. */
   unlock() {
     try {
       if (!this.ctx) {

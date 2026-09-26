@@ -76,6 +76,9 @@ const featuredIndex = () => pickFeaturedLegendAct(STREET_LEGENDS_ACTS, progress)
 
 function finishBoot() {
   requestAnimationFrame(() => requestAnimationFrame(() => {
+    // Building the AudioContext takes 100 ms+ on phones; done here it starts suspended, so the
+    // "Tap to play" gesture only has to resume it and the tap answers at once.
+    sound.unlock();
     openTapToPlayGate(bootScreen, () => { sound.unlock(); sound.uiSelect(); });
   }));
 }
