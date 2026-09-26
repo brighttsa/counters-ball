@@ -121,7 +121,7 @@ function showTitle() {
   app.friendInvite = null;
   ensureAttractMode();
   menus.setHomeFeature(STREET_LEGENDS_ACTS[featuredIndex()]);
-  menus.setTitleStars(totalStars(progress, CAMPAIGN_LEVELS), CAMPAIGN_LEVELS.length * 3);
+  menus.setTitleStars(totalStars(progress, STREET_LEGENDS_ACTS), STREET_LEGENDS_ACTS.length * 3); // one star count: Street Legends
   menus.setFirstLaunch(!progress.practiceDone && !progress.practiceSkipped);
   menus.show('title');
 }

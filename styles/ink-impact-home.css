@@ -342,3 +342,8 @@
 @media (prefers-reduced-motion: reduce) {
   @keyframes attract-callout-in { from { opacity: 0; } }
 }
+
+/* Trial: Classic Campaign is hidden so Street Legends is the one single-player path. Remove the button's
+   hidden attribute in index.html (and this rule) to bring it back. */
+.screen-title .home-secondary { grid-template-columns: minmax(0, 1fr); } /* Practice alone fills the row */
+.home-secondary .btn[hidden] { display: none; }
