@@ -233,6 +233,7 @@ function showResults(result) {
   const track = trackFor(app.mode);
   const level = track[app.levelIndex];
   hud.show(false);
+  if (result.winner && (app.mode === 'versus' || result.winner === 'home')) sound.kidsReact?.('win');
   presentFullTimeResults(result, {
     level, mode: app.mode, levelIndex: app.levelIndex, trackLength: track.length, progress, hotSeat,
     challenge: challengeFor(level), card: resultsCard, share: resultsShare, homeColour: HOME_TEAM.hudColor,

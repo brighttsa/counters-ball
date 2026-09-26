@@ -9,7 +9,9 @@ Browser game of Ghanaian bottle-cap tabletop football. Three.js r160 from CDN vi
 an import map, **no build step, no binary assets** — every texture, sound and
 sprite is generated at runtime. **One owner-approved exception (2026-09-24):**
 the soundtrack, the owner's three original recordings, as 128 kbps MP3 web
-copies in `assets/audio/` (see `src/audio/soundtrack-*.js`). Sound effects and
+copies in `assets/audio/` (see `src/audio/soundtrack-*.js`). **Second exception (2026-09-26):** four short kids'
+crowd reactions (`assets/audio/kids-*.mp3`, ~135 KB, CC0 recordings by craigsmith on Freesound) played by
+`src/audio/kids-crowd-reaction-clips.js`. Sound effects and
 ambience stay synthesised; do not add other binary assets without asking. Six-venue campaign vs a simulating AI, 2-player
 hot-seat, procedural audio, depth-of-field street environments.
 

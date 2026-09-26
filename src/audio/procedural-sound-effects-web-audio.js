@@ -6,6 +6,7 @@
 import { StreetAmbienceBeds } from './street-ambience-beds-web-audio.js';
 import { VenueAmbientEventScheduler } from './venue-ambient-event-scheduler.js';
 import { MatchMomentumLayer } from './match-momentum-rhythmic-tension-layer.js';
+import { KidsCrowdReactions } from './kids-crowd-reaction-clips.js';
 import { BoundedAudioVoiceSynthesis } from './bounded-audio-voice-synthesis.js';
 import { playSoundEvent, normalizedStrength } from './semantic-sound-event-mapping.js';
 import { bottleTap, cardboardTap, netCatch, paperCrinkle } from './table-object-sound-recipes.js';
@@ -23,6 +24,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.ambience = new StreetAmbienceBeds();
     this.venueEvents = new VenueAmbientEventScheduler();
     this.momentum = new MatchMomentumLayer();
+    this.kids = new KidsCrowdReactions();
   }
 
   /** Must be called from a user gesture before anything is audible. */
@@ -57,6 +59,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         this.momentum.attach(this.ctx, this.master);
       }
       this.music?.attach(this.ctx); // the soundtrack shares the context on its own bus
+      this.kids.load(this.ctx);
       this.setPaused(this.paused);
     } catch {
       this.dispose(); // audio unavailable: the game stays playable in silence
@@ -180,6 +183,9 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     if (!this.can('net', 400)) return;
     netCatch(this, pan);
   }
+
+  /** The watching kids: 'cheer' for your goal, 'aww' for a near miss or a goal against you, 'win' at full time. */
+  kidsReact(kind) { this.kids.play(this, kind); }
 
   whistle() {
     if (!this.can('whistle', 400)) return;
