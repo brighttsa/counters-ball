@@ -2,23 +2,15 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Plain words: bounce/side instead of bank/rail",
+  "task": "Animation polish plans 001-006",
   "status": "released",
   "paths": [
-    "src/ui/just-in-time-chalk-hints.js",
-    "src/ui/konk-interface-copy.js",
-    "src/ui/kwame-corner-practice-coach.js",
-    "src/core/schoolyard-shot-memory.js",
-    "src/gameplay/toll-gate-lane-signal-state.js",
-    "src/gameplay/ruler-seesaw-venue-mechanic.js",
-    "src/gameplay/match-presentation-director.js",
-    "src/gameplay/clay-pot-maze-venue-mechanic.js",
-    "src/gameplay/clay-pot-maze-state.js",
-    "src/gameplay/ruler-seesaw-state.js",
-    "src/gameplay/skill-play-event-tracker.js",
-    "src/levels/",
-    "tests/"
+    "styles/game-ui-base-and-hud.css",
+    "styles/game-ui-menus-and-results.css",
+    "styles/ink-impact-home.css",
+    "src/ui/ui-kinetic-event-callout.js",
+    "index.html"
   ],
-  "updatedAt": "2026-09-26T00:24:36.253Z",
-  "head": "c1c9250c1bebb586a007ae319562960ce3b72ecd"
+  "updatedAt": "2026-09-26T01:47:18.043Z",
+  "head": "a62bc201636f01443d13fd47128a35715ef1d685"
 }
