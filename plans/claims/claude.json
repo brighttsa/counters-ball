@@ -2,15 +2,14 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Animation polish plans 001-006",
+  "task": "Faster first tap and logo load",
   "status": "released",
   "paths": [
-    "styles/game-ui-base-and-hud.css",
-    "styles/game-ui-menus-and-results.css",
-    "styles/ink-impact-home.css",
-    "src/ui/ui-kinetic-event-callout.js",
-    "index.html"
+    "src/main.js",
+    "src/audio/procedural-sound-effects-web-audio.js",
+    "index.html",
+    "assets/konk-logo.svg"
   ],
-  "updatedAt": "2026-09-26T01:47:18.043Z",
-  "head": "a62bc201636f01443d13fd47128a35715ef1d685"
+  "updatedAt": "2026-09-26T14:57:16.638Z",
+  "head": "09afda5f7c3946124b56b1331b9fec5db8613d58"
 }
