@@ -39,7 +39,7 @@ import {
   trackFor, challengeForLevel, isTrackLevelUnlocked, takeChallengeFromUrl,
   takeFriendInviteFromUrl,
 } from './levels/level-tracks-and-challenge-unlocks.js';
-import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=2';
+import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=4';
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 

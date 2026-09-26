@@ -5,7 +5,7 @@ import { totalStars } from '../core/save-progress-local-storage.js';
 import { schoolyardReturnMemory } from '../core/schoolyard-shot-memory.js';
 import { fillVenuePreview } from './ui-circuit-venue-preview.js?v=2';
 import { getVenueVisualProfile } from '../scene/venue-visual-profiles.js';
-import { featuredActCopy } from '../levels/featured-home-legends-act.js?v=3';
+import { featuredActCopy } from '../levels/featured-home-legends-act.js?v=4';
 import { MENU_COPY, STAR_SVG, starRules, tableConditionCopy, titleStarsCopy } from './konk-interface-copy.js?v=3';
 
 const $ = (id) => document.getElementById(id);
