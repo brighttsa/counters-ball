@@ -33,13 +33,13 @@ export class HumanDragAimInput {
       this.selectionNotice.className = 'touch-selection-status';
       this.selectionNotice.setAttribute('aria-live', 'polite');
       document.body.append(this.selectionNotice);
-      this.cancelButton = document.createElement('button');
-      this.cancelButton.type = 'button';
-      this.cancelButton.className = 'aim-cancel-button';
-      this.cancelButton.textContent = 'Cancel aim';
-      this.cancelButton.hidden = true;
-      this.cancelButton.addEventListener('click', () => this.cancel());
-      document.body.append(this.cancelButton);
+      // Cancelling is the gesture itself: pull back onto the cap and let go. This label only appears in that
+      // moment, so the player knows the release will put the cap down instead of flicking it.
+      this.cancelHint = document.createElement('p');
+      this.cancelHint.className = 'aim-cancel-hint';
+      this.cancelHint.textContent = 'Let go to cancel';
+      this.cancelHint.hidden = true;
+      document.body.append(this.cancelHint);
     }
 
     this.listeners = {
@@ -112,7 +112,7 @@ export class HumanDragAimInput {
     try { this.domElement.setPointerCapture(e.pointerId); } catch { /* synthetic events */ }
     this.pull.set(0, 0);
     this.domElement.classList.add('aiming');
-    if (this.cancelButton) this.cancelButton.hidden = false;
+    this.armed = false; // becomes true once the pull is strong enough to flick
     this.visuals.show(entry.body, this.pull);
     if (this.selectionNotice && e.pointerType === 'touch') this.selectionNotice.textContent = 'Cap selected';
     this.onAimStart?.(entry);
@@ -136,7 +136,10 @@ export class HumanDragAimInput {
     const len = this.pull.length();
     if (len > MAX_PULL) this.pull.multiplyScalar(MAX_PULL / len);
     this.visuals.show(this.selected.body, this.pull);
-    this.juice.press(this.selected, this.pull, this.pull.length() / MAX_PULL);
+    const power = this.pull.length() / MAX_PULL;
+    this.juice.press(this.selected, this.pull, power);
+    if (power > MIN_FLICK_POWER * 2) this.armed = true;
+    if (this.cancelHint) this.cancelHint.hidden = !(this.armed && power <= MIN_FLICK_POWER);
   }
 
   onUp(e) {
@@ -175,7 +178,7 @@ export class HumanDragAimInput {
     this.visuals.hide();
     if (this.selectionNotice) this.selectionNotice.textContent = '';
     this.domElement.classList.remove('aiming');
-    if (this.cancelButton) this.cancelButton.hidden = true;
+    if (this.cancelHint) this.cancelHint.hidden = true;
     if (wasAiming) this.onAimEnd?.();
   }
 
@@ -186,7 +189,7 @@ export class HumanDragAimInput {
     window.removeEventListener('blur', this.cancelGesture);
     window.removeEventListener('resize', this.cancelGesture);
     this.selectionNotice?.remove();
-    this.cancelButton?.remove();
+    this.cancelHint?.remove();
     this.keyboard.dispose();
   }
 }
