@@ -132,10 +132,7 @@ export function wireMatchFeedback(session) {
     if (session.slowMoUsed && rules.phase === 'moving') {
       sound.event?.('nearMiss');
       // The table gasps with you: a shot that nearly went in gets its own word, not just a sound.
-      if (!options.isAttract && rules.isHuman(rules.turn)) {
-        hud.event('SO CLOSE!', { priority: 3, duration: 1.1 });
-        sound.kidsReact?.('aww');
-      }
+      if (!options.isAttract && rules.isHuman(rules.turn)) hud.event('SO CLOSE!', { priority: 3, duration: 1.1 });
     }
     origResolve();
   };
@@ -153,10 +150,7 @@ export function wireMatchFeedback(session) {
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
     sound.netCatch?.(screenPan(session.camera, goalX, 0)); // the ball settling in the net, under the whistle
     sound.whistle();
-    if (!options.isAttract) {
-      sound.music?.duckForGoal(); // room for the whistle and the net
-      sound.kidsReact?.(rules.isHuman(scorer) ? 'cheer' : 'aww'); // the kids are on your side
-    }
+    if (!options.isAttract) sound.music?.duckForGoal(); // room for the whistle and the net
     session.stage.backdrop.startle(); // the neighbourhood reacts too
     particles.confettiBurst(goalX);
     juice.wobbleGoal(Math.sign(goalX), 0.6);

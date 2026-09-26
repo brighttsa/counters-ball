@@ -9,10 +9,10 @@ import { AttractModeCallout, createAttractHud } from './ui/attract-mode-callout.
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
-import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js?v=2';
+import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js?v=3';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
-import { MatchSession } from './gameplay/match-session-runtime.js?v=7';
+import { MatchSession } from './gameplay/match-session-runtime.js?v=8';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=4';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js?v=2';
 import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
@@ -233,7 +233,6 @@ function showResults(result) {
   const track = trackFor(app.mode);
   const level = track[app.levelIndex];
   hud.show(false);
-  if (result.winner && (app.mode === 'versus' || result.winner === 'home')) sound.kidsReact?.('win');
   presentFullTimeResults(result, {
     level, mode: app.mode, levelIndex: app.levelIndex, trackLength: track.length, progress, hotSeat,
     challenge: challengeFor(level), card: resultsCard, share: resultsShare, homeColour: HOME_TEAM.hudColor,
