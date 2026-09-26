@@ -31,7 +31,7 @@ export const HARMATTAN_DEPARTING_LORRY_ACTS = [
     blurb: 'The Bolga Express is moving. A goal is strapped to it. Read the next stop.',
     objective: 'Score into the moving lorry',
     introLines: [
-      'First to 1 · 10 flicks each · rookie rival',
+      'First to 1 · 10 flicks each',
       'Each flick the lorry drives one stop along the end line',
       'The ghost goal shows its next stop; it turns back at the far ends',
       'Abdul plays too. Aim for the next stop before he blocks it',

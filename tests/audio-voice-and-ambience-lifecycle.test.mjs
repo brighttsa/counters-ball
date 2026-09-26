@@ -8,7 +8,8 @@ import { SOUND_EVENT_NAMES } from '../src/audio/semantic-sound-event-mapping.js'
 function audioContext() {
   const nodes = [];
   const parameter = () => ({ value: 0, targets: [], setValueAtTime() {},
-    exponentialRampToValueAtTime() {}, setTargetAtTime(value) { this.targets.push(value); } });
+    exponentialRampToValueAtTime() {}, linearRampToValueAtTime() {}, cancelScheduledValues() {},
+    setTargetAtTime(value) { this.targets.push(value); } });
   const node = () => {
     const result = { gain: parameter(), frequency: parameter(), Q: parameter(), pan: parameter(), type: 'sine',
       disconnects: 0, stops: 0, starts: 0,
@@ -55,13 +56,18 @@ test('voice cap rejects extra allocation and ending a voice frees its full chain
   assert.ok(noise.nodes.every(node => node.disconnects === 1));
 });
 
-test('pause and mute suppress new voices and resume restores availability', () => {
+test('pause silences effects without suspending, so the music plays on; resume restores availability', async () => {
   const { sound, ctx } = board();
+  const dips = [];
+  sound.music = { setDip: (value) => dips.push(value) };
   sound.setPaused(true);
-  assert.equal(ctx.suspends, 1);
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  assert.equal(ctx.suspends, 0, 'the context keeps running under the pause menu');
+  assert.deepEqual(dips, [0.5]);
   assert.equal(sound.tone({ freq: 440 }), null);
   sound.setPaused(false);
   assert.equal(ctx.resumes, 1);
+  assert.deepEqual(dips, [0.5, 1]);
   sound.setMuted(true);
   assert.equal(sound.tone({ freq: 440 }), null);
   sound.setMuted(false);

@@ -2,6 +2,7 @@
 // title (live AI-vs-AI match behind the menu) → pitch select → intro flyover
 // → match → full-time results → next pitch. Persistent renderer, post stack,
 // camera director and audio; one MatchSession per venue.
+import { installButtonPressFeedback } from './ui/button-press-feedback.js';
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
 import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
 import { createAdaptiveQuality } from './fx/adaptive-render-quality.js';
@@ -244,9 +245,11 @@ function setPaused(paused) {
   menus.show(paused ? 'pause' : null);
 }
 
+const alreadyPressed = installButtonPressFeedback(sound);
 const menus = new MenuScreens((action, el) => {
   sound.unlock();
-  if (action === 'preview-level') {
+  if (alreadyPressed(el)) { /* the press already clicked; keyboard activation falls through to a sound */ }
+  else if (action === 'preview-level') {
     el.classList.contains('locked') ? sound.uiLocked() : sound.uiSelect();
   } else if (action !== 'toggle-sound') {
     sound.uiTick();

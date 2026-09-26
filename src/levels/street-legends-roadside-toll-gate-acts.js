@@ -32,7 +32,7 @@ export const ROADSIDE_TOLL_GATE_ACTS = [
     blurb: 'Rush hour. One boom drops every flick. Green is open; amber is next to close.',
     objective: 'Score through an open toll lane',
     introLines: [
-      'First to 1 · 10 flicks each · rookie rival',
+      'First to 1 · 10 flicks each',
       'GREEN lane = boom up, the ball can pass · RED = boom down',
       'AMBER blinking = open now, shuts on your next flick',
       'Caps slide under the booms; the ball can\'t. Leave the ball under a boom and it jams open',

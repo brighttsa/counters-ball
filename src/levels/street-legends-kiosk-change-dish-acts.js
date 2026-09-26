@@ -31,7 +31,7 @@ export const KIOSK_CHANGE_DISH_ACTS = [
     blurb: 'Kofi\'s change dish guards the goal. It turns every flick. Find the gap.',
     objective: 'Score through the gap in the dish',
     introLines: [
-      'First to 1 · 10 flicks each · rookie rival',
+      'First to 1 · 10 flicks each',
       'The dish turns every flick: open left, open edges, open right, open edges',
       'Watch the dish turn between turns; prepare for its next gap',
       'Score when only the edges are open for EXACT CHANGE',

@@ -2,17 +2,13 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Pause menu: four actions + settings on the card back",
+  "task": "Pause fades audio before suspending",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/ui/",
-    "src/audio/music-and-effects-audio-settings.js",
-    "styles/",
-    "tests/",
-    "docs/",
-    "plans/agent-handoff-board.md"
+    "src/audio/bounded-audio-voice-synthesis.js",
+    "src/audio/soundtrack-music-director.js",
+    "tests/audio-voice-and-ambience-lifecycle.test.mjs"
   ],
-  "updatedAt": "2026-09-24T16:43:40.913Z",
-  "head": "699e4dc094973e81c7f73f8d09c242e300f02b6b"
+  "updatedAt": "2026-09-25T23:20:48.467Z",
+  "head": "0144c7e16f675b452a7464aef1c8963ab86972c1"
 }

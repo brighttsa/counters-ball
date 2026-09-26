@@ -45,6 +45,9 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         this.master.gain.value = this.muted || this.effectsOff ? 0 : MASTER_LEVEL;
         this.compressor = this.ctx.createDynamicsCompressor();
         this.master.connect(this.compressor).connect(this.ctx.destination);
+        this.uiBus = this.ctx.createGain(); // button clicks: follows mute and Sound effects, not pause
+        this.uiBus.gain.value = this.master.gain.value;
+        this.uiBus.connect(this.compressor);
         const buffer = this.ctx.createBuffer(1, this.ctx.sampleRate * NOISE_SECONDS, this.ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
@@ -74,7 +77,9 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   }
 
   applyMasterLevel() {
-    this.master?.gain.setTargetAtTime(this.muted || this.effectsOff ? 0 : MASTER_LEVEL, this.ctx.currentTime, 0.05);
+    const level = this.muted || this.effectsOff ? 0 : MASTER_LEVEL;
+    this.master?.gain.setTargetAtTime(level, this.ctx.currentTime, 0.05);
+    this.uiBus?.gain.setTargetAtTime(level, this.ctx.currentTime, 0.05);
   }
 
   setSfxLevel(level) {
@@ -207,20 +212,21 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     bottleTap(this, f, { gain: 0.16, ring: 0.7 });
   }
 
-  uiTick() {
-    if (!this.can('ui', 40)) return;
-    cardboardTap(this);
+  /** Runs a button sound on the UI bus, so it is heard on the pause menu too. */
+  ui(play) {
+    this.uiVoice = true;
+    try { if (this.can('ui', 40)) play(); } finally { this.uiVoice = false; }
   }
 
-  uiSelect() {
-    if (!this.can('ui', 40)) return;
-    cardboardTap(this, 1.4);
-  }
+  uiTick() { this.ui(() => cardboardTap(this)); }
+
+  uiSelect() { this.ui(() => cardboardTap(this, 1.4)); }
 
   uiLocked() {
-    if (!this.can('ui', 40)) return;
-    this.tone({ freq: 140, to: 90, duration: 0.06, gain: 0.08 });
-    this.noise({ duration: 0.018, filter: 'lowpass', freq: 800, gain: 0.06 });
+    this.ui(() => {
+      this.tone({ freq: 140, to: 90, duration: 0.06, gain: 0.08 });
+      this.noise({ duration: 0.018, filter: 'lowpass', freq: 800, gain: 0.06 });
+    });
   }
 
   dispose() {

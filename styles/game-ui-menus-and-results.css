@@ -381,3 +381,10 @@
   .pause-card[data-face='settings'] .setting-row { margin-bottom: 2px; }
   .pause-card[data-face='settings'] .chip { min-height: 38px; font-size: var(--text-xs); }
 }
+
+/* Extra rule lines live behind "How it works": the card leads with the story and one rule. */
+.intro-more { margin: -12px 0 20px; font: var(--text-sm)/1.5 var(--font-body); }
+.intro-more summary { width: fit-content; min-height: 32px; padding: 4px 0; color: var(--yellow); cursor: pointer; font-weight: 700; }
+.intro-more summary:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.intro-more .intro-rules { margin: 4px 0 0; }
+@media (max-height: 620px), (max-width: 700px) { .intro-more { margin: -4px 0 8px; font-size: var(--text-xs); } }
