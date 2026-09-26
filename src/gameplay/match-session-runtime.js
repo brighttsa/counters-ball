@@ -6,7 +6,7 @@ import { buildLevelStage } from '../scene/level-stage-builder-and-disposal.js';
 import { FlickPhysicsEngine } from './flick-physics-engine.js';
 import { MatchRules } from './match-rules-turns-goals-and-results.js';
 import { AimVisuals } from './aim-trajectory-power-ring-and-rim-glow.js';
-import { HumanDragAimInput } from './human-drag-aim-input.js?v=2';
+import { HumanDragAimInput } from './human-drag-aim-input.js?v=3';
 import { AiTurnPerformer } from './ai-opponent-turn-performer.js?v=2';
 import { wireMatchFeedback } from './match-session-feedback-hooks.js?v=4';
 import { JuiceAnimator } from '../fx/cap-ball-goal-juice-springs.js';

@@ -12,7 +12,7 @@ import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js?v=3';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
-import { MatchSession } from './gameplay/match-session-runtime.js?v=9';
+import { MatchSession } from './gameplay/match-session-runtime.js?v=10';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=4';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js?v=2';
 import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
