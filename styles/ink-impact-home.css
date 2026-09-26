@@ -347,3 +347,9 @@
    hidden attribute in index.html (and this rule) to bring it back. */
 .screen-title .home-secondary { grid-template-columns: minmax(0, 1fr); } /* Practice alone fills the row */
 .home-secondary .btn[hidden] { display: none; }
+
+/* Shorter menu: the two quiet choices ("Just play" and "All venues") share one row when both show; the
+   main button and Play Live keep the full width. */
+.screen-title .menu-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.screen-title .menu-stack > * { grid-column: 1 / -1; }
+.screen-title .menu-stack:has(.home-just-play:not([hidden])) :is(.home-just-play, .home-venues) { grid-column: auto; text-align: center; padding-inline: 12px; font-size: var(--text-sm); }
