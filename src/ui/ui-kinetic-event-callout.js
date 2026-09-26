@@ -1,4 +1,7 @@
 // A single presentation lane: lesser events cannot obscure a decisive moment.
+// The entrance lands softly (close to cubic-bezier(0.23, 1, 0.32, 1)); the exit leaves fast.
+const easeOut = (t) => 1 - (1 - t) ** 5;
+const easeIn = (t) => t ** 3;
 export class KineticEventCallout {
   constructor(root) {
     this.root = root;
@@ -32,8 +35,8 @@ export class KineticEventCallout {
 
   paint() {
     const { elapsed, duration, direction, fromOpacity, fromOffset, fromScale, fromLift } = this.active;
-    const enter = Math.min(1, elapsed / Math.min(0.14, duration / 3));
-    const exit = Math.max(0, 1 - (duration - elapsed) / Math.min(0.16, duration / 3));
+    const enter = easeOut(Math.min(1, elapsed / Math.min(0.14, duration / 3)));
+    const exit = easeIn(Math.max(0, 1 - (duration - elapsed) / Math.min(0.16, duration / 3)));
     this.offset = this.motion.matches ? 0 : fromOffset * (1 - enter) + direction * exit * 32;
     this.opacity = Math.min(fromOpacity + (1 - fromOpacity) * enter, 1 - exit);
     this.scale = this.motion.matches ? 1 : fromScale + (1 - fromScale) * enter;

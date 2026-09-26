@@ -27,7 +27,7 @@ test('reduced-motion callouts fade without travel and clear on time', () => {
   callout.event('GOAL', { duration: 1 });
   assert.equal(root.style.opacity, '0');
   callout.update(.07);
-  assert.equal(Number(root.style.opacity), .5);
+  assert.equal(Number(root.style.opacity), 1 - .5 ** 5, 'eased entrance: mostly in by half time');
   assert.equal(root.style.transform, 'translateX(0px) translateY(0px) scale(1)');
   callout.update(.85);
   assert.ok(Number(root.style.opacity) < 1);

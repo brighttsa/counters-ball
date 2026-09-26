@@ -1,7 +1,7 @@
 // In-match HUD: scoreboard (on screen or chalked on the table), flick counts,
 // turn banner, event callouts, replay label and the tutorial hand.
 import { SIDE_HOME, SIDE_AWAY } from '../core/pitch-dimensions-and-constants.js';
-import { KineticEventCallout } from './ui-kinetic-event-callout.js';
+import { KineticEventCallout } from './ui-kinetic-event-callout.js?v=2';
 import { markChoice } from './pause-card-faces-and-setting-chips.js';
 
 const $ = (id) => document.getElementById(id);
