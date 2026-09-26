@@ -23,6 +23,6 @@ export function featuredActCopy(level) {
     kicker: `ACT ${level.legend.act} / ${level.legend.acts}`,
     venue: level.place,
     actTitle: `${level.name} · ${level.actTitle}`,
-    button: opener ? 'Start Street Legends' : 'Continue Street Legends',
+    button: opener ? 'Play' : 'Continue', // one path through the game: no mode name to explain
   };
 }

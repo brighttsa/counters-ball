@@ -116,7 +116,7 @@ export class MenuScreens {
     document.body.classList.add('ink-menus');
     this.circuitProgress = progress;
     const versus = mode === 'versus';
-    $('levels-heading').textContent = mode === 'legends' ? 'Street Legends' : versus ? 'The Circuit · 2 Players' : 'The Circuit';
+    $('levels-heading').textContent = mode === 'legends' ? 'Venues' : versus ? 'The Circuit · 2 Players' : 'The Circuit';
     $('levels-star-total').innerHTML = versus ? '' : `<svg class="star-svg" aria-hidden="true" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor"/></svg> ${totalStars(progress, levels)} / ${levels.length * 3}`;
     $('level-grid').innerHTML = levels.map((level, i) => {
       const unlocked = isUnlocked(i);
@@ -156,7 +156,7 @@ export class MenuScreens {
     const { rules, opponent } = level;
     const legend = level.legend;
     $('intro-number').textContent = level.practice ? `${level.name} / Practice`
-      : legend ? `Street Legends / ${level.place} / Act ${legend.act} of ${legend.acts}`
+      : legend ? `${level.place} · Act ${legend.act} of ${legend.acts}`
       : `The Circuit / Match ${String(index + 1).padStart(2, '0')} of ${total}`;
     $('intro-title').textContent = legend ? level.actTitle : level.name;
     $('intro-place').textContent = legend ? `${level.name} · ${level.place}` : level.place;
