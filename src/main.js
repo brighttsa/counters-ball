@@ -19,7 +19,8 @@ import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
-import { createMenuActions } from './ui/menu-button-action-routes.js';
+import { createMenuActions } from './ui/menu-button-action-routes.js?v=2';
+import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js?v=3';
 import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=2';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
@@ -123,6 +124,7 @@ function showTitle() {
   menus.setHomeFeature(STREET_LEGENDS_ACTS[featuredIndex()]);
   menus.setTitleStars(totalStars(progress, STREET_LEGENDS_ACTS), STREET_LEGENDS_ACTS.length * 3); // one star count: Street Legends
   menus.setFirstLaunch(!progress.practiceDone && !progress.practiceSkipped);
+  dailyFlick.refreshHomeButton();
   menus.show('title');
 }
 
@@ -147,7 +149,7 @@ function showFriendMatch({ incoming = false } = {}) {
 }
 
 function showLevels(mode = app.mode) {
-  if (mode === 'practice') return showTitle(); // Kwame's Corner has no table list: Back and Quit go home
+  if (mode === 'practice' || mode === 'daily') return showTitle(); // no table list: Back and Quit go home
   app.challenge = null;
   app.friendInvite = null;
   if (mode !== app.mode && (mode === 'legends' || app.mode === 'legends')) app.levelIndex = 0; // different track
@@ -179,6 +181,7 @@ function openMatchTable(level, sessionOptions, versus) {
 
 /** @param rematch 2-Player Rematch: same table, next game of the series, straight to kick-off */
 function prepareMatch(index, { rematch = false } = {}) {
+  if (app.mode === 'daily') return dailyFlick.start(); // Restart from the pause menu
   const track = trackFor(app.mode);
   const level = track[index];
   if (!level || !unlockedIn(app.mode, index)) return showLevels();
@@ -257,10 +260,12 @@ const menus = new MenuScreens((action, el) => {
 const chalkHints = new JustInTimeChalkHints();
 const messageMatch = createMessageMatchFlow({ app, openMatchTable, menus, hud, sound, cameraDirector, showResults, showTitle,
   baseUrl: `${location.origin}${location.pathname}` });
+const dailyFlick = createDailyFlickFlow({ app, progress, save: saveProgress, openMatchTable, menus, hud, sound, cameraDirector,
+  baseUrl: `${location.origin}${location.pathname}` });
 const actions = createMenuActions({
   app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints: chalkHints,
   featuredIndex, levels: STREET_LEGENDS_ACTS,
-  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch,
+  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch, dailyFlick,
 });
 
 // Browsers only unlock audio on some gestures: on touch screens pointerdown is not one of them,
