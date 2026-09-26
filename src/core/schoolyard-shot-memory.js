@@ -10,7 +10,7 @@ export function remembersSchoolyardBank(storage) {
 
 export function schoolyardReturnMemory(level, mode) {
   return mode === 'legends' && isSchoolyard(level) && remembersSchoolyardBank()
-    ? 'Remembered here: your match-winning ruler bank.' : '';
+    ? 'Remembered here: your match-winning bounce off the ruler.' : '';
 }
 
 export function createSchoolyardShotMemory(level, options, storage) {
@@ -20,7 +20,7 @@ export function createSchoolyardShotMemory(level, options, storage) {
   return {
     goal({ scorer, scores }, label) {
       if (finished) return;
-      decidingBank = eligible && scorer === 'home' && label === 'RULER BANK'
+      decidingBank = eligible && scorer === 'home' && label === 'OFF THE RULER'
         && scores.home >= level.rules.goalsToWin;
     },
     finish(result) {

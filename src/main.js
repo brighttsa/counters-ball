@@ -14,13 +14,15 @@ import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
 import { MatchSession } from './gameplay/match-session-runtime.js?v=6';
-import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=3';
+import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=4';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js?v=2';
 import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
-import { createMenuActions } from './ui/menu-button-action-routes.js';
+import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
+import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
+import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js?v=3';
 import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=2';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
@@ -40,7 +42,7 @@ import {
   trackFor, challengeForLevel, isTrackLevelUnlocked, takeChallengeFromUrl,
   takeFriendInviteFromUrl,
 } from './levels/level-tracks-and-challenge-unlocks.js';
-import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=2';
+import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=4';
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 
@@ -123,8 +125,9 @@ function showTitle() {
   app.friendInvite = null;
   ensureAttractMode();
   menus.setHomeFeature(STREET_LEGENDS_ACTS[featuredIndex()]);
-  menus.setTitleStars(totalStars(progress, CAMPAIGN_LEVELS), CAMPAIGN_LEVELS.length * 3);
+  menus.setTitleStars(totalStars(progress, STREET_LEGENDS_ACTS), STREET_LEGENDS_ACTS.length * 3); // one star count: Street Legends
   menus.setFirstLaunch(!progress.practiceDone && !progress.practiceSkipped);
+  dailyFlick.refreshHomeButton();
   menus.show('title');
 }
 
@@ -149,7 +152,7 @@ function showFriendMatch({ incoming = false } = {}) {
 }
 
 function showLevels(mode = app.mode) {
-  if (mode === 'practice') return showTitle(); // Kwame's Corner has no table list: Back and Quit go home
+  if (mode === 'practice' || mode === 'daily') return showTitle(); // no table list: Back and Quit go home
   app.challenge = null;
   app.friendInvite = null;
   if (mode !== app.mode && (mode === 'legends' || app.mode === 'legends')) app.levelIndex = 0; // different track
@@ -172,7 +175,8 @@ function previewLevel(index) {
 
 /** A real match table with the full HUD: shared by solo, 2-Player and Message Match. */
 function openMatchTable(level, sessionOptions, versus) {
-  replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, ...sessionOptions }, hud);
+  goalClip.reset();
+  replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, onGoalReplay: goalClip.onGoalReplay, ...sessionOptions }, hud);
   sound.setSfxLevel(1);
   sound.setAmbience(level.backdrop);
   hud.attachTableChalk(createChalkTableScoreboard(app.session.stage.group, HOME_TEAM.hudColor, level.opponent.team.hudColor));
@@ -181,6 +185,7 @@ function openMatchTable(level, sessionOptions, versus) {
 
 /** @param rematch 2-Player Rematch: same table, next game of the series, straight to kick-off */
 function prepareMatch(index, { rematch = false } = {}) {
+  if (app.mode === 'daily') return dailyFlick.start(); // Restart from the pause menu
   const track = trackFor(app.mode);
   const level = track[index];
   if (!level || !unlockedIn(app.mode, index)) return showLevels();
@@ -259,10 +264,14 @@ const menus = new MenuScreens((action, el) => {
 const chalkHints = new JustInTimeChalkHints();
 const messageMatch = createMessageMatchFlow({ app, openMatchTable, menus, hud, sound, cameraDirector, showResults, showTitle,
   baseUrl: `${location.origin}${location.pathname}` });
+const goalClip = createGoalClipSharing({ canvas, sound, button: document.getElementById('btn-clip'),
+  status: document.getElementById('results-share-status') });
+const dailyFlick = createDailyFlickFlow({ app, progress, save: saveProgress, openMatchTable, menus, hud, sound, cameraDirector,
+  baseUrl: `${location.origin}${location.pathname}` });
 const actions = createMenuActions({
   app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints: chalkHints,
   featuredIndex, levels: STREET_LEGENDS_ACTS,
-  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch,
+  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch, dailyFlick, goalClip,
 });
 
 // Browsers only unlock audio on some gestures: on touch screens pointerdown is not one of them,

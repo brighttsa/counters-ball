@@ -73,7 +73,7 @@ export class SkillPlayEventTracker {
     const direction = signOf(s.side);
     const advance = (ball.pos.x - s.startX) * direction;
     const threatening = advance > SKILL_TUNING.advance && ball.vel.x * direction > 0.45;
-    if (s.wall && threatening) { s.bank = true; this.award('BANK'); }
+    if (s.wall && threatening) { s.bank = true; this.award('BOUNCE'); }
     if (s.defensive && threatening && ball.pos.x * direction > 0) {
       s.counter = true;
       this.award('COUNTER');
@@ -85,7 +85,7 @@ export class SkillPlayEventTracker {
     if (!s || s.side !== scorer || !s.touched || s.lastBallSide !== scorer) return { label: '', replay: false };
     const street = s.strikeChainSize >= 2 || (s.bank && s.counter);
     if (street) this.award('STREET PLAY', 2);
-    const label = street ? 'STREET PLAY' : s.counter ? 'COUNTER GOAL' : s.bank ? 'BANK GOAL' : s.sweet ? 'SWEET SPOT' : '';
+    const label = street ? 'STREET PLAY' : s.counter ? 'COUNTER GOAL' : s.bank ? 'BOUNCE GOAL' : s.sweet ? 'SWEET SPOT' : '';
     return { label, replay: Boolean(label) || s.peakSpeed > 3.8, direction: signOf(scorer) };
   }
 

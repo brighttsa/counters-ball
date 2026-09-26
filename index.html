@@ -59,16 +59,17 @@
 
   <section class="screen screen-title" data-screen="title">
     <h1 class="home-logo"><img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK! Bottle-cap football" /></h1>
-    <p class="home-edition">Street Legends · featured</p>
+    <p class="home-edition">Next match</p>
     <div class="home-location"><b id="home-feature-act">ACT 1 / 3</b><span><span id="home-feature-venue">Roadside Showdown</span><br><span id="home-feature-title"></span></span></div>
     <nav class="menu-stack">
       <button class="btn btn-primary home-play home-learn" data-action="play-practice" hidden><span class="home-learn-label">Learn with Kwame <small>2-minute practice</small></span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <button class="btn home-just-play" data-action="skip-practice" hidden>I know how to play: just play</button>
-      <button class="btn btn-primary home-play home-featured" data-action="play-featured"><span id="home-feature-button">Play Roadside</span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <button class="btn home-venues" data-action="play-legends">See all 18 acts</button>
+      <button class="btn home-just-play" data-action="skip-practice" hidden>Just play</button>
+      <button class="btn btn-primary home-play home-featured" data-action="play-featured"><span id="home-feature-button">Play</span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
+      <button class="btn home-venues" data-action="play-legends">All venues</button>
       <button class="btn home-live" data-action="play-friend" aria-label="Play live online"><span>Play Live</span><small>Create or join a room</small><svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <div class="home-secondary"><button class="btn" data-action="play-practice" aria-label="Practice with Kwame">Practice</button>
-      <button class="btn" data-action="play-campaign" aria-label="Classic Campaign">Campaign</button></div>
+      <div class="home-secondary"><button class="btn" data-action="daily-start" id="home-daily">Daily Flick</button>
+      <button class="btn" data-action="play-practice" aria-label="Practice with Kwame">Practice</button>
+      <button class="btn" data-action="play-campaign" aria-label="Classic Campaign" hidden>Campaign</button></div>
     </nav>
     <p class="title-stars" id="title-stars"></p>
     <nav class="home-utilities" aria-label="Game information">
@@ -264,6 +265,20 @@
     </div>
   </section>
 
+  <section class="screen screen-challenge screen-daily" data-screen="daily-result">
+    <article class="paper-card intro-card challenge-card" aria-labelledby="daily-headline">
+      <p class="card-kicker" id="daily-number">Daily Flick</p>
+      <h2 class="card-title" id="daily-headline"></h2>
+      <p class="intro-place" id="daily-score"></p>
+      <p class="intro-blurb" id="daily-streak"></p>
+      <div class="card-actions">
+        <button class="btn btn-small" data-action="back-to-title">Home</button>
+        <button class="btn btn-small" data-action="daily-retry">Try again</button>
+        <button class="btn btn-primary" data-action="daily-share">Share</button>
+      </div>
+      <p class="share-status" id="daily-share-status" role="status"></p>
+    </article>
+  </section>
   <section class="screen screen-pause" data-screen="pause">
     <article class="paper-card menu-card pause-card" id="pause-card" data-face="actions">
       <span class="tape tape-left"></span>
@@ -348,6 +363,7 @@
       <ul class="results-stars" id="results-stars"></ul>
       <p class="results-note" id="results-note"></p>
       <ul class="results-lines" id="results-lines"></ul>
+      <button class="btn results-clip" data-action="share-clip" id="btn-clip" hidden>Share goal clip</button>
       <div class="card-actions">
         <button class="btn btn-small" data-action="results-levels" data-track-label="{track}">Pitches</button>
         <button class="btn" data-action="share-result" id="btn-share">Share</button>
@@ -361,6 +377,6 @@
 
   <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true"><svg class="sound-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
   <noscript><p class="noscript">KONK! needs JavaScript and WebGL to run.</p></noscript>
-<script type="module" src="./src/main.js?v=11"></script>
+<script type="module" src="./src/main.js?v=14"></script>
 </body>
 </html>

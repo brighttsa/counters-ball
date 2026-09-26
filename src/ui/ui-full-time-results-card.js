@@ -69,7 +69,7 @@ export class FullTimeResultsCard {
     title.textContent = fullTimeTitle(result, level, mode, names);
     title.dataset.outcome = winner === null ? 'draw' : versus || winner === SIDE_HOME ? 'win' : 'loss';
     $('results-score').replaceChildren(chalkSide(scores.home, homeColour), ' — ', chalkSide(scores.away, level.opponent.team.hudColor));
-    $('results-opponent').textContent = level.legend ? `Street Legends · ${level.name} · Act ${level.legend.act}: ${level.actTitle}`
+    $('results-opponent').textContent = level.legend ? `${level.name} · Act ${level.legend.act}: ${level.actTitle}`
       : versus ? `${level.name} · ${names.home} vs ${names.away}` : `${level.name} · Accra Reds vs ${level.opponent.team.name}`;
 
     const labels = starGoals(level.rules.threeStarFlicks);

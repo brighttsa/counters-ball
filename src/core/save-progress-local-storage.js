@@ -16,6 +16,13 @@ function rivalriesField(raw) {
   return Object.keys(rivalries).length ? { rivalries } : {};
 }
 
+/** Daily Flick record: best flicks per puzzle number, streak and the last day played. */
+function dailyField(raw) {
+  if (!isPlainObject(raw) || !isCount(raw.streak) || !isCount(raw.lastDay) || !isPlainObject(raw.best)) return {};
+  const best = Object.fromEntries(Object.entries(raw.best).filter(([key, value]) => /^\d+$/.test(key) && isCount(value)));
+  return { daily: { best, streak: raw.streak, lastDay: raw.lastDay } };
+}
+
 export function loadProgress() {
   const fresh = { stars: {}, muted: false };
   try {
@@ -36,6 +43,7 @@ export function loadProgress() {
       ...(parsed?.practiceSkipped === true && { practiceSkipped: true }), // chose "just play" on first launch
       ...(validNames(parsed?.versusNames) && { versusNames: { home: parsed.versusNames.home, away: parsed.versusNames.away } }),
       ...rivalriesField(parsed?.rivalries),
+      ...dailyField(parsed?.daily),
     };
   } catch {
     return fresh;

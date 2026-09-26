@@ -5,7 +5,7 @@ const icon = body => `<svg class="camera-view-icon" viewBox="0 0 24 18" aria-hid
 
 export const CAMERA_VIEWS = {
   tactical: {
-    label: 'Tactical', key: '1', purpose: 'Straight down: every angle',
+    label: 'Tactical', key: '1', purpose: 'Straight down: see the whole table',
     icon: icon('<rect x="3" y="3" width="18" height="12" rx="1"/><path d="M12 3v12"/><circle cx="12" cy="9" r="2.2"/>'),
   },
   broadcast: {

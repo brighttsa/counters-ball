@@ -101,7 +101,7 @@ test('toll goals get their own hero labels', () => {
   assert.match(gates.goalLabel('home'), /^THROUGH THE (LEFT|CENTRE|RIGHT) TOLL$/);
   assert.equal(gates.goalLabel('away'), '');
   gates.noteImpact({ kind: 'ball' }, { kind: 'boom' });
-  assert.equal(gates.goalLabel('home'), 'BOOM BANK');
+  assert.equal(gates.goalLabel('home'), 'OFF THE BOOM');
   gates.plazaDefendedBy('away').jammed.add(lane);
   gates.observe(ball);
   assert.equal(gates.goalLabel('home'), 'JAMMED THE GATE');

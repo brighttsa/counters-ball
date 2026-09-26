@@ -33,7 +33,7 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
     introLines: [
       'First to 1 · 10 flicks each',
       'The ruler turns 45° every flick: open, slanted, across, slanted back',
-      'Watch the ruler turn between turns. Bank the ball off it',
+      'Watch the ruler turn between turns. Bounce the ball off it',
       'The turn sweeps caps and ball aside. Watch where they settle',
     ],
     rules: { goalsToWin: 1, flickLimit: 10, threeStarFlicks: 5 },
@@ -48,7 +48,7 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
     objective: 'Beat Kwame around the ruler',
     introLines: [
       'First to 1 · 14 flicks each',
-      'Line up for the ruler\'s next angle, not the one it has now',
+      'Line up for where the ruler turns next, not where it is now',
       'Your ruler turns too: across is a wall, open is a highway',
     ],
     rules: { goalsToWin: 1, flickLimit: 14, threeStarFlicks: 6 },
@@ -61,7 +61,7 @@ export const SCHOOLYARD_RULER_SEESAW_ACTS = [
     objective: 'First to 2 before the bell',
     introLines: [
       'First to 2 · 16 flicks each',
-      'A goal off the ruler is a RULER BANK',
+      'A goal off the ruler is OFF THE RULER',
       'Across is a wall, open is a highway: time your shot to the turn',
     ],
     rules: { goalsToWin: 2, flickLimit: 16, threeStarFlicks: 9 },

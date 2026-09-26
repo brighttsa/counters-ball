@@ -2,13 +2,23 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Pause fades audio before suspending",
+  "task": "Plain words: bounce/side instead of bank/rail",
   "status": "released",
   "paths": [
-    "src/audio/bounded-audio-voice-synthesis.js",
-    "src/audio/soundtrack-music-director.js",
-    "tests/audio-voice-and-ambience-lifecycle.test.mjs"
+    "src/ui/just-in-time-chalk-hints.js",
+    "src/ui/konk-interface-copy.js",
+    "src/ui/kwame-corner-practice-coach.js",
+    "src/core/schoolyard-shot-memory.js",
+    "src/gameplay/toll-gate-lane-signal-state.js",
+    "src/gameplay/ruler-seesaw-venue-mechanic.js",
+    "src/gameplay/match-presentation-director.js",
+    "src/gameplay/clay-pot-maze-venue-mechanic.js",
+    "src/gameplay/clay-pot-maze-state.js",
+    "src/gameplay/ruler-seesaw-state.js",
+    "src/gameplay/skill-play-event-tracker.js",
+    "src/levels/",
+    "tests/"
   ],
-  "updatedAt": "2026-09-25T23:20:48.467Z",
-  "head": "0144c7e16f675b452a7464aef1c8963ab86972c1"
+  "updatedAt": "2026-09-26T00:24:36.253Z",
+  "head": "c1c9250c1bebb586a007ae319562960ce3b72ecd"
 }

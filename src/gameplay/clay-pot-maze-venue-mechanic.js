@@ -13,13 +13,13 @@ export function createClayPotMazeMechanic(session) {
   // A straight goal is waved off: say so plainly, and let the ball roll on.
   session.physics.onGoalDenied = () => {
     maze.denied += 1;
-    session.hud.event?.('NO BANK, NO GOAL', { priority: 5, duration: 1.4, detail: 'Auntie Ama\'s rule: off a pot or the rail first' });
+    session.hud.event?.('BOUNCE IT IN', { priority: 5, duration: 1.4, detail: 'Auntie Ama\'s rule: off a pot or the side first' });
     session.sound.woodKnock?.(0.7);
   };
   return {
     maze,
     view,
-    hint: { label: 'BANK FIRST', detail: 'Bounce it off a pot or the rail first' },
+    hint: { label: 'BOUNCE FIRST', detail: 'Bounce it off a pot or the side first' },
     onTurn: (side, bodies) => maze.advance(side, bodies),
     describe: () => maze.describe(),
     onFlick: (side) => maze.beginFlick(side),
