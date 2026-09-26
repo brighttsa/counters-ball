@@ -62,7 +62,7 @@ export const ROADSIDE_TOLL_GATE_ACTS = [
     objective: 'First to 2 at the junction',
     introLines: [
       'First to 2 · 16 flicks each',
-      'Bank off a lowered boom, jam a gate, thread the green lane',
+      'Bounce off a lowered boom, jam a gate, go through the green lane',
       'A bottle blocks the middle of the road',
     ],
     obstacles: [{ type: 'bottle', x: 0.02, z: -0.5 }],

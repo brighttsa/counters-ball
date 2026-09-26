@@ -36,7 +36,7 @@ export const CAMPAIGN_LEVELS = [
   },
   {
     id: 'kiosk', name: 'Kiosk Corner', place: 'Nima Market Road',
-    blurb: 'Esi knows every mark on Kofi\'s table. Can you find an angle she hasn\'t seen?',
+    blurb: 'Esi knows every mark on Kofi\'s table. Can you find a shot she hasn\'t seen?',
     surface: CARDBOARD, lighting: 'late-afternoon', backdrop: 'kiosk', frictionScale: 1,
     obstacles: [],
     rules: { goalsToWin: 2, flickLimit: 14, threeStarFlicks: 6 },

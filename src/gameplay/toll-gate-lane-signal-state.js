@@ -144,7 +144,7 @@ export class TollGateLaneSignals {
     const f = this.flight;
     if (!f || f.side !== scorer) return '';
     if (f.through?.jammed) return 'JAMMED THE GATE';
-    if (f.boomBank) return 'BOOM BANK';
+    if (f.boomBank) return 'OFF THE BOOM';
     if (f.through) return `THROUGH THE ${LANE_KEYS[f.through.lane].toUpperCase()} TOLL`;
     return '';
   }

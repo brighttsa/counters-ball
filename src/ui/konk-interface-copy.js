@@ -1,6 +1,6 @@
 export const MENU_COPY = Object.freeze({
   localIntro: 'Two names. One table. Take turns on this screen.',
-  obstacles: 'Obstacles are in play. Bank if you can.',
+  obstacles: 'Obstacles are in play. Bounce around them.',
   dust: 'Dust slows the caps.',
   noObstacles: 'No fixed obstacles',
 });
@@ -11,7 +11,7 @@ export const RESULTS_COPY = Object.freeze({
   classicFinal: 'Every table settled. For now.',
   improved: 'New best on this table.',
   ordinaryWin: 'Made that one count.',
-  soloOut: 'Out of flicks. Set up the next angle.',
+  soloOut: 'Out of flicks. Set up the next shot.',
   drawnStars: 'Level on goals. Win the rematch to earn stars.',
   playAgain: 'Play again',
   runItBack: 'Run it back',
@@ -21,15 +21,15 @@ export const RESULTS_COPY = Object.freeze({
 });
 
 export const shotStory = (label, winner) => {
-  if (!label || label === 'GOAL') return winner === null ? 'The table stayed level.' : 'The deciding angle found the net.';
+  if (!label || label === 'GOAL') return winner === null ? 'The table stayed level.' : 'The winning shot found the net.';
   return ({
-    'RULER BANK': 'The ruler bank decided it.',
+    'OFF THE RULER': 'The ruler bounce decided it.',
     'OFF THE DISH': 'The dish opened. You found it.',
     'OFF THE POT': 'The pot turned the match.',
     'THROUGH THE TOLL': 'The green lane paid out.',
     'CAUGHT THE LORRY': 'You caught the moving goal.',
     'LIGHTS ON': 'You lit the way to goal.',
-    'BANK GOAL': 'The bank angle did the damage.',
+    'BOUNCE GOAL': 'The bounce did the damage.',
     'COUNTER GOAL': 'The counter landed clean.',
     'STREET PLAY': 'That was a proper street move.',
     'SWEET SPOT': 'You found the sweet spot.',

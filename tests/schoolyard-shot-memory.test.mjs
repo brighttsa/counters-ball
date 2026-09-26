@@ -11,7 +11,7 @@ function fixture(l = level, o = options) {
   return { memory: createSchoolyardShotMemory(l, o, storage), storage, writes };
 }
 test('non-winning banks, ordinary finishes, losses and draws never save', () => {
-  for (const [score, label, winner] of [[1, 'RULER BANK', 'home'], [2, '', 'home'], [2, 'RULER BANK', 'away'], [2, 'RULER BANK', null]]) {
+  for (const [score, label, winner] of [[1, 'OFF THE RULER', 'home'], [2, '', 'home'], [2, 'OFF THE RULER', 'away'], [2, 'OFF THE RULER', null]]) {
     const { memory, writes } = fixture();
     memory.goal({ scorer: 'home', scores: { home: score } }, label);
     memory.finish({ winner }); assert.equal(writes.length, 0);
@@ -23,33 +23,33 @@ test('AI, attract, previews, hot-seat and other venues cannot earn the memory', 
     [level, { controllers: { home: 'ai', away: 'ai' } }],
     [{ ...level, backdrop: 'kiosk' }, options], [{ ...level, mechanic: null }, options]]) {
     const { memory, writes } = fixture(l, o);
-    memory.goal({ scorer: 'home', scores: { home: 2 } }, 'RULER BANK');
+    memory.goal({ scorer: 'home', scores: { home: 2 } }, 'OFF THE RULER');
     memory.finish({ winner: 'home' }); assert.equal(writes.length, 0);
   }
 });
 test('a later ordinary goal replaces an earlier bank; away goals do not count', () => {
   const { memory, writes } = fixture();
-  memory.goal({ scorer: 'home', scores: { home: 1 } }, 'RULER BANK');
+  memory.goal({ scorer: 'home', scores: { home: 1 } }, 'OFF THE RULER');
   memory.goal({ scorer: 'home', scores: { home: 2 } }, '');
   memory.finish({ winner: 'home' }); assert.equal(writes.length, 0);
   const away = fixture();
-  away.memory.goal({ scorer: 'away', scores: { home: 2 } }, 'RULER BANK');
+  away.memory.goal({ scorer: 'away', scores: { home: 2 } }, 'OFF THE RULER');
   away.memory.finish({ winner: 'home' }); assert.equal(away.writes.length, 0);
 });
 test('winning bank saves only at match end, once; recall stays Schoolyard Legends-only', () => {
   const { memory, storage, writes } = fixture();
-  memory.goal({ scorer: 'home', scores: { home: 2 } }, 'RULER BANK');
+  memory.goal({ scorer: 'home', scores: { home: 2 } }, 'OFF THE RULER');
   assert.equal(writes.length, 0);
   memory.finish({ winner: 'home' }); memory.finish({ winner: 'home' });
   assert.equal(writes.length, 1); assert.equal(remembersSchoolyardBank(storage), true);
-  assert.match(schoolyardReturnMemory(level, 'legends'), /match-winning ruler bank/);
+  assert.match(schoolyardReturnMemory(level, 'legends'), /match-winning bounce off the ruler/);
   assert.equal(schoolyardReturnMemory(level, 'versus'), '');
   assert.equal(schoolyardReturnMemory({ ...level, backdrop: 'night' }, 'legends'), '');
 });
 test('blocked storage never interrupts a match win', () => {
   const storage = { getItem() { throw Error('blocked'); }, setItem() { throw Error('blocked'); } };
   const memory = createSchoolyardShotMemory(level, options, storage);
-  memory.goal({ scorer: 'home', scores: { home: 2 } }, 'RULER BANK');
+  memory.goal({ scorer: 'home', scores: { home: 2 } }, 'OFF THE RULER');
   assert.doesNotThrow(() => memory.finish({ winner: 'home' }));
   assert.equal(remembersSchoolyardBank(storage), true);
 });

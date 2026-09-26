@@ -11,7 +11,7 @@ function setup(reduced = false) {
 
 test('replacement preserves current callout opacity and position', () => {
   const { root, callout } = setup();
-  callout.event('BANK', { priority: 1 });
+  callout.event('BOUNCE', { priority: 1 });
   callout.update(.07);
   const before = { ...root.style };
   callout.event('GOAL', { priority: 10, direction: -1 });

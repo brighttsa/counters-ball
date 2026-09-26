@@ -1,7 +1,7 @@
 import { SkillPlayEventTracker } from './skill-play-event-tracker.js';
 import { CompactTransformReplay } from './compact-transform-replay.js';
 
-const soundKey = { 'SWEET SPOT': 'sweetSpot', BANK: 'bank', COUNTER: 'counter', 'STREET PLAY': 'streetPlay' };
+const soundKey = { 'SWEET SPOT': 'sweetSpot', BOUNCE: 'bank', COUNTER: 'counter', 'STREET PLAY': 'streetPlay' };
 
 export class MatchPresentationDirector {
   constructor(session) {
@@ -57,7 +57,7 @@ export class MatchPresentationDirector {
       s.particles.setVisible(false);
       s.hud.clearEvents();
       const view = this.highlight.label === 'STREET PLAY' ? 'HERO CAM'
-        : this.highlight.label === 'BANK GOAL' ? 'TOP CAM'
+        : this.highlight.label === 'BOUNCE GOAL' ? 'TOP CAM'
           : this.highlight.label === 'SWEET SPOT' ? 'GROUND CAM' : 'TRACKING CAM';
       s.hud.replay(true, `${view} / REPLAY`);
       s.cameraDirector.setReplayFocus(s.stage.ballMesh.position);

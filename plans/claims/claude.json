@@ -2,16 +2,23 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Drop Street Legends/featured labels from player-facing text",
+  "task": "Plain words: bounce/side instead of bank/rail",
   "status": "released",
   "paths": [
-    "index.html",
-    "src/levels/featured-home-legends-act.js",
-    "src/ui/ui-menu-screens-title-levels-intro.js",
-    "src/ui/ui-full-time-results-card.js",
-    "src/ui/ui-circuit-venue-preview.js",
-    "tests/featured-home-and-chalk-hud.test.mjs"
+    "src/ui/just-in-time-chalk-hints.js",
+    "src/ui/konk-interface-copy.js",
+    "src/ui/kwame-corner-practice-coach.js",
+    "src/core/schoolyard-shot-memory.js",
+    "src/gameplay/toll-gate-lane-signal-state.js",
+    "src/gameplay/ruler-seesaw-venue-mechanic.js",
+    "src/gameplay/match-presentation-director.js",
+    "src/gameplay/clay-pot-maze-venue-mechanic.js",
+    "src/gameplay/clay-pot-maze-state.js",
+    "src/gameplay/ruler-seesaw-state.js",
+    "src/gameplay/skill-play-event-tracker.js",
+    "src/levels/",
+    "tests/"
   ],
-  "updatedAt": "2026-09-26T00:10:43.896Z",
-  "head": "dbe0560f31d0915fc110d899a6ed9262ad43b860"
+  "updatedAt": "2026-09-26T00:24:36.253Z",
+  "head": "c1c9250c1bebb586a007ae319562960ce3b72ecd"
 }

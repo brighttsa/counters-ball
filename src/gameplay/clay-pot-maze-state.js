@@ -66,6 +66,6 @@ export class ClayPotMaze {
   }
 
   describe() {
-    return `No straight goals: bounce it off a pot or the rail first · ${this.denied} waved off so far`;
+    return `No straight goals: bounce it off a pot or the side first · ${this.denied} waved off so far`;
   }
 }

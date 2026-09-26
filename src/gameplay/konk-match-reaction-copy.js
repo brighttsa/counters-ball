@@ -1,4 +1,4 @@
-const HOME_GOALS = ['That one was yours.', 'In it goes.', 'Right through.', 'That angle paid off.'];
+const HOME_GOALS = ['That one was yours.', 'In it goes.', 'Right through.', 'That shot paid off.'];
 const AWAY_GOALS = [(kid) => `${kid} answers.`, (kid) => `${kid} found the gap.`];
 
 export function ordinaryGoalDetail({ scorer, kid, names, versus, goalNumber }) {

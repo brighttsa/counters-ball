@@ -11,7 +11,7 @@ export const CHALK_HINTS_KEY = 'counters-ball-chalk-hints-v1';
 const HINT_SECONDS = 9;
 const fine = () => globalThis.matchMedia?.('(hover: hover) and (pointer: fine)')?.matches ?? false;
 const COPY = {
-  bank: () => 'Blocked? Bank it off the rail',
+  bank: () => 'Blocked? Bounce it off the side',
   street: () => (fine() ? 'In the way? Street view · 3' : 'In the way? Camera → Street Level'),
   peek: () => 'Cap hidden? Hold Tactical peek',
 };

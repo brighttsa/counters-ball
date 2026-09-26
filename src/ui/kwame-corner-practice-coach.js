@@ -27,7 +27,7 @@ export class KwameCornerCoach {
     session.rules.on('goal', ({ scorer }) => { if (scorer === 'home' && this.attempt) this.attempt.scored = true; });
     session.rules.on('kickoff', () => { this.needsSetup = true; }); // a goal reset the table: lay the lesson out again
     this.previousDenied = session.physics.onGoalDenied;
-    session.physics.onGoalDenied = (sign) => { this.previousDenied?.(sign); this.say('Off the rail first! Again.'); };
+    session.physics.onGoalDenied = (sign) => { this.previousDenied?.(sign); this.say('Off the side first! Again.'); };
     this.show();
   }
 

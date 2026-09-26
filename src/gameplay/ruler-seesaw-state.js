@@ -81,7 +81,7 @@ export class RulerSeesaws {
   }
 
   goalLabel(scorer) {
-    return this.flight?.side === scorer && this.flight.rulerBank ? 'RULER BANK' : '';
+    return this.flight?.side === scorer && this.flight.rulerBank ? 'OFF THE RULER' : '';
   }
 
   describe(side) {

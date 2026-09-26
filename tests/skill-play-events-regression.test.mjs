@@ -46,8 +46,8 @@ test('bank requires owned contact plus forward advantage, not wall contact alone
   ball.pos.x = 0.5;
   tracker.update(0.1, ball);
   tracker.update(0.1, ball);
-  assert.deepEqual(events.map(event => event.label), ['BANK']);
-  assert.equal(tracker.goal('home').label, 'BANK GOAL');
+  assert.deepEqual(events.map(event => event.label), ['BOUNCE']);
+  assert.equal(tracker.goal('home').label, 'BOUNCE GOAL');
 });
 
 test('counter requires previous opponent touch and reversal out of own half', () => {
@@ -145,5 +145,5 @@ test('striker wall contact after ball departure cannot label a direct shot as ba
   assert.equal(tracker.goal('home').label, '');
   tracker.wall(ball, 0.5);
   tracker.update(0.1, ball);
-  assert.deepEqual(events.map(event => event.label), ['BANK']);
+  assert.deepEqual(events.map(event => event.label), ['BOUNCE']);
 });

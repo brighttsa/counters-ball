@@ -58,7 +58,7 @@ test('RULER BANK only for the scorer whose ball touched a ruler', () => {
   rulers.noteImpact({ kind: 'ruler' }, { kind: 'cap' });
   assert.equal(rulers.goalLabel('home'), '');
   rulers.noteImpact({ kind: 'ruler' }, { kind: 'ball' });
-  assert.equal(rulers.goalLabel('home'), 'RULER BANK');
+  assert.equal(rulers.goalLabel('home'), 'OFF THE RULER');
   assert.equal(rulers.goalLabel('away'), '');
 });
 
