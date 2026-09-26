@@ -62,6 +62,8 @@ export class MatchPresentationDirector {
       s.hud.replay(true, `${view} / REPLAY`);
       s.cameraDirector.setReplayFocus(s.stage.ballMesh.position);
       s.cameraDirector.setReplay(true, this.highlight.direction, view);
+      const scorer = this.highlight.direction > 0 ? 'home' : 'away';
+      s.options.onGoalReplay?.(true, { byHuman: s.rules.isHuman(scorer) }); // the results card can share this replay
       return;
     }
     s.rules.finishGoalCelebration();
@@ -95,6 +97,7 @@ export class MatchPresentationDirector {
     s.particles.setVisible(true);
     s.hud.replay(false);
     s.cameraDirector.setReplay(false);
+    s.options.onGoalReplay?.(false);
     // Motion preferences can change while paused; only resume may advance rules.
     if (s.paused) this.pendingContinuation = true;
     else s.rules.finishGoalCelebration();

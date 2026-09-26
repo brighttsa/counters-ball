@@ -129,7 +129,11 @@ export function wireMatchFeedback(session) {
 
   const origResolve = rules.resolvePlayAtRest.bind(rules);
   rules.resolvePlayAtRest = function () {
-    if (session.slowMoUsed && rules.phase === 'moving') sound.event?.('nearMiss');
+    if (session.slowMoUsed && rules.phase === 'moving') {
+      sound.event?.('nearMiss');
+      // The table gasps with you: a shot that nearly went in gets its own word, not just a sound.
+      if (!options.isAttract && rules.isHuman(rules.turn)) hud.event('SO CLOSE!', { priority: 3, duration: 1.1 });
+    }
     origResolve();
   };
 

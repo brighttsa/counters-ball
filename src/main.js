@@ -19,7 +19,8 @@ import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
-import { createMenuActions } from './ui/menu-button-action-routes.js?v=2';
+import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
+import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js?v=3';
 import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=2';
@@ -172,7 +173,8 @@ function previewLevel(index) {
 
 /** A real match table with the full HUD: shared by solo, 2-Player and Message Match. */
 function openMatchTable(level, sessionOptions, versus) {
-  replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, ...sessionOptions }, hud);
+  goalClip.reset();
+  replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team, onGoalReplay: goalClip.onGoalReplay, ...sessionOptions }, hud);
   sound.setSfxLevel(1);
   sound.setAmbience(level.backdrop);
   hud.attachTableChalk(createChalkTableScoreboard(app.session.stage.group, HOME_TEAM.hudColor, level.opponent.team.hudColor));
@@ -260,12 +262,14 @@ const menus = new MenuScreens((action, el) => {
 const chalkHints = new JustInTimeChalkHints();
 const messageMatch = createMessageMatchFlow({ app, openMatchTable, menus, hud, sound, cameraDirector, showResults, showTitle,
   baseUrl: `${location.origin}${location.pathname}` });
+const goalClip = createGoalClipSharing({ canvas, sound, button: document.getElementById('btn-clip'),
+  status: document.getElementById('results-share-status') });
 const dailyFlick = createDailyFlickFlow({ app, progress, save: saveProgress, openMatchTable, menus, hud, sound, cameraDirector,
   baseUrl: `${location.origin}${location.pathname}` });
 const actions = createMenuActions({
   app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints: chalkHints,
   featuredIndex, levels: STREET_LEGENDS_ACTS,
-  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch, dailyFlick,
+  flow: { showTitle, showLevels, previewLevel, prepareMatch, kickOff, setPaused, featuredIndex, showFriendMatch }, messageMatch, dailyFlick, goalClip,
 });
 
 // Browsers only unlock audio on some gestures: on touch screens pointerdown is not one of them,

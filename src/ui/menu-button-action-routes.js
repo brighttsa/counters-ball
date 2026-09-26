@@ -12,7 +12,7 @@ const ARM_SECONDS = 4;
  */
 const VIEWS = ['tactical', 'broadcast', 'street', 'free'];
 
-export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints, messageMatch, dailyFlick, featuredIndex, levels }) {
+export function createMenuActions({ app, progress, save, flow, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints, messageMatch, dailyFlick, goalClip, featuredIndex, levels }) {
   const audio = () => { save(progress); applyAudioSettings({ progress, sound, music, menus }); };
   const finishReplay = () => { if (app.session?.presentation.replay.active) app.session.presentation.finishReplay(); };
   // The chips on the back of the pause card. Unknown values are ignored, so a stale chip can't save junk.
@@ -124,12 +124,12 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     restart: (el) => { if (confirmed(el, 'Sure? Press again to restart')) flow.prepareMatch(app.levelIndex); },
     quit: (el) => { if (confirmed(el, 'Sure? Press again to quit')) flow.showLevels(); },
     'results-levels': () => flow.showLevels(),
-    replay: () => { // on the 2-Player Table this is Rematch: next game of the series, straight to kick-off
-      if (app.mode !== 'versus') return flow.prepareMatch(app.levelIndex);
-      hotSeat.rematch();
+    replay: () => { // Play again goes straight to kick-off: the rules card was read the first time
+      if (app.mode === 'versus') hotSeat.rematch(); // 2-Player: next game of the series
       flow.prepareMatch(app.levelIndex, { rematch: true });
     },
     'share-result': () => resultsShare.share(),
+    'share-clip': () => goalClip.share(),
     'friend-share': () => friendShare.share(),
     'friend-copy': () => friendShare.copy(),
     'friend-play': () => {
