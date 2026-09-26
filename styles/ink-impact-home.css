@@ -354,8 +354,8 @@
 .screen-title .menu-stack > * { grid-column: 1 / -1; }
 .screen-title .menu-stack:has(.home-just-play:not([hidden])) :is(.home-just-play, .home-venues) { grid-column: auto; text-align: center; padding-inline: 12px; font-size: var(--text-sm); }
 
-/* Narrower home buttons: a compact column under the logo instead of a full-width slab. */
-.screen-title .menu-stack, .screen-title .home-utilities { width: min(380px, 100%); max-width: 100%; }
+/* Narrow home buttons (300px, 250px on phones): a compact column under the logo, not a full-width slab. */
+.screen-title .menu-stack, .screen-title .home-utilities { width: min(300px, 100%); max-width: 100%; }
 @media (max-width: 700px) {
-  .screen-title .menu-stack, .screen-title .home-utilities { width: min(300px, 100%); }
+  .screen-title .menu-stack, .screen-title .home-utilities { width: min(250px, 100%); }
 }
