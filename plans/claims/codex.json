@@ -2,29 +2,12 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Live multiplayer room protocol; peak-end match feedback and decisive results",
+  "task": "Native iOS Schoolyard vertical slice",
   "status": "released",
   "paths": [
-    "match-server/src/live-match-room-rules.js",
-    "match-server/src/konk-match-worker-and-durable-object.js",
-    "tests/live-match-room.test.mjs",
-    "src/gameplay/message-match-letter-recorder-and-replayer.js",
-    "src/ui/message-match-flow.js",
-    "src/ui/message-match-letter-card.js",
-    "src/core/message-match-turn-letter-codec.js",
-    "tests/message-match-letters.test.mjs",
-    "tests/message-match-server.test.mjs",
-    "index.html",
-    "src/main.js",
-    "plans/agent-handoff-board.md",
-    "plans/claims/codex.json",
-    "src/gameplay/match-session-feedback-hooks.js",
-    "src/ui/ui-full-time-results-card.js",
-    "src/ui/full-time-results-presentation.js",
-    "src/ui/konk-interface-copy.js",
-    "src/gameplay/goal-line-crossing-detection.js",
-    "styles/game-ui-menus-and-results.css"
+    "ios/",
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-25T19:18:00Z",
-  "head": "3abf88f"
+  "updatedAt": "2026-09-28T20:22:15Z",
+  "head": "ed9c9fb3b3c574292aa98a80aef22fa23051de18"
 }
