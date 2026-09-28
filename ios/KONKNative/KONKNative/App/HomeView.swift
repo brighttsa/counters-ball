@@ -60,3 +60,9 @@ struct HomeView: View {
         }
     }
 }
+
+#Preview("KONK Native") {
+    let previewDefaults = UserDefaults(suiteName: "world.konk.native.preview")!
+    HomeView()
+        .environmentObject(ProgressStore(defaults: previewDefaults))
+}
