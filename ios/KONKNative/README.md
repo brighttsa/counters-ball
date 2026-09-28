@@ -1,8 +1,9 @@
 # KONK Native
 
-An iOS/iPadOS vertical slice of **Schoolyard Break: Ruler Rules**. The app uses
-SwiftUI, SceneKit, a deterministic fixed-step 2D solver, generated audio and
-procedural geometry. It does not require binary art or sound assets.
+An iOS/iPadOS host for the current KONK experience. The launch path renders
+the live game from `konk.world` in a full-screen WebKit view so the website is
+the visual, gameplay and progression source of truth while native systems are
+migrated incrementally without creating a second version of the game.
 
 ## Run
 
@@ -14,11 +15,13 @@ procedural geometry. It does not require binary art or sound assets.
 The bundle identifier is `world.konk.native`. Change it in Signing &
 Capabilities if that identifier is unavailable on the selected team.
 
-## Slice scope
+## Current scope
 
-- One-goal match against Kwame with 14 flicks per side.
-- Pull-and-release touch flicks and deterministic disc collisions.
-- Two rulers that rotate 45 degrees with their attacking turn.
-- Broadcast, tactical and street cameras.
-- Automatic goal replay, haptics and generated match audio.
-- Persisted Schoolyard wins and best flick count.
+- Exact current KONK home, modes, venues, matches, audio and saves.
+- Full-screen iPhone and iPad presentation with inline media playback.
+- Native loading, retry and offline states.
+- Inspectable WebKit content for Safari/Xcode debugging.
+
+The older native Schoolyard experiment remains outside the launch path while
+its reusable physics and rendering work is evaluated against the web game.
+It is not the product specification.

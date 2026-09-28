@@ -18,6 +18,8 @@
 		A1000000000000000000000A /* FlickPhysicsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* FlickPhysicsTests.swift */; };
 		A1000000000000000000000B /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* SceneKit.framework */; };
 		A1000000000000000000000C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* AVFoundation.framework */; };
+		A1000000000000000000000D /* KONKWebGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000F /* KONKWebGameView.swift */; };
+		A1000000000000000000000E /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000000000000000000010 /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,17 +41,19 @@
 		B1000000000000000000000C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B1000000000000000000000D /* KONKNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KONKNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1000000000000000000000E /* KONKNativeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KONKNativeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1000000000000000000000F /* KONKWebGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KONKWebGameView.swift; sourceTree = "<group>"; };
+		B10000000000000000000010 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		F10000000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A1000000000000000000000B, A1000000000000000000000C,); runOnlyForDeploymentPostprocessing = 0; };
+		F10000000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A1000000000000000000000B, A1000000000000000000000C, A1000000000000000000000E,); runOnlyForDeploymentPostprocessing = 0; };
 		F10000000000000000000002 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		D10000000000000000000002 = {isa = PBXGroup; children = (D10000000000000000000003, D10000000000000000000007, D10000000000000000000008,); sourceTree = "<group>"; };
 		D10000000000000000000003 /* KONKNative */ = {isa = PBXGroup; children = (D10000000000000000000004, D10000000000000000000005, D10000000000000000000006, D10000000000000000000009,); path = KONKNative; sourceTree = "<group>"; };
-		D10000000000000000000004 /* App */ = {isa = PBXGroup; children = (B10000000000000000000001, B10000000000000000000002, B10000000000000000000003, B10000000000000000000004,); path = App; sourceTree = "<group>"; };
+		D10000000000000000000004 /* App */ = {isa = PBXGroup; children = (B10000000000000000000001, B1000000000000000000000F, B10000000000000000000002, B10000000000000000000003, B10000000000000000000004,); path = App; sourceTree = "<group>"; };
 		D10000000000000000000005 /* Game */ = {isa = PBXGroup; children = (B10000000000000000000005, B10000000000000000000006, B10000000000000000000007,); path = Game; sourceTree = "<group>"; };
 		D10000000000000000000006 /* Scene */ = {isa = PBXGroup; children = (B10000000000000000000008,); path = Scene; sourceTree = "<group>"; };
 		D10000000000000000000009 /* Audio */ = {isa = PBXGroup; children = (B10000000000000000000009,); path = Audio; sourceTree = "<group>"; };
@@ -72,7 +76,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		F20000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000004, A10000000000000000000005, A10000000000000000000006, A10000000000000000000007, A10000000000000000000008, A10000000000000000000009,); runOnlyForDeploymentPostprocessing = 0; };
+		F20000000000000000000001 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A1000000000000000000000D, A10000000000000000000002, A10000000000000000000003, A10000000000000000000004, A10000000000000000000005, A10000000000000000000006, A10000000000000000000007, A10000000000000000000008, A10000000000000000000009,); runOnlyForDeploymentPostprocessing = 0; };
 		F20000000000000000000002 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A1000000000000000000000A,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 

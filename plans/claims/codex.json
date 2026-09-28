@@ -2,11 +2,12 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Native iOS interactive Xcode preview",
+  "task": "Faithful KONK iOS parity host",
   "status": "released",
   "paths": [
-    "ios/KONKNative/KONKNative/App/HomeView.swift"
+    "ios/KONKNative/",
+    "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-28T20:35:34Z",
-  "head": "20239c488484224c556b5e30b2c8fb0c26e37a1c"
+  "updatedAt": "2026-09-28T20:43:22Z",
+  "head": "9b01ec3844776dfe106c50775e572291ad1800ee"
 }
