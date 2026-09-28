@@ -2,14 +2,13 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Faster first tap and logo load",
+  "task": "Copyright licence",
   "status": "released",
   "paths": [
-    "src/main.js",
-    "src/audio/procedural-sound-effects-web-audio.js",
-    "index.html",
-    "assets/konk-logo.svg"
+    "LICENSE",
+    "README.md",
+    "index.html"
   ],
-  "updatedAt": "2026-09-26T14:57:16.638Z",
-  "head": "09afda5f7c3946124b56b1331b9fec5db8613d58"
+  "updatedAt": "2026-09-28T00:15:29.819Z",
+  "head": "3a7b89cc22eb1626d0104a3f88d04df414707d9e"
 }

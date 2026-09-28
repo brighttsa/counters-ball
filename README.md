@@ -64,3 +64,7 @@ human-like aiming error.
 
 See [docs/design-guidelines.md](docs/design-guidelines.md) for the art and
 motion bible, and [plans/](plans/) for implementation plans.
+
+## Licence
+
+Copyright © 2026 Bright Senanu Tsa. All rights reserved. See [LICENSE](LICENSE).
