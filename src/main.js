@@ -22,12 +22,12 @@ import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v
 import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
 import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
-import { createMessageMatchFlow } from './ui/message-match-flow.js?v=3';
-import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=2';
+import { createMessageMatchFlow } from './ui/message-match-flow.js?v=4';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=3';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
-import { takeRoomIdFromUrl } from './core/live-match-room-transport.js';
+import { takeRoomIdFromUrl } from './core/live-match-room-transport.js?v=2';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';

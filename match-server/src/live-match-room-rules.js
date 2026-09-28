@@ -9,20 +9,32 @@ export function cleanRoomName(value, fallback = 'Player') {
   return name || fallback;
 }
 
+/** A seat's secret: the room code is shared in the invite, so the code alone must not let anyone act for a player. */
+export function newSeatToken(random = crypto.getRandomValues.bind(crypto)) {
+  return Array.from(random(new Uint8Array(18)), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** Which seat a token belongs to, or null. */
+export function seatFor(room, token) {
+  if (!room || typeof token !== 'string' || !token) return null;
+  return SEATS.find((seat) => room.seats[seat]?.token === token) ?? null;
+}
+
 export function newRoom(random = crypto.getRandomValues.bind(crypto)) {
   const alphabet = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   return Array.from(random(new Uint8Array(10)), (b) => alphabet[b % alphabet.length]).join('');
 }
 
 export function createRoom({ levelId, homeName, now = Date.now() }) {
-  return { phase: 'lobby', levelId: String(levelId ?? ''), createdAt: now, updatedAt: now,
-    seats: { home: { name: cleanRoomName(homeName, 'Player 1'), ready: false, seenAt: now }, away: null } };
+  return { phase: 'lobby', levelId: String(levelId ?? '').slice(0, 40), createdAt: now, updatedAt: now,
+    seats: { home: { name: cleanRoomName(homeName, 'Player 1'), ready: false, seenAt: now, token: newSeatToken() }, away: null } };
 }
 
 export function joinRoom(room, { name, now = Date.now() }) {
   if (!room || room.phase === 'ended') return { ok: false, status: 410, error: 'room is closed' };
   if (room.seats.away && now - room.seats.away.seenAt <= PRESENCE_MS) return { ok: false, status: 409, error: 'room is full' };
-  room.seats.away = { name: cleanRoomName(name, 'Player 2'), ready: false, seenAt: now };
+  // Reclaiming an abandoned seat issues a new token, so the player who left can no longer act for it.
+  room.seats.away = { name: cleanRoomName(name, 'Player 2'), ready: false, seenAt: now, token: newSeatToken() };
   room.updatedAt = now;
   return { ok: true, seat: 'away' };
 }

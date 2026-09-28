@@ -2,13 +2,20 @@
   "schema": 1,
   "owner": "claude",
   "branch": "main",
-  "task": "Copyright licence",
+  "task": "Security fixes: live room seat tokens, size limits, clean push text",
   "status": "released",
   "paths": [
-    "LICENSE",
-    "README.md",
-    "index.html"
+    "src/main.js",
+    "src/ui/message-match-flow.js",
+    "src/ui/live-match-room-flow.js",
+    "index.html",
+    "match-server/src/live-match-room-rules.js",
+    "match-server/src/konk-match-worker-and-durable-object.js",
+    "match-server/src/match-turn-ledger-rules.js",
+    "match-server/src/match-link-preview-card-and-page.js",
+    "src/core/live-match-room-transport.js",
+    "tests/live-match-room.test.mjs"
   ],
-  "updatedAt": "2026-09-28T00:15:29.819Z",
-  "head": "3a7b89cc22eb1626d0104a3f88d04df414707d9e"
+  "updatedAt": "2026-09-28T00:47:03.755Z",
+  "head": "72cfc85e526a6414947b5ed4e747b6dfb853c00a"
 }

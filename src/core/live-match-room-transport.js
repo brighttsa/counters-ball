@@ -21,12 +21,16 @@ async function call(base, path, init = {}, fetchImpl = globalThis.fetch) {
   } finally { clearTimeout(timer); }
 }
 
+// The server hands each seat a secret token on create/join; every later move or ready-up proves the seat with it.
+const seatTokens = new Map();
+const keep = (id) => (result) => { if (result?.token) seatTokens.set(id ?? result.id, result.token); return result; };
+
 export function createLiveRoom(base, details, fetchImpl) {
-  return call(base, '/rooms', { method: 'POST', body: JSON.stringify(details) }, fetchImpl);
+  return call(base, '/rooms', { method: 'POST', body: JSON.stringify(details) }, fetchImpl).then(keep());
 }
 
 export function joinLiveRoom(base, id, name, fetchImpl) {
-  return call(base, `/rooms/${id}/join`, { method: 'POST', body: JSON.stringify({ name }) }, fetchImpl);
+  return call(base, `/rooms/${id}/join`, { method: 'POST', body: JSON.stringify({ name }) }, fetchImpl).then(keep(id));
 }
 
 export function readLiveRoom(base, id, fetchImpl) {
@@ -34,15 +38,15 @@ export function readLiveRoom(base, id, fetchImpl) {
 }
 
 export function setLiveRoomReady(base, id, seat, ready, fetchImpl) {
-  return call(base, `/rooms/${id}/ready`, { method: 'POST', body: JSON.stringify({ seat, ready }) }, fetchImpl);
+  return call(base, `/rooms/${id}/ready`, { method: 'POST', body: JSON.stringify({ seat, ready, token: seatTokens.get(id) }) }, fetchImpl);
 }
 
 export function heartbeatLiveRoom(base, id, seat, fetchImpl) {
-  return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat }) }, fetchImpl);
+  return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat, token: seatTokens.get(id) }) }, fetchImpl);
 }
 
 export function sendLiveRoomTurn(base, id, letter, fetchImpl) {
-  return call(base, `/rooms/${id}/turn`, { method: 'POST', body: JSON.stringify({ letter }) }, fetchImpl);
+  return call(base, `/rooms/${id}/turn`, { method: 'POST', body: JSON.stringify({ letter, token: seatTokens.get(id) }) }, fetchImpl);
 }
 
 export function readLiveRoomTurn(base, id, fetchImpl) {

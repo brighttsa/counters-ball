@@ -11,7 +11,7 @@ import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMat
 import { cleanSubscription, sendPush } from './web-push-vapid-and-aes128gcm.js';
 import { describeMatch, previewPageHtml, scoreCardSvg } from './match-link-preview-card-and-page.js';
 import { renderScoreCardPng } from './score-card-png-renderer.js';
-import { createRoom, joinRoom, publicRoom, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
+import { createRoom, joinRoom, publicRoom, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
@@ -49,7 +49,7 @@ export class KonkMatch extends DurableObject {
     const created = createRoom(body);
     await this.ctx.storage.put('room', created);
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
-    return json({ room: publicRoom(created), seat: 'home' }, 201);
+    return json({ room: publicRoom(created), seat: 'home', token: created.seats.home.token }, 201);
   }
 
   async roomJoin(request) {
@@ -58,24 +58,28 @@ export class KonkMatch extends DurableObject {
     const verdict = joinRoom(room, await request.json());
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
-    return json({ room: publicRoom(room), seat: verdict.seat });
+    return json({ room: publicRoom(room), seat: verdict.seat, token: room.seats.away.token });
   }
 
   async roomReady(request) {
     if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
     const room = await this.ctx.storage.get('room');
     const body = await request.json();
-    const verdict = setReady(room, body.seat, body.ready);
+    const seat = seatFor(room, body.token);
+    if (!seat) return json({ error: 'not your seat' }, 403);
+    const verdict = setReady(room, seat, body.ready);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
-    return json({ room: publicRoom(room), seat: body.seat });
+    return json({ room: publicRoom(room), seat });
   }
 
   async roomHeartbeat(request) {
     if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
     const room = await this.ctx.storage.get('room');
     const body = await request.json();
-    const verdict = touch(room, body.seat);
+    const seat = seatFor(room, body.token);
+    if (!seat) return json({ error: 'not your seat' }, 403);
+    const verdict = touch(room, seat);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
     return json({ room: publicRoom(room) });
@@ -88,12 +92,18 @@ export class KonkMatch extends DurableObject {
     }
     if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
     const body = await request.json();
+    const room = await this.ctx.storage.get('room');
+    // Only a seated player may move, only for their own side, and only once the room has kicked off.
+    const seat = seatFor(room, body.token);
+    if (!room || (room.phase !== 'ready' && room.phase !== 'playing')) return json({ error: 'match has not started' }, 409);
+    if (!seat || body.letter?.by !== seat[0]) return json({ error: 'not your seat' }, 403);
     const previous = await this.ctx.storage.get('room:letter');
     const verdict = previous ? checkNextLetter(previous, body.letter) : checkOpeningLetter(body.letter);
     if (!verdict.ok) return json({ error: verdict.error, ...(previous ? { letter: previous, seq: previous.k } : {}) }, verdict.status);
-    await this.ctx.storage.put('room:letter', body.letter);
-    const room = await this.ctx.storage.get('room');
-    if (room) { room.phase = body.letter.ra[0] === 1 ? 'ended' : 'playing'; room.updatedAt = Date.now(); await this.ctx.storage.put('room', room); }
+    room.phase = body.letter.ra[0] === 1 ? 'ended' : 'playing';
+    room.updatedAt = Date.now();
+    await this.ctx.storage.put({ 'room:letter': body.letter, room });
+    await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
     return json({ seq: body.letter.k }, previous ? 200 : 201);
   }
 
@@ -134,7 +144,7 @@ async function route(request, env) {
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
   if (parts[0] === 'm' && request.method === 'GET') return preview(request, env, parts[1], parts[2]);
   if (parts[0] === 'rooms' && request.method === 'POST' && parts.length === 1) {
-    const body = await request.json().catch(() => null);
+    const body = await smallJson(request);
     if (!body?.levelId) return json({ error: 'levelId missing' }, 400);
     const id = newRoomId();
     const response = await stub(env, id).fetch('https://match/room', { method: 'POST', body: JSON.stringify(body) });
@@ -148,7 +158,11 @@ async function route(request, env) {
     const target = action === 'join' ? '/room/join' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
     if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
     if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch('https://match/room/turn');
-    if (request.method === 'POST' && ['join', 'ready', 'heartbeat', 'turn'].includes(action)) return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: await request.text() });
+    if (request.method === 'POST' && ['join', 'ready', 'heartbeat', 'turn'].includes(action)) {
+      const body = await smallJson(request);
+      if (!body) return json({ error: 'body missing or too large' }, 413);
+      return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: JSON.stringify(body) });
+    }
     return json({ error: 'not found' }, 404);
   }
 
@@ -205,6 +219,13 @@ function vapidFrom(env) {
 }
 
 const stub = (env, id) => env.KONK_MATCH.get(env.KONK_MATCH.idFromName(id));
+
+/** A small JSON object body, or null: room requests never need more than one letter. */
+async function smallJson(request) {
+  const text = await request.text();
+  if (text.length > MAX_LETTER_BYTES) return null;
+  try { const parsed = JSON.parse(text); return parsed && typeof parsed === 'object' ? parsed : null; } catch { return null; }
+}
 
 /** The raw body, re-serialised only if it is a small JSON object with a `letter`. */
 async function readBody(request) {
