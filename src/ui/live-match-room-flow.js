@@ -1,4 +1,4 @@
-import { createLiveRoom, joinLiveRoom, readLiveRoom, roomApiBase, roomLink, setLiveRoomReady, heartbeatLiveRoom } from '../core/live-match-room-transport.js';
+import { createLiveRoom, joinLiveRoom, readLiveRoom, roomApiBase, roomLink, setLiveRoomReady, heartbeatLiveRoom } from '../core/live-match-room-transport.js?v=2';
 
 const $ = (id) => document.getElementById(id);
 const other = (seat) => seat === 'home' ? 'away' : 'home';

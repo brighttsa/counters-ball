@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRoom, joinRoom, publicRoom, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
+import { createRoom, joinRoom, publicRoom, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
 import { createLiveRoom, joinLiveRoom, roomApiBase, roomLink, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
 
 test('live room opens with one seat and no ready state', () => {
@@ -53,4 +53,36 @@ test('browser transport keeps room actions small and addressable', async () => {
     ['https://api/rooms/abcdefghij/join', 'POST', { name: 'Kofi' }],
     ['https://api/rooms/abcdefghij/ready', 'POST', { seat: 'away', ready: true }],
   ]);
+});
+
+test('each seat gets its own secret token and only that token acts for the seat', () => {
+  const room = createRoom({ levelId: 'kiosk', homeName: 'Ama' });
+  joinRoom(room, { name: 'Kofi' });
+  const { home, away } = room.seats;
+  assert.match(home.token, /^[0-9a-f]{36}$/);
+  assert.notEqual(home.token, away.token);
+  assert.equal(seatFor(room, home.token), 'home');
+  assert.equal(seatFor(room, away.token), 'away');
+  assert.equal(seatFor(room, 'guess'), null);
+  assert.equal(seatFor(room, undefined), null);
+  assert.equal('token' in publicRoom(room).seats.home, false);
+});
+
+test('reclaiming an abandoned seat revokes the old token', () => {
+  const room = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 100 });
+  joinRoom(room, { name: 'Kofi', now: 200 });
+  const old = room.seats.away.token;
+  joinRoom(room, { name: 'Yaw', now: 200 + PRESENCE_MS + 1 });
+  assert.equal(seatFor(room, old), null);
+});
+
+test('browser transport proves the seat with the token it was given', async () => {
+  const calls = [];
+  const fake = async (url, init) => {
+    calls.push(JSON.parse(init.body));
+    return { ok: true, status: 200, json: async () => ({ id: 'qrstuvwxyz', token: 'secret-home', room: { phase: 'lobby' } }) };
+  };
+  await createLiveRoom('https://api', { levelId: 'kiosk', homeName: 'Ama' }, fake);
+  await setLiveRoomReady('https://api', 'qrstuvwxyz', 'home', true, fake);
+  assert.equal(calls.at(-1).token, 'secret-home');
 });

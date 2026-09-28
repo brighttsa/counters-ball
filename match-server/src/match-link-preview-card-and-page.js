@@ -2,6 +2,8 @@
 // (Open Graph tags + an instant redirect into the game) and the 1200×630 score card image as SVG.
 // Everything here is pure; names and taunts are player-typed, so every one is escaped.
 import { CAMPAIGN_LEVELS, HOME_TEAM } from '../../src/levels/campaign-level-definitions.js';
+import { cleanTaunt } from '../../src/core/message-match-turn-letter-codec.js';
+import { cleanPlayerName } from '../../src/core/hot-seat-series-and-rivalry-record.js';
 
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 630;
@@ -15,13 +17,14 @@ const escapeXml = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&': '&am
 export function describeMatch(packed) {
   const level = CAMPAIGN_LEVELS.find((l) => l.id === packed.l);
   const [phase, turn, [home, away]] = packed.ra;
-  const names = { home: packed.n[0], away: packed.n[1] };
+  // Player-typed text comes from the cleaned letter (length- and character-limited), not the raw fields.
+  const names = { home: cleanPlayerName(packed.n?.[0], 'Player 1'), away: cleanPlayerName(packed.n?.[1], 'Player 2') };
   const mover = packed.by === 'h' ? names.home : names.away;
   const ended = phase === 1;
   const next = turn === 'h' ? names.home : names.away;
   const winner = home === away ? null : home > away ? names.home : names.away;
   return {
-    names, scores: { home, away }, mover, ended, taunt: packed.m ?? '',
+    names, scores: { home, away }, mover, ended, taunt: cleanTaunt(packed.m),
     pitch: level?.name ?? 'KONK!', place: level?.place ?? '',
     colors: { home: HOME_TEAM.hudColor, away: level?.opponent.team.hudColor ?? PAPER },
     call: ended ? (winner ? `Full time · ${winner} wins` : 'Full time · all square') : `Your move, ${next}`,

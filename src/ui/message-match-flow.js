@@ -10,7 +10,7 @@ import { pushAvailability, subscribeToMatch } from '../core/message-match-push-s
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
-import { readLiveRoomTurn, sendLiveRoomTurn } from '../core/live-match-room-transport.js';
+import { readLiveRoomTurn, sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=2';
 
 const other = (side) => (side === 'home' ? 'away' : 'home');
 

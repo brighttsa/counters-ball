@@ -1,7 +1,8 @@
 // Pure rules for a Message Match record: which letters may open a match and which may follow.
 // A letter is accepted only if it continues exactly where the stored table and score left off,
 // so replies can never fork a match, repeat a turn, or rewrite the score.
-import { unpackLetter } from '../../src/core/message-match-turn-letter-codec.js';
+import { cleanTaunt, unpackLetter } from '../../src/core/message-match-turn-letter-codec.js';
+import { cleanPlayerName } from '../../src/core/hot-seat-series-and-rivalry-record.js';
 
 export const MAX_LETTER_BYTES = 16 * 1024;
 
@@ -41,16 +42,18 @@ export const MATCH_ID = /^[a-km-np-zA-HJ-NP-Z2-9]{10}$/;
 
 /** What the player whose turn it now is sees on their lock screen after a move lands. */
 export function pushMessageFor(packed, matchId, siteUrl) {
-  const names = { h: packed.n[0], a: packed.n[1] };
+  // Lock-screen text comes from the cleaned letter, never the raw player-typed fields.
+  const names = { h: cleanPlayerName(packed.n?.[0], 'Player 1'), a: cleanPlayerName(packed.n?.[1], 'Player 2') };
+  const taunt = cleanTaunt(packed.m);
   const [, , [home, away]] = packed.ra;
   const mover = names[packed.by];
-  const score = `${packed.n[0]} ${home}–${away} ${packed.n[1]}`;
+  const score = `${names.h} ${home}–${away} ${names.a}`;
   const ended = packed.ra[0] === 1;
   return {
     to: packed.by === 'h' ? 'away' : 'home',
     payload: {
       title: ended ? `${mover} took the last flick` : `${mover} flicked. Your move!`,
-      body: `${score}${packed.m ? ` · “${packed.m}”` : ''}`,
+      body: `${score}${taunt ? ` · “${taunt}”` : ''}`,
       url: `${siteUrl}?m=${matchId}`,
       tag: `konk-${matchId}`,
     },
