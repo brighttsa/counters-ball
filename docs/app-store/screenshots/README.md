@@ -11,6 +11,13 @@ NODE_PATH="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/n
   node scripts/generate-app-store-screenshots.mjs
 ```
 
+## App Store Connect upload set
+
+Some existing App Store Connect records expose the iPhone 6.5-inch slot rather
+than the 6.9-inch slot. Use the matching five files in `iphone-6.5/` for that
+slot. They are 1284 × 2778, one of Apple's accepted portrait dimensions, and
+keep the same numbered upload order as the 6.9-inch originals.
+
 Reference direction was informed by Mobbin examples that prioritize full-bleed
 gameplay, one short promise per frame and visible variety across the set:
 

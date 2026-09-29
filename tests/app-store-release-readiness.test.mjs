@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import { readFileSync, statSync } from 'node:fs';
 
 const project = readFileSync('ios/KONKNative/KONKNative.xcodeproj/project.pbxproj', 'utf8');
+const screenshotNames = [
+  '01-flick-bank-score.png', '02-street-legends.png', '03-six-pitches.png',
+  '04-two-player.png', '05-camera-replay.png',
+];
 
 test('release target has stable 1.0 identity and export declaration', () => {
   assert.match(project, /MARKETING_VERSION = 1\.0;/);
@@ -31,14 +35,19 @@ test('public privacy policy names storage, online features and contact', () => {
 });
 
 test('App Store screenshots use the iPhone 6.9-inch portrait dimensions', () => {
-  const names = [
-    '01-flick-bank-score.png', '02-street-legends.png', '03-six-pitches.png',
-    '04-two-player.png', '05-camera-replay.png',
-  ];
-  for (const name of names) {
+  for (const name of screenshotNames) {
     const image = readFileSync(`docs/app-store/screenshots/${name}`);
     assert.equal(image.toString('ascii', 1, 4), 'PNG');
     assert.equal(image.readUInt32BE(16), 1320, `${name} width`);
     assert.equal(image.readUInt32BE(20), 2868, `${name} height`);
+  }
+});
+
+test('App Store screenshot fallback set uses accepted iPhone 6.5-inch portrait dimensions', () => {
+  for (const name of screenshotNames) {
+    const image = readFileSync(`docs/app-store/screenshots/iphone-6.5/${name}`);
+    assert.equal(image.toString('ascii', 1, 4), 'PNG');
+    assert.equal(image.readUInt32BE(16), 1284, `${name} width`);
+    assert.equal(image.readUInt32BE(20), 2778, `${name} height`);
   }
 });
