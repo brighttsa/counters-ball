@@ -1,5 +1,17 @@
 # Project Changelog
 
+## 2026-09-29 — Professional audio audit and ElevenLabs production plan
+
+### Documented
+- Audited every current soundtrack, procedural effect, semantic event, ambience layer,
+  physics trigger and Street Legends mechanism without changing runtime audio.
+- Mapped all six implemented venues to their real surfaces, visible sound sources,
+  current gaps and proposed bed/punctuation/signature identity.
+- Prepared a 253-candidate ElevenLabs manifest with planned filenames clearly marked
+  as nonexistent, exact prompt components, proof-batch approval gate and rejection criteria.
+- Proposed a central material-aware Web Audio architecture, debug mode, dynamic mix,
+  package loading strategy and eight independently verifiable implementation passes.
+
 ## 2026-09-29 — Full-bleed native loading frame
 
 ### Fixed
