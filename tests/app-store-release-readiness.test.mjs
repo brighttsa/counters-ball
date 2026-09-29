@@ -25,4 +25,7 @@ test('public privacy policy names storage, online features and contact', () => {
   const policy = readFileSync('privacy.html', 'utf8');
   for (const phrase of ['Data stored on your device', 'Online features', 'brighttsa@gmail.com']) assert.match(policy, new RegExp(phrase));
   assert.match(policy, /id="contact"/);
+
+  const pagesWorkflow = readFileSync('.github/workflows/deploy-game-to-github-pages.yml', 'utf8');
+  assert.match(pagesWorkflow, /cp -R[^\n]*privacy\.html[^\n]*_site\//);
 });
