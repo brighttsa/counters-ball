@@ -481,3 +481,14 @@ Turned the visual-direction prototype into a playable game.
   hijack a drag).
 - Swept goal-line test replaces the positional check (no tunnelling at speed).
 - Pixel ratio refreshed on resize; dust sprite texture shared.
+# 2026-09-29 — Native iPhone adaptive layout
+
+### Fixed
+- The iOS host no longer draws a second KONK wordmark over the web game's own loading screen; its connection state is now a neutral, opaque progress layer.
+- The native WebView marks the document before rendering, removes stray scroll insets and indicators, and dismisses the keyboard interactively.
+- Native portrait layouts use the available width instead of a fixed 250 px menu, compress by usable height, keep cards inside safe areas, and preserve comfortable touch targets.
+- Venue selection now reserves a stable act strip, clamps long venue copy, and keeps the play action and horizontal carousel reachable on short phones.
+
+### Verified
+- Source syntax and project-file validation pass.
+- Simulator build succeeds. Native-mode browser checks at 414×896, 375×667 and 896×414 have no page overflow or console errors; home, venue selection and the live match HUD stay within the viewport.

@@ -23,9 +23,6 @@ struct KONKWebGameView: View {
     @ViewBuilder
     private var status: some View {
         VStack(spacing: 18) {
-            Text("KONK")
-                .font(.system(size: 58, weight: .black, design: .rounded))
-                .foregroundStyle(Color(red: 253 / 255, green: 246 / 255, blue: 230 / 255))
             switch state {
             case .loading:
                 ProgressView().tint(Color(red: 223 / 255, green: 185 / 255, blue: 79 / 255))
@@ -45,6 +42,8 @@ struct KONKWebGameView: View {
                 EmptyView()
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 18 / 255, green: 18 / 255, blue: 16 / 255))
         .padding(28)
     }
 }
@@ -66,11 +65,21 @@ private struct KONKWebView: UIViewRepresentable {
         configuration.mediaTypesRequiringUserActionForPlayback = [.audio]
         configuration.websiteDataStore = .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        configuration.userContentController.addUserScript(WKUserScript(
+            source: "document.documentElement.classList.add('konk-native')",
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        ))
 
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+        webView.scrollView.contentInset = .zero
+        webView.scrollView.scrollIndicatorInsets = .zero
         webView.scrollView.bounces = false
+        webView.scrollView.showsHorizontalScrollIndicator = false
+        webView.scrollView.showsVerticalScrollIndicator = false
+        webView.scrollView.keyboardDismissMode = .interactive
         webView.allowsLinkPreview = false
         webView.isInspectable = true
         webView.load(URLRequest(url: URL(string: "https://konk.world")!,

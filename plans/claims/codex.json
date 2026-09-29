@@ -2,12 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Faithful KONK iOS parity host",
+  "task": "Native iPhone adaptive layout",
   "status": "released",
   "paths": [
-    "ios/KONKNative/",
+    "ios/KONKNative/KONKNative/App/KONKWebGameView.swift",
+    "styles/native-ios-adaptive.css",
+    "index.html",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-28T20:43:22Z",
-  "head": "9b01ec3844776dfe106c50775e572291ad1800ee"
+  "updatedAt": "2026-09-29T01:05:00Z",
+  "head": "b4b617a"
 }
