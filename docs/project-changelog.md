@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-29 — Kwame lesson HUD clears the scoreboard
+
+### Fixed
+- Kwame's Corner lesson copy now sits eight pixels below the complete score and flick-count
+  stack on desktop, portrait phones and short landscape phones instead of overlapping it.
+- The match HUD stylesheet cache version was advanced so existing web sessions receive the fix.
+
 ## 2026-09-29 — Game UI selection and caret guardrails
 
 ### Fixed

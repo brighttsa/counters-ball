@@ -2,15 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Web and native selection and caret cleanup",
+  "task": "Keep Kwame lesson HUD clear of scoreboard",
   "status": "released",
   "paths": [
     "index.html",
-    "styles/game-interaction-guardrails.css",
-    "tests/game-interaction-guardrails.test.mjs",
+    "styles/match-hud-one-frame-and-aim-fade.css",
+    "tests/kwame-corner-practice-table.test.mjs",
     "plans/agent-handoff-board.md",
     "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-29T07:01:02Z",
-  "head": "fce569f659209efa836e2620ee99952144c29280"
+  "updatedAt": "2026-09-29T07:08:54Z",
+  "head": "abd821fab92f4323de901ea8deed5e6074463cf7"
 }
