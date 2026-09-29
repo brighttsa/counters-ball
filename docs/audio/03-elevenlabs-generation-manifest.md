@@ -7,6 +7,10 @@ them, then derive deployment files. Do not place unapproved generations in
 
 ## Generation rules
 
+- The current ElevenLabs Sound Effects web UI accepts at most **450 characters**
+  per prompt. Keep every final concatenated prompt at or below that limit; the
+  longer planning descriptions below must be tightened without losing object,
+  material, action, force, perspective, duration or exclusions.
 - Generate one isolated performance per file, 48 kHz/24-bit WAV where available.
 - Generate variants as separate performances, never as pitch-shifted copies.
 - Leave no baked music, limiter pumping, stereo widening or synthetic sub-bass.
@@ -257,3 +261,23 @@ Planned count: 15 flick + 18 cap-cap + 15 cap-ball + 8 post + 60 movement
 + 36 rails/mechanics + 20 UI + 25 reactions + 50 venue + 6 introductions =
 **253 candidate masters**. Runtime should ship only selected winners; the count is a
 production pool, not a download requirement.
+
+## Proof-batch generation record
+
+Generated privately in the owner's ElevenLabs Sound Effects account on 2026-09-29:
+
+- Flick: light, medium and hard.
+- Cap-cap: light, medium and hard.
+- Cap-paper-ball: light, medium and hard.
+- Goalpost: light and hard.
+- Short slide: clean cardboard, dusty cardboard and worn wood.
+
+Each of the 14 prompt groups produced four one-second candidates: **56 candidates
+total**. Explore sharing was disabled before generation. The initial long-form light
+flick prompt was rejected at 562 characters and incurred no charge; all successful
+proof prompts were tightened to 339-408 characters.
+
+The candidates remain in ElevenLabs History for listening review. The browser's WAV
+menu did not produce a capturable export for the newer batches, so no local WAV is
+claimed and no generated sample has been added to runtime assets. Pass 2 remains
+blocked on owner listening selection and verified WAV export.

@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-09-29 — ElevenLabs proof batch generated for review
+
+### Generated
+- Created 56 private ElevenLabs candidates across the approved 14-group proof batch:
+  three flick strengths, three cap-cap strengths, three cap-ball strengths, two
+  post strengths and short movement on each implemented surface.
+- Disabled Explore sharing before generation and left every candidate in ElevenLabs
+  History for owner listening review; no generated sound entered runtime assets.
+
+### Corrected
+- Documented the current 450-character Sound Effects prompt ceiling after the UI
+  rejected the first 562-character draft without charging it.
+- Recorded that newer WAV exports were not captured locally, preventing partial or
+  duplicate diagnostic downloads from being mistaken for approved masters.
+
 ## 2026-09-29 — Professional audio audit and ElevenLabs production plan
 
 ### Documented
