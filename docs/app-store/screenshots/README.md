@@ -1,8 +1,8 @@
 # KONK! App Store Screenshots
 
-Five iPhone 6.9-inch portrait screenshots at 1320 × 2868. Each uses a live capture
-from the shipped game and a restrained KONK editorial layer. Raw captures are kept
-in `sources/` for review.
+Five screenshots are provided for each supported storefront size. Every image uses
+a live capture from the shipped game, the actual KONK logo and a restrained
+editorial layer. Intermediate device captures are discarded after composition.
 
 Regenerate while the game is served on port 4182:
 
@@ -17,6 +17,10 @@ Some existing App Store Connect records expose the iPhone 6.5-inch slot rather
 than the 6.9-inch slot. Use the matching five files in `iphone-6.5/` for that
 slot. They are 1284 × 2778, one of Apple's accepted portrait dimensions, and
 keep the same numbered upload order as the 6.9-inch originals.
+
+Use the five files in `ipad-12.9/` for the iPad 12.9-inch display slot. They are
+native 2048 × 2732 captures with a tablet-specific composition. Upload every set
+in filename order, from `01` through `05`.
 
 Reference direction was informed by Mobbin examples that prioritize full-bleed
 gameplay, one short promise per frame and visible variety across the set:

@@ -51,3 +51,18 @@ test('App Store screenshot fallback set uses accepted iPhone 6.5-inch portrait d
     assert.equal(image.readUInt32BE(20), 2778, `${name} height`);
   }
 });
+
+test('App Store iPad set uses accepted 12.9-inch portrait dimensions', () => {
+  for (const name of screenshotNames) {
+    const image = readFileSync(`docs/app-store/screenshots/ipad-12.9/${name}`);
+    assert.equal(image.toString('ascii', 1, 4), 'PNG');
+    assert.equal(image.readUInt32BE(16), 2048, `${name} width`);
+    assert.equal(image.readUInt32BE(20), 2732, `${name} height`);
+  }
+});
+
+test('App Store screenshot generator uses the actual KONK logo', () => {
+  const generator = readFileSync('scripts/generate-app-store-screenshots.mjs', 'utf8');
+  assert.match(generator, /assets\/konk-logo\.svg/);
+  assert.doesNotMatch(generator, /class="cap"/);
+});
