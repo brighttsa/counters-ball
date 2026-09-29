@@ -1,5 +1,14 @@
 # Project Changelog
 
+## 2026-09-29 — Live-room field rhythm
+
+### Fixed
+- Made the live-room input wrapper an actual grid so its intended spacing applies.
+  Name and room-code groups now have 16 px between them on web and native while
+  each label stays tightly associated with its own input.
+- Advanced the shared menu stylesheet cache key and added an Apple interface
+  contract test for the field-group spacing.
+
 ## 2026-09-29 — App Store screenshot campaign
 
 ### Added

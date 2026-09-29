@@ -91,7 +91,7 @@ html.konk-native .setting-row {
 }
 
 html.konk-native .room-fields {
-  gap: var(--native-space-3);
+  gap: 16px;
 }
 
 html.konk-native .room-fields .name-field {

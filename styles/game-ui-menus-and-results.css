@@ -55,6 +55,7 @@
 }
 .name-field input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .intro-names .vs { padding-bottom: 8px; }
+.room-fields { display: grid; gap: 16px; }
 
 .screen-challenge { background: var(--scrim); }
 
