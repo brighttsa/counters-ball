@@ -11,6 +11,8 @@
 ### Release
 - Promoted the iOS target to version 1.0 build 1, declared exempt encryption use,
   and retained the complete offline game package inside the native app.
+- Made the native runtime packager portable across macOS and Linux so the same
+  offline-package contract can gate GitHub Pages deployment in CI.
 - Signed archive creation succeeds for `world.konk.native`; the 12 MB app contains
   240 local runtime files. Full JavaScript suite passes 331 tests and every source
   module parses. App Store distribution still requires Apple's export/upload step.

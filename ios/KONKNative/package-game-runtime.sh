@@ -18,7 +18,7 @@ sed \
 
 cp "$ROOT/manifest.webmanifest" "$DEST/manifest.webmanifest"
 for directory in assets src styles vendor; do
-  ditto "$ROOT/$directory" "$DEST/$directory"
+  cp -R "$ROOT/$directory" "$DEST/$directory"
 done
 
 if grep -Eq 'fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net/npm/three' "$DEST/index.html"; then
