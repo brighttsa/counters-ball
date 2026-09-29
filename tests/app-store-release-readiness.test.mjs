@@ -65,4 +65,6 @@ test('App Store screenshot generator uses the actual KONK logo', () => {
   const generator = readFileSync('scripts/generate-app-store-screenshots.mjs', 'utf8');
   assert.match(generator, /assets\/konk-logo\.svg/);
   assert.doesNotMatch(generator, /class="cap"/);
+  assert.match(generator, /\.player-camera kbd/);
+  assert.match(generator, /\.keyboard-aim-help/);
 });

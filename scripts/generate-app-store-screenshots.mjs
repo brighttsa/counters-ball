@@ -46,7 +46,10 @@ async function newGamePage(browser, format) {
 
 async function captureSource(browser, shot, sourcePath, format) {
   const page = await newGamePage(browser, format);
-  await page.addStyleTag({ content: '.tutorial-tip,.tutorial-hand,.keyboard-aim-help{display:none!important}' });
+  await page.addStyleTag({ content: `
+    .tutorial-tip,.tutorial-hand,.tutorial-keys,.keyboard-aim-help,
+    .player-camera kbd,.camera-keys-note{display:none!important}
+  ` });
   if (shot.screen === 'venues') {
     await page.evaluate((index) => {
       const game = window.__countersBall;
