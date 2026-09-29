@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-09-29 — Landscape flick counter optical alignment
+
+### Fixed
+- The flick-count numbers and label now share a compact explicit line height and sit one
+  pixel lower, keeping visible space above and below the text balanced on web and native phones.
+
 ## 2026-09-29 — Landscape lesson HUD joins the top band
 
 ### Changed
