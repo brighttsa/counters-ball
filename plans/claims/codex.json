@@ -2,14 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Native iPhone adaptive layout",
+  "task": "Full native UI and UX quality pass",
   "status": "released",
   "paths": [
-    "ios/KONKNative/KONKNative/App/KONKWebGameView.swift",
-    "styles/native-ios-adaptive.css",
+    "styles/",
     "index.html",
-    "plans/agent-handoff-board.md"
+    "src/ui/",
+    "plans/agent-handoff-board.md",
+    "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-29T01:05:00Z",
-  "head": "b4b617a"
+  "updatedAt": "2026-09-29T01:14:29Z",
+  "head": "929274e"
 }

@@ -492,3 +492,20 @@ Turned the visual-direction prototype into a playable game.
 ### Verified
 - Source syntax and project-file validation pass.
 - Simulator build succeeds. Native-mode browser checks at 414×896, 375×667 and 896×414 have no page overflow or console errors; home, venue selection and the live match HUD stay within the viewport.
+
+# 2026-09-29 — Native interface quality pass
+
+### Improved
+- Native menu and match flows now share a compact spacing rhythm, 44 pt minimum touch targets, readable body typography, visible keyboard focus, tactile press feedback, and restrained disabled/busy states.
+- Portrait action groups keep the primary command full-width; short landscape screens use compact controls without shrinking tap areas or labels below a readable size.
+- Primary actions now come first in both visual and DOM order, keeping keyboard and assistive-technology navigation consistent.
+- Back actions use concise destination labels, and the duplicate floating sound control is hidden outside Home where Pause and Settings already expose audio controls.
+
+### Fixed
+- Live Match Join remains unavailable until a room code is entered and locks both room actions while a request is in progress.
+- Native venue, intro, result, settings, and multiplayer cards retain their controls inside compact phone viewports without page overflow.
+- Removed negative heading letter spacing from shared menu typography.
+
+### Verified
+- Home, Settings, Credits, Live Match, Venues, Intro, match HUD and Pause/Settings were checked at 414×896, 375×667, 320×568, 896×414 and 667×375.
+- JavaScript syntax, project-file validation and whitespace checks pass; the full suite passes 312 tests.

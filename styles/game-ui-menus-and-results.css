@@ -11,7 +11,7 @@
 .screen-results { background: var(--scrim); }
 .screen-intro { justify-items: start; align-content: end; padding-bottom: 36px; }
 
-.chalk-heading, .card-title { margin: 0; font-family: var(--font-display); letter-spacing: -0.02em; text-transform: uppercase; }
+.chalk-heading, .card-title { margin: 0; font-family: var(--font-display); letter-spacing: 0; text-transform: uppercase; }
 .card-title { font-size: var(--text-3xl); line-height: 1.06; overflow-wrap: anywhere; }
 
 .menu-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 16px; }

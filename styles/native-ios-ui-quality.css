@@ -1,0 +1,193 @@
+/* Native product-quality layer: one spacing rhythm, predictable navigation,
+   readable type and touch targets that remain usable at compact heights. */
+html.konk-native {
+  --native-gutter: max(16px, env(safe-area-inset-left));
+  --native-space-1: 4px;
+  --native-space-2: 8px;
+  --native-space-3: 12px;
+  --native-space-4: 16px;
+  --native-space-6: 24px;
+}
+
+html.konk-native body:not([data-screen='title']) .sound-btn { display: none; }
+
+html.konk-native :is(button, summary, input) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html.konk-native :is(.btn, .icon-btn, .home-utilities button, .settings-tab, .chip,
+  .pause-settings-link, .player-camera button, .orientation-actions button) {
+  min-height: 44px;
+}
+
+html.konk-native :is(.btn, .icon-btn, .home-utilities button, .settings-tab, .chip,
+  .pause-settings-link, .player-camera button):not(:disabled):active {
+  transform: scale(.97);
+  transition-duration: 100ms;
+}
+
+html.konk-native :is(button, input):disabled {
+  cursor: default;
+  opacity: .45;
+}
+
+html.konk-native button[aria-busy='true'] {
+  cursor: progress;
+}
+
+html.konk-native input {
+  min-height: 48px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+html.konk-native :is(.intro-blurb, .credits-card p, .friend-card .intro-blurb,
+  .letter-notify-status, .results-note) {
+  line-height: 1.5;
+}
+
+html.konk-native .intro-more summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: 8px;
+}
+
+html.konk-native .card-actions,
+html.konk-native .friend-actions {
+  gap: var(--native-space-2);
+}
+
+html.konk-native .screen-title .menu-stack,
+html.konk-native .home-secondary,
+html.konk-native .home-utilities {
+  gap: var(--native-space-2);
+}
+
+html.konk-native .home-secondary .btn {
+  font-size: 12px;
+}
+
+html.konk-native .pause-actions {
+  gap: var(--native-space-2);
+}
+
+html.konk-native .pause-settings-link {
+  margin-top: var(--native-space-2);
+}
+
+html.konk-native #hints-reset {
+  min-height: 44px;
+}
+
+html.konk-native .settings-tabs,
+html.konk-native .chips {
+  gap: var(--native-space-2);
+}
+
+html.konk-native .setting-row {
+  gap: var(--native-space-2);
+  margin-bottom: var(--native-space-3);
+}
+
+html.konk-native .room-fields {
+  gap: var(--native-space-3);
+}
+
+html.konk-native .room-fields .name-field {
+  gap: var(--native-space-1);
+}
+
+html.konk-native .room-fields input:focus {
+  border-color: var(--yellow);
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+html.konk-native .screen-levels .level-grid {
+  margin-right: 0;
+  padding-right: calc(var(--control-size) + var(--native-space-3));
+}
+
+html.konk-native .screen-levels .level-card {
+  scroll-snap-stop: always;
+}
+
+html.konk-native .screen-header {
+  gap: var(--native-space-3);
+}
+
+html.konk-native .camera-toolbar button {
+  min-width: 48px;
+}
+
+html.konk-native #camera-close {
+  min-width: 72px;
+}
+
+@media (orientation: portrait) and (max-width: 480px) {
+  html.konk-native .paper-card {
+    padding: 20px;
+  }
+
+  html.konk-native .card-title {
+    font-size: clamp(32px, 10vw, 44px);
+    line-height: 1;
+  }
+
+  html.konk-native .card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  html.konk-native .card-actions .btn-primary {
+    grid-column: 1 / -1;
+  }
+
+  html.konk-native .friend-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html.konk-native .screen-live-room .friend-actions {
+    grid-template-columns: 1fr;
+  }
+
+  html.konk-native .results-card .card-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  html.konk-native .results-card .card-actions .btn-primary {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+  html.konk-native :is(.home-secondary .btn, .home-utilities button,
+    .intro-card .btn, .pause-card .btn, .settings-tab, .chip, #hints-reset, .pause-done) {
+    min-height: 44px;
+    font-size: 12px;
+  }
+
+  html.konk-native :is(.intro-card .card-kicker, .intro-rules, .setting-label,
+    .camera-menu-label small, .level-lock, #circuit-lock-note) {
+    font-size: 12px;
+  }
+
+  html.konk-native .pause-face[data-face-panel='settings']:not([hidden]) {
+    gap: var(--native-space-1) var(--native-space-4);
+  }
+
+  html.konk-native .pause-face[data-face-panel='settings'] .setting-row {
+    margin-bottom: var(--native-space-1);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  html.konk-native :is(.scoreboard, .flick-meter, .paper-card, .intro-card,
+    .player-camera #camera-panel, .camera-toolbar) {
+    background: var(--ink);
+    backdrop-filter: none;
+  }
+}
