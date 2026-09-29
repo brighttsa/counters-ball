@@ -2,14 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Generate and review ElevenLabs proof batch",
+  "task": "Integrate approved ElevenLabs proof batch",
   "status": "released",
   "paths": [
+    "src/audio/",
     "audio-production/proof-batch/",
-    "docs/audio/03-elevenlabs-generation-manifest.md",
+    "assets/audio/",
+    "tests/",
     "docs/project-changelog.md",
     "plans/agent-handoff-board.md"
   ],
-  "updatedAt": "2026-09-29T08:37:00Z",
-  "head": "6466fc1"
+  "updatedAt": "2026-09-29T09:24:00Z",
+  "head": "413198c"
 }

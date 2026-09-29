@@ -1,6 +1,7 @@
 # KONK! ElevenLabs Proof Batch
 
-Status: generated privately in ElevenLabs History on 2026-09-29; not integrated.
+Status: owner selected candidate `#1` for every group on 2026-09-29. Thirteen
+valid masters are integrated; one malformed master remains on procedural fallback.
 
 ## Candidate groups
 
@@ -22,16 +23,16 @@ Status: generated privately in ElevenLabs History on 2026-09-29; not integrated.
 - Sharing to Explore disabled before generation.
 - Successful prompt lengths: 339-408 characters.
 
-## Review gate
+## Selection result
 
-1. Listen to all four candidates in each group with music off.
-2. Reject cinematic low end, incorrect material, room tone, clipped attacks and
-   sounds that read as coins, glass or full-size sports equipment.
-3. Select at least two credible candidates per group before bulk generation.
-4. Export selected candidates as 48 kHz WAV and verify the files locally.
-5. Do not copy anything into `assets/audio/` or begin Pass 2 until this gate passes.
+- Owner choice: `#1` in all fourteen groups.
+- Valid exports: thirteen one-second masters at 48 kHz.
+- Rejected: `cap-cap-light #1`, returned at sixteen seconds despite a brief for
+  one isolated impact under 0.4 seconds.
+- Two cap-ball choices were accidentally exported as MP3; all accepted sources
+  were normalized to 48 kHz, 128 kbps MP3 deployment copies.
+- The malformed band uses the existing procedural light-contact sound until a
+  replacement is approved.
 
-No generated binary is present in this directory yet. The repeated
-`Extreme_close-miked__#1-*.wav` downloads in the user's Downloads folder came from
-the first light-flick candidate while diagnosing browser export behavior; they are
-not accepted masters and are not part of the repository.
+The generated deployment copies are in `assets/audio/foley/`. Original downloads
+remain outside the repository.

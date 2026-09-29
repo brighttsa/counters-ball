@@ -1,5 +1,23 @@
 # Project Changelog
 
+## 2026-09-29 — Approved tactile Foley enters gameplay
+
+### Added
+- Integrated thirteen owner-selected ElevenLabs `#1` masters for light/medium/hard
+  flicks, medium/hard cap contacts, all cap-ball strengths, both post strengths and
+  clean-cardboard, dusty-cardboard and worn-wood movement.
+- Added a decoded-buffer Foley bank with force routing, surface routing, subtle
+  gain/playback variation, stereo contact placement, bounded voices and procedural fallback.
+
+### Quality control
+- Rejected the generated light cap-cap take because its sixteen-second duration
+  violated the isolated sub-second impact brief; light contacts retain the existing
+  procedural sound until a replacement is approved.
+- Normalized accepted deployment assets to 48 kHz, 128 kbps MP3 for a roughly
+  260 KB web/native package. Original source downloads remain outside the repository.
+- Verified all thirteen files load after browser audio unlock with no console errors;
+  all 322 regression tests pass, including the offline Apple package.
+
 ## 2026-09-29 — ElevenLabs proof batch generated for review
 
 ### Generated

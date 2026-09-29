@@ -20,6 +20,7 @@ export function wireMatchFeedback(session) {
   const versus = options.controllers.home !== 'ai' && options.controllers.away !== 'ai'; // hot-seat or by message
   const localSide = options.localSide ?? null;
   const tableSurface = level.surface?.kind ?? 'cardboard';
+  sound.setSurface?.(tableSurface, level.surface?.dusty);
   const shotMemory = createSchoolyardShotMemory(level, options);
   const entryByBody = new Map(session.entries.map((e) => [e.body, e]));
   // 2-Player seats go by the names typed on the intro card; the object is read live, so kick-off can fill it.
@@ -52,6 +53,8 @@ export function wireMatchFeedback(session) {
           && Math.abs(z - (physics.goalCenters?.[Math.sign(x)] ?? 0)) < GOAL_HALF_WIDTH + 0.04) {
           sound.event?.('goalLineSave', strength);
         }
+      } else if (other.kind === 'post') {
+        sound.postHit?.(strength, pan);
       } else {
         sound[SURFACE_SOUND[other.kind]]?.(strength, pan);
       }

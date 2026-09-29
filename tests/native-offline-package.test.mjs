@@ -23,6 +23,8 @@ test('native package contains the complete local boot runtime', () => {
       'src/main.js',
       'styles/game-ui-base-and-hud.css',
       'assets/audio/konk-home-theme-three-contact-motif.mp3',
+      'assets/audio/foley/flick-hard-01.mp3',
+      'assets/audio/foley/post-hard-01.mp3',
       'vendor/fonts/anton-regular.ttf',
       'vendor/three-r160/addons/controls/OrbitControls.js',
     ]) assert.ok(readFileSync(join(output, path)).length > 0, `${path} should be bundled`);

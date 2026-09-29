@@ -9,6 +9,7 @@ import { MatchMomentumLayer } from './match-momentum-rhythmic-tension-layer.js';
 import { BoundedAudioVoiceSynthesis } from './bounded-audio-voice-synthesis.js';
 import { playSoundEvent, normalizedStrength } from './semantic-sound-event-mapping.js';
 import { bottleTap, cardboardTap, netCatch, paperCrinkle } from './table-object-sound-recipes.js';
+import { ApprovedFoleyBank } from './approved-foley-decoded-buffer-bank.js';
 
 const NOISE_SECONDS = 1;
 const MASTER_LEVEL = 0.9;
@@ -23,6 +24,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.ambience = new StreetAmbienceBeds();
     this.venueEvents = new VenueAmbientEventScheduler();
     this.momentum = new MatchMomentumLayer();
+    this.foley = new ApprovedFoleyBank();
+    this.surface = { kind: 'cardboard', dusty: false };
   }
 
   /** Builds the audio graph (it may start suspended) and resumes it; call again from a user gesture to make it audible. */
@@ -55,6 +58,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         this.ambience.attach(this.ctx, this.master, buffer);
         this.venueEvents.attach(this.ctx, this.master);
         this.momentum.attach(this.ctx, this.master);
+        this.foley.attach(this.ctx, this.master);
       }
       this.music?.attach(this.ctx); // the soundtrack shares the context on its own bus
       this.setPaused(this.paused);
@@ -84,12 +88,15 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
 
   setSfxLevel(level) {
     this.sfxLevel = normalizedStrength(level);
+    this.foley.setLevel(this.sfxLevel);
   }
 
   setAmbience(kind) {
     this.ambience.set(kind);
     this.venueEvents.set(kind === 'day' ? 'kiosk' : kind);
   }
+
+  setSurface(kind = 'cardboard', dusty = false) { this.surface = { kind, dusty: Boolean(dusty) }; }
 
   /** Start/stop the momentum layer with the match lifecycle. */
   startMomentum() { this.momentum.start(); }
@@ -122,6 +129,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   /** Fingernail off the cap's rim: a dry snap, the cap's small thump, a scrape as it leaves. */
   flick(s) {
     if (!this.can('flick', 60)) return;
+    if (this.foley.playFlick(s, { surface: this.surface.kind, dusty: this.surface.dusty })) return;
     this.noise({ duration: 0.014, filter: 'highpass', freq: 3600, gain: 0.18 + s * 0.3 });
     this.tone({ freq: 190, to: 95, duration: 0.035, gain: 0.06 + s * 0.12 });
     this.noise({ duration: 0.05 + s * 0.05, filter: 'bandpass', freq: 1800, to: 1200, q: 2, gain: 0.03 + s * 0.05, delay: 0.01 });
@@ -129,6 +137,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
 
   capClink(s, pan = 0, surface = 'cap') {
     if (!this.can('clink')) return;
+    if (this.foley.playImpact('cap-cap', s, { pan })) return;
     const g = 0.05 + s * 0.4;
     const base = surface === 'stone' ? 1400 + Math.random() * 400
       : surface === 'wood' ? 1600 + Math.random() * 600
@@ -145,6 +154,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   /** Cap into the paper ball: a papery thwack, with the skin crinkling on firmer hits. */
   ballTap(s, pan = 0, surface = 'cardboard') {
     if (!this.can('tap')) return;
+    if (this.foley.playImpact('cap-ball', s, { pan })) return;
     const g = 0.08 + s * 0.5;
     const bodyFreq = surface === 'wood' ? 170 : surface === 'cardboard' ? 210 : 240;
     const filterFreq = surface === 'wood' ? 600 + s * 2000 : 800 + s * 2400;
@@ -162,6 +172,11 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     const dur = surface === 'cardboard' ? 0.06 : 0.08;
     this.tone({ freq: baseFreq, to: baseFreq * 0.63, duration: dur, gain: g, pan });
     this.noise({ duration: 0.025, filter: 'bandpass', freq: noiseFreq, q: surface === 'cardboard' ? 2 : 3, gain: g * 0.6, pan });
+  }
+
+  postHit(s, pan = 0) {
+    if (!this.can('post', 35)) return;
+    if (!this.foley.playPost(s, { pan })) this.woodKnock(s, pan, 'wood');
   }
 
   stoneClack(s, pan = 0) {
@@ -232,6 +247,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   dispose() {
     this.venueEvents.dispose();
     this.momentum.dispose();
+    this.foley.dispose();
     super.dispose();
   }
 }
