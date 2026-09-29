@@ -45,6 +45,7 @@ import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=4
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 
+const publicBaseUrl = globalThis.__KONK_PUBLIC_BASE_URL__ ?? `${location.origin}${location.pathname}`;
 const canvas = document.getElementById('game-canvas');
 const bootScreen = document.getElementById('boot-screen');
 const { renderer, scene, camera } = createRendererSceneCamera(canvas);
@@ -64,7 +65,7 @@ const attractCallout = new AttractModeCallout();
 const attractHud = createAttractHud(attractCallout); // the title-screen match only announces goals
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
-const liveRoom = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: `${location.origin}${location.pathname}`, showTitle,
+const liveRoom = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: publicBaseUrl, showTitle,
   onStart: (roomId, seat, seats, level) => messageMatch.startRoom(STREET_LEGENDS_ACTS.findIndex((act) => act.id === level.id), roomId, seat, {
     home: seats.home?.name ?? 'Player 1', away: seats.away?.name ?? 'Player 2',
   }) });
@@ -148,7 +149,7 @@ function showFriendMatch({ incoming = false } = {}) {
   app.levelIndex = app.friendInvite.index;
   const level = trackFor(app.mode)[app.levelIndex];
   menus.fillFriendMatch(level, incoming ? friendInviteLine(level) : 'Send the invite. They play the same table and share their full-time mark back. No excuses, just angles.', incoming);
-  friendShare.prepare(buildFriendInvite(level, app.mode, `${location.origin}${location.pathname}`));
+  friendShare.prepare(buildFriendInvite(level, app.mode, publicBaseUrl));
   menus.show('friend-match');
 }
 
@@ -239,7 +240,7 @@ function showResults(result) {
   presentFullTimeResults(result, {
     level, mode: app.mode, levelIndex: app.levelIndex, trackLength: track.length, progress, hotSeat,
     challenge: challengeFor(level), card: resultsCard, share: resultsShare, homeColour: HOME_TEAM.hudColor,
-    baseUrl: `${location.origin}${location.pathname}`, onStar: (i) => sound.starDing(i),
+    baseUrl: publicBaseUrl, onStar: (i) => sound.starDing(i),
   });
   menus.show('results');
 }
@@ -264,11 +265,11 @@ const menus = new MenuScreens((action, el) => {
 });
 const chalkHints = new JustInTimeChalkHints();
 const messageMatch = createMessageMatchFlow({ app, openMatchTable, menus, hud, sound, cameraDirector, showResults, showTitle,
-  baseUrl: `${location.origin}${location.pathname}` });
+  baseUrl: publicBaseUrl });
 const goalClip = createGoalClipSharing({ canvas, sound, button: document.getElementById('btn-clip'),
   status: document.getElementById('results-share-status') });
 const dailyFlick = createDailyFlickFlow({ app, progress, save: saveProgress, openMatchTable, menus, hud, sound, cameraDirector,
-  baseUrl: `${location.origin}${location.pathname}` });
+  baseUrl: publicBaseUrl });
 const actions = createMenuActions({
   app, progress, save: saveProgress, hud, sound, music, cameraDirector, hotSeat, resultsShare, friendShare, liveRoom, menus, hints: chalkHints,
   featuredIndex, levels: STREET_LEGENDS_ACTS,

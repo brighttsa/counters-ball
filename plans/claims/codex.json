@@ -2,15 +2,16 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Full native UI and UX quality pass",
+  "task": "Offline local iOS and macOS packaging",
   "status": "released",
   "paths": [
-    "styles/",
-    "index.html",
-    "src/ui/",
+    "ios/KONKNative/",
+    "vendor/three-r160/",
+    "src/main.js",
+    "tests/native-offline-package.test.mjs",
     "plans/agent-handoff-board.md",
     "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-29T01:14:29Z",
-  "head": "929274e"
+  "updatedAt": "2026-09-29T01:29:21Z",
+  "head": "14316f1"
 }

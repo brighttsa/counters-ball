@@ -27,7 +27,7 @@ struct KONKWebGameView: View {
             case .loading:
                 ProgressView().tint(Color(red: 223 / 255, green: 185 / 255, blue: 79 / 255))
             case .failed:
-                Text("KONK needs a connection to load the live game.")
+                Text("KONK could not open its local game files.")
                     .font(.headline)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.white.opacity(0.72))
@@ -65,8 +65,13 @@ private struct KONKWebView: UIViewRepresentable {
         configuration.mediaTypesRequiringUserActionForPlayback = [.audio]
         configuration.websiteDataStore = .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        configuration.setURLSchemeHandler(KONKLocalSchemeHandler(),
+                                          forURLScheme: KONKLocalSchemeHandler.scheme)
         configuration.userContentController.addUserScript(WKUserScript(
-            source: "document.documentElement.classList.add('konk-native')",
+            source: """
+            document.documentElement.classList.add('konk-native');
+            window.__KONK_PUBLIC_BASE_URL__ = 'https://konk.world/';
+            """,
             injectionTime: .atDocumentStart,
             forMainFrameOnly: true
         ))
@@ -82,8 +87,7 @@ private struct KONKWebView: UIViewRepresentable {
         webView.scrollView.keyboardDismissMode = .interactive
         webView.allowsLinkPreview = false
         webView.isInspectable = true
-        webView.load(URLRequest(url: URL(string: "https://konk.world")!,
-                                cachePolicy: .reloadRevalidatingCacheData))
+        webView.load(URLRequest(url: URL(string: "konk-local://game/index.html")!))
         return webView
     }
 
@@ -109,6 +113,6 @@ private struct KONKWebView: UIViewRepresentable {
     }
 }
 
-#Preview("Live KONK") {
+#Preview("Local KONK") {
     KONKWebGameView()
 }

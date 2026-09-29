@@ -509,3 +509,21 @@ Turned the visual-direction prototype into a playable game.
 ### Verified
 - Home, Settings, Credits, Live Match, Venues, Intro, match HUD and Pause/Settings were checked at 414×896, 375×667, 320×568, 896×414 and 667×375.
 - JavaScript syntax, project-file validation and whitespace checks pass; the full suite passes 312 tests.
+
+# 2026-09-29 — Offline native game package
+
+### Changed
+- The native app now boots the existing KONK game from an internal `konk-local://game/` origin instead of opening `konk.world`.
+- Native builds copy the current `index.html`, source, styles, assets and manifest into the application bundle, keeping the web game as the single gameplay source of truth.
+- Three.js r160, its used addon modules and the four existing interface fonts are pinned locally with their licences.
+- The same Xcode target now builds for iPhone, iPad and macOS through Mac Catalyst.
+- Shared result, friend and room links retain the public `https://konk.world/` address when created by the local app.
+
+### Offline boundary
+- Solo play, AI matches, Street Legends, Daily Flick, local hot-seat, venues, audio, saves and replays boot and run without internet.
+- Live Match, Message Match, sharing and opening public challenge links require connectivity because they communicate with other devices or apps.
+
+### Verified
+- iOS Simulator and Mac Catalyst builds succeed; both bundles contain all 220 runtime files and have no boot-time font or Three.js CDN reference.
+- The Mac app reached a real match at `konk-local://game/index.html`.
+- The signed offline iPhone build installs successfully. Full JavaScript and packaging suite: 313 passing tests.
