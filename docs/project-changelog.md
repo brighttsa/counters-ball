@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-09-29 — KONK 1.0 App Store release candidate
+
+### Added
+- Added the opaque 1024px KONK app icon catalog and an Apple privacy manifest
+  declaring no tracking or collected data and the local preferences API reason.
+- Added public privacy/support copy and complete App Store 1.0 metadata, review
+  notes, category guidance and age-rating answers.
+
+### Release
+- Promoted the iOS target to version 1.0 build 1, declared exempt encryption use,
+  and retained the complete offline game package inside the native app.
+- Signed archive creation succeeds for `world.konk.native`; the 12 MB app contains
+  240 local runtime files. Full JavaScript suite passes 331 tests and every source
+  module parses. App Store distribution still requires Apple's export/upload step.
+
 ## 2026-09-29 — Goal sequencing and variation protection
 
 ### Added
