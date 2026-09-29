@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-29 — Game UI selection and caret guardrails
+
+### Fixed
+- Game labels, menus, HUD text and artwork no longer show browser text-selection blocks,
+  insertion carets or image-drag affordances on the web, iOS or macOS.
+- Name and room-code fields remain normally selectable and retain their editing caret.
+
 ## 2026-09-25 — Street Legends active-rival challenge pass
 
 ### Changed

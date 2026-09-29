@@ -1,0 +1,32 @@
+/* The game is an interactive surface; only fields should behave like document text. */
+html,
+body,
+body :not(input):not(textarea):not([contenteditable='true']) {
+  -webkit-user-select: none;
+  user-select: none;
+  caret-color: transparent;
+}
+
+html {
+  -webkit-touch-callout: none;
+}
+
+body :not(input):not(textarea):not([contenteditable='true'])::selection {
+  color: inherit;
+  background: transparent;
+}
+
+:is(img, svg, canvas) {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+:is(input, textarea, [contenteditable='true']) {
+  -webkit-user-select: text;
+  user-select: text;
+  caret-color: auto;
+}
+
+body {
+  cursor: default;
+}

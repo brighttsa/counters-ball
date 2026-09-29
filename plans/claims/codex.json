@@ -2,16 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Offline local iOS and macOS packaging",
+  "task": "Web and native selection and caret cleanup",
   "status": "released",
   "paths": [
-    "ios/KONKNative/",
-    "vendor/three-r160/",
-    "src/main.js",
-    "tests/native-offline-package.test.mjs",
+    "index.html",
+    "styles/game-interaction-guardrails.css",
+    "tests/game-interaction-guardrails.test.mjs",
     "plans/agent-handoff-board.md",
     "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-29T01:29:21Z",
-  "head": "14316f1"
+  "updatedAt": "2026-09-29T07:01:02Z",
+  "head": "fce569f659209efa836e2620ee99952144c29280"
 }
