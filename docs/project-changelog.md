@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-09-29 — Landscape flick counter centering
+
+### Fixed
+- The scoreboard's flick-count row now uses equal top and bottom padding in regular and
+  very-short landscape layouts on web, iOS and macOS, without changing its total height.
+
 ## 2026-09-29 — Kwame lesson HUD clears the scoreboard
 
 ### Fixed
