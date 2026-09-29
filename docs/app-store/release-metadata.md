@@ -59,3 +59,13 @@ Answer the current App Store Connect questionnaire based on the shipped build:
 - Unrestricted web access: no general browser.
 
 Do not select **Made for Kids** unless Bright Tsa intentionally accepts Apple's permanent Kids Category obligations.
+
+## Screenshot order
+
+Upload the five 1320 × 2868 images from `docs/app-store/screenshots/` in filename order:
+
+1. Flick. Bank. Score. — core bottle-cap football action
+2. The Rules Move. — Street Legends and venue mechanics
+3. Six Pitches. Six Stories. — Ghanaian venue progression
+4. Settle It Side by Side. — local 2-player mode
+5. See Every Angle. — Broadcast, Tactical and Street cameras

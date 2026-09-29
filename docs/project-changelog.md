@@ -1,5 +1,17 @@
 # Project Changelog
 
+## 2026-09-29 — App Store screenshot campaign
+
+### Added
+- Added five 1320 × 2868 App Store screenshots built from live shipped-game
+  captures: core play, Street Legends, venue progression, local 2-player and cameras.
+- Added a repeatable Playwright capture/compositor script, raw source frames and a
+  release test guarding every screenshot's required iPhone portrait dimensions.
+
+### Direction
+- Used Mobbin references to prioritize full-bleed real gameplay, one short promise
+  per frame and meaningful visual variety rather than repeated menus or fake renders.
+
 ## 2026-09-29 — KONK 1.0 App Store release candidate
 
 ### Added

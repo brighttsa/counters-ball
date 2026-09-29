@@ -29,3 +29,16 @@ test('public privacy policy names storage, online features and contact', () => {
   const pagesWorkflow = readFileSync('.github/workflows/deploy-game-to-github-pages.yml', 'utf8');
   assert.match(pagesWorkflow, /cp -R[^\n]*privacy\.html[^\n]*_site\//);
 });
+
+test('App Store screenshots use the iPhone 6.9-inch portrait dimensions', () => {
+  const names = [
+    '01-flick-bank-score.png', '02-street-legends.png', '03-six-pitches.png',
+    '04-two-player.png', '05-camera-replay.png',
+  ];
+  for (const name of names) {
+    const image = readFileSync(`docs/app-store/screenshots/${name}`);
+    assert.equal(image.toString('ascii', 1, 4), 'PNG');
+    assert.equal(image.readUInt32BE(16), 1320, `${name} width`);
+    assert.equal(image.readUInt32BE(20), 2868, `${name} height`);
+  }
+});
