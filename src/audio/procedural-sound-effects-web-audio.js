@@ -9,6 +9,8 @@ import { MatchMomentumLayer } from './match-momentum-rhythmic-tension-layer.js';
 import { BoundedAudioVoiceSynthesis } from './bounded-audio-voice-synthesis.js';
 import { playSoundEvent, normalizedStrength } from './semantic-sound-event-mapping.js';
 import { bottleTap, cardboardTap, netCatch, paperCrinkle } from './table-object-sound-recipes.js';
+import { ApprovedFoleyBank } from './approved-foley-decoded-buffer-bank.js';
+import { VelocityDrivenCapMovementAudio } from './velocity-driven-cap-movement-audio.js';
 
 const NOISE_SECONDS = 1;
 const MASTER_LEVEL = 0.9;
@@ -23,6 +25,13 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.ambience = new StreetAmbienceBeds();
     this.venueEvents = new VenueAmbientEventScheduler();
     this.momentum = new MatchMomentumLayer();
+    this.foley = new ApprovedFoleyBank();
+    this.surface = { kind: 'cardboard', dusty: false };
+    this.debug = {};
+    this.movement = new VelocityDrivenCapMovementAudio({
+      onSlide: (strength, pan, speed) => this.surfaceMovement(strength, pan, speed),
+      onSettle: (pan) => this.capSettle(pan),
+    });
   }
 
   /** Builds the audio graph (it may start suspended) and resumes it; call again from a user gesture to make it audible. */
@@ -55,6 +64,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         this.ambience.attach(this.ctx, this.master, buffer);
         this.venueEvents.attach(this.ctx, this.master);
         this.momentum.attach(this.ctx, this.master);
+        this.foley.attach(this.ctx, this.master);
       }
       this.music?.attach(this.ctx); // the soundtrack shares the context on its own bus
       this.setPaused(this.paused);
@@ -84,11 +94,54 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
 
   setSfxLevel(level) {
     this.sfxLevel = normalizedStrength(level);
+    this.foley.setLevel(this.sfxLevel);
   }
 
   setAmbience(kind) {
+    this.ambienceKind = kind;
     this.ambience.set(kind);
     this.venueEvents.set(kind === 'day' ? 'kiosk' : kind);
+  }
+
+  setSurface(kind = 'cardboard', dusty = false) { this.surface = { kind, dusty: Boolean(dusty) }; }
+
+  updateMovement(bodies, dt, panFor) { this.movement.update(bodies, dt, panFor); }
+
+  surfaceMovement(strength, pan = 0, speed = 0) {
+    if (!this.can('surface-movement', 70)) return;
+    this.noteDebug('slide', strength, speed);
+    if (this.foley.playSlide(strength, { ...this.surface, pan })) return;
+    this.noise({ duration: 0.025 + strength * 0.035, filter: 'bandpass', freq: 1150 + strength * 1200,
+      to: 850, q: 2.2, gain: 0.018 + strength * 0.035, pan });
+  }
+
+  capSettle(pan = 0) {
+    if (!this.can('settle', 55)) return;
+    this.noteDebug('settle', 0.1, 0);
+    this.noise({ duration: 0.012, filter: 'highpass', freq: 2400, gain: 0.035, pan });
+    this.tone({ freq: 1250, to: 900, duration: 0.025, gain: 0.022, pan });
+  }
+
+  noteDebug(event, strength, speed = null) {
+    this.debug = { event, strength: Number(strength).toFixed(2), speed: speed == null ? '-' : Number(speed).toFixed(2) };
+  }
+
+  debugSnapshot() {
+    const bank = this.foley.debugSnapshot();
+    return { ...this.debug, sample: bank.lastPlayed ? `${bank.lastPlayed.key} #${bank.lastPlayed.variation}` : '-',
+      surface: `${this.surface.kind}${this.surface.dusty ? ' dusty' : ''}`, voices: this.voices.size + bank.voices,
+      loaded: bank.loaded, gain: this.sfxLevel.toFixed(2), ambience: this.ambienceKind ?? '-',
+      music: this.music?.playing ?? '-', ducking: Boolean(this.music?.dip && this.music.dip.gain.value < 0.95),
+      paused: this.paused };
+  }
+
+  audition(event, strength = 0.5) {
+    if (event === 'flick') return this.flick(strength);
+    if (event === 'cap-cap') return this.capClink(strength);
+    if (event === 'cap-ball') return this.ballTap(strength);
+    if (event === 'post') return this.postHit(strength);
+    if (event === 'slide') return this.surfaceMovement(strength, 0, strength * 4.4);
+    if (event === 'settle') return this.capSettle();
   }
 
   /** Start/stop the momentum layer with the match lifecycle. */
@@ -111,6 +164,28 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.momentum.setTension(Boolean(value));
   }
 
+  duckAmbience(scale, seconds) { this.ambience.duckForMoment(scale, seconds); }
+
+  matchReaction(kind, strength = 0.5, pan = 0) {
+    this.noteDebug(kind, strength);
+    if (kind === 'near-miss') {
+      this.noise({ duration: 0.24, freq: 340, to: 760, q: 1, gain: 0.035 + strength * 0.035, attack: 0.07, pan });
+      return;
+    }
+    if (kind === 'disappointment') {
+      this.noise({ duration: 0.2, filter: 'lowpass', freq: 620, to: 260, gain: 0.025 + strength * 0.03, attack: 0.04, pan });
+      return;
+    }
+    const gain = 0.025 + strength * 0.035;
+    [760, 980].forEach((freq, index) => this.tone({ freq, duration: 0.07, gain, delay: index * 0.055, pan }));
+  }
+
+  goalReward(strength = 0.5, pan = 0) {
+    this.noteDebug('goal-reward', strength);
+    const gain = 0.035 + strength * 0.05;
+    [620, 830, 1110].forEach((freq, index) => this.tone({ freq, duration: 0.08, gain, delay: index * 0.065, pan }));
+  }
+
   can(key, gapMs = 28) {
     if (!this.available()) return false;
     const now = this.ctx.currentTime * 1000;
@@ -122,6 +197,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   /** Fingernail off the cap's rim: a dry snap, the cap's small thump, a scrape as it leaves. */
   flick(s) {
     if (!this.can('flick', 60)) return;
+    this.noteDebug('flick', s);
+    if (this.foley.playFlick(s, { surface: this.surface.kind, dusty: this.surface.dusty })) return;
     this.noise({ duration: 0.014, filter: 'highpass', freq: 3600, gain: 0.18 + s * 0.3 });
     this.tone({ freq: 190, to: 95, duration: 0.035, gain: 0.06 + s * 0.12 });
     this.noise({ duration: 0.05 + s * 0.05, filter: 'bandpass', freq: 1800, to: 1200, q: 2, gain: 0.03 + s * 0.05, delay: 0.01 });
@@ -129,6 +206,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
 
   capClink(s, pan = 0, surface = 'cap') {
     if (!this.can('clink')) return;
+    this.noteDebug('cap-cap', s);
+    if (this.foley.playImpact('cap-cap', s, { pan })) return;
     const g = 0.05 + s * 0.4;
     const base = surface === 'stone' ? 1400 + Math.random() * 400
       : surface === 'wood' ? 1600 + Math.random() * 600
@@ -145,6 +224,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   /** Cap into the paper ball: a papery thwack, with the skin crinkling on firmer hits. */
   ballTap(s, pan = 0, surface = 'cardboard') {
     if (!this.can('tap')) return;
+    this.noteDebug('cap-ball', s);
+    if (this.foley.playImpact('cap-ball', s, { pan })) return;
     const g = 0.08 + s * 0.5;
     const bodyFreq = surface === 'wood' ? 170 : surface === 'cardboard' ? 210 : 240;
     const filterFreq = surface === 'wood' ? 600 + s * 2000 : 800 + s * 2400;
@@ -162,6 +243,12 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     const dur = surface === 'cardboard' ? 0.06 : 0.08;
     this.tone({ freq: baseFreq, to: baseFreq * 0.63, duration: dur, gain: g, pan });
     this.noise({ duration: 0.025, filter: 'bandpass', freq: noiseFreq, q: surface === 'cardboard' ? 2 : 3, gain: g * 0.6, pan });
+  }
+
+  postHit(s, pan = 0) {
+    if (!this.can('post', 35)) return;
+    this.noteDebug('post', s);
+    if (!this.foley.playPost(s, { pan })) this.woodKnock(s, pan, 'wood');
   }
 
   stoneClack(s, pan = 0) {
@@ -232,6 +319,8 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
   dispose() {
     this.venueEvents.dispose();
     this.momentum.dispose();
+    this.foley.dispose();
+    this.movement.reset();
     super.dispose();
   }
 }

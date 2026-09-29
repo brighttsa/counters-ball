@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { THREE, FlickPhysicsEngine } from './helpers/real-three-session-fixture.mjs';
 const { PRACTICE_LESSONS, applyPracticeSetup } = await import('../src/gameplay/kwame-corner-practice-lesson-steps.js');
 const { KWAME_CORNER_TABLE } = await import('../src/levels/kwame-corner-practice-table.js');
@@ -65,4 +66,13 @@ test('finishing practice is remembered in the save', async () => {
     globalThis.window = { localStorage: { getItem: () => JSON.stringify({ stars: {}, practiceDone: 'yes' }) } };
     assert.equal(loadProgress().practiceDone, undefined);
   } finally { globalThis.window = previous; }
+});
+
+test('the lesson card clears the scoreboard below it or beside it', async () => {
+  const css = await readFile(new URL('../styles/match-hud-one-frame-and-aim-fade.css', import.meta.url), 'utf8');
+  assert.ok(css.includes('#kwame-coach { top: calc(max(14px, env(safe-area-inset-top)) + 96px); }'));
+  assert.match(css, /orientation: portrait[\s\S]*#kwame-coach[^}]+\+ 92px/);
+  assert.match(css, /max-height: 600px[\s\S]*#kwame-coach[\s\S]*left: calc\([^;]+clamp\(244px, 38vw, 330px\) \+ 10px\)/);
+  assert.match(css, /max-height: 600px[\s\S]*#kwame-coach[\s\S]*right: max\(76px, calc\(env\(safe-area-inset-right\) \+ 64px\)\)/);
+  assert.ok(css.includes('width: auto; max-width: none; transform: none;'));
 });

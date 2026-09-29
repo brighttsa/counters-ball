@@ -11,7 +11,7 @@
 .screen-results { background: var(--scrim); }
 .screen-intro { justify-items: start; align-content: end; padding-bottom: 36px; }
 
-.chalk-heading, .card-title { margin: 0; font-family: var(--font-display); letter-spacing: -0.02em; text-transform: uppercase; }
+.chalk-heading, .card-title { margin: 0; font-family: var(--font-display); letter-spacing: 0; text-transform: uppercase; }
 .card-title { font-size: var(--text-3xl); line-height: 1.06; overflow-wrap: anywhere; }
 
 .menu-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 16px; }
@@ -55,6 +55,7 @@
 }
 .name-field input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .intro-names .vs { padding-bottom: 8px; }
+.room-fields { display: grid; gap: 16px; }
 
 .screen-challenge { background: var(--scrim); }
 
@@ -346,7 +347,7 @@
   }
   .pause-face[data-face-panel='settings'] .chips { gap: 5px; }
   .pause-face[data-face-panel='settings'] .chip {
-    min-height: 36px;
+    min-height: 44px;
     padding: 4px 6px;
     font-size: 12px;
     line-height: 1;
@@ -356,13 +357,13 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .pause-face[data-face-panel='settings'] #hints-reset {
-    min-height: 34px;
+    min-height: 44px;
     margin-top: 4px;
     padding: 4px 8px;
     font-size: 12px;
   }
   .pause-face[data-face-panel='settings'] .pause-done {
-    min-height: 40px;
+    min-height: 44px;
     margin-top: 4px;
     padding: 8px 12px;
   }
@@ -379,12 +380,15 @@
   .pause-card[data-face='settings'] .card-title { margin-bottom: 0; }
   .pause-card[data-face='settings'] .settings-tabs { margin-bottom: 4px; }
   .pause-card[data-face='settings'] .setting-row { margin-bottom: 2px; }
-  .pause-card[data-face='settings'] .chip { min-height: 38px; font-size: var(--text-xs); }
+  .pause-card[data-face='settings'] .chip { min-height: 44px; font-size: var(--text-xs); }
+  .pause-card[data-face='actions'] { padding-block: 8px; }
+  .pause-card[data-face='actions'] .card-title { margin-bottom: 4px; }
+  .pause-card[data-face='actions'] .pause-settings-link { margin-top: 4px; }
 }
 
 /* Extra rule lines live behind "How it works": the card leads with the story and one rule. */
 .intro-more { margin: -12px 0 20px; font: var(--text-sm)/1.5 var(--font-body); }
-.intro-more summary { width: fit-content; min-height: 32px; padding: 4px 0; color: var(--yellow); cursor: pointer; font-weight: 700; }
+.intro-more summary { display: flex; align-items: center; width: fit-content; min-height: 44px; padding: 8px 0; color: var(--yellow); cursor: pointer; font-weight: 700; }
 .intro-more summary:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
 .intro-more .intro-rules { margin: 4px 0 0; }
 @media (max-height: 620px), (max-width: 700px) { .intro-more { margin: -4px 0 8px; font-size: var(--text-xs); } }

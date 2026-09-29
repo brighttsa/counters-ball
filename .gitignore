@@ -2,3 +2,7 @@
 .DS_Store
 .playwright-cli/
 .vercel/
+
+# Xcode's per-user window state and local scheme preferences.
+xcuserdata/
+*.xcuserstate

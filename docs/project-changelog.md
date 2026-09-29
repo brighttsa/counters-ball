@@ -1,5 +1,179 @@
 # Project Changelog
 
+## 2026-09-29 — Live-room field rhythm
+
+### Fixed
+- Made the live-room input wrapper an actual grid so its intended spacing applies.
+  Name and room-code groups now have 16 px between them on web and native while
+  each label stays tightly associated with its own input.
+- Advanced the shared menu stylesheet cache key and added an Apple interface
+  contract test for the field-group spacing.
+
+## 2026-09-29 — App Store screenshot campaign
+
+### Added
+- Added five 1320 × 2868 App Store screenshots built from live shipped-game
+  captures: core play, Street Legends, venue progression, local 2-player and cameras.
+- Added a repeatable Playwright capture/compositor script, raw source frames and a
+  release test guarding every screenshot's required iPhone portrait dimensions.
+
+### Direction
+- Used Mobbin references to prioritize full-bleed real gameplay, one short promise
+  per frame and meaningful visual variety rather than repeated menus or fake renders.
+
+## 2026-09-29 — KONK 1.0 App Store release candidate
+
+### Added
+- Added the opaque 1024px KONK app icon catalog and an Apple privacy manifest
+  declaring no tracking or collected data and the local preferences API reason.
+- Added public privacy/support copy and complete App Store 1.0 metadata, review
+  notes, category guidance and age-rating answers.
+
+### Release
+- Promoted the iOS target to version 1.0 build 1, declared exempt encryption use,
+  and retained the complete offline game package inside the native app.
+- Made the native runtime packager portable across macOS and Linux so the same
+  offline-package contract can gate GitHub Pages deployment in CI.
+- Included the privacy/support page in the deliberately restricted GitHub Pages
+  artifact and added a release test that guards its public deployment.
+- Signed archive creation succeeds for `world.konk.native`; the 12 MB app contains
+  240 local runtime files. Full JavaScript suite passes 331 tests and every source
+  module parses. App Store distribution still requires Apple's export/upload step.
+
+## 2026-09-29 — Goal sequencing and variation protection
+
+### Added
+- Goals now play as a sequence: net contact, 90 ms of physical space, whistle,
+  significance-scaled local reaction accent and a short tactile reward cadence.
+- Ordinary, skill and match-winning goals use increasing intensity; opponent goals
+  use a restrained disappointed response. Near misses briefly clear ambience for
+  their own compact reaction instead of borrowing the goal celebration.
+- Approved sample pools now prevent immediate take repetition while preserving
+  unbiased selection and single-take fallback.
+
+### Production
+- Added a focused ElevenLabs review batch for the rejected light cap collision,
+  three surface-specific settles and five restrained nonverbal human reactions.
+  Planned filenames are documentation only; no unapproved binary entered runtime.
+- Full Three r160 suite passes 328 tests. Local port 4181 serves the complete new
+  cache-busted module chain.
+
+## 2026-09-29 — Physics-driven cap movement and audio diagnostics
+
+### Added
+- Added velocity-driven cap movement Foley: short surface grains become denser and
+  brighter with speed, then resolve into one close-miked settle tick as each cap stops.
+- Added a developer-only `?audioDebug=1` panel for auditioning approved flick,
+  collision, post, slide and settle events while inspecting force, speed, selected
+  sample, surface, effects gain, venue ambience, music dip and active voices.
+
+### Guardrails
+- Movement uses real linear physics velocity and screen-space position. Spin and
+  wobble remain intentionally unimplemented until gameplay exposes angular velocity.
+- The panel is never mounted in the normal player experience. Full regression suite:
+  325 passed with the pinned Three r160 fixture; live browser loaded all 13 samples.
+
+## 2026-09-29 — Approved tactile Foley enters gameplay
+
+### Added
+- Integrated thirteen owner-selected ElevenLabs `#1` masters for light/medium/hard
+  flicks, medium/hard cap contacts, all cap-ball strengths, both post strengths and
+  clean-cardboard, dusty-cardboard and worn-wood movement.
+- Added a decoded-buffer Foley bank with force routing, surface routing, subtle
+  gain/playback variation, stereo contact placement, bounded voices and procedural fallback.
+
+### Quality control
+- Rejected the generated light cap-cap take because its sixteen-second duration
+  violated the isolated sub-second impact brief; light contacts retain the existing
+  procedural sound until a replacement is approved.
+- Normalized accepted deployment assets to 48 kHz, 128 kbps MP3 for a roughly
+  260 KB web/native package. Original source downloads remain outside the repository.
+- Verified all thirteen files load after browser audio unlock with no console errors;
+  all 322 regression tests pass, including the offline Apple package.
+
+## 2026-09-29 — ElevenLabs proof batch generated for review
+
+### Generated
+- Created 56 private ElevenLabs candidates across the approved 14-group proof batch:
+  three flick strengths, three cap-cap strengths, three cap-ball strengths, two
+  post strengths and short movement on each implemented surface.
+- Disabled Explore sharing before generation and left every candidate in ElevenLabs
+  History for owner listening review; no generated sound entered runtime assets.
+
+### Corrected
+- Documented the current 450-character Sound Effects prompt ceiling after the UI
+  rejected the first 562-character draft without charging it.
+- Recorded that newer WAV exports were not captured locally, preventing partial or
+  duplicate diagnostic downloads from being mistaken for approved masters.
+
+## 2026-09-29 — Professional audio audit and ElevenLabs production plan
+
+### Documented
+- Audited every current soundtrack, procedural effect, semantic event, ambience layer,
+  physics trigger and Street Legends mechanism without changing runtime audio.
+- Mapped all six implemented venues to their real surfaces, visible sound sources,
+  current gaps and proposed bed/punctuation/signature identity.
+- Prepared a 253-candidate ElevenLabs manifest with planned filenames clearly marked
+  as nonexistent, exact prompt components, proof-batch approval gate and rejection criteria.
+- Proposed a central material-aware Web Audio architecture, debug mode, dynamic mix,
+  package loading strategy and eight independently verifiable implementation passes.
+
+## 2026-09-29 — Full-bleed native loading frame
+
+### Fixed
+- The native loading background now fills the entire device instead of appearing as an
+  inset rectangle. Its 28-point padding applies only to status content, not the frame.
+- Loading and failure states cover unsafe areas consistently while keeping the indicator centered.
+
+## 2026-09-29 — Apple-quality compact interaction pass
+
+### Fixed
+- Home, venue navigation, intro disclosure, Pause and Settings now preserve a 44-point
+  minimum interaction target even on 568×320 and other short landscape phones.
+- The smallest Pause sheet fits all actions without internal scrolling; compact spacing
+  yields before touch targets do.
+- Landscape Settings keeps every segmented option, tips action and Done control fully
+  visible with no viewport overflow from 568×320 through 896×414.
+
+### Verified
+- Home, venue selection, intro, live match HUD, Pause and Settings were measured across
+  ten phone, tablet and desktop portrait/landscape viewports with no visible control below
+  44 points, no clipped controls and no page overflow.
+- Source syntax and all 318 tests pass.
+
+## 2026-09-29 — Landscape flick counter optical alignment
+
+### Fixed
+- The flick-count numbers and label now share a compact explicit line height and sit one
+  pixel lower, keeping visible space above and below the text balanced on web and native phones.
+
+## 2026-09-29 — Landscape lesson HUD joins the top band
+
+### Changed
+- On phone landscape, Kwame's lesson panel now occupies the space between the scoreboard
+  and Pause instead of sitting below the scoreboard. Portrait and taller desktop layouts
+  keep the lesson beneath the score stack.
+
+## 2026-09-29 — Landscape flick counter centering
+
+### Fixed
+- The scoreboard's flick-count row now uses equal top and bottom padding in regular and
+  very-short landscape layouts on web, iOS and macOS, without changing its total height.
+
+## 2026-09-29 — Kwame lesson HUD clears the scoreboard
+
+### Fixed
+- Kwame's Corner lesson copy now sits eight pixels below the complete score and flick-count
+  stack on desktop, portrait phones and short landscape phones instead of overlapping it.
+- The match HUD stylesheet cache version was advanced so existing web sessions receive the fix.
+
+## 2026-09-29 — Game UI selection and caret guardrails
+
+### Fixed
+- Game labels, menus, HUD text and artwork no longer show browser text-selection blocks,
+  insertion carets or image-drag affordances on the web, iOS or macOS.
+- Name and room-code fields remain normally selectable and retain their editing caret.
+
 ## 2026-09-25 — Street Legends active-rival challenge pass
 
 ### Changed
@@ -481,3 +655,49 @@ Turned the visual-direction prototype into a playable game.
   hijack a drag).
 - Swept goal-line test replaces the positional check (no tunnelling at speed).
 - Pixel ratio refreshed on resize; dust sprite texture shared.
+# 2026-09-29 — Native iPhone adaptive layout
+
+### Fixed
+- The iOS host no longer draws a second KONK wordmark over the web game's own loading screen; its connection state is now a neutral, opaque progress layer.
+- The native WebView marks the document before rendering, removes stray scroll insets and indicators, and dismisses the keyboard interactively.
+- Native portrait layouts use the available width instead of a fixed 250 px menu, compress by usable height, keep cards inside safe areas, and preserve comfortable touch targets.
+- Venue selection now reserves a stable act strip, clamps long venue copy, and keeps the play action and horizontal carousel reachable on short phones.
+
+### Verified
+- Source syntax and project-file validation pass.
+- Simulator build succeeds. Native-mode browser checks at 414×896, 375×667 and 896×414 have no page overflow or console errors; home, venue selection and the live match HUD stay within the viewport.
+
+# 2026-09-29 — Native interface quality pass
+
+### Improved
+- Native menu and match flows now share a compact spacing rhythm, 44 pt minimum touch targets, readable body typography, visible keyboard focus, tactile press feedback, and restrained disabled/busy states.
+- Portrait action groups keep the primary command full-width; short landscape screens use compact controls without shrinking tap areas or labels below a readable size.
+- Primary actions now come first in both visual and DOM order, keeping keyboard and assistive-technology navigation consistent.
+- Back actions use concise destination labels, and the duplicate floating sound control is hidden outside Home where Pause and Settings already expose audio controls.
+
+### Fixed
+- Live Match Join remains unavailable until a room code is entered and locks both room actions while a request is in progress.
+- Native venue, intro, result, settings, and multiplayer cards retain their controls inside compact phone viewports without page overflow.
+- Removed negative heading letter spacing from shared menu typography.
+
+### Verified
+- Home, Settings, Credits, Live Match, Venues, Intro, match HUD and Pause/Settings were checked at 414×896, 375×667, 320×568, 896×414 and 667×375.
+- JavaScript syntax, project-file validation and whitespace checks pass; the full suite passes 312 tests.
+
+# 2026-09-29 — Offline native game package
+
+### Changed
+- The native app now boots the existing KONK game from an internal `konk-local://game/` origin instead of opening `konk.world`.
+- Native builds copy the current `index.html`, source, styles, assets and manifest into the application bundle, keeping the web game as the single gameplay source of truth.
+- Three.js r160, its used addon modules and the four existing interface fonts are pinned locally with their licences.
+- The same Xcode target now builds for iPhone, iPad and macOS through Mac Catalyst.
+- Shared result, friend and room links retain the public `https://konk.world/` address when created by the local app.
+
+### Offline boundary
+- Solo play, AI matches, Street Legends, Daily Flick, local hot-seat, venues, audio, saves and replays boot and run without internet.
+- Live Match, Message Match, sharing and opening public challenge links require connectivity because they communicate with other devices or apps.
+
+### Verified
+- iOS Simulator and Mac Catalyst builds succeed; both bundles contain all 220 runtime files and have no boot-time font or Three.js CDN reference.
+- The Mac app reached a real match at `konk-local://game/index.html`.
+- The signed offline iPhone build installs successfully. Full JavaScript and packaging suite: 313 passing tests.

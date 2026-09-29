@@ -1,0 +1,160 @@
+/* The native WebKit host marks the root at document start. These refinements
+   use the actual viewport, safe areas and available height instead of a device list. */
+html.konk-native,
+html.konk-native body {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+}
+
+html.konk-native #game-canvas,
+html.konk-native .hud-layer,
+html.konk-native .screen {
+  width: 100%;
+  height: 100dvh;
+}
+
+html.konk-native button,
+html.konk-native input,
+html.konk-native summary {
+  touch-action: manipulation;
+}
+
+@media (orientation: portrait) and (max-width: 480px) {
+  html.konk-native .screen-title.is-active {
+    align-items: stretch;
+    padding-inline:
+      max(16px, calc(env(safe-area-inset-left) + 12px))
+      max(16px, calc(env(safe-area-inset-right) + 12px));
+  }
+
+  html.konk-native .home-logo {
+    width: min(330px, 86vw);
+  }
+
+  html.konk-native .screen-title .menu-stack,
+  html.konk-native .screen-title .home-utilities {
+    width: 100%;
+    max-width: none;
+  }
+
+  html.konk-native .screen-title .home-play {
+    min-height: 58px;
+  }
+
+  html.konk-native .screen-title .home-venues,
+  html.konk-native .screen-title .home-live {
+    min-height: 50px;
+  }
+
+  html.konk-native .home-secondary .btn,
+  html.konk-native .home-utilities button {
+    min-height: 46px;
+  }
+
+  html.konk-native .screen-levels.is-active {
+    grid-template-rows: auto minmax(0, 1fr) 104px;
+    padding-inline:
+      max(14px, calc(env(safe-area-inset-left) + 10px))
+      max(14px, calc(env(safe-area-inset-right) + 10px));
+  }
+
+  html.konk-native .circuit-hero {
+    align-self: end;
+    max-height: 100%;
+    padding: 10px 14px;
+  }
+
+  html.konk-native .circuit-venue-copy h3 {
+    margin-block: 2px 4px;
+    font-size: clamp(30px, 10vw, 42px);
+    line-height: .96;
+  }
+
+  html.konk-native .circuit-venue-copy p {
+    margin-block: 2px;
+    line-height: 1.25;
+  }
+
+  html.konk-native #circuit-venue-note {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-block: 4px 2px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  html.konk-native #circuit-enter {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  html.konk-native .screen-levels .level-grid {
+    margin-right: calc(var(--control-size) + 12px);
+    scroll-padding-inline: 0;
+  }
+
+  html.konk-native .screen-levels .level-card {
+    min-height: 96px;
+  }
+
+  html.konk-native :is(.screen-intro, .screen-pause, .screen-results, .screen-challenge) {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(14px, calc(env(safe-area-inset-right) + 10px))
+      max(12px, env(safe-area-inset-bottom))
+      max(14px, calc(env(safe-area-inset-left) + 10px));
+  }
+
+  html.konk-native :is(.paper-card, .intro-card, .pause-card, .results-card) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (orientation: portrait) and (max-height: 740px) {
+  html.konk-native .screen-title.is-active {
+    justify-content: center;
+    gap: 5px;
+    padding-block:
+      max(22px, calc(env(safe-area-inset-top) + 12px))
+      max(50px, calc(env(safe-area-inset-bottom) + 14px));
+  }
+
+  html.konk-native .home-location {
+    display: none;
+  }
+
+  html.konk-native .home-logo {
+    width: min(260px, 72vw);
+  }
+
+  html.konk-native .screen-levels.is-active {
+    grid-template-rows: auto minmax(0, 1fr) 92px;
+  }
+
+  html.konk-native #circuit-venue-place,
+  html.konk-native #circuit-venue-note {
+    display: none;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+  html.konk-native .screen-title.is-active {
+    padding-left: max(22px, calc(env(safe-area-inset-left) + 14px));
+    padding-right: max(calc(var(--control-size) + 20px), calc(env(safe-area-inset-right) + 14px));
+  }
+
+  html.konk-native .screen-levels.is-active {
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.konk-native .screen,
+  html.konk-native .paper-card {
+    transform: none !important;
+  }
+}

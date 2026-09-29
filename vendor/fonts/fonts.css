@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./anton-regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Cabin Sketch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./cabin-sketch-700.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Lilita One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./lilita-one-regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Patrick Hand';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./patrick-hand-regular.ttf') format('truetype');
+}
