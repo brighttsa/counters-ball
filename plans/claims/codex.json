@@ -2,17 +2,14 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Apple-quality interaction target and compact-layout audit",
+  "task": "Fix native loading overlay frame",
   "status": "released",
   "paths": [
-    "index.html",
-    "styles/ink-impact-home.css",
-    "styles/game-ui-menus-and-results.css",
-    "styles/circuit-venue-preview.css",
-    "tests/apple-interface-quality-contracts.test.mjs",
+    "ios/KONKNative/KONKNative/App/KONKWebGameView.swift",
+    "tests/native-loading-overlay-frame.test.mjs",
     "plans/agent-handoff-board.md",
     "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-29T08:31:00Z",
-  "head": "1b84a04bcf57970a32d1e4a91493b92346efec73"
+  "updatedAt": "2026-09-29T09:03:00Z",
+  "head": "7c5e699"
 }

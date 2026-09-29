@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-29 — Full-bleed native loading frame
+
+### Fixed
+- The native loading background now fills the entire device instead of appearing as an
+  inset rectangle. Its 28-point padding applies only to status content, not the frame.
+- Loading and failure states cover unsafe areas consistently while keeping the indicator centered.
+
 ## 2026-09-29 — Apple-quality compact interaction pass
 
 ### Fixed

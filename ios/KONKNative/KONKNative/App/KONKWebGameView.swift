@@ -22,29 +22,34 @@ struct KONKWebGameView: View {
 
     @ViewBuilder
     private var status: some View {
-        VStack(spacing: 18) {
-            switch state {
-            case .loading:
-                ProgressView().tint(Color(red: 223 / 255, green: 185 / 255, blue: 79 / 255))
-            case .failed:
-                Text("KONK could not open its local game files.")
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.white.opacity(0.72))
-                Button("TRY AGAIN") {
-                    state = .loading
-                    reloadID = UUID()
+        ZStack {
+            Color(red: 18 / 255, green: 18 / 255, blue: 16 / 255)
+                .ignoresSafeArea()
+
+            VStack(spacing: 18) {
+                switch state {
+                case .loading:
+                    ProgressView().tint(Color(red: 223 / 255, green: 185 / 255, blue: 79 / 255))
+                case .failed:
+                    Text("KONK could not open its local game files.")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.white.opacity(0.72))
+                    Button("TRY AGAIN") {
+                        state = .loading
+                        reloadID = UUID()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color(red: 223 / 255, green: 185 / 255, blue: 79 / 255))
+                    .foregroundStyle(.black)
+                case .ready:
+                    EmptyView()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(Color(red: 223 / 255, green: 185 / 255, blue: 79 / 255))
-                .foregroundStyle(.black)
-            case .ready:
-                EmptyView()
             }
+            .padding(28)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 18 / 255, green: 18 / 255, blue: 16 / 255))
-        .padding(28)
+        .ignoresSafeArea()
     }
 }
 
