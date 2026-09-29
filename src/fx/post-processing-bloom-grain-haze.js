@@ -87,5 +87,8 @@ export function createPostProcessing(renderer, scene, camera) {
       bloomPulse *= Math.exp(-dt * 1.3);
       bloom.strength = bloomBase + bloomPulse;
     },
+
+    setBokehEnabled(on) { bokeh.enabled = on; },
+    get bokehEnabled() { return bokeh.enabled; },
   };
 }
