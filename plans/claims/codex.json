@@ -2,15 +2,15 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Center landscape flick counter padding",
+  "task": "Place landscape lesson HUD beside scoreboard",
   "status": "released",
   "paths": [
     "index.html",
-    "styles/mobile-tablet-match-layout.css",
-    "tests/landscape-flick-meter-spacing.test.mjs",
+    "styles/match-hud-one-frame-and-aim-fade.css",
+    "tests/kwame-corner-practice-table.test.mjs",
     "plans/agent-handoff-board.md",
     "docs/project-changelog.md"
   ],
-  "updatedAt": "2026-09-29T07:13:45Z",
-  "head": "33b67fe26bc3b03b6082cdb974a3499cd14fa1e6"
+  "updatedAt": "2026-09-29T07:20:22Z",
+  "head": "fd12270cfa3515f2b456df2212e54152ec6e27a5"
 }

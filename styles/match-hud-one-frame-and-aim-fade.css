@@ -43,10 +43,12 @@
   #kwame-coach { top: calc(max(10px, env(safe-area-inset-top)) + 92px); }
 }
 @media (orientation: landscape) and (max-height: 600px) {
-  #kwame-coach { top: calc(max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-top)) + 84px); }
-}
-@media (orientation: landscape) and (max-height: 420px) {
-  #kwame-coach { top: calc(max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-top)) + 80px); }
+  #kwame-coach {
+    top: max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-top));
+    left: calc(max(var(--mobile-landscape-edge-pad, 14px), env(safe-area-inset-left)) + clamp(244px, 38vw, 330px) + 10px);
+    right: max(76px, calc(env(safe-area-inset-right) + 64px));
+    width: auto; max-width: none; transform: none;
+  }
 }
 
 /* ---- One corner tray ---- */

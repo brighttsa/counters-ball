@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-29 — Landscape lesson HUD joins the top band
+
+### Changed
+- On phone landscape, Kwame's lesson panel now occupies the space between the scoreboard
+  and Pause instead of sitting below the scoreboard. Portrait and taller desktop layouts
+  keep the lesson beneath the score stack.
+
 ## 2026-09-29 — Landscape flick counter centering
 
 ### Fixed
