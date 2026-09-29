@@ -11,6 +11,7 @@ export class ApprovedFoleyBank {
     this.voices = new Set();
     this.level = 1;
     this.lastPlayed = null;
+    this.lastVariation = new Map();
   }
 
   attach(ctx, destination) {
@@ -56,11 +57,19 @@ export class ApprovedFoleyBank {
     return this.play(surfaceSlideKey(surface, dusty), { gain: 0.035 + strength * 0.1, ...options });
   }
 
+  chooseVariation(key, count) {
+    const previous = this.lastVariation.get(key);
+    let variation = Math.floor(this.random() * count);
+    if (count > 1 && variation === previous) variation = (variation + 1 + Math.floor(this.random() * (count - 1))) % count;
+    this.lastVariation.set(key, variation);
+    return variation;
+  }
+
   play(key, { gain = 0.6, pan = 0, delay = 0 } = {}) {
     const pool = this.buffers.get(key);
     if (!this.ctx || !this.destination || !pool?.length || this.voices.size >= MAX_VOICES) return false;
     const source = this.ctx.createBufferSource();
-    const variation = Math.floor(this.random() * pool.length);
+    const variation = this.chooseVariation(key, pool.length);
     source.buffer = pool[variation];
     source.playbackRate.value = 0.985 + this.random() * 0.03;
     const level = this.ctx.createGain();
@@ -97,6 +106,7 @@ export class ApprovedFoleyBank {
     }
     this.voices.clear();
     this.buffers.clear();
+    this.lastVariation.clear();
     this.ctx = null;
     this.destination = null;
     this.loading = null;

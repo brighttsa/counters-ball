@@ -1,5 +1,23 @@
 # Project Changelog
 
+## 2026-09-29 — Goal sequencing and variation protection
+
+### Added
+- Goals now play as a sequence: net contact, 90 ms of physical space, whistle,
+  significance-scaled local reaction accent and a short tactile reward cadence.
+- Ordinary, skill and match-winning goals use increasing intensity; opponent goals
+  use a restrained disappointed response. Near misses briefly clear ambience for
+  their own compact reaction instead of borrowing the goal celebration.
+- Approved sample pools now prevent immediate take repetition while preserving
+  unbiased selection and single-take fallback.
+
+### Production
+- Added a focused ElevenLabs review batch for the rejected light cap collision,
+  three surface-specific settles and five restrained nonverbal human reactions.
+  Planned filenames are documentation only; no unapproved binary entered runtime.
+- Full Three r160 suite passes 328 tests. Local port 4181 serves the complete new
+  cache-busted module chain.
+
 ## 2026-09-29 — Physics-driven cap movement and audio diagnostics
 
 ### Added

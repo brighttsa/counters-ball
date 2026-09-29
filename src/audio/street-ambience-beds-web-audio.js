@@ -34,6 +34,14 @@ export class StreetAmbienceBeds {
     if (this.level) this.level.gain.setTargetAtTime(this.baseLevel * this.gainScale(), this.ctx.currentTime, 0.3);
   }
 
+  duckForMoment(scale = 0.6, seconds = 1) {
+    if (!this.level || !this.ctx) return;
+    const now = this.ctx.currentTime, rest = this.baseLevel * this.gainScale();
+    this.level.gain.cancelScheduledValues(now);
+    this.level.gain.setTargetAtTime(rest * Math.max(0.25, Math.min(1, scale)), now, 0.035);
+    this.level.gain.setTargetAtTime(rest, now + seconds, 0.25);
+  }
+
   stop() {
     this.sources.forEach((node) => { try { node.stop(); } catch { /* already stopped */ } });
     this.nodes.forEach((node) => node.disconnect());

@@ -29,3 +29,11 @@ test('sampled Foley follows the shared effects level used by attract mode', () =
   bank.setLevel(4);
   assert.equal(bank.level, 1);
 });
+
+test('variation pools never repeat the same take consecutively', () => {
+  const bank = new ApprovedFoleyBank({ random: () => 0 });
+  assert.equal(bank.chooseVariation('flick-hard', 3), 0);
+  assert.notEqual(bank.chooseVariation('flick-hard', 3), 0);
+  assert.equal(bank.chooseVariation('only-take', 1), 0);
+  assert.equal(bank.chooseVariation('only-take', 1), 0);
+});

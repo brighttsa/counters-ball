@@ -164,6 +164,28 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
     this.momentum.setTension(Boolean(value));
   }
 
+  duckAmbience(scale, seconds) { this.ambience.duckForMoment(scale, seconds); }
+
+  matchReaction(kind, strength = 0.5, pan = 0) {
+    this.noteDebug(kind, strength);
+    if (kind === 'near-miss') {
+      this.noise({ duration: 0.24, freq: 340, to: 760, q: 1, gain: 0.035 + strength * 0.035, attack: 0.07, pan });
+      return;
+    }
+    if (kind === 'disappointment') {
+      this.noise({ duration: 0.2, filter: 'lowpass', freq: 620, to: 260, gain: 0.025 + strength * 0.03, attack: 0.04, pan });
+      return;
+    }
+    const gain = 0.025 + strength * 0.035;
+    [760, 980].forEach((freq, index) => this.tone({ freq, duration: 0.07, gain, delay: index * 0.055, pan }));
+  }
+
+  goalReward(strength = 0.5, pan = 0) {
+    this.noteDebug('goal-reward', strength);
+    const gain = 0.035 + strength * 0.05;
+    [620, 830, 1110].forEach((freq, index) => this.tone({ freq, duration: 0.08, gain, delay: index * 0.065, pan }));
+  }
+
   can(key, gapMs = 28) {
     if (!this.available()) return false;
     const now = this.ctx.currentTime * 1000;

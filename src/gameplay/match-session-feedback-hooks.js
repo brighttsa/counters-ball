@@ -8,6 +8,7 @@ import { screenPan } from '../audio/screen-space-stereo-pan.js';
 import { needsFirstShotGuidance, completeFirstShotGuidance } from '../core/first-shot-guidance.js';
 import { MATCH_COPY, ordinaryGoalDetail } from './konk-match-reaction-copy.js';
 import { CONTACT_RESTITUTION_SQUARE, RAIL_RESTITUTION } from './flick-feel-contact-rail-and-settle-rules.js';
+import { MatchMomentAudioDirector } from '../audio/match-moment-audio-director.js';
 
 const SURFACE_SOUND = { cap: 'capClink', coins: 'capClink', post: 'woodKnock', pebble: 'stoneClack', bottle: 'glassTink',
   boom: 'woodKnock', booth: 'stoneClack', kerb: 'stoneClack', ruler: 'woodKnock' };
@@ -30,6 +31,13 @@ export function wireMatchFeedback(session) {
   let lastTurnTime = 0;
   const goalCounts = { [SIDE_HOME]: 0, [SIDE_AWAY]: 0 };
   const kid = level.opponent.kid;
+  const moments = new MatchMomentAudioDirector({
+    schedule: (delay, callback) => session.schedule(delay, callback),
+    net: (pan) => sound.netCatch?.(pan), whistle: () => sound.whistle(),
+    reward: (strength, pan) => sound.goalReward?.(strength, pan),
+    reaction: (kind, strength, pan) => sound.matchReaction?.(kind, strength, pan),
+    duck: (scale, seconds) => sound.duckAmbience?.(scale, seconds),
+  });
   const syncFlicks = () => hud.setFlicks(rules.flicksLeft(SIDE_HOME), rules.flicksLeft(SIDE_AWAY));
 
   physics.onImpact = (a, b, impulse, x, z) => {
@@ -135,6 +143,7 @@ export function wireMatchFeedback(session) {
   rules.resolvePlayAtRest = function () {
     if (session.slowMoUsed && rules.phase === 'moving') {
       sound.event?.('nearMiss');
+      moments.nearMiss({ significance: 0.45 });
       // The table gasps with you: a shot that nearly went in gets its own word, not just a sound.
       if (!options.isAttract && rules.isHuman(rules.turn)) hud.event('SO CLOSE!', { priority: 3, duration: 1.1 });
     }
@@ -152,8 +161,10 @@ export function wireMatchFeedback(session) {
     const highlight = venueLabel || skillLabel;
     session.lastShotStory = highlight || 'GOAL';
     const goalX = (scorer === SIDE_HOME ? 1 : -1) * GOAL_LINE_X;
-    sound.netCatch?.(screenPan(session.camera, goalX, 0)); // the ball settling in the net, under the whistle
-    sound.whistle();
+    const goalPan = screenPan(session.camera, goalX, 0);
+    const winning = scores[scorer] >= rules.rules.goalsToWin || rules.tiebreak === 'golden';
+    moments.goal({ pan: goalPan, significance: winning ? 1 : highlight ? 0.72 : 0.48,
+      positive: versus || scorer === SIDE_HOME });
     if (!options.isAttract) sound.music?.duckForGoal(); // room for the whistle and the net
     session.stage.backdrop.startle(); // the neighbourhood reacts too
     particles.confettiBurst(goalX);
