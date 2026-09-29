@@ -10,6 +10,7 @@ export class ApprovedFoleyBank {
     this.loading = null;
     this.voices = new Set();
     this.level = 1;
+    this.lastPlayed = null;
   }
 
   attach(ctx, destination) {
@@ -51,11 +52,16 @@ export class ApprovedFoleyBank {
     return this.play(`post-${strength < 0.48 ? 'light' : 'hard'}`, { gain: 0.5 + strength * 0.3, ...options });
   }
 
+  playSlide(strength, { surface, dusty, ...options } = {}) {
+    return this.play(surfaceSlideKey(surface, dusty), { gain: 0.035 + strength * 0.1, ...options });
+  }
+
   play(key, { gain = 0.6, pan = 0, delay = 0 } = {}) {
     const pool = this.buffers.get(key);
     if (!this.ctx || !this.destination || !pool?.length || this.voices.size >= MAX_VOICES) return false;
     const source = this.ctx.createBufferSource();
-    source.buffer = pool[Math.floor(this.random() * pool.length)];
+    const variation = Math.floor(this.random() * pool.length);
+    source.buffer = pool[variation];
     source.playbackRate.value = 0.985 + this.random() * 0.03;
     const level = this.ctx.createGain();
     level.gain.value = gain * this.level * (0.96 + this.random() * 0.08);
@@ -74,7 +80,13 @@ export class ApprovedFoleyBank {
       this.voices.delete(voice);
     };
     source.start(this.ctx.currentTime + delay);
+    this.lastPlayed = { key, variation: variation + 1, gain };
     return true;
+  }
+
+  debugSnapshot() {
+    return { loaded: [...this.buffers.values()].reduce((sum, pool) => sum + pool.length, 0),
+      voices: this.voices.size, lastPlayed: this.lastPlayed };
   }
 
   dispose() {

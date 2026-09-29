@@ -11,7 +11,6 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 ## In progress
 | Task | Owner | Branch | Files / folders claimed | Started |
 |---|---|---|---|---|
-(No active task recorded.)
 
 ## Blocked
 (Public deployment below is resolved; kept for history.)
@@ -39,6 +38,7 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 ## Done (newest first)
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|
+| Physics-driven movement Foley and audio debug mode | Codex | Commit containing this note | Cap motion now emits velocity-mapped, cooldown-spaced surface grains and exactly one settle tick on rest, using real body velocity and screen pan. Added a developer-only `?audioDebug=1` audition panel with live event/sample/force/speed/surface/gain/venue/music/voice state. No fake spin or wobble was added because physics has no angular velocity. Live browser loaded all 13 approved samples and the full Three-enabled suite passes 325 tests. |
 | Integrate approved ElevenLabs proof batch | Codex | Commit containing this note | Integrated thirteen owner-selected `#1` masters as compact 48 kHz deployment assets: three flick strengths, cap-cap medium/hard, all cap-ball strengths, both post strengths and all three implemented surfaces. The malformed sixteen-second light cap-cap take was rejected and retains procedural fallback. Added force/surface routing, subtle gain/pitch variation, stereo placement, voice limits and fallback. Browser loaded every file without console errors; 323 tests pass with real Three.js and the offline Apple package. |
 | ElevenLabs proof-batch generation | Codex | Commit containing this note | Owner approved the manifest. Generated 14 private proof groups in ElevenLabs History, four candidates each: light/medium/hard flick, cap-cap and cap-ball; light/hard post; clean-card, dusty-card and wood short slides. Explore sharing stayed disabled. Corrected the manifest for the UI's real 450-character ceiling. No generated asset was integrated: newer WAV exports were not captured locally, and owner listening selection remains the gate before Pass 2. |
 | KONK professional audio audit and ElevenLabs pipeline | Codex | Commit containing this note | Audited all current audio assets, triggers, procedural systems and six venues without changing runtime audio. Added an indexed seven-deliverable packet: current/event audit, venue sonic map, 253-candidate generation manifest with exact prompt components, proposed Web Audio architecture and eight-pass approval-gated plan. No ElevenLabs assets were generated or claimed to exist. Documentation checks and whitespace checks pass. Owner approval of the proof-batch manifest is the next gate. |

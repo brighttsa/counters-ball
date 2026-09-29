@@ -93,6 +93,7 @@ export function wireMatchFeedback(session) {
     session.schedule(1.6, () => hud.event(hint.label, { priority: 2, duration: 1.8, detail: hint.detail }));
   };
   physics.onStep = (dt) => {
+    sound.updateMovement?.(physics.bodies, dt, (body) => screenPan(session.camera, body.pos.x, body.pos.y));
     if (rules.phase === 'moving') session.presentation.skills.update(dt, session.ballBody);
     if (rules.phase === 'moving') session.mechanic?.observe(session.ballBody);
   };

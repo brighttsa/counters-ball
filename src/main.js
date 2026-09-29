@@ -9,7 +9,8 @@ import { AttractModeCallout, createAttractHud } from './ui/attract-mode-callout.
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
-import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js?v=3';
+import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js?v=4';
+import { installDeveloperAudioDebugPanel } from './audio/developer-audio-debug-panel.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
 import { MatchSession } from './gameplay/match-session-runtime.js?v=10';
@@ -53,6 +54,7 @@ const post = createPostProcessing(renderer, scene, camera);
 const cameraDirector = new CameraDirector(camera, scene);
 const progress = loadProgress();
 const sound = new ProceduralSoundBoard({ muted: progress.muted });
+installDeveloperAudioDebugPanel(sound);
 const music = new SoundtrackDirector();
 music.prefetch('home');
 const hud = new MatchHud();

@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-09-29 — Physics-driven cap movement and audio diagnostics
+
+### Added
+- Added velocity-driven cap movement Foley: short surface grains become denser and
+  brighter with speed, then resolve into one close-miked settle tick as each cap stops.
+- Added a developer-only `?audioDebug=1` panel for auditioning approved flick,
+  collision, post, slide and settle events while inspecting force, speed, selected
+  sample, surface, effects gain, venue ambience, music dip and active voices.
+
+### Guardrails
+- Movement uses real linear physics velocity and screen-space position. Spin and
+  wobble remain intentionally unimplemented until gameplay exposes angular velocity.
+- The panel is never mounted in the normal player experience. Full regression suite:
+  325 passed with the pinned Three r160 fixture; live browser loaded all 13 samples.
+
 ## 2026-09-29 — Approved tactile Foley enters gameplay
 
 ### Added

@@ -2,16 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "main",
-  "task": "Integrate approved ElevenLabs proof batch",
-  "status": "released",
-  "paths": [
-    "src/audio/",
-    "audio-production/proof-batch/",
-    "assets/audio/",
-    "tests/",
-    "docs/project-changelog.md",
-    "plans/agent-handoff-board.md"
-  ],
-  "updatedAt": "2026-09-29T09:24:00Z",
-  "head": "413198c"
+  "task": null,
+  "status": "idle",
+  "paths": [],
+  "updatedAt": "2026-09-29T10:10:00Z",
+  "head": "93b3f8a"
 }
