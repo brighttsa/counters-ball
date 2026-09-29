@@ -1,5 +1,21 @@
 # Project Changelog
 
+## 2026-09-29 — Apple-quality compact interaction pass
+
+### Fixed
+- Home, venue navigation, intro disclosure, Pause and Settings now preserve a 44-point
+  minimum interaction target even on 568×320 and other short landscape phones.
+- The smallest Pause sheet fits all actions without internal scrolling; compact spacing
+  yields before touch targets do.
+- Landscape Settings keeps every segmented option, tips action and Done control fully
+  visible with no viewport overflow from 568×320 through 896×414.
+
+### Verified
+- Home, venue selection, intro, live match HUD, Pause and Settings were measured across
+  ten phone, tablet and desktop portrait/landscape viewports with no visible control below
+  44 points, no clipped controls and no page overflow.
+- Source syntax and all 318 tests pass.
+
 ## 2026-09-29 — Landscape flick counter optical alignment
 
 ### Fixed
