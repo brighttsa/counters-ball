@@ -24,8 +24,8 @@ import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v
 import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
 import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
-import { createMessageMatchFlow } from './ui/message-match-flow.js?v=4';
-import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=4';
+import { createMessageMatchFlow } from './ui/message-match-flow.js?v=5';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=5';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
@@ -70,7 +70,7 @@ const attractHud = createAttractHud(attractCallout); // the title-screen match o
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
 const liveRoom = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: publicBaseUrl, showTitle,
-  onStart: (roomId, seat, seats, level) => messageMatch.startRoom(STREET_LEGENDS_ACTS.findIndex((act) => act.id === level.id), roomId, seat, {
+  onStart: (roomId, seat, seats, level) => messageMatch.startRoom(level, roomId, seat, {
     home: seats.home?.name ?? 'Player 1', away: seats.away?.name ?? 'Player 2',
   }) });
 const orientation = createMatchOrientationPrompt();

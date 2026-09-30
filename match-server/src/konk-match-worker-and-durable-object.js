@@ -116,6 +116,7 @@ export class KonkMatch extends DurableObject {
     const seat = seatFor(room, body.token);
     if (!room || (room.phase !== 'ready' && room.phase !== 'playing')) return json({ error: 'match has not started' }, 409);
     if (!seat || body.letter?.by !== seat[0]) return json({ error: 'not your seat' }, 403);
+    if (body.letter?.l !== room.levelId) return json({ error: 'turn belongs to a different table' }, 409);
     const previous = await this.ctx.storage.get('room:letter');
     const verdict = previous ? checkNextLetter(previous, body.letter) : checkOpeningLetter(body.letter);
     if (!verdict.ok) return json({ error: verdict.error, ...(previous ? { letter: previous, seq: previous.k } : {}) }, verdict.status);

@@ -2,6 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
 import { connectLiveRoomSocket, createLiveRoom, joinLiveRoom, roomApiBase, roomLink, roomSocketBase, setLiveRoomName, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
+import { createLiveMatchRoomFlow } from '../src/ui/live-match-room-flow.js';
+import { STREET_LEGENDS_ACTS } from '../src/levels/street-legends-acts-and-unlocks.js';
+import { createMessageMatchFlow } from '../src/ui/message-match-flow.js';
+import { startLiveRoomGameSync } from '../src/ui/live-match-room-game-sync.js';
+import { packLetter } from '../src/core/message-match-turn-letter-codec.js';
 
 test('live room opens with one seat and no ready state', () => {
   const room = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 100 });
@@ -125,4 +130,87 @@ test('live room socket authenticates with the seat token and reconnects using th
   socket.close();
   assert.equal(socket.connected, false);
   assert.deepEqual(states, [true, false]);
+});
+
+test('challenger enters the host venue and starts the host act at kickoff', async () => {
+  const saved = { document: globalThis.document, location: globalThis.location, fetch: globalThis.fetch };
+  const fields = new Map();
+  const element = (key) => {
+    if (!fields.has(key)) fields.set(key, { value: '', textContent: '', hidden: false, disabled: false,
+      readOnly: false, addEventListener() {}, setAttribute() {}, classList: { toggle() {} } });
+    return fields.get(key);
+  };
+  const hostLevel = STREET_LEGENDS_ACTS.find((act) => act.backdrop === 'kiosk');
+  const room = { phase: 'ready', levelId: hostLevel.id,
+    seats: { home: { name: 'Ama', ready: true, online: true }, away: { name: 'Kofi', ready: true, online: true } } };
+  const starts = [];
+  try {
+    globalThis.document = { getElementById: element, querySelector: element, querySelectorAll: () => [], body: { dataset: {} } };
+    globalThis.location = { hostname: 'localhost' };
+    globalThis.fetch = async () => ({ ok: true, json: async () => ({ seat: 'away', token: 'away-token', room }) });
+    const flow = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: 'https://konk.world/',
+      showTitle() {}, onStart: (...args) => starts.push(args) });
+    flow.show();
+    element('live-room-code').value = 'abcdefghij';
+    await flow.join();
+    assert.equal(element('live-room-venue').textContent, hostLevel.name);
+    assert.equal(starts.length, 1);
+    assert.equal(starts[0][3].id, hostLevel.id);
+  } finally {
+    globalThis.document = saved.document;
+    globalThis.location = saved.location;
+    globalThis.fetch = saved.fetch;
+  }
+});
+
+test('both live seats open the same act and home takes the first turn', async () => {
+  const saved = globalThis.document;
+  const level = STREET_LEGENDS_ACTS.find((act) => act.backdrop === 'kiosk');
+  const names = { home: 'Ama', away: 'Kofi' };
+  const opened = [];
+  globalThis.document = { getElementById: () => ({}) };
+  try {
+    for (const side of ['home', 'away']) {
+      const app = { session: null };
+      const flow = createMessageMatchFlow({ app, baseUrl: 'https://konk.world/',
+        openMatchTable(table, options) {
+          opened.push({ side, table, options });
+          app.session = { rules: { on() {} }, flick() {}, start(first) { this.first = first; } };
+        },
+        menus: { show() {} }, hud: { setLocalPerspective() {}, show() {}, event() {} },
+        sound: { whistle() {} }, cameraDirector: { setMode() {} }, showTitle() {} });
+      await flow.startRoom(level, 'abcdefghij', side, names);
+      assert.equal(app.session.first, 'home');
+      flow.home();
+    }
+    assert.deepEqual(opened.map(({ table }) => table.id), [level.id, level.id]);
+    assert.deepEqual(opened.map(({ options, side }) => options.controllers[side]), ['human', 'human']);
+  } finally { globalThis.document = saved; }
+});
+
+test('a connected challenger catches a missed turn once and rejects another venue', async () => {
+  const levelId = STREET_LEGENDS_ACTS[0].id;
+  const rules = (turn, used) => ({ phase: 'aiming', turn, scores: { home: 0, away: 0 },
+    flicksUsed: { home: used, away: 0 }, lastScorer: null, tiebreak: null, tiebreakBonus: { home: 0, away: 0 } });
+  const packed = packLetter({ levelId, names: { home: 'Ama', away: 'Kofi' }, seq: 1, by: 'home',
+    before: [0, 0, 1, 0], rulesBefore: rules('home', 0), rulesAfter: rules('away', 1),
+    flicks: [{ entry: 0, vx: 1, vy: 0, after: [0.1, 0, 1, 0] }] });
+  const played = [];
+  let message;
+  let state;
+  const sync = startLiveRoomGameSync({ api: 'https://api', id: 'abcdefghij', mySide: 'away',
+    letters: { levelId, replay: async (letter) => played.push(letter.seq) }, hud: { event() {} },
+    readTurn: async () => ({ letter: packed }),
+    socketFactory: (_api, _id, onMessage, onState) => {
+      message = onMessage; state = onState;
+      return { connected: true, close() {} };
+    } });
+  try {
+    await new Promise(setImmediate);
+    state(true);
+    message({ type: 'turn', letter: packed });
+    message({ type: 'turn', letter: { ...packed, k: 2, l: 'another-venue' } });
+    await new Promise(setImmediate);
+    assert.deepEqual(played, [1]);
+  } finally { sync.close(); }
 });

@@ -9,9 +9,10 @@ import {
 import { pushAvailability, subscribeToMatch } from '../core/message-match-push-subscription.js';
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
+import { STREET_LEGENDS_ACTS } from '../levels/street-legends-acts-and-unlocks.js?v=2';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
 import { sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=4';
-import { startLiveRoomGameSync } from './live-match-room-game-sync.js?v=1';
+import { startLiveRoomGameSync } from './live-match-room-game-sync.js?v=2';
 
 const other = (side) => (side === 'home' ? 'away' : 'home');
 
@@ -33,8 +34,8 @@ export function createMessageMatchFlow(deps) {
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
   const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
 
-  function openTable(index, mySide, names, seq, online = false) {
-    const source = CAMPAIGN_LEVELS[index];
+  function openTable(index, mySide, names, seq, online = false, roomLevel = null) {
+    const source = roomLevel ?? CAMPAIGN_LEVELS[index];
     const level = online ? { ...source, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3 } } : source;
     Object.assign(app, { mode: 'versus', levelIndex: index });
     result = null;
@@ -92,11 +93,12 @@ export function createMessageMatchFlow(deps) {
   }
 
   return {
-    async startRoom(index, id, mySide, names) {
+    async startRoom(level, id, mySide, names) {
       roomSync?.close();
-      const letters = openTable(index, mySide, names, 0, true);
+      const index = STREET_LEGENDS_ACTS.findIndex((act) => act.id === level.id);
+      if (index < 0) throw new Error('unknown live room level');
+      const letters = openTable(index, mySide, names, 0, true, level);
       hud.event('LIVE MATCH', { priority: 6, duration: 2.2, detail: mySide === 'home' ? 'You are HOME' : 'You are AWAY' });
-      roomSync = startLiveRoomGameSync({ api, id, mySide, letters, hud });
       letters.onLetter = async (letter) => {
         const packed = packLetter(letter);
         hud.event('YOUR FLICK IS IN', { priority: 5, duration: 1.4, detail: `${names[mySide]} · waiting for the answer` });
@@ -104,7 +106,8 @@ export function createMessageMatchFlow(deps) {
         roomSync?.noteSent(letter);
       };
       sound.whistle();
-      app.session.start(mySide);
+      app.session.start('home');
+      roomSync = startLiveRoomGameSync({ api, id, mySide, letters, hud });
     },
     /** From the 2-Player intro: this device plays home and flicks first. */
     start(index) {

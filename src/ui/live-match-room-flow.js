@@ -1,4 +1,5 @@
 import { createLiveRoom, joinLiveRoom, readLiveRoom, roomApiBase, roomLink, setLiveRoomName, setLiveRoomReady, heartbeatLiveRoom, connectLiveRoomSocket } from '../core/live-match-room-transport.js?v=4';
+import { STREET_LEGENDS_ACTS } from '../levels/street-legends-acts-and-unlocks.js?v=2';
 
 const $ = (id) => document.getElementById(id);
 const other = (seat) => seat === 'home' ? 'away' : 'home';
@@ -72,6 +73,9 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     });
   };
   const open = (result) => {
+    const roomLevel = STREET_LEGENDS_ACTS.find((act) => act.id === result.room?.levelId);
+    if (!roomLevel) throw new Error('unknown room level');
+    currentLevel = roomLevel;
     roomId = result.id ?? roomId; seat = result.seat ?? seat; invite = roomLink(`${baseUrl}`, roomId);
     $('live-room-code').value = roomId; $('live-room-code').readOnly = true;
     $('live-room-name').readOnly = false; $('live-room-name').disabled = false; $('live-room-venue').textContent = currentLevel.name;
@@ -89,7 +93,7 @@ export function createLiveMatchRoomFlow({ level, baseUrl, showTitle, onStart }) 
     show(nextLevel = currentLevel) { currentLevel = nextLevel; started = false; document.querySelectorAll('[data-screen]').forEach((screen) => screen.classList.toggle('is-active', screen.dataset.screen === 'live-room')); $('live-room-name').disabled = false; $('live-room-name').readOnly = false; $('live-room-venue').textContent = currentLevel.name; $('live-room-line').textContent = 'Host the table or join a rival with a code. You will each see your own side during the match.'; roomCode.readOnly = false; roomCode.value = ''; $('live-room-status').textContent = ''; setBusy(false); document.body.dataset.screen = 'live-room'; },
     open(id) { this.show(); $('live-room-code').value = id; this.join(); },
     async create() { setBusy(true); status('Creating your room…'); try { const result = await createLiveRoom(api, { levelId: currentLevel.id, homeName: $('live-room-name').value }); open(result); status(`Room created. Your code is ${result.id}. Send the invite.`); } catch { setBusy(false); status('Could not create a room. Check your connection.'); } },
-    async join() { const id = roomCode.value.trim(); if (!id) return status('Paste a room code first.'); setBusy(true); status('Joining room…'); try { open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { setBusy(false); status(error.status === 409 ? 'That room is full. Ask the host for a fresh invite.' : 'Could not join that room. Check the code and your connection.'); } },
+    async join() { const id = roomCode.value.trim(); if (!id) return status('Paste a room code first.'); setBusy(true); status('Joining room…'); try { open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); if (!started) status('You joined. Ready up when you are set.'); } catch (error) { setBusy(false); status(error.message === 'unknown room level' ? 'This room uses a table this version does not support. Refresh the game and try again.' : error.status === 409 ? 'That room is full. Ask the host for a fresh invite.' : 'Could not join that room. Check the code and your connection.'); } },
     async ready() { const room = await readLiveRoom(api, roomId); const next = !room.room.seats[seat].ready; await setLiveRoomReady(api, roomId, seat, next); render((await readLiveRoom(api, roomId)).room); },
     async copy() {
       const message = `Join me for a live KONK! match at ${currentLevel.name}. Tap this invite, choose your name, and ready up: ${invite}`;
