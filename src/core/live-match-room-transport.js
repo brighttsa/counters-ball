@@ -4,6 +4,12 @@ const ROOM_ID = /^[a-km-np-zA-HJ-NP-Z2-9]{10}$/;
 const PRODUCTION_API = 'https://konk-match-server.konk-match-server.workers.dev';
 const TIMEOUT_MS = 8000;
 
+export function roomSocketBase(base) {
+  const url = new URL(base);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  return url.origin;
+}
+
 export function roomApiBase(loc = globalThis.location) {
   if (!loc) return '';
   return loc.hostname === 'localhost' || loc.hostname === '127.0.0.1' ? 'http://localhost:8787' : PRODUCTION_API;
@@ -41,6 +47,10 @@ export function setLiveRoomReady(base, id, seat, ready, fetchImpl) {
   return call(base, `/rooms/${id}/ready`, { method: 'POST', body: JSON.stringify({ seat, ready, token: seatTokens.get(id) }) }, fetchImpl);
 }
 
+export function setLiveRoomName(base, id, name, fetchImpl) {
+  return call(base, `/rooms/${id}/name`, { method: 'POST', body: JSON.stringify({ name, token: seatTokens.get(id) }) }, fetchImpl);
+}
+
 export function heartbeatLiveRoom(base, id, seat, fetchImpl) {
   return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat, token: seatTokens.get(id) }) }, fetchImpl);
 }
@@ -51,6 +61,53 @@ export function sendLiveRoomTurn(base, id, letter, fetchImpl) {
 
 export function readLiveRoomTurn(base, id, fetchImpl) {
   return call(base, `/rooms/${id}/turn`, {}, fetchImpl);
+}
+
+export function connectLiveRoomSocket(base, id, onMessage, onState = () => {}, WebSocketImpl = globalThis.WebSocket) {
+  const token = seatTokens.get(id);
+  let socket = null;
+  let closed = false;
+  let retry = null;
+  let heartbeat = null;
+  let attempts = 0;
+  const state = (connected) => onState(connected);
+  const connect = () => {
+    if (closed || !token || !WebSocketImpl) return;
+    try {
+      socket = new WebSocketImpl(`${roomSocketBase(base)}/rooms/${id}/socket`);
+      socket.addEventListener('open', () => {
+        attempts = 0;
+        socket.send(JSON.stringify({ type: 'auth', token }));
+        heartbeat = setInterval(() => {
+          if (socket?.readyState === WebSocketImpl.OPEN) socket.send(JSON.stringify({ type: 'heartbeat' }));
+        }, 5000);
+        state(true);
+      });
+      socket.addEventListener('message', (event) => {
+        try { onMessage(JSON.parse(event.data)); } catch { /* ignore malformed frames */ }
+      });
+      socket.addEventListener('close', () => {
+        clearInterval(heartbeat);
+        heartbeat = null;
+        state(false);
+        if (!closed) retry = setTimeout(connect, Math.min(1000 * (2 ** attempts++), 8000));
+      });
+      socket.addEventListener('error', () => socket?.close());
+    } catch {
+      state(false);
+      if (!closed) retry = setTimeout(connect, Math.min(1000 * (2 ** attempts++), 8000));
+    }
+  };
+  connect();
+  return {
+    get connected() { return socket?.readyState === WebSocketImpl?.OPEN; },
+    close() {
+      closed = true;
+      clearTimeout(retry);
+      clearInterval(heartbeat);
+      socket?.close(1000, 'Leaving room');
+    },
+  };
 }
 
 export function roomLink(baseUrl, id) {

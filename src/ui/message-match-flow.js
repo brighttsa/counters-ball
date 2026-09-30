@@ -10,7 +10,8 @@ import { pushAvailability, subscribeToMatch } from '../core/message-match-push-s
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
-import { readLiveRoomTurn, sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=2';
+import { sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=4';
+import { startLiveRoomGameSync } from './live-match-room-game-sync.js?v=1';
 
 const other = (side) => (side === 'home' ? 'away' : 'home');
 
@@ -27,7 +28,7 @@ export function createMessageMatchFlow(deps) {
   let outgoing = null;   // our finished move, waiting to be sent
   let sentUrl = null;    // once a move is on the server, resending shares the same link
   let result = null;     // full time, held back until our last letter is sent
-  let roomTimer = null;
+  let roomSync = null;
 
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
   const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
@@ -92,28 +93,16 @@ export function createMessageMatchFlow(deps) {
 
   return {
     async startRoom(index, id, mySide, names) {
-      clearInterval(roomTimer);
+      roomSync?.close();
       const letters = openTable(index, mySide, names, 0, true);
       hud.event('LIVE MATCH', { priority: 6, duration: 2.2, detail: mySide === 'home' ? 'You are HOME' : 'You are AWAY' });
-      let seen = 0;
-      const onLetter = letters.onLetter;
+      roomSync = startLiveRoomGameSync({ api, id, mySide, letters, hud });
       letters.onLetter = async (letter) => {
         const packed = packLetter(letter);
         hud.event('YOUR FLICK IS IN', { priority: 5, duration: 1.4, detail: `${names[mySide]} · waiting for the answer` });
         await sendLiveRoomTurn(api, id, packed);
-        seen = letter.seq;
+        roomSync?.noteSent(letter);
       };
-      roomTimer = setInterval(async () => {
-        try {
-          const { letter: packed } = await readLiveRoomTurn(api, id);
-          if (!packed || packed.k <= seen || packed.by === (mySide === 'home' ? 'h' : 'a')) return;
-          const letter = unpackLetter(packed);
-          if (!letter) return;
-          seen = letter.seq;
-          hud.event('OPPONENT FLICKED', { priority: 4, duration: 1.6, detail: `${letter.names[letter.by]} · Your move` });
-          await letters.replay(letter);
-        } catch { /* room polling retries on the next heartbeat */ }
-      }, 1200);
       sound.whistle();
       app.session.start(mySide);
     },
@@ -217,7 +206,8 @@ export function createMessageMatchFlow(deps) {
     },
 
     home() {
-      clearInterval(roomTimer);
+      roomSync?.close();
+      roomSync = null;
       incoming = null;
       outgoing = null;
       deps.showTitle();

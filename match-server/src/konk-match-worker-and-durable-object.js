@@ -11,7 +11,8 @@ import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMat
 import { cleanSubscription, sendPush } from './web-push-vapid-and-aes128gcm.js';
 import { describeMatch, previewPageHtml, scoreCardSvg } from './match-link-preview-card-and-page.js';
 import { renderScoreCardPng } from './score-card-png-renderer.js';
-import { createRoom, joinRoom, publicRoom, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
+import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
+import { broadcastLiveRoom, handleLiveRoomSocketMessage, upgradeLiveRoomSocket } from './live-room-websocket-session.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
@@ -20,9 +21,11 @@ export class KonkMatch extends DurableObject {
     const { pathname } = new URL(request.url);
     if (pathname === '/room') return this.room(request);
     if (pathname === '/room/join') return this.roomJoin(request);
+    if (pathname === '/room/name') return this.roomName(request);
     if (pathname === '/room/ready') return this.roomReady(request);
     if (pathname === '/room/heartbeat') return this.roomHeartbeat(request);
     if (pathname === '/room/turn') return this.roomTurn(request);
+    if (pathname.endsWith('/socket')) return this.roomSocket(request);
     const latest = await this.ctx.storage.get('latest');
     if (request.method === 'GET') return latest ? json({ letter: latest, seq: latest.k }) : json({ error: 'no such match' }, 404);
 
@@ -58,6 +61,7 @@ export class KonkMatch extends DurableObject {
     const verdict = joinRoom(room, await request.json());
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
+    broadcastLiveRoom(this.ctx, room);
     return json({ room: publicRoom(room), seat: verdict.seat, token: room.seats.away.token });
   }
 
@@ -70,6 +74,20 @@ export class KonkMatch extends DurableObject {
     const verdict = setReady(room, seat, body.ready);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
+    broadcastLiveRoom(this.ctx, room);
+    return json({ room: publicRoom(room), seat });
+  }
+
+  async roomName(request) {
+    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+    const room = await this.ctx.storage.get('room');
+    const body = await request.json();
+    const seat = seatFor(room, body.token);
+    if (!seat) return json({ error: 'not your seat' }, 403);
+    const verdict = renameSeat(room, seat, body.name);
+    if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
+    await this.ctx.storage.put('room', room);
+    broadcastLiveRoom(this.ctx, room);
     return json({ room: publicRoom(room), seat });
   }
 
@@ -82,6 +100,7 @@ export class KonkMatch extends DurableObject {
     const verdict = touch(room, seat);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
+    broadcastLiveRoom(this.ctx, room);
     return json({ room: publicRoom(room) });
   }
 
@@ -104,8 +123,18 @@ export class KonkMatch extends DurableObject {
     room.updatedAt = Date.now();
     await this.ctx.storage.put({ 'room:letter': body.letter, room });
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
+    broadcastLiveRoom(this.ctx, room, { type: 'turn', letter: body.letter });
     return json({ seq: body.letter.k }, previous ? 200 : 201);
   }
+
+  roomSocket(request) {
+    if (request.method !== 'GET' || request.headers.get('Upgrade')?.toLowerCase() !== 'websocket') {
+      return json({ error: 'websocket upgrade required' }, 426);
+    }
+    return upgradeLiveRoomSocket(this.ctx);
+  }
+
+  webSocketMessage(socket, message) { return handleLiveRoomSocketMessage(this.ctx, socket, message); }
 
   async subscribe(latest, { side, subscription, id }) {
     const clean = cleanSubscription(subscription);
@@ -134,6 +163,7 @@ export default {
     const cors = corsHeaders(request, env);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     const routed = await route(request, env).catch(() => json({ error: 'server error' }, 500));
+    if (routed.status === 101) return routed;
     const response = new Response(routed.body, routed); // Durable Object responses have immutable headers
     for (const [k, v] of Object.entries(cors)) response.headers.set(k, v);
     return response;
@@ -155,10 +185,15 @@ async function route(request, env) {
 
   if (parts[0] === 'rooms') {
     if (!id || !ROOM_ID.test(id)) return json({ error: 'room not found' }, 404);
-    const target = action === 'join' ? '/room/join' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
+    const target = action === 'join' ? '/room/join' : action === 'name' ? '/room/name' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
     if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
     if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch('https://match/room/turn');
-    if (request.method === 'POST' && ['join', 'ready', 'heartbeat', 'turn'].includes(action)) {
+    if (request.method === 'GET' && action === 'socket') {
+      const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((value) => value.trim());
+      if (!allowed.includes(request.headers.get('Origin') ?? '')) return json({ error: 'origin not allowed' }, 403);
+      return stub(env, id).fetch(request);
+    }
+    if (request.method === 'POST' && ['join', 'name', 'ready', 'heartbeat', 'turn'].includes(action)) {
       const body = await smallJson(request);
       if (!body) return json({ error: 'body missing or too large' }, 413);
       return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: JSON.stringify(body) });

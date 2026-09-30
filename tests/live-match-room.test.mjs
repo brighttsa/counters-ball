@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRoom, joinRoom, publicRoom, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
-import { createLiveRoom, joinLiveRoom, roomApiBase, roomLink, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
+import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
+import { connectLiveRoomSocket, createLiveRoom, joinLiveRoom, roomApiBase, roomLink, roomSocketBase, setLiveRoomName, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
 
 test('live room opens with one seat and no ready state', () => {
   const room = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 100 });
@@ -20,6 +20,14 @@ test('a second player joins, both ready, and presence expires', () => {
   assert.equal(publicRoom(room, 400 + PRESENCE_MS + 1).seats.home.online, false);
   assert.equal(touch(room, 'home', 500).ok, true);
   assert.equal(publicRoom(room, 500).seats.home.online, true);
+});
+
+test('players can rename only their own occupied seat', () => {
+  const room = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 100 });
+  joinRoom(room, { name: 'Kofi', now: 200 });
+  assert.deepEqual(renameSeat(room, 'away', ' Ko\u0000fi  Jr ', 300), { ok: true });
+  assert.equal(room.seats.away.name, 'Kofi Jr');
+  assert.equal(renameSeat(room, 'spectator', 'Yaw').status, 404);
 });
 
 test('a live room cannot accept a third player or an unknown seat', () => {
@@ -41,17 +49,19 @@ test('browser transport keeps room actions small and addressable', async () => {
   const calls = [];
   const fake = async (url, init) => {
     calls.push([url, init.method, JSON.parse(init.body)]);
-    return { ok: true, status: 200, json: async () => ({ room: { phase: 'lobby' } }) };
+    return { ok: true, status: 200, json: async () => ({ id: 'abcdefghij', token: 'secret-home', room: { phase: 'lobby' } }) };
   };
   assert.equal(roomApiBase({ hostname: 'localhost' }), 'http://localhost:8787');
   assert.equal(roomLink('https://konk.world/', 'abcdefghij'), 'https://konk.world/?room=abcdefghij');
   await createLiveRoom('https://api', { levelId: 'kiosk', homeName: 'Ama' }, fake);
   await joinLiveRoom('https://api', 'abcdefghij', 'Kofi', fake);
   await setLiveRoomReady('https://api', 'abcdefghij', 'away', true, fake);
+  await setLiveRoomName('https://api', 'abcdefghij', 'Kofi Two', fake);
   assert.deepEqual(calls.map(([url, method, body]) => [url, method, body]), [
     ['https://api/rooms', 'POST', { levelId: 'kiosk', homeName: 'Ama' }],
     ['https://api/rooms/abcdefghij/join', 'POST', { name: 'Kofi' }],
-    ['https://api/rooms/abcdefghij/ready', 'POST', { seat: 'away', ready: true }],
+    ['https://api/rooms/abcdefghij/ready', 'POST', { seat: 'away', ready: true, token: 'secret-home' }],
+    ['https://api/rooms/abcdefghij/name', 'POST', { name: 'Kofi Two', token: 'secret-home' }],
   ]);
 });
 
@@ -85,4 +95,34 @@ test('browser transport proves the seat with the token it was given', async () =
   await createLiveRoom('https://api', { levelId: 'kiosk', homeName: 'Ama' }, fake);
   await setLiveRoomReady('https://api', 'qrstuvwxyz', 'home', true, fake);
   assert.equal(calls.at(-1).token, 'secret-home');
+});
+
+test('live room socket authenticates with the seat token and reconnects using the secure URL', async () => {
+  const id = 'qrstuvwxyz';
+  await createLiveRoom('https://api', { levelId: 'kiosk', homeName: 'Ama' }, async () => ({
+    ok: true, status: 201, json: async () => ({ id, token: 'secret-home' }),
+  }));
+  assert.equal(roomSocketBase('https://api/path'), 'wss://api');
+  assert.equal(roomSocketBase('http://localhost:8787'), 'ws://localhost:8787');
+  const states = [];
+  let deliver;
+  class FakeSocket {
+    static OPEN = 1;
+    readyState = 0;
+    listeners = {};
+    sent = [];
+    constructor(url) { this.url = url; deliver = (type, event = {}) => this.listeners[type]?.(event); FakeSocket.last = this; }
+    addEventListener(type, listener) { this.listeners[type] = listener; }
+    send(value) { this.sent.push(value); }
+    close() { this.readyState = 3; this.listeners.close?.(); }
+  }
+  const socket = connectLiveRoomSocket('https://api', id, () => {}, (connected) => states.push(connected), FakeSocket);
+  assert.equal(FakeSocket.last.url, `wss://api/rooms/${id}/socket`);
+  FakeSocket.last.readyState = FakeSocket.OPEN;
+  deliver('open');
+  assert.deepEqual(JSON.parse(FakeSocket.last.sent[0]), { type: 'auth', token: 'secret-home' });
+  assert.equal(socket.connected, true);
+  socket.close();
+  assert.equal(socket.connected, false);
+  assert.deepEqual(states, [true, false]);
 });

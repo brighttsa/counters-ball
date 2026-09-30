@@ -5,7 +5,7 @@ export const SEATS = ['home', 'away'];
 export const PRESENCE_MS = 15_000;
 
 export function cleanRoomName(value, fallback = 'Player') {
-  const name = String(value ?? '').replace(/[^\p{L}\p{N} ._'’-]/gu, '').trim().slice(0, 22);
+  const name = String(value ?? '').replace(/[^\p{L}\p{N} ._'’-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 22);
   return name || fallback;
 }
 
@@ -46,6 +46,14 @@ export function setReady(room, seat, ready, now = Date.now()) {
   room.updatedAt = now;
   if (room.seats.home?.ready && room.seats.away?.ready) room.phase = 'ready';
   return { ok: true, phase: room.phase };
+}
+
+export function renameSeat(room, seat, name, now = Date.now()) {
+  if (!SEATS.includes(seat) || !room?.seats[seat]) return { ok: false, status: 404, error: 'seat is not taken' };
+  room.seats[seat].name = cleanRoomName(name, seat === 'home' ? 'Player 1' : 'Player 2');
+  room.seats[seat].seenAt = now;
+  room.updatedAt = now;
+  return { ok: true };
 }
 
 export function touch(room, seat, now = Date.now()) {
