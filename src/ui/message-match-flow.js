@@ -9,10 +9,9 @@ import {
 import { pushAvailability, subscribeToMatch } from '../core/message-match-push-subscription.js';
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
-import { STREET_LEGENDS_ACTS } from '../levels/street-legends-acts-and-unlocks.js?v=2';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
-import { sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=4';
-import { startLiveRoomGameSync } from './live-match-room-game-sync.js?v=2';
+import { sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=5';
+import { startLiveRoomGameSync } from './live-match-room-game-sync.js?v=4';
 
 const other = (side) => (side === 'home' ? 'away' : 'home');
 
@@ -34,10 +33,11 @@ export function createMessageMatchFlow(deps) {
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
   const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
 
-  function openTable(index, mySide, names, seq, online = false, roomLevel = null) {
-    const source = roomLevel ?? CAMPAIGN_LEVELS[index];
-    const level = online ? { ...source, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3 } } : source;
-    Object.assign(app, { mode: 'versus', levelIndex: index });
+  function openTable(index, mySide, names, seq, online = false, onRoundEnd = null) {
+    const source = typeof index === 'number' ? CAMPAIGN_LEVELS[index] : index;
+    const level = online ? { ...source, objective: null, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3,
+      ...(onRoundEnd ? { knockout: true } : {}) } } : source;
+    Object.assign(app, { mode: 'versus', levelIndex: Math.max(0, CAMPAIGN_LEVELS.findIndex((candidate) => candidate.id === source.id)) });
     result = null;
     outgoing = null;
     sentUrl = null;
@@ -45,7 +45,8 @@ export function createMessageMatchFlow(deps) {
       controllers: { [mySide]: 'human', [other(mySide)]: 'remote' },
       playerNames: names,
       localSide: mySide,
-      onEnd: (fullTime) => { result = fullTime; if (outgoing) card.showFullTimeButton(); else deps.showResults(fullTime); },
+      onEnd: (fullTime) => { result = fullTime; if (onRoundEnd) return;
+        if (outgoing) card.showFullTimeButton(); else deps.showResults(fullTime); },
     }, true);
     hud.setLocalPerspective(mySide, names);
     cameraDirector.setMode('play');
@@ -93,21 +94,22 @@ export function createMessageMatchFlow(deps) {
   }
 
   return {
-    async startRoom(level, id, mySide, names) {
+    async startRoom(index, id, mySide, names, { matchId = null, onRoundEnd = null } = {}) {
       roomSync?.close();
-      const index = STREET_LEGENDS_ACTS.findIndex((act) => act.id === level.id);
-      if (index < 0) throw new Error('unknown live room level');
-      const letters = openTable(index, mySide, names, 0, true, level);
+      const letters = openTable(index, mySide, names, 0, true, onRoundEnd);
       hud.event('LIVE MATCH', { priority: 6, duration: 2.2, detail: mySide === 'home' ? 'You are HOME' : 'You are AWAY' });
+      let finished = false;
+      const finish = () => { if (finished || !onRoundEnd) return; finished = true; roomSync?.close(); onRoundEnd(); };
+      roomSync = startLiveRoomGameSync({ api, id, matchId, mySide, letters, hud, onEnded: finish });
       letters.onLetter = async (letter) => {
         const packed = packLetter(letter);
         hud.event('YOUR FLICK IS IN', { priority: 5, duration: 1.4, detail: `${names[mySide]} · waiting for the answer` });
-        await sendLiveRoomTurn(api, id, packed);
+        await sendLiveRoomTurn(api, id, packed, undefined, matchId);
         roomSync?.noteSent(letter);
+        if (letter.rulesAfter.phase === 'ended') finish();
       };
       sound.whistle();
       app.session.start('home');
-      roomSync = startLiveRoomGameSync({ api, id, mySide, letters, hud });
     },
     /** From the 2-Player intro: this device plays home and flicks first. */
     start(index) {

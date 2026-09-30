@@ -20,7 +20,7 @@ async function call(base, path, init = {}, fetchImpl = globalThis.fetch) {
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
     const response = await fetchImpl(`${base}${path}`, { ...init, signal: controller.signal,
-      headers: init.body ? { 'Content-Type': 'application/json' } : undefined });
+      headers: { ...(init.body ? { 'Content-Type': 'application/json' } : {}), ...init.headers } });
     const body = await response.json().catch(() => null);
     if (!response.ok) throw Object.assign(new Error(body?.error ?? `room server replied ${response.status}`), { status: response.status });
     return body;
@@ -29,7 +29,22 @@ async function call(base, path, init = {}, fetchImpl = globalThis.fetch) {
 
 // The server hands each seat a secret token on create/join; every later move or ready-up proves the seat with it.
 const seatTokens = new Map();
-const keep = (id) => (result) => { if (result?.token) seatTokens.set(id ?? result.id, result.token); return result; };
+const keep = (id) => (result) => {
+  if (result?.token) {
+    const key = id ?? result.id;
+    seatTokens.set(key, result.token);
+    try { sessionStorage.setItem(`konk:room:${key}`, JSON.stringify({ token: result.token, seat: result.seat })); } catch { /* storage may be unavailable */ }
+  }
+  return result;
+};
+const tokenFor = (id) => {
+  if (seatTokens.has(id)) return seatTokens.get(id);
+  try { return JSON.parse(sessionStorage.getItem(`konk:room:${id}`))?.token ?? null; } catch { return null; }
+};
+
+export function savedLiveRoomSeat(id) {
+  try { return JSON.parse(sessionStorage.getItem(`konk:room:${id}`))?.seat ?? null; } catch { return null; }
+}
 
 export function createLiveRoom(base, details, fetchImpl) {
   return call(base, '/rooms', { method: 'POST', body: JSON.stringify(details) }, fetchImpl).then(keep());
@@ -44,27 +59,28 @@ export function readLiveRoom(base, id, fetchImpl) {
 }
 
 export function setLiveRoomReady(base, id, seat, ready, fetchImpl) {
-  return call(base, `/rooms/${id}/ready`, { method: 'POST', body: JSON.stringify({ seat, ready, token: seatTokens.get(id) }) }, fetchImpl);
+  return call(base, `/rooms/${id}/ready`, { method: 'POST', body: JSON.stringify({ seat, ready, token: tokenFor(id) }) }, fetchImpl);
 }
 
 export function setLiveRoomName(base, id, name, fetchImpl) {
-  return call(base, `/rooms/${id}/name`, { method: 'POST', body: JSON.stringify({ name, token: seatTokens.get(id) }) }, fetchImpl);
+  return call(base, `/rooms/${id}/name`, { method: 'POST', body: JSON.stringify({ name, token: tokenFor(id) }) }, fetchImpl);
 }
 
 export function heartbeatLiveRoom(base, id, seat, fetchImpl) {
-  return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat, token: seatTokens.get(id) }) }, fetchImpl);
+  return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat, token: tokenFor(id) }) }, fetchImpl);
 }
 
-export function sendLiveRoomTurn(base, id, letter, fetchImpl) {
-  return call(base, `/rooms/${id}/turn`, { method: 'POST', body: JSON.stringify({ letter, token: seatTokens.get(id) }) }, fetchImpl);
+export function sendLiveRoomTurn(base, id, letter, fetchImpl, matchId = null) {
+  return call(base, `/rooms/${id}/turn${matchId ? `?matchId=${encodeURIComponent(matchId)}` : ''}`, { method: 'POST', body: JSON.stringify({ letter, token: tokenFor(id) }) }, fetchImpl);
 }
 
-export function readLiveRoomTurn(base, id, fetchImpl) {
-  return call(base, `/rooms/${id}/turn`, {}, fetchImpl);
+export function readLiveRoomTurn(base, id, fetchImpl, matchId = null) {
+  return call(base, `/rooms/${id}/turn${matchId ? `?matchId=${encodeURIComponent(matchId)}` : ''}`,
+    matchId ? { headers: { Authorization: `Bearer ${tokenFor(id)}` } } : {}, fetchImpl);
 }
 
 export function connectLiveRoomSocket(base, id, onMessage, onState = () => {}, WebSocketImpl = globalThis.WebSocket) {
-  const token = seatTokens.get(id);
+  const token = tokenFor(id);
   let socket = null;
   let closed = false;
   let retry = null;

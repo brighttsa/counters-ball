@@ -1,4 +1,5 @@
 import { publicRoom, seatFor, touch } from './live-match-room-rules.js';
+import { tournamentMatchFor } from './tournament-room-rules.js';
 
 export function upgradeLiveRoomSocket(ctx, Pair = globalThis.WebSocketPair) {
   const pair = new Pair();
@@ -20,8 +21,9 @@ export async function handleLiveRoomSocketMessage(ctx, socket, raw) {
     attachment = { seat };
     socket.serializeAttachment(attachment);
     socket.send(JSON.stringify({ type: 'room', room: publicRoom(room) }));
-    const latest = await ctx.storage.get('room:letter');
-    if (latest) socket.send(JSON.stringify({ type: 'turn', letter: latest }));
+    const matchId = tournamentMatchFor(room, seat);
+    const latest = await ctx.storage.get(matchId ? `room:letter:${matchId}` : 'room:letter');
+    if (latest && (room.mode !== 'tournament' || matchId)) socket.send(JSON.stringify({ type: 'turn', ...(matchId ? { matchId } : {}), letter: latest }));
     return;
   }
   const verdict = touch(room, attachment.seat);
@@ -32,8 +34,12 @@ export async function handleLiveRoomSocketMessage(ctx, socket, raw) {
 
 export function broadcastLiveRoom(ctx, room, event = { type: 'room' }) {
   const message = JSON.stringify({ ...event, room: publicRoom(room) });
+  const roomMessage = JSON.stringify({ type: 'room', room: publicRoom(room) });
   for (const socket of ctx.getWebSockets()) {
-    if (!socket.deserializeAttachment()?.seat) continue;
-    try { socket.send(message); } catch { /* disconnected sockets close asynchronously */ }
+    const seat = socket.deserializeAttachment()?.seat;
+    if (!seat) continue;
+    const match = event.matchId && room.tournament?.matches[event.matchId];
+    const visible = !match || match.home === seat || match.away === seat;
+    try { socket.send(visible ? message : roomMessage); } catch { /* disconnected sockets close asynchronously */ }
   }
 }

@@ -4,7 +4,7 @@
 // camera director and audio; one MatchSession per venue.
 import { installButtonPressFeedback } from './ui/button-press-feedback.js';
 import { createRendererSceneCamera } from './scene/scene-and-lighting-setup.js';
-import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js';
+import { createPostProcessing } from './fx/post-processing-bloom-grain-haze.js?v=2';
 import { createAdaptiveQuality } from './fx/adaptive-render-quality.js';
 import { AttractModeCallout, createAttractHud } from './ui/attract-mode-callout.js';
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
@@ -24,12 +24,12 @@ import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v
 import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
 import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
-import { createMessageMatchFlow } from './ui/message-match-flow.js?v=5';
-import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=5';
+import { createMessageMatchFlow } from './ui/message-match-flow.js?v=7';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=8';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
-import { takeRoomIdFromUrl } from './core/live-match-room-transport.js?v=2';
+import { takeRoomIdFromUrl } from './core/live-match-room-transport.js?v=5';
 import { pauseFace, showPauseFace } from './ui/pause-card-faces-and-setting-chips.js';
 import { HotSeatRivalry } from './core/hot-seat-series-and-rivalry-record.js';
 import { challengeInviteLine, markText } from './core/challenge-link-codec-and-comparison.js';
@@ -38,6 +38,7 @@ import { startGameRenderLoop } from './core/game-render-loop-and-viewport.js';
 import { JustInTimeChalkHints } from './ui/just-in-time-chalk-hints.js';
 import { KwameCornerCoach } from './ui/kwame-corner-practice-coach.js';
 import { CAMPAIGN_LEVELS, HOME_TEAM } from './levels/campaign-level-definitions.js';
+import { liveRoomVenueFor } from './levels/live-room-venue-selection.js';
 import { STREET_LEGENDS_ACTS } from './levels/street-legends-acts-and-unlocks.js?v=2';
 import {
   trackFor, challengeForLevel, isTrackLevelUnlocked, takeChallengeFromUrl,
@@ -69,10 +70,13 @@ const attractCallout = new AttractModeCallout();
 const attractHud = createAttractHud(attractCallout); // the title-screen match only announces goals
 
 const app = { mode: 'campaign', levelIndex: 0, session: null, paused: false, challenge: null, friendInvite: null };
-const liveRoom = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: publicBaseUrl, showTitle,
-  onStart: (roomId, seat, seats, level) => messageMatch.startRoom(level, roomId, seat, {
+const liveRoom = createLiveMatchRoomFlow({ level: CAMPAIGN_LEVELS[0],
+  prepareLevel: (level) => liveRoomVenueFor(level, CAMPAIGN_LEVELS),
+  levelForId: (id) => STREET_LEGENDS_ACTS.find((act) => act.id === id) ?? CAMPAIGN_LEVELS.find((level) => level.id === id),
+  baseUrl: publicBaseUrl, showTitle, showRoomScreen: () => menus.show('live-room'),
+  onStart: (roomId, seat, seats, level, options) => messageMatch.startRoom(level, roomId, seat, {
     home: seats.home?.name ?? 'Player 1', away: seats.away?.name ?? 'Player 2',
-  }) });
+  }, options) });
 const orientation = createMatchOrientationPrompt();
 new PlayerCameraController(app, cameraDirector);
 const challengeFor = (level) => challengeForLevel(app.challenge, level);

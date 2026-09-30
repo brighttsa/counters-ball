@@ -13,6 +13,7 @@ import { describeMatch, previewPageHtml, scoreCardSvg } from './match-link-previ
 import { renderScoreCardPng } from './score-card-png-renderer.js';
 import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
 import { broadcastLiveRoom, handleLiveRoomSocketMessage, upgradeLiveRoomSocket } from './live-room-websocket-session.js';
+import { tournamentTurn } from './tournament-room-turns.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
@@ -52,7 +53,8 @@ export class KonkMatch extends DurableObject {
     const created = createRoom(body);
     await this.ctx.storage.put('room', created);
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
-    return json({ room: publicRoom(created), seat: 'home', token: created.seats.home.token }, 201);
+    const seat = created.mode === 'tournament' ? 'p1' : 'home';
+    return json({ room: publicRoom(created), seat, token: created.seats[seat].token }, 201);
   }
 
   async roomJoin(request) {
@@ -62,7 +64,7 @@ export class KonkMatch extends DurableObject {
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
     broadcastLiveRoom(this.ctx, room);
-    return json({ room: publicRoom(room), seat: verdict.seat, token: room.seats.away.token });
+    return json({ room: publicRoom(room), seat: verdict.seat, token: room.seats[verdict.seat].token });
   }
 
   async roomReady(request) {
@@ -105,13 +107,14 @@ export class KonkMatch extends DurableObject {
   }
 
   async roomTurn(request) {
+    const room = await this.ctx.storage.get('room');
+    if (room?.mode === 'tournament') return tournamentTurn(this.ctx, request, room);
     if (request.method === 'GET') {
       const letter = await this.ctx.storage.get('room:letter');
       return letter ? json({ letter, seq: letter.k }) : json({ error: 'match has not started' }, 404);
     }
     if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
     const body = await request.json();
-    const room = await this.ctx.storage.get('room');
     // Only a seated player may move, only for their own side, and only once the room has kicked off.
     const seat = seatFor(room, body.token);
     if (!room || (room.phase !== 'ready' && room.phase !== 'playing')) return json({ error: 'match has not started' }, 409);
@@ -188,7 +191,8 @@ async function route(request, env) {
     if (!id || !ROOM_ID.test(id)) return json({ error: 'room not found' }, 404);
     const target = action === 'join' ? '/room/join' : action === 'name' ? '/room/name' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
     if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
-    if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch('https://match/room/turn');
+    if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch(`https://match/room/turn${new URL(request.url).search}`,
+      { headers: { Authorization: request.headers.get('Authorization') ?? '' } });
     if (request.method === 'GET' && action === 'socket') {
       const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((value) => value.trim());
       if (!allowed.includes(request.headers.get('Origin') ?? '')) return json({ error: 'origin not allowed' }, 403);
@@ -197,7 +201,7 @@ async function route(request, env) {
     if (request.method === 'POST' && ['join', 'name', 'ready', 'heartbeat', 'turn'].includes(action)) {
       const body = await smallJson(request);
       if (!body) return json({ error: 'body missing or too large' }, 413);
-      return stub(env, id).fetch(`https://match${target}`, { method: 'POST', body: JSON.stringify(body) });
+      return stub(env, id).fetch(`https://match${target}${action === 'turn' ? new URL(request.url).search : ''}`, { method: 'POST', body: JSON.stringify(body) });
     }
     return json({ error: 'not found' }, 404);
   }
@@ -278,7 +282,7 @@ function corsHeaders(request, env) {
   const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((s) => s.trim());
   return allowed.includes(origin)
     ? { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400', Vary: 'Origin' }
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Max-Age': '86400', Vary: 'Origin' }
     : { Vary: 'Origin' };
 }
 

@@ -134,7 +134,7 @@ export class MatchRules {
     if (this.rules.awayFlickLimit === 0 || this.scores.home !== this.scores.away) return false;
     if (this.tiebreak === null) this.tiebreak = 'golden';
     else if (this.tiebreak === 'golden') this.tiebreak = 'extra';
-    else return false;
+    else if (!this.rules.knockout) return false;
     const granted = this.tiebreak === 'golden' ? 1 : 2;
     this.tiebreakBonus.home += granted;
     this.tiebreakBonus.away += granted;

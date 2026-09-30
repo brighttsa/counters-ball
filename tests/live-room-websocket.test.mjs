@@ -64,3 +64,21 @@ test('authenticated heartbeat updates seat presence and broadcasts current state
   assert.ok(room.seats.home.seenAt >= 100);
   assert.equal(ws.sent.at(-1).type, 'room');
 });
+
+test('a semifinal turn is only sent to its two players while everyone gets bracket state', () => {
+  const room = createRoom({ mode: 'tournament', levelId: 'schoolyard', homeName: 'Ama' });
+  for (const name of ['Kofi', 'Esi', 'Yaw']) joinRoom(room, { name });
+  room.tournament = { matches: {
+    'semi-a': { home: 'p1', away: 'p2', winner: null, score: null },
+    'semi-b': { home: 'p3', away: 'p4', winner: null, score: null },
+    final: { home: null, away: null, winner: null, score: null },
+  } };
+  const pair = (seat) => {
+    const sent = [];
+    return { sent, deserializeAttachment: () => ({ seat }), send: (raw) => sent.push(JSON.parse(raw)) };
+  };
+  const sockets = ['p1', 'p2', 'p3', 'p4'].map(pair);
+  broadcastLiveRoom({ getWebSockets: () => sockets }, room, { type: 'turn', matchId: 'semi-a', letter: { k: 1 } });
+  assert.deepEqual(sockets.map((ws) => ws.sent[0].type), ['turn', 'turn', 'room', 'room']);
+  assert.equal(sockets[2].sent[0].letter, undefined);
+});

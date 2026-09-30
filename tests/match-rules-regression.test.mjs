@@ -124,6 +124,18 @@ test('a level golden flick escalates to two more each, then a real draw if still
   assert.equal(rules.tiebreak, 'extra');
 });
 
+test('knockout keeps extra flicks running until there is a winner', () => {
+  const rules = create({ flickLimit: 1, knockout: true });
+  rules.start();
+  for (let i = 0; i < 8; i++) {
+    assert.equal(rules.registerFlick(rules.turn), true);
+    rules.resolvePlayAtRest();
+  }
+  assert.equal(rules.phase, 'aiming');
+  assert.equal(rules.tiebreak, 'extra');
+  assert.equal(rules.result, null);
+});
+
 test('a solo challenge (awayFlickLimit: 0) never tiebreaks: exhausting home ends it flat', () => {
   const rules = create({ goalsToWin: 1, flickLimit: 1, awayFlickLimit: 0 });
   rules.start();

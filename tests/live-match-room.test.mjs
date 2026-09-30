@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
-import { connectLiveRoomSocket, createLiveRoom, joinLiveRoom, roomApiBase, roomLink, roomSocketBase, setLiveRoomName, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
+import { connectLiveRoomSocket, createLiveRoom, joinLiveRoom, readLiveRoomTurn, roomApiBase, roomLink, roomSocketBase, setLiveRoomName, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
 import { createLiveMatchRoomFlow } from '../src/ui/live-match-room-flow.js';
 import { STREET_LEGENDS_ACTS } from '../src/levels/street-legends-acts-and-unlocks.js';
 import { createMessageMatchFlow } from '../src/ui/message-match-flow.js';
@@ -100,6 +100,20 @@ test('browser transport proves the seat with the token it was given', async () =
   await createLiveRoom('https://api', { levelId: 'kiosk', homeName: 'Ama' }, fake);
   await setLiveRoomReady('https://api', 'qrstuvwxyz', 'home', true, fake);
   assert.equal(calls.at(-1).token, 'secret-home');
+});
+
+test('a tournament turn read proves its seat without putting the token in the URL', async () => {
+  const id = 'tournament';
+  await createLiveRoom('https://api', { levelId: 'schoolyard', mode: 'tournament' }, async () => ({
+    ok: true, status: 201, json: async () => ({ id, seat: 'p1', token: 'seat-secret' }),
+  }));
+  let request;
+  await readLiveRoomTurn('https://api', id, async (url, init) => {
+    request = { url, init };
+    return { ok: true, status: 200, json: async () => ({ letter: { k: 1 } }) };
+  }, 'semi-a');
+  assert.equal(request.url, 'https://api/rooms/tournament/turn?matchId=semi-a');
+  assert.equal(request.init.headers.Authorization, 'Bearer seat-secret');
 });
 
 test('live room socket authenticates with the seat token and reconnects using the secure URL', async () => {
