@@ -25,7 +25,7 @@ import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
 import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js?v=4';
-import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=3';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=4';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
