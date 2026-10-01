@@ -1,0 +1,30 @@
+@media (max-width: 700px) and (orientation: portrait) {
+  .screen-title .home-utilities {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .screen-title .home-utilities .home-trailer-link {
+    grid-column: 1 / -1;
+  }
+
+  html .screen-title .home-utilities button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 8px;
+    line-height: 1.25;
+    text-align: center;
+    overflow-wrap: anywhere;
+    touch-action: manipulation;
+  }
+
+  /* Keep utilities reachable when browser chrome or text scaling reduces room. */
+  .screen-title.is-active {
+    overflow-y: auto;
+    justify-content: safe center;
+  }
+}
