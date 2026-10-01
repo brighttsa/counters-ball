@@ -2,7 +2,7 @@
   "name": "KONK! Bottle-Cap Football",
   "short_name": "KONK!",
   "description": "Flick bottle caps across Ghanaian street tables.",
-  "start_url": "/",
+  "start_url": "/?play=1",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
