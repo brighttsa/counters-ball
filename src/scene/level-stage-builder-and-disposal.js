@@ -7,7 +7,7 @@ import { lightingForVenue } from './lighting-presets-by-time-of-day.js';
 import { buildLightRig } from './scene-and-lighting-setup.js';
 import { buildTableAndBattens } from './table-and-battens-builder.js';
 import { buildBottleCapTeams } from './bottle-cap-players.js';
-import { buildPaperMatchBall, buildMatchstickGoals } from './match-ball-and-goal-posts.js';
+import { buildPaperMatchBall, buildMatchstickGoals } from './match-ball-and-goal-posts.js?v=2';
 import { buildTableObstacles } from './table-obstacles-pebbles-bottles-coins.js';
 import { buildStreetBackdrop } from './street-background-environment.js';
 

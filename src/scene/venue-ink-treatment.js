@@ -34,10 +34,9 @@ export function applyVenueInkTreatment(stage, level) {
     ring.rotation.x = -Math.PI / 2; ring.position.y = .006; cap.pivot.add(ring);
     for (const mat of cap.mesh.material) { mat.roughness = .8; mat.metalness = .18; }
   }
-  contour(stage.ballMesh, 0x383d34, .65);
   const materials = new Set();
   stage.group.traverse(o => {
-    if (!o.isMesh || o.name === 'selective-ink-contour') return;
+    if (!o.isMesh || o.name === 'selective-ink-contour' || o === stage.ballMesh) return;
     for (const mat of Array.isArray(o.material) ? o.material : [o.material]) {
       if (!mat?.isMeshStandardMaterial || materials.has(mat)) continue;
       materials.add(mat);

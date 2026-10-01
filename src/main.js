@@ -14,7 +14,7 @@ import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio
 import { installDeveloperAudioDebugPanel } from './audio/developer-audio-debug-panel.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
 import { wireSoundtrack } from './audio/soundtrack-app-wiring.js';
-import { MatchSession } from './gameplay/match-session-runtime.js?v=11';
+import { MatchSession } from './gameplay/match-session-runtime.js?v=12';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=4';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js?v=3';
 import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';

@@ -9,11 +9,11 @@ function paintPaperBallTexture(rng) {
   const c = document.createElement('canvas');
   c.width = c.height = 256;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = '#e6dcc8';
+  ctx.fillStyle = '#fbfaf2';
   ctx.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 60; i++) { // crease shadows
+  for (let i = 0; i < 20; i++) { // crease shadows
     const x = rng() * 256, y = rng() * 256;
-    ctx.strokeStyle = `rgba(110, 92, 64, ${0.12 + rng() * 0.25})`;
+    ctx.strokeStyle = `rgba(86, 98, 91, ${0.045 + rng() * 0.065})`;
     ctx.lineWidth = 0.8 + rng() * 1.6;
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -21,10 +21,10 @@ function paintPaperBallTexture(rng) {
       x + (rng() - 0.5) * 100, y + (rng() - 0.5) * 100);
     ctx.stroke();
   }
-  for (let i = 0; i < 24; i++) { // grime and thumb smudges
+  for (let i = 0; i < 8; i++) { // grime and thumb smudges
     const x = rng() * 256, y = rng() * 256, r = 6 + rng() * 20;
     const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, 'rgba(96, 74, 46, 0.14)');
+    g.addColorStop(0, 'rgba(96, 94, 86, 0.025)');
     g.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = g;
     ctx.fillRect(x - r, y - r, r * 2, r * 2);
@@ -46,11 +46,19 @@ export function buildPaperMatchBall(group) {
   geo.computeVertexNormals();
   const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
     map: paintPaperBallTexture(rng), roughness: 0.92, metalness: 0,
+    emissive: 0xfbfaf2, emissiveIntensity: 0.15,
   }));
   mesh.castShadow = true;
-  mesh.receiveShadow = true;
+  mesh.receiveShadow = false;
   mesh.position.set(0, BALL_RADIUS, 0);
   group.add(mesh);
+  // Back-facing shell outlines only the silhouette, never the creases or ground.
+  const silhouette = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color: 0x182422, side: THREE.BackSide, depthWrite: false, toneMapped: false,
+  }));
+  silhouette.name = 'paper-ball-silhouette';
+  silhouette.scale.setScalar(1.08);
+  mesh.add(silhouette);
   return mesh;
 }
 

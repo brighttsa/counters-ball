@@ -2,7 +2,7 @@
 // and feedback systems, and runs the per-frame update. Timers run on
 // pausable game time. Dispose it and the venue leaves no trace.
 import * as THREE from 'three';
-import { buildLevelStage } from '../scene/level-stage-builder-and-disposal.js';
+import { buildLevelStage } from '../scene/level-stage-builder-and-disposal.js?v=2';
 import { FlickPhysicsEngine } from './flick-physics-engine.js';
 import { MatchRules } from './match-rules-turns-goals-and-results.js';
 import { AimVisuals } from './aim-trajectory-power-ring-and-rim-glow.js';
@@ -16,7 +16,7 @@ import { createSeededRandom } from '../core/seeded-random-number-generator.js';
 import { MatchPresentationDirector } from './match-presentation-director.js';
 import { syncMatchMeshes } from './match-mesh-motion.js';
 import { createVenueMechanic } from './street-legends-venue-mechanic-wiring.js';
-import { applyVenueInkTreatment } from '../scene/venue-ink-treatment.js';
+import { applyVenueInkTreatment } from '../scene/venue-ink-treatment.js?v=2';
 import { InkImpactBursts } from '../fx/ink-impact-contact-bursts.js';
 import { classifyOutOfBounds, restartPoint } from './out-of-bounds-restart-rules.js';
 import {
