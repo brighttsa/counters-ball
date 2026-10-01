@@ -84,9 +84,11 @@ test('portrait trailer uses balanced 16px gutters without a viewport-height widt
 
 test('room format picker has a defined brand accent and dark options', async () => {
   const css = await readFile(new URL('styles/tournament-room.css', root), 'utf8');
-  assert.match(game, /styles\/tournament-room\.css\?v=2/);
+  assert.match(game, /styles\/tournament-room\.css\?v=3/);
   assert.match(css, /\.screen-live-room \.name-field \{ --chip: var\(--yellow\); \}/);
-  assert.match(css, /appearance: none; color-scheme: dark/);
-  assert.match(css, /select option \{ color: var\(--paper\); background: var\(--ink-raised\); \}/);
-  assert.match(css, /select option:checked \{ color: var\(--ink\); background: var\(--yellow\); \}/);
+  assert.doesNotMatch(game, /<select id="live-room-format"/);
+  assert.match(game, /type="hidden" id="live-room-format" value="duel"/);
+  assert.equal((game.match(/name="room-format-choice"/g) ?? []).length, 2);
+  assert.match(css, /\.room-format-options label:has\(input:checked\) \{ background: var\(--yellow\); color: var\(--ink\); \}/);
+  assert.match(css, /\.room-format-options \{[^}]*background: var\(--ink-raised\)/);
 });
