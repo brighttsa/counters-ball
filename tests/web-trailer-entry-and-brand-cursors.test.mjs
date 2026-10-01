@@ -74,6 +74,14 @@ test('both pages share the matching arrow and hand cursors', async () => {
   assert.match(css, /#game-canvas\.can-grab, #game-canvas\.aiming \{ cursor: var\(--konk-hold\), grabbing !important; \}/);
 });
 
+test('portrait trailer uses balanced 16px gutters without a viewport-height width cap', async () => {
+  const css = await readFile(new URL('styles/trailer-page.css', root), 'utf8');
+  assert.match(css, /@media \(max-width: 680px\) and \(orientation: portrait\) \{\s*\.video-frame \{ width: min\(calc\(100% - 32px\), 540px\); \}/);
+  assert.match(css, /\.trailer-video \{[^}]*object-fit: contain/);
+  assert.match(css, /aspect-ratio: 9 \/ 16/);
+  assert.match(trailer, /trailer-page\.css\?v=9/);
+});
+
 test('room format picker has a defined brand accent and dark options', async () => {
   const css = await readFile(new URL('styles/tournament-room.css', root), 'utf8');
   assert.match(game, /styles\/tournament-room\.css\?v=2/);

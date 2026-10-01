@@ -36,6 +36,8 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 
 ## Done (newest first)
 
+Mobile portrait trailer gutters (Codex, 2026-10-01): portrait-only width now uses the available viewport width minus 16px on each side, capped at 540px, instead of the narrow 36svh limit. Full 9:16 media stays uncropped; desktop and landscape styles are unchanged. CSS cache version 9. Seven focused tests pass. Manual handoff because the collaboration helper requires a peer-clone remote unavailable in this isolated release checkout.
+
 Mobile homepage arrows (Codex, 2026-10-01): replaced platform-dependent arrow glyphs with matching Lucide ArrowUpRight vectors in both header links; fixed 18px dimensions, inherited brand colors, decorative accessibility semantics, and CSS cache version 8. Six focused routing/cursor/icon tests pass. Release isolated from unrelated source changes. Collaboration helper could not run because this release checkout uses the GitHub remote rather than the peer clone; this note is the manual handoff. Physical iPhone visual verification remains with the owner.
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|

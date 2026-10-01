@@ -57,6 +57,9 @@ footer b { color: var(--gold); padding-left: 6px; }
   .feature-line { grid-column: 1; grid-row: auto; gap: 8px; line-height: 1.45; }
   footer { font-size: 9px; }
 }
+@media (max-width: 680px) and (orientation: portrait) {
+  .video-frame { width: min(calc(100% - 32px), 540px); }
+}
 @media (max-width: 420px) {
   .topbar { gap: 10px; padding-inline: 14px; }
   .wordmark { width: 76px; }
