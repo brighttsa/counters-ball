@@ -15,8 +15,10 @@ a:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
 .top-play:active { transform: translateY(1px); }
 .top-follow { color: var(--paper); font-size: 13px; font-weight: 700; }
 .top-follow:hover { color: var(--gold); }
-.top-follow span { color: var(--gold); padding-left: 8px; }
-.top-play span { color: var(--ink); }
+.link-arrow { display: block; width: 18px; height: 18px; flex: 0 0 18px; pointer-events: none; }
+.top-follow { gap: 8px; }
+.top-follow .link-arrow { color: var(--gold); }
+.top-play .link-arrow { color: var(--ink); }
 main { width: min(1460px, 100%); margin: 0 auto; padding: 32px clamp(20px, 5vw, 76px) 44px; }
 .stage-rule { display: flex; justify-content: space-between; gap: 16px; margin: 0 0 13px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .14em; }
 .video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #080a09; }

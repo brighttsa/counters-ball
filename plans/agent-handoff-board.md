@@ -35,6 +35,8 @@ coordinate board claims manually. See `docs/collaboration-workflow.md`.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+
+Mobile homepage arrows (Codex, 2026-10-01): replaced platform-dependent arrow glyphs with matching Lucide ArrowUpRight vectors in both header links; fixed 18px dimensions, inherited brand colors, decorative accessibility semantics, and CSS cache version 8. Six focused routing/cursor/icon tests pass. Release isolated from unrelated source changes. Collaboration helper could not run because this release checkout uses the GitHub remote rather than the peer clone; this note is the manual handoff. Physical iPhone visual verification remains with the owner.
 | Task | Owner | Commit | Handoff note |
 |---|---|---|---|
 | Keep both live-room players on the same table and turn | Codex | Commit containing this note | Join now adopts the host's room level, kickoff loads that exact Street Legends act on both devices and starts with home, and socket connect/reconnect catches up missed turns. The Worker rejects a turn for another venue. Added lobby/kickoff/catch-up regressions; all 343 tests and source syntax pass. Local Worker accepted the correct opener (201) and rejected a wrong venue (409). Publish web client before Worker; players should start fresh rooms after rollout. |

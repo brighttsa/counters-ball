@@ -45,6 +45,19 @@ test('installed web app launches straight into play', async () => {
   assert.equal(manifest.start_url, '/play/');
 });
 
+test('homepage link arrows are matching vectors rather than mobile emoji glyphs', async () => {
+  const css = await readFile(new URL('styles/trailer-page.css', root), 'utf8');
+  const arrows = [...trailer.matchAll(/<svg class="link-arrow"[^>]*>[\s\S]*?<\/svg>/g)];
+  assert.equal(arrows.length, 2);
+  assert.equal(arrows[0][0], arrows[1][0]);
+  assert.match(arrows[0][0], /stroke="currentColor"/);
+  assert.match(arrows[0][0], /aria-hidden="true" focusable="false"/);
+  assert.doesNotMatch(trailer, /↗/);
+  assert.match(css, /\.link-arrow \{[^}]*width: 18px; height: 18px; flex: 0 0 18px/);
+  assert.match(css, /\.top-follow \.link-arrow \{ color: var\(--gold\); \}/);
+  assert.match(css, /\.top-play \.link-arrow \{ color: var\(--ink\); \}/);
+});
+
 test('both pages share the matching arrow and hand cursors', async () => {
   const css = await readFile(new URL('styles/konk-brand-cursors.css', root), 'utf8');
   const grip = await readFile(new URL('assets/konk-cursor-hold.svg', root), 'utf8');
