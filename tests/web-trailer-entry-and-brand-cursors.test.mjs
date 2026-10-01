@@ -4,10 +4,10 @@ import { runInNewContext } from 'node:vm';
 import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
-const game = await readFile(new URL('index.html', root), 'utf8');
-const trailer = await readFile(new URL('trailer/index.html', root), 'utf8');
+const game = await readFile(new URL('play/index.html', root), 'utf8');
+const trailer = await readFile(new URL('index.html', root), 'utf8');
 const legacyTrailer = await readFile(new URL('trailer.html', root), 'utf8');
-const gate = game.match(/<script id="web-trailer-entry">([\s\S]*?)<\/script>/)?.[1];
+const gate = trailer.match(/<script id="legacy-game-entry">([\s\S]*?)<\/script>/)?.[1];
 
 function destination(href) {
   const url = new URL(href);
@@ -20,28 +20,29 @@ function destination(href) {
   return redirected;
 }
 
-test('plain web visits see the trailer before the game loads', () => {
+test('homepage serves KONK content and links to the separate game', () => {
   assert.ok(gate);
-  assert.equal(destination('https://konk.world/'), 'https://konk.world/trailer/');
-  assert.equal(destination('https://konk.world/index.html'), 'https://konk.world/trailer/');
-  assert.match(trailer, /class="top-play" href="\/\?play=1"/);
-  assert.match(game, /class="home-trailer-link" href="\/trailer\/"/);
-  assert.match(legacyTrailer, /location\.replace\('\/trailer\/'/);
-  assert.match(trailer, /<link rel="canonical" href="https:\/\/konk\.world\/trailer\/">/);
+  assert.equal(destination('https://konk.world/'), null);
+  assert.equal(destination('https://konk.world/?utm_source=instagram'), null);
+  assert.match(trailer, /class="top-play" href="\/play\/"/);
+  assert.match(game, /<base href="\/"/);
+  assert.match(game, /class="home-trailer-link" href="\/"/);
+  assert.match(legacyTrailer, /location\.replace\('\/'/);
+  assert.match(trailer, /<link rel="canonical" href="https:\/\/konk\.world\/">/);
   assert.match(trailer, /poster="\/promo\/konk-trailer\//);
   assert.match(trailer, /href="\/styles\/trailer-page\.css/);
 });
 
-test('play, invitation and offline iOS entry go straight to the game', () => {
-  assert.equal(destination('https://konk.world/?play=1'), null);
-  assert.equal(destination('https://konk.world/?room=ABCDE'), null);
-  assert.equal(destination('https://konk.world/?beat=schoolyard'), null);
+test('old play and invitation links preserve their details at the new game route', () => {
+  assert.equal(destination('https://konk.world/?play=1'), 'https://konk.world/play/');
+  assert.equal(destination('https://konk.world/?room=ABCDE'), 'https://konk.world/play/?room=ABCDE');
+  assert.equal(destination('https://konk.world/?beat=schoolyard&m=legends&s=2-1'), 'https://konk.world/play/?beat=schoolyard&m=legends&s=2-1');
   assert.equal(destination('konk-local://game/index.html'), null);
 });
 
 test('installed web app launches straight into play', async () => {
   const manifest = JSON.parse(await readFile(new URL('manifest.webmanifest', root), 'utf8'));
-  assert.equal(manifest.start_url, '/?play=1');
+  assert.equal(manifest.start_url, '/play/');
 });
 
 test('both pages share the matching arrow and hand cursors', async () => {

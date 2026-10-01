@@ -48,7 +48,7 @@ import { pickFeaturedLegendAct } from './levels/featured-home-legends-act.js?v=4
 import { createChalkTableScoreboard } from './scene/chalk-table-score-and-flick-tallies.js';
 import { loadProgress, saveProgress, totalStars } from './core/save-progress-local-storage.js';
 
-const publicBaseUrl = globalThis.__KONK_PUBLIC_BASE_URL__ ?? `${location.origin}${location.pathname}`;
+const publicBaseUrl = globalThis.__KONK_PUBLIC_BASE_URL__ ?? `${location.origin}/`;
 const canvas = document.getElementById('game-canvas');
 const bootScreen = document.getElementById('boot-screen');
 const { renderer, scene, camera } = createRendererSceneCamera(canvas);

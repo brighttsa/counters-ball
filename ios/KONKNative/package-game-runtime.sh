@@ -14,7 +14,7 @@ sed \
 <link rel="stylesheet" href="styles/game-ui-base#' \
   -e 's#https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js#./vendor/three-r160/three.module.js#' \
   -e 's#https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/#./vendor/three-r160/addons/#' \
-  "$ROOT/index.html" > "$DEST/index.html"
+  "$ROOT/play/index.html" > "$DEST/index.html"
 
 cp "$ROOT/manifest.webmanifest" "$DEST/manifest.webmanifest"
 for directory in assets src styles vendor; do

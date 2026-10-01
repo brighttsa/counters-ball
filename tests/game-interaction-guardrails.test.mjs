@@ -5,7 +5,7 @@ import test from 'node:test';
 const root = new URL('../', import.meta.url);
 
 test('game document loads interaction guardrails after interface styles', async () => {
-  const html = await readFile(new URL('index.html', root), 'utf8');
+  const html = await readFile(new URL('play/index.html', root), 'utf8');
   const guardrailLink = 'styles/game-interaction-guardrails.css?v=3';
 
   assert.ok(html.includes(guardrailLink));

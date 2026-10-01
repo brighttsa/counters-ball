@@ -13,6 +13,8 @@ test('native package contains the complete local boot runtime', () => {
   try {
     execFileSync(join(root, 'ios/KONKNative/package-game-runtime.sh'), [output]);
     const html = readFileSync(join(output, 'index.html'), 'utf8');
+    assert.match(html, /id="game-canvas"/);
+    assert.doesNotMatch(html, /legacy-game-entry/);
 
     assert.match(html, /vendor\/fonts\/fonts\.css/);
     assert.match(html, /vendor\/three-r160\/three\.module\.js/);

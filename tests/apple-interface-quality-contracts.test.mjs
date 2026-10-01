@@ -9,7 +9,7 @@ test('compact layouts preserve the Apple 44 point interaction floor', async () =
   const menus = await readFile(new URL('styles/game-ui-menus-and-results.css', root), 'utf8');
   const native = await readFile(new URL('styles/native-ios-ui-quality.css', root), 'utf8');
   const circuit = await readFile(new URL('styles/circuit-venue-preview.css', root), 'utf8');
-  const html = await readFile(new URL('index.html', root), 'utf8');
+  const html = await readFile(new URL('play/index.html', root), 'utf8');
 
   assert.doesNotMatch(home, /min-height:\s*(?:38|40|42)px/);
   assert.match(menus, /\.intro-more summary[^}]*min-height:\s*44px/);

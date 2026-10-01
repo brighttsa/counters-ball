@@ -196,7 +196,7 @@ test('reading a challenge from the URL strips it and resolves its table', async 
 test('every [data-action] button in index.html has a route', async () => {
   const { readFile } = await import('node:fs/promises');
   const { createMenuActions } = await import('../src/ui/menu-button-action-routes.js');
-  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../play/index.html', import.meta.url), 'utf8');
   const used = new Set([...html.matchAll(/data-action="([^"]+)"/g)].map((m) => m[1]));
   const routes = createMenuActions({ app: {}, progress: {}, flow: {} });
   assert.ok(used.size > 20);

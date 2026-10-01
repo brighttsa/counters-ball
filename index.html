@@ -1,399 +1,91 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<script id="web-trailer-entry">
-  if (/^https?:$/.test(location.protocol) && !location.search && !location.hash &&
-      (location.pathname === '/' || location.pathname.endsWith('/index.html'))) {
-    location.replace(new URL('trailer/', location.href).href);
-  }
-</script>
-<title>KONK! — Bottle-Cap Football</title>
-<meta name="description" content="Flick bottle caps across tiny street pitches in Ghana. Thread the gap, bank it off a rival, score the goal the whole street talks about." />
-<!-- Link previews: a shared result or challenge link shows the key art in chat apps. -->
-<meta property="og:type" content="website" />
-<meta property="og:site_name" content="KONK!" />
-<meta property="og:title" content="KONK! — Bottle-Cap Football" />
-<meta property="og:description" content="Small pitch. Big mouth. Flick bottle caps across Ghanaian street tables." />
-<meta property="og:url" content="https://konk.world/" />
-<meta property="og:image" content="https://konk.world/assets/konk-share-preview.jpg?v=2" />
-<meta property="og:image:secure_url" content="https://konk.world/assets/konk-share-preview.jpg?v=2" />
-<meta property="og:image:type" content="image/jpeg" />
-<meta property="og:image:alt" content="KONK! Bottle-cap football logo on a chalk pitch" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="675" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="KONK! — Bottle-Cap Football" />
-<meta name="twitter:description" content="Small pitch. Big mouth. Flick bottle caps across Ghanaian street tables." />
-<meta name="twitter:image" content="https://konk.world/assets/konk-share-preview.jpg?v=2" />
-<link rel="canonical" href="https://konk.world/" />
-<meta name="theme-color" content="#191b1b" />
-<link rel="icon" type="image/svg+xml" href="assets/konk-favicon.svg" />
-<!-- The logo is the first thing painted: fetch it ahead of the stylesheets and fonts. -->
-<link rel="preload" as="image" href="assets/konk-logo.svg" fetchpriority="high" />
-<link rel="apple-touch-icon" href="assets/konk-app-icon-180.png" />
-<link rel="manifest" href="manifest.webmanifest" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-title" content="KONK!" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin+Sketch:wght@700&family=Lilita+One&family=Patrick+Hand&display=swap" />
-<link rel="stylesheet" href="styles/game-ui-base-and-hud.css?v=12" />
-<link rel="stylesheet" href="styles/game-ui-menus-and-results.css?v=11" />
-<link rel="stylesheet" href="styles/circuit-venue-preview.css?v=7" />
-<link rel="stylesheet" href="styles/street-legends-mode.css?v=2" />
-<link rel="stylesheet" href="styles/ink-impact-home.css?v=14" />
-<link rel="stylesheet" href="styles/player-camera-controls.css?v=3" />
-<link rel="stylesheet" href="styles/mobile-tablet-match-layout.css?v=8" />
-<link rel="stylesheet" href="styles/match-hud-one-frame-and-aim-fade.css?v=8" />
-<link rel="stylesheet" href="styles/native-ios-adaptive.css?v=1" />
-<link rel="stylesheet" href="styles/native-ios-ui-quality.css?v=1" />
-<link rel="stylesheet" href="styles/game-interaction-guardrails.css?v=3" />
-<link rel="stylesheet" href="styles/konk-brand-cursors.css?v=3" />
-<link rel="stylesheet" href="styles/tournament-room.css?v=2" />
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-  }
-}
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101211">
+  <meta name="description" content="Play KONK!, Ghanaian bottle-cap football rebuilt for the web. Flick, strike and score across six tabletop venues, challenge Street Legends, and play live with friends. Coming to iOS.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KONK! — Ghanaian Bottle-Cap Football">
+  <meta property="og:description" content="Four players. Earned special moves. One table that brings everyone in.">
+  <meta property="og:url" content="https://konk.world/">
+  <meta property="og:image" content="https://konk.world/promo/konk-trailer/konk-next-round-poster-wide.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://konk.world/">
+  <link rel="icon" type="image/svg+xml" href="/assets/konk-favicon.svg">
+  <title>KONK! — Ghanaian Bottle-Cap Football</title>
+  <script id="legacy-game-entry">
+    const entry = new URL(location.href);
+    if (['play', 'room', 'm', 'km', 'beat', 'friend'].some((key) => entry.searchParams.has(key))) {
+      entry.pathname = '/play/';
+      entry.searchParams.delete('play');
+      location.replace(entry.href);
+    }
+  </script>
+  <link rel="preload" as="image" href="/assets/konk-logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
+  <link rel="stylesheet" href="/styles/trailer-page.css?v=7">
+  <link rel="stylesheet" href="/styles/konk-brand-cursors.css?v=3">
 </head>
-<body class="is-loading">
-  <div id="boot-screen" class="boot-screen" role="status" aria-live="polite" aria-label="Loading KONK!">
-    <img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK!" fetchpriority="high" />
-    <p>Setting the caps…</p>
-    <button type="button" class="boot-start" id="boot-start" hidden>Tap to play<small>or press any key</small></button>
-  </div>
-  <canvas id="game-canvas" aria-label="Tabletop football pitch"></canvas>
-  <div id="film-frame"></div>
-
-  <section class="screen screen-title" data-screen="title">
-    <h1 class="home-logo"><img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK! Bottle-cap football" /></h1>
-    <p class="home-edition">Next match</p>
-    <div class="home-location"><b id="home-feature-act">ACT 1 / 3</b><span><span id="home-feature-venue">Roadside Showdown</span><br><span id="home-feature-title"></span></span></div>
-    <nav class="menu-stack">
-      <button class="btn btn-primary home-play home-learn" data-action="play-practice" hidden><span class="home-learn-label">Learn with Kwame <small>2-minute practice</small></span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <button class="btn home-just-play" data-action="skip-practice" hidden>Just play</button>
-      <button class="btn btn-primary home-play home-featured" data-action="play-featured"><span id="home-feature-button">Play</span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <button class="btn home-venues" data-action="play-legends">All venues</button>
-      <button class="btn home-live" data-action="play-friend" aria-label="Play live online"><span>Play Live</span><small>Create or join a room</small><svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <div class="home-secondary"><button class="btn" data-action="daily-start" id="home-daily">Daily Flick</button>
-      <button class="btn" data-action="play-practice" aria-label="Practice with Kwame">Practice</button>
-      <button class="btn" data-action="play-campaign" aria-label="Classic Campaign" hidden>Campaign</button></div>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="/" aria-label="KONK! home"><img src="/assets/konk-logo.svg" alt="KONK!"></a>
+    <span class="origin">BORN IN GHANA</span>
+    <nav class="top-actions" aria-label="KONK! links">
+      <a class="top-play" href="/play/">PLAY KONK! <span aria-hidden="true">↗</span></a>
+      <a class="top-follow" href="https://www.instagram.com/konk.world/" target="_blank" rel="noopener">Follow the next round <span aria-hidden="true">↗</span></a>
     </nav>
-    <p class="title-stars" id="title-stars"></p>
-    <nav class="home-utilities" aria-label="Game information">
-      <a class="home-trailer-link" href="/trailer/" target="_blank" rel="noopener">Watch trailer</a>
-      <button type="button" data-action="home-settings">Settings</button>
-      <button type="button" data-action="home-credits">Credits</button>
-    </nav>
-  </section>
-  <p class="attract-callout" id="attract-callout" aria-hidden="true" hidden></p>
-
-  <section class="screen screen-pause screen-home-settings" data-screen="home-settings" aria-label="Settings"></section>
-
-  <section class="screen screen-pause screen-credits" data-screen="credits">
-    <article class="paper-card menu-card credits-card" aria-labelledby="credits-title">
-      <p class="card-kicker">KONK!</p>
-      <h2 class="card-title" id="credits-title">Credits</h2>
-      <p>Bright Tsa grew up loving Counters ball. A few bottle caps, a ball, and suddenly everyone had an opinion about whether that was a goal. KONK! brings that feeling back.</p>
-      <h3>On the speakers</h3>
-      <p>Three-Contact Motif · Found Object Groove · Bottle Cap Challenge. Music made by Bright Tsa with Suno.</p>
-      <p>Built with Codex and Claude on Three.js. The cap clinks, street sounds and venues are made in-game.</p>
-      <p class="credits-copyright">© 2026 Bright Senanu Tsa. All rights reserved.</p>
-      <button class="btn btn-primary" data-action="back-to-title">Back home</button>
-    </article>
-  </section>
-
-  <section class="screen screen-levels" data-screen="levels">
-    <header class="screen-header">
-      <button class="btn btn-small back-btn" data-action="back-to-title"><svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Back</button>
-      <h2 class="chalk-heading" id="levels-heading">The Circuit</h2>
-      <span class="star-total" id="levels-star-total"></span>
-    </header>
-    <article class="circuit-hero" aria-labelledby="circuit-venue-name">
-      <div class="circuit-venue-copy" aria-live="polite" aria-atomic="true">
-        <p class="card-kicker" id="circuit-match-number"></p>
-        <h3 id="circuit-venue-name"></h3>
-        <p id="circuit-venue-place"></p>
-        <p id="circuit-venue-opponent"></p>
-        <p id="circuit-venue-note"></p>
-        <p id="circuit-venue-stars"></p>
+  </header>
+  <main>
+    <section class="trailer-stage" aria-labelledby="trailer-title">
+      <div class="stage-rule"><span>THE NEXT ROUND</span><span>GHANA · WORLDWIDE</span></div>
+      <div class="video-frame">
+        <video id="trailer-video" class="trailer-video" playsinline preload="metadata" poster="/promo/konk-trailer/konk-next-round-poster-wide.jpg" aria-label="KONK! The Next Round trailer">
+          Your browser does not support the trailer video.
+        </video>
+        <button id="trailer-play" class="video-start" type="button" aria-label="Play the KONK! Next Round trailer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        </button>
       </div>
-      <button class="btn btn-primary" id="circuit-enter" data-action="select-level" disabled>Play this match</button>
-      <p id="circuit-lock-note"></p>
-    </article>
-    <nav class="level-grid" id="level-grid" aria-label="Ghana venue circuit"></nav>
-  </section>
-
-  <section class="screen screen-intro" data-screen="intro">
-    <article class="paper-card intro-card">
-      <span class="tape tape-left"></span><span class="tape tape-right"></span>
-      <p class="card-kicker" id="intro-number"></p>
-      <h2 class="card-title" id="intro-title"></h2>
-      <p class="intro-place" id="intro-place"></p>
-      <p class="intro-blurb" id="intro-blurb"></p>
-      <div class="intro-versus" id="intro-versus">
-        <span class="team-chip" id="intro-home"></span><span class="vs">vs</span><span class="team-chip" id="intro-away"></span>
-      </div>
-      <div class="intro-names" id="intro-names" hidden>
-        <label class="name-field" id="intro-name-home-field"><span id="intro-name-home-team"></span>
-          <input id="intro-name-home" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done"></label>
-        <span class="vs">vs</span>
-        <label class="name-field" id="intro-name-away-field"><span id="intro-name-away-team"></span>
-          <input id="intro-name-away" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done"></label>
-      </div>
-      <ul class="intro-rules" id="intro-rules"></ul>
-      <details class="intro-more" id="intro-more" hidden><summary>How it works</summary><ul class="intro-rules" id="intro-rules-more"></ul></details>
-      <div class="card-actions">
-        <button class="btn btn-primary" data-action="kick-off">Kick off</button>
-        <button class="btn" data-action="letter-start" id="intro-letter" hidden>Play by message</button>
-        <button class="btn btn-small" data-action="intro-back" data-track-label="Back to {track}">Back</button>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen screen-challenge" data-screen="challenge">
-    <article class="paper-card intro-card challenge-card" aria-labelledby="challenge-title">
-      <p class="card-kicker">Your friend left a mark</p>
-      <h2 class="card-title" id="challenge-title"></h2>
-      <p class="intro-place" id="challenge-venue"></p>
-      <p class="intro-blurb" id="challenge-mark"></p>
-      <div class="card-actions">
-        <button class="btn btn-primary" data-action="challenge-accept">Play their table</button>
-        <button class="btn btn-small" data-action="challenge-decline">Later</button>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen screen-challenge screen-friend-match" data-screen="friend-match">
-    <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="friend-title">
-      <p class="card-kicker">Friend Match</p>
-      <h2 class="card-title" id="friend-title">Call someone to the table</h2>
-      <p class="intro-place" id="friend-venue"></p>
-      <p class="intro-blurb" id="friend-mark"></p>
-      <div class="friend-actions">
-        <button class="btn btn-primary" data-action="friend-share">Share invite</button>
-        <button class="btn" data-action="friend-copy">Copy link</button>
-      </div>
-      <p class="results-share-status" id="friend-share-status" aria-live="polite"></p>
-      <div class="card-actions">
-        <button class="btn btn-primary" data-action="friend-play">Play this table</button>
-        <button class="btn btn-small" data-action="friend-pick-table">See all acts</button>
-        <button class="btn btn-small" data-action="friend-back">Back home</button>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen screen-challenge screen-live-room" data-screen="live-room">
-    <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="live-room-title">
-      <p class="card-kicker">Live Match Room</p>
-      <h2 class="card-title" id="live-room-title">Play someone live</h2>
-      <p class="intro-place" id="live-room-venue"></p>
-      <p class="intro-blurb" id="live-room-line">Host the table or join a rival with a code. You will each see your own side during the match.</p>
-      <div class="room-fields">
-        <label class="name-field"><span>Your name</span><input id="live-room-name" maxlength="22" autocomplete="nickname" placeholder="Player 1"></label>
-        <label class="name-field"><span>Room code to join</span><input id="live-room-code" maxlength="10" autocapitalize="characters" placeholder="Paste a code to join"></label>
-        <label class="name-field" id="live-room-format-field"><span>Host a</span><select id="live-room-format"><option value="duel">Head-to-head match</option><option value="tournament">Four-player knockout</option></select></label>
-      </div>
-      <div class="friend-actions">
-        <button class="btn btn-primary" data-action="live-room-create">Host the table</button>
-        <button class="btn" data-action="live-room-join" disabled>Join the table</button>
-      </div>
-      <p class="results-share-status" id="live-room-status" aria-live="polite"></p>
-      <div class="room-seats" id="live-room-seats" hidden>
-        <p><b id="live-room-home">Player 1</b><span id="live-room-home-state">Waiting</span></p>
-        <p><b id="live-room-away">Waiting for a friend</b><span id="live-room-away-state">Not joined</span></p>
-      </div>
-      <div class="tournament-bracket" id="live-room-bracket" hidden></div>
-      <div class="card-actions">
-        <button class="btn btn-primary" data-action="live-room-ready" hidden>Ready up</button>
-        <button class="btn btn-small" data-action="live-room-copy" hidden>Copy invite</button>
-        <button class="btn btn-small" data-action="live-room-back">Back home</button>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen screen-challenge screen-letter" data-screen="letter">
-    <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="letter-title">
-      <p class="card-kicker" id="letter-kicker">Message Match</p>
-      <h2 class="card-title" id="letter-title"></h2>
-      <p class="intro-place" id="letter-venue"></p>
-      <p class="intro-blurb" id="letter-line"></p>
-      <p class="letter-taunt" id="letter-taunt" hidden></p>
-      <div class="letter-group" data-letter-group="incoming">
-        <div class="card-actions">
-          <button class="btn btn-primary" data-action="letter-watch">Watch their flick</button>
-          <button class="btn btn-small" data-action="letter-home">Later</button>
-        </div>
-      </div>
-      <div class="letter-notify" id="letter-notify" hidden>
-        <button class="btn" data-action="letter-notify" id="letter-notify-button">Notify me</button>
-        <p class="letter-notify-status" id="letter-notify-status" aria-live="polite"></p>
-      </div>
-      <div class="letter-group" data-letter-group="waiting" hidden>
-        <div class="card-actions">
-          <button class="btn btn-small" data-action="letter-home">Back home</button>
-          <button class="btn btn-primary" data-action="letter-refresh">Check again</button>
-        </div>
-      </div>
-      <div class="letter-group" data-letter-group="message" hidden>
-        <div class="card-actions">
-          <button class="btn btn-primary" data-action="letter-home">Back home</button>
-        </div>
-      </div>
-      <div class="letter-group" data-letter-group="send">
-        <label class="name-field letter-taunt-field"><span>Chalk a line (optional)</span>
-          <input id="letter-taunt-input" name="letter-taunt" maxlength="40" autocomplete="off" spellcheck="false" enterkeyhint="send" placeholder="Top bins. Your move…"></label>
-        <div class="friend-actions">
-          <button class="btn btn-primary" data-action="letter-send">Send your move</button>
-          <button class="btn" data-action="letter-copy">Copy link</button>
-        </div>
-        <p class="results-share-status" id="letter-status" aria-live="polite"></p>
-        <div class="card-actions">
-          <button class="btn btn-small" data-action="letter-home">Back home</button>
-          <button class="btn btn-small" data-action="letter-full-time" id="letter-full-time" hidden>Full time</button>
-        </div>
-      </div>
-    </article>
-  </section>
-
-  <section id="hud" class="hud-layer" hidden>
-    <div class="scoreboard">
-      <span class="turn-dot home" id="turn-dot-home"></span>
-      <span class="team-name" id="hud-home-name"></span>
-      <span class="score-digits"><span id="score-home">0</span><span class="dash">–</span><span id="score-away">0</span></span>
-      <span class="team-name" id="hud-away-name"></span>
-      <span class="turn-dot away inactive" id="turn-dot-away"></span>
-    </div>
-    <div class="flick-meter"><b id="flicks-home"></b><span id="flick-meter-label">flicks left</span><b id="flicks-away"></b></div>
-    <button class="icon-btn pause-btn" data-action="pause" aria-label="Pause"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg></button>
-    <div class="turn-banner" id="turn-banner" aria-live="polite"></div>
-    <div class="legend-objective" id="hud-objective" aria-live="polite" hidden></div>
-    <div class="goal-banner" id="goal-banner" role="status" aria-live="polite" aria-atomic="true" hidden><span class="goal-word">GOAL</span><span class="goal-sub" id="goal-sub"></span></div>
-    <div class="replay-controls" id="replay-controls" hidden><span id="replay-label">Replay</span><button class="btn btn-small" data-action="skip-replay">Skip replay</button></div>
-    <div class="tutorial-hand" id="tutorial-hand" hidden>
-      <span class="tutorial-ring"></span>
-      <svg class="tutorial-finger" viewBox="0 0 48 64" aria-hidden="true"><path d="M20 4c3 0 5 2 5 5v18l12 3c4 1 6 4 5 8l-3 15c-1 5-5 9-10 9H19c-4 0-7-2-9-6L3 42c-1-3 1-6 4-6 2 0 4 1 5 3l3 5V9c0-3 2-5 5-5z" fill="#fdf6e6" stroke="#2b1a0c" stroke-width="3" stroke-linejoin="round"/></svg>
-      <span class="tutorial-tip">Drag back from a cap. Release to flick.<span class="tutorial-keys"> Or press Space to aim with the keyboard.</span></span>
-    </div>
-  </section>
-
-  <section class="screen screen-challenge screen-daily" data-screen="daily-result">
-    <article class="paper-card intro-card challenge-card" aria-labelledby="daily-headline">
-      <p class="card-kicker" id="daily-number">Daily Flick</p>
-      <h2 class="card-title" id="daily-headline"></h2>
-      <p class="intro-place" id="daily-score"></p>
-      <p class="intro-blurb" id="daily-streak"></p>
-      <div class="card-actions">
-        <button class="btn btn-primary" data-action="daily-share">Share</button>
-        <button class="btn btn-small" data-action="daily-retry">Try again</button>
-        <button class="btn btn-small" data-action="back-to-title">Home</button>
-      </div>
-      <p class="share-status" id="daily-share-status" role="status"></p>
-    </article>
-  </section>
-  <section class="screen screen-pause" data-screen="pause">
-    <article class="paper-card menu-card pause-card" id="pause-card" data-face="actions">
-      <span class="tape tape-left"></span>
-      <div class="pause-face" data-face-panel="actions">
-        <h2 class="card-title">Paused</h2>
-        <nav class="menu-stack">
-          <button class="btn btn-primary" data-action="resume">Resume</button>
-          <button class="btn" data-action="restart">Restart match</button>
-          <button class="btn" data-action="how-to-play">How to play · Kwame's Corner</button>
-          <button class="btn" data-action="quit" data-track-label="Quit to {track}">Quit to Pitches</button>
-        </nav>
-        <button class="pause-settings-link" data-action="open-settings"><svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</button>
-      </div>
-      <div class="pause-face" data-face-panel="settings" hidden>
-        <h2 class="card-title">Settings</h2>
-        <div class="settings-tabs" role="group" aria-label="Settings sections">
-          <button type="button" class="settings-tab" data-action="settings-section" data-section="sound" aria-controls="pause-setting-sound" aria-pressed="true">Sound</button>
-          <button type="button" class="settings-tab" data-action="settings-section" data-section="camera" aria-controls="pause-setting-camera" aria-pressed="false">Camera</button>
-          <button type="button" class="settings-tab" data-action="settings-section" data-section="table" aria-controls="pause-setting-table" aria-pressed="false">Table</button>
-        </div>
-        <section class="setting-group" id="pause-setting-sound" data-setting-section="sound" aria-labelledby="setting-sound">
-          <h3 class="setting-group-title" id="setting-sound">Sound</h3>
-          <div class="setting-row" role="group" aria-labelledby="setting-music">
-            <span class="setting-label" id="setting-music">Music</span>
-            <span class="chips">
-              <button class="chip" data-action="choose-setting" data-choice="music" data-value="0" aria-pressed="false">Off</button>
-              <button class="chip" data-action="choose-setting" data-choice="music" data-value="0.35" aria-pressed="false">Low</button>
-              <button class="chip" data-action="choose-setting" data-choice="music" data-value="0.7" aria-pressed="true">Med</button>
-              <button class="chip" data-action="choose-setting" data-choice="music" data-value="1" aria-pressed="false">High</button>
-            </span>
-          </div>
-          <div class="setting-row" role="group" aria-labelledby="setting-effects">
-            <span class="setting-label" id="setting-effects">Effects</span>
-            <span class="chips">
-              <button class="chip" data-action="choose-setting" data-choice="effects" data-value="on" aria-pressed="true">On</button>
-              <button class="chip" data-action="choose-setting" data-choice="effects" data-value="off" aria-pressed="false">Off</button>
-            </span>
-          </div>
-        </section>
-        <section class="setting-group" id="pause-setting-camera" data-setting-section="camera" aria-labelledby="setting-camera">
-          <h3 class="setting-group-title" id="setting-camera">Camera</h3>
-          <div class="setting-row" role="group" aria-labelledby="setting-view">
-            <span class="setting-label" id="setting-view">View</span>
-            <span class="chips">
-              <button class="chip" data-action="choose-setting" data-choice="view" data-value="tactical" aria-pressed="false">Tactical</button>
-              <button class="chip" data-action="choose-setting" data-choice="view" data-value="broadcast" aria-pressed="true">Broadcast</button>
-              <button class="chip" data-action="choose-setting" data-choice="view" data-value="street" aria-pressed="false">Street</button>
-              <button class="chip" data-action="choose-setting" data-choice="view" data-value="free" aria-pressed="false">Free</button>
-            </span>
-          </div>
-          <div class="setting-row" role="group" aria-labelledby="setting-motion">
-            <span class="setting-label" id="setting-motion">Motion</span>
-            <span class="chips">
-              <button class="chip" data-action="choose-setting" data-choice="motion" data-value="on" aria-pressed="true">On</button>
-              <button class="chip" data-action="choose-setting" data-choice="motion" data-value="off" aria-pressed="false">Off</button>
-            </span>
-          </div>
-        </section>
-        <section class="setting-group" id="pause-setting-table" data-setting-section="table" aria-labelledby="setting-table">
-          <h3 class="setting-group-title" id="setting-table">Table</h3>
-          <div class="setting-row" role="group" aria-labelledby="setting-scoreboard">
-            <span class="setting-label" id="setting-scoreboard">Score</span>
-            <span class="chips">
-              <button class="chip" data-action="choose-setting" data-choice="scoreboard" data-value="chalk" aria-pressed="true">Chalk</button>
-              <button class="chip" data-action="choose-setting" data-choice="scoreboard" data-value="broadcast" aria-pressed="false">Broadcast</button>
-            </span>
-          </div>
-        </section>
-        <button class="pause-settings-link" id="hints-reset" data-action="reset-hints">Show first-match tips again</button>
-        <button class="btn btn-primary pause-done" data-action="close-settings">Done</button>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen screen-results" data-screen="results">
-    <article class="paper-card results-card">
-      <span class="tape tape-right"></span>
-      <p class="card-kicker">Full Time</p>
-      <h2 class="card-title results-title" id="results-title"></h2>
-      <p class="results-score" id="results-score"></p>
-      <p class="results-opponent" id="results-opponent"></p>
-      <ul class="results-stars" id="results-stars"></ul>
-      <p class="results-note" id="results-note"></p>
-      <ul class="results-lines" id="results-lines"></ul>
-      <button class="btn results-clip" data-action="share-clip" id="btn-clip" hidden>Share goal clip</button>
-      <div class="card-actions">
-        <button class="btn btn-primary" data-action="next-level" id="btn-next">Next pitch</button>
-        <button class="btn" data-action="replay" id="btn-replay">Play again</button>
-        <button class="btn" data-action="share-result" id="btn-share">Share</button>
-        <button class="btn btn-small" data-action="results-levels" data-track-label="Back to {track}">Back</button>
-      </div>
-      <p class="results-share-status" id="results-share-status" aria-live="polite"></p>
-      <svg class="maker-stamp" aria-hidden="true" viewBox="0 0 78 43" fill="currentColor"><path d="M15.48 23.76L16.62 24.85V37.81L1.66 42.38L0 0L15.42.97L15.48 23.76ZM5.71 6.57L6 20.56L9.88 21.19L9.82 7.2L5.71 6.57ZM11.02 33.53V27.25L6.28 25.87L7.08 35.64L11.02 33.53Z"/><path d="M24.52 17.02L32.69 16.28L33.6 40.84L18.81 40.67L19.09 26.5L24.57 26.33L24.12 35.3L27.83 35.47L27.32 22.39L19.26 23.08L18.75 1.77L33.66 1.03L32.97 12.91L27.6 13.42L28.4 6.68H23.77L24.52 17.02Z"/><path d="M54.55.97L44.5 20.22L53.86 39.64L49.12 39.93L40.84 23.19L41.76 40.04H36.16V.97H41.76L40.56 15.94L49.01 1.2L54.55.97Z"/><path d="M54.31 1.2L71.91 1.94L71.68 8.57L65.85 7.43C65.39 17.02 64.77 39.53 64.77 40.84L59.23 41.12C59.23 40.04 59.97 20.51 60.43 7.65L53.69 7.94L54.31 1.2Z"/><path d="M72.4 34.5H78V40.21L72.4 40.84V34.5Z"/></svg>
-    </article>
-  </section>
-
-  <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true"><svg class="sound-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
-  <noscript><p class="noscript">KONK! needs JavaScript and WebGL to run.</p></noscript>
-<script type="module" src="./src/main.js?v=33"></script>
+      <div class="stage-caption"><p class="eyebrow">A CHILDHOOD CLASSIC. A NEW GENERATION.</p><h1 id="trailer-title">The table<br>gets bigger.</h1></div>
+    </section>
+    <section class="next-round" aria-label="KONK! features">
+      <p class="next-round-copy">Four players enter a live knockout. Earn your special move. Make the flick they talk about after.</p>
+      <div class="feature-line"><span>FOUR-PLAYER KNOCKOUT</span><i></i><span>EARNED SPECIAL MOVES</span><i></i><span>STARTED IN GHANA</span></div>
+    </section>
+  </main>
+  <footer><span>KONK! · BOTTLE-CAP FOOTBALL</span><span>ACCRA, GHANA <b>✳</b></span></footer>
+  <script>
+    const trailer = document.getElementById('trailer-video');
+    const playButton = document.getElementById('trailer-play');
+    const portrait = window.matchMedia('(max-width: 680px)');
+    const selectTrailer = () => {
+      if (trailer.dataset.started === 'true') return;
+      trailer.src = portrait.matches ? '/promo/konk-trailer/konk-next-round-vertical.mp4' : '/promo/konk-trailer/konk-next-round-wide.mp4';
+      trailer.poster = portrait.matches ? '/promo/konk-trailer/konk-next-round-poster-vertical.jpg' : '/promo/konk-trailer/konk-next-round-poster-wide.jpg';
+    };
+    selectTrailer();
+    portrait.addEventListener('change', selectTrailer);
+    playButton.addEventListener('click', async () => {
+      trailer.controls = true;
+      trailer.tabIndex = 0;
+      try {
+        await trailer.play();
+        trailer.dataset.started = 'true';
+        trailer.focus();
+      } catch {
+        trailer.controls = false;
+        playButton.focus();
+      }
+    });
+    trailer.addEventListener('play', () => {
+      trailer.dataset.started = 'true';
+      playButton.hidden = true;
+    });
+    trailer.addEventListener('ended', () => {
+      playButton.hidden = false;
+      playButton.setAttribute('aria-label', 'Replay the KONK! Next Round trailer');
+    });
+  </script>
 </body>
 </html>

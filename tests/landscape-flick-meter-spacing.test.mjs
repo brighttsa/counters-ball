@@ -6,7 +6,7 @@ const root = new URL('../', import.meta.url);
 
 test('landscape flick meter has equal padding and optically centered text', async () => {
   const css = await readFile(new URL('styles/mobile-tablet-match-layout.css', root), 'utf8');
-  const html = await readFile(new URL('index.html', root), 'utf8');
+  const html = await readFile(new URL('play/index.html', root), 'utf8');
 
   assert.match(css, /height: 26px; align-items: center; padding: 4px 10px;/);
   assert.match(css, /height: 24px; align-items: center; padding-block: 4px;/);
