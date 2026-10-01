@@ -40,12 +40,13 @@ test('installed web app launches straight into play', async () => {
 
 test('both pages share the matching arrow and hand cursors', async () => {
   const css = await readFile(new URL('styles/konk-brand-cursors.css', root), 'utf8');
-  assert.match(game, /styles\/konk-brand-cursors\.css\?v=1/);
-  assert.match(trailer, /styles\/konk-brand-cursors\.css\?v=1/);
+  assert.match(game, /styles\/konk-brand-cursors\.css\?v=2/);
+  assert.match(trailer, /styles\/konk-brand-cursors\.css\?v=2/);
   assert.match(css, /--konk-arrow: url\(/);
   assert.match(css, /--konk-hand: url\(/);
   assert.equal((css.match(/fill='%23faf5e2'/g) ?? []).length, 2);
   assert.match(css, /cursor: var\(--konk-hand\), pointer !important/);
+  assert.match(css, /#game-canvas \{ cursor: var\(--konk-hand\), pointer !important; \}/);
 });
 
 test('room format picker has a defined brand accent and dark options', async () => {

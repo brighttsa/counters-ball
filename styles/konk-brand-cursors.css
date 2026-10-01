@@ -5,6 +5,7 @@
   }
 
   html, body { cursor: var(--konk-arrow), default; }
+  #game-canvas { cursor: var(--konk-hand), pointer !important; }
   body :is(button, a, summary, label, select, [role='button'], [tabindex]):not(:is(input, textarea, [contenteditable='true'], :disabled)),
   .awaiting-start .boot-screen { cursor: var(--konk-hand), pointer !important; }
   body :is(input, textarea, [contenteditable='true']) { cursor: text !important; }
