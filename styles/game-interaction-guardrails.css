@@ -30,3 +30,22 @@ body :not(input):not(textarea):not([contenteditable='true'])::selection {
 body {
   cursor: default;
 }
+
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --konk-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='48' viewBox='0 0 44 48'%3E%3Cpath d='M5 3v34l8-8 7 15 7-3-7-15 13 1L5 3z' fill='%23000' stroke='%23000' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M5 3v34l8-8 7 15 7-3-7-15 13 1L5 3z' fill='%23faf5e2' stroke='%230c1110' stroke-width='2.7' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3;
+  }
+
+  body,
+  body :is(button, a, summary, [role='button'], [tabindex]) {
+    cursor: var(--konk-cursor), default;
+  }
+
+  body :is(input, textarea, [contenteditable='true']) {
+    cursor: text;
+  }
+
+  body :disabled {
+    cursor: not-allowed;
+  }
+}

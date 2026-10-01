@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101211">
+  <meta name="description" content="The next round of KONK! is here: four-player knockout, earned special moves and Ghanaian bottle-cap football. Watch the trailer.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KONK! — The Next Round">
+  <meta property="og:description" content="Four players. Earned special moves. One table that brings everyone in.">
+  <meta property="og:url" content="https://konk.world/trailer.html">
+  <meta property="og:image" content="https://konk.world/promo/konk-trailer/konk-next-round-poster-wide.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>KONK! — The Next Round</title>
+  <link rel="preload" as="image" href="assets/konk-logo.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
+  <link rel="stylesheet" href="styles/trailer-page.css?v=7">
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="/" aria-label="KONK! home"><img src="assets/konk-logo.svg" alt="KONK!"></a>
+    <span class="origin">BORN IN GHANA</span>
+    <nav class="top-actions" aria-label="KONK! links">
+      <a class="top-play" href="/">PLAY KONK! <span aria-hidden="true">↗</span></a>
+      <a class="top-follow" href="https://www.instagram.com/konk.world/" target="_blank" rel="noopener">Follow the next round <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main>
+    <section class="trailer-stage" aria-labelledby="trailer-title">
+      <div class="stage-rule"><span>THE NEXT ROUND</span><span>GHANA · WORLDWIDE</span></div>
+      <div class="video-frame">
+        <video id="trailer-video" class="trailer-video" playsinline preload="metadata" poster="promo/konk-trailer/konk-next-round-poster-wide.jpg" aria-label="KONK! The Next Round trailer">
+          Your browser does not support the trailer video.
+        </video>
+        <button id="trailer-play" class="video-start" type="button" aria-label="Play the KONK! Next Round trailer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="stage-caption"><p class="eyebrow">A CHILDHOOD CLASSIC. A NEW GENERATION.</p><h1 id="trailer-title">The table<br>gets bigger.</h1></div>
+    </section>
+    <section class="next-round" aria-label="KONK! features">
+      <p class="next-round-copy">Four players enter a live knockout. Earn your special move. Make the flick they talk about after.</p>
+      <div class="feature-line"><span>FOUR-PLAYER KNOCKOUT</span><i></i><span>EARNED SPECIAL MOVES</span><i></i><span>STARTED IN GHANA</span></div>
+    </section>
+  </main>
+  <footer><span>KONK! · BOTTLE-CAP FOOTBALL</span><span>ACCRA, GHANA <b>✳</b></span></footer>
+  <script>
+    const trailer = document.getElementById('trailer-video');
+    const playButton = document.getElementById('trailer-play');
+    const portrait = window.matchMedia('(max-width: 680px)');
+    const selectTrailer = () => {
+      if (trailer.dataset.started === 'true') return;
+      trailer.src = portrait.matches ? 'promo/konk-trailer/konk-next-round-vertical.mp4' : 'promo/konk-trailer/konk-next-round-wide.mp4';
+      trailer.poster = portrait.matches ? 'promo/konk-trailer/konk-next-round-poster-vertical.jpg' : 'promo/konk-trailer/konk-next-round-poster-wide.jpg';
+    };
+    selectTrailer();
+    portrait.addEventListener('change', selectTrailer);
+    playButton.addEventListener('click', async () => {
+      trailer.controls = true;
+      trailer.tabIndex = 0;
+      try {
+        await trailer.play();
+        trailer.dataset.started = 'true';
+        trailer.focus();
+      } catch {
+        trailer.controls = false;
+        playButton.focus();
+      }
+    });
+    trailer.addEventListener('play', () => {
+      trailer.dataset.started = 'true';
+      playButton.hidden = true;
+    });
+    trailer.addEventListener('ended', () => {
+      playButton.hidden = false;
+      playButton.setAttribute('aria-label', 'Replay the KONK! Next Round trailer');
+    });
+  </script>
+</body>
+</html>
