@@ -75,7 +75,7 @@ test('a semifinal turn is only sent to its two players while everyone gets brack
   } };
   const pair = (seat) => {
     const sent = [];
-    return { sent, deserializeAttachment: () => ({ seat }), send: (raw) => sent.push(JSON.parse(raw)) };
+    return { sent, deserializeAttachment: () => ({ seat, token: room.seats[seat].token }), send: (raw) => sent.push(JSON.parse(raw)) };
   };
   const sockets = ['p1', 'p2', 'p3', 'p4'].map(pair);
   broadcastLiveRoom({ getWebSockets: () => sockets }, room, { type: 'turn', matchId: 'semi-a', letter: { k: 1 } });

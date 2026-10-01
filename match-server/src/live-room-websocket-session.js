@@ -18,7 +18,7 @@ export async function handleLiveRoomSocketMessage(ctx, socket, raw) {
   if (!attachment.seat) {
     const seat = message.type === 'auth' ? seatFor(room, message.token) : null;
     if (!seat) { socket.close(1008, 'Invalid seat'); return; }
-    attachment = { seat };
+    attachment = { seat, token: message.token };
     socket.serializeAttachment(attachment);
     socket.send(JSON.stringify({ type: 'room', room: publicRoom(room) }));
     const matchId = tournamentMatchFor(room, seat);
@@ -26,6 +26,7 @@ export async function handleLiveRoomSocketMessage(ctx, socket, raw) {
     if (latest && (room.mode !== 'tournament' || matchId)) socket.send(JSON.stringify({ type: 'turn', ...(matchId ? { matchId } : {}), letter: latest }));
     return;
   }
+  if (seatFor(room, attachment.token) !== attachment.seat) { socket.close(1008, 'Seat unavailable'); return; }
   const verdict = touch(room, attachment.seat);
   if (!verdict.ok) { socket.close(1008, 'Seat unavailable'); return; }
   await ctx.storage.put('room', room);
@@ -36,8 +37,10 @@ export function broadcastLiveRoom(ctx, room, event = { type: 'room' }) {
   const message = JSON.stringify({ ...event, room: publicRoom(room) });
   const roomMessage = JSON.stringify({ type: 'room', room: publicRoom(room) });
   for (const socket of ctx.getWebSockets()) {
-    const seat = socket.deserializeAttachment()?.seat;
+    const attachment = socket.deserializeAttachment();
+    const seat = attachment?.seat;
     if (!seat) continue;
+    if (seatFor(room, attachment.token) !== seat) { socket.close(1008, 'Seat unavailable'); continue; }
     const match = event.matchId && room.tournament?.matches[event.matchId];
     const visible = !match || match.home === seat || match.away === seat;
     try { socket.send(visible ? message : roomMessage); } catch { /* disconnected sockets close asynchronously */ }

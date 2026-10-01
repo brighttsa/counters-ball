@@ -35,7 +35,9 @@ export function createRoom({ levelId, homeName, mode = 'duel', now = Date.now() 
 }
 
 export function joinRoom(room, { name, now = Date.now() }) {
+  if (room?.matchmaking) return { ok: false, status: 409, error: 'public match seats are reserved' };
   if (!room || room.phase === 'ended') return { ok: false, status: 410, error: 'room is closed' };
+  if (room.phase !== 'lobby') return { ok: false, status: 409, error: 'match has started' };
   if (room.mode === 'tournament') {
     if (room.phase !== 'lobby') return { ok: false, status: 409, error: 'tournament has started' };
     const seat = TOURNAMENT_SEATS.find((id) => !room.seats[id] || now - room.seats[id].seenAt > PRESENCE_MS);
@@ -53,6 +55,7 @@ export function joinRoom(room, { name, now = Date.now() }) {
 
 export function setReady(room, seat, ready, now = Date.now()) {
   if (!room?.seats[seat]) return { ok: false, status: 404, error: 'seat is not taken' };
+  if (room.phase !== 'lobby') return { ok: false, status: 409, error: 'lobby is closed' };
   if (room.mode === 'tournament' && room.phase !== 'lobby') return { ok: false, status: 409, error: 'tournament has started' };
   room.seats[seat].ready = Boolean(ready);
   room.seats[seat].seenAt = now;

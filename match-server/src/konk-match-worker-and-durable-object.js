@@ -14,16 +14,33 @@ import { renderScoreCardPng } from './score-card-png-renderer.js';
 import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
 import { broadcastLiveRoom, handleLiveRoomSocketMessage, upgradeLiveRoomSocket } from './live-room-websocket-session.js';
 import { tournamentTurn } from './tournament-room-turns.js';
+import { handlePublicMatchmaking, routePublicMatchmaking } from './public-rival-matchmaking-service.js';
+import { leavePublicMatchLobby } from './public-match-lobby-departure.js';
+import { duelRoomTurn } from './live-duel-room-turns.js';
+import { handleKonkerProfile, routeKonkerProfiles } from './konker-profile-service.js';
+import { limitProfileRequest } from './profile-request-limits.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
 export class KonkMatch extends DurableObject {
   async fetch(request) {
     const { pathname } = new URL(request.url);
+    if (pathname === '/profile-limit') return this.ctx.blockConcurrencyWhile(() => limitProfileRequest(this.ctx, request.headers.get('X-Profile-Client')));
+    if (pathname === '/player') return this.ctx.blockConcurrencyWhile(() => handleKonkerProfile(this.ctx, request));
+    if (pathname === '/matchmaking') return this.ctx.blockConcurrencyWhile(async () =>
+      handlePublicMatchmaking(this.ctx, this.env, await request.json(), Date.now(), request.headers.get('X-Queue-Client')));
+    if (pathname === '/room/public-match' && request.method === 'POST') {
+      if (await this.ctx.storage.get('room')) return json({ error: 'room already exists' }, 409);
+      const { room } = await request.json();
+      await this.ctx.storage.put('room', room);
+      await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
+      return json({ ok: true }, 201);
+    }
     if (pathname === '/room') return this.room(request);
     if (pathname === '/room/join') return this.roomJoin(request);
     if (pathname === '/room/name') return this.roomName(request);
     if (pathname === '/room/ready') return this.roomReady(request);
+    if (pathname === '/room/leave') return leavePublicMatchLobby(this.ctx, request);
     if (pathname === '/room/heartbeat') return this.roomHeartbeat(request);
     if (pathname === '/room/turn') return this.roomTurn(request);
     if (pathname.endsWith('/socket')) return this.roomSocket(request);
@@ -109,26 +126,7 @@ export class KonkMatch extends DurableObject {
   async roomTurn(request) {
     const room = await this.ctx.storage.get('room');
     if (room?.mode === 'tournament') return tournamentTurn(this.ctx, request, room);
-    if (request.method === 'GET') {
-      const letter = await this.ctx.storage.get('room:letter');
-      return letter ? json({ letter, seq: letter.k }) : json({ error: 'match has not started' }, 404);
-    }
-    if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
-    const body = await request.json();
-    // Only a seated player may move, only for their own side, and only once the room has kicked off.
-    const seat = seatFor(room, body.token);
-    if (!room || (room.phase !== 'ready' && room.phase !== 'playing')) return json({ error: 'match has not started' }, 409);
-    if (!seat || body.letter?.by !== seat[0]) return json({ error: 'not your seat' }, 403);
-    if (body.letter?.l !== room.levelId) return json({ error: 'turn belongs to a different table' }, 409);
-    const previous = await this.ctx.storage.get('room:letter');
-    const verdict = previous ? checkNextLetter(previous, body.letter) : checkOpeningLetter(body.letter);
-    if (!verdict.ok) return json({ error: verdict.error, ...(previous ? { letter: previous, seq: previous.k } : {}) }, verdict.status);
-    room.phase = body.letter.ra[0] === 1 ? 'ended' : 'playing';
-    room.updatedAt = Date.now();
-    await this.ctx.storage.put({ 'room:letter': body.letter, room });
-    await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
-    broadcastLiveRoom(this.ctx, room, { type: 'turn', letter: body.letter });
-    return json({ seq: body.letter.k }, previous ? 200 : 201);
+    return duelRoomTurn(this.ctx, request, room);
   }
 
   roomSocket(request) {
@@ -175,7 +173,9 @@ export default {
 };
 
 async function route(request, env) {
+  const profile = await routeKonkerProfiles(request, env); if (profile) return profile;
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
+  if (parts.length === 1 && parts[0] === 'matchmaking') return routePublicMatchmaking(request, env);
   if (parts[0] === 'm' && request.method === 'GET') return preview(request, env, parts[1], parts[2]);
   if (parts[0] === 'rooms' && request.method === 'POST' && parts.length === 1) {
     const body = await smallJson(request);
@@ -189,7 +189,7 @@ async function route(request, env) {
 
   if (parts[0] === 'rooms') {
     if (!id || !ROOM_ID.test(id)) return json({ error: 'room not found' }, 404);
-    const target = action === 'join' ? '/room/join' : action === 'name' ? '/room/name' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
+    const target = action === 'leave' ? '/room/leave' : action === 'join' ? '/room/join' : action === 'name' ? '/room/name' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
     if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
     if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch(`https://match/room/turn${new URL(request.url).search}`,
       { headers: { Authorization: request.headers.get('Authorization') ?? '' } });
@@ -198,7 +198,7 @@ async function route(request, env) {
       if (!allowed.includes(request.headers.get('Origin') ?? '')) return json({ error: 'origin not allowed' }, 403);
       return stub(env, id).fetch(request);
     }
-    if (request.method === 'POST' && ['join', 'name', 'ready', 'heartbeat', 'turn'].includes(action)) {
+    if (request.method === 'POST' && ['join', 'name', 'ready', 'leave', 'heartbeat', 'turn'].includes(action)) {
       const body = await smallJson(request);
       if (!body) return json({ error: 'body missing or too large' }, 413);
       return stub(env, id).fetch(`https://match${target}${action === 'turn' ? new URL(request.url).search : ''}`, { method: 'POST', body: JSON.stringify(body) });

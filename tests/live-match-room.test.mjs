@@ -140,6 +140,8 @@ test('live room socket authenticates with the seat token and reconnects using th
   FakeSocket.last.readyState = FakeSocket.OPEN;
   deliver('open');
   assert.deepEqual(JSON.parse(FakeSocket.last.sent[0]), { type: 'auth', token: 'secret-home' });
+  assert.equal(socket.connected, false);
+  deliver('message', { data: JSON.stringify({ type: 'room', room: {} }) });
   assert.equal(socket.connected, true);
   socket.close();
   assert.equal(socket.connected, false);
@@ -151,7 +153,7 @@ test('challenger enters the host venue and starts the host act at kickoff', asyn
   const fields = new Map();
   const element = (key) => {
     if (!fields.has(key)) fields.set(key, { value: '', textContent: '', hidden: false, disabled: false,
-      readOnly: false, addEventListener() {}, setAttribute() {}, classList: { toggle() {} } });
+      readOnly: false, addEventListener() {}, setAttribute() {}, closest() { return this; }, classList: { toggle() {} } });
     return fields.get(key);
   };
   const hostLevel = STREET_LEGENDS_ACTS.find((act) => act.backdrop === 'kiosk');
@@ -160,7 +162,7 @@ test('challenger enters the host venue and starts the host act at kickoff', asyn
   const starts = [];
   try {
     globalThis.document = { getElementById: element, querySelector: element, querySelectorAll: () => [], body: { dataset: {} } };
-    globalThis.location = { hostname: 'localhost' };
+    globalThis.location = { hostname: 'localhost', href: 'http://localhost:4181/play/' };
     globalThis.fetch = async () => ({ ok: true, json: async () => ({ seat: 'away', token: 'away-token', room }) });
     const flow = createLiveMatchRoomFlow({ level: STREET_LEGENDS_ACTS[0], baseUrl: 'https://konk.world/',
       showTitle() {}, onStart: (...args) => starts.push(args) });
@@ -179,6 +181,8 @@ test('challenger enters the host venue and starts the host act at kickoff', asyn
 
 test('both live seats open the same act and home takes the first turn', async () => {
   const saved = globalThis.document;
+  const savedFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: false, status: 404, json: async () => ({ error: 'match has not started' }) });
   const level = STREET_LEGENDS_ACTS.find((act) => act.backdrop === 'kiosk');
   const names = { home: 'Ama', away: 'Kofi' };
   const opened = [];
@@ -199,7 +203,7 @@ test('both live seats open the same act and home takes the first turn', async ()
     }
     assert.deepEqual(opened.map(({ table }) => table.id), [level.id, level.id]);
     assert.deepEqual(opened.map(({ options, side }) => options.controllers[side]), ['human', 'human']);
-  } finally { globalThis.document = saved; }
+  } finally { globalThis.document = saved; globalThis.fetch = savedFetch; }
 });
 
 test('a connected challenger catches a missed turn once and rejects another venue', async () => {

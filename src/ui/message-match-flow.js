@@ -1,6 +1,3 @@
-// Message Match app flow: start one from a 2-Player table, open a friend's move (short match link or
-// self-contained letter link), replay it, play your flick, and send the table back. The match server
-// is the transport when it is reachable; a letter link is the fallback, so a match never gets stuck.
 import { MessageMatchLetters } from '../gameplay/message-match-letter-recorder-and-replayer.js?v=2';
 import { encodeLetterLink, packLetter, unpackLetter } from '../core/message-match-turn-letter-codec.js';
 import {
@@ -10,14 +7,9 @@ import { pushAvailability, subscribeToMatch } from '../core/message-match-push-s
 import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js';
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
-import { sendLiveRoomTurn } from '../core/live-match-room-transport.js?v=5';
-import { startLiveRoomGameSync } from './live-match-room-game-sync.js?v=4';
+import { startLiveRoomFromSnapshot } from './live-room-snapshot-start.js';
 
 const other = (side) => (side === 'home' ? 'away' : 'home');
-
-/**
- * @param deps { app, openMatchTable(level, sessionOptions, versus), menus, hud, sound, cameraDirector, showResults, showTitle, baseUrl }
- */
 export function createMessageMatchFlow(deps) {
   const { app, menus, hud, sound, cameraDirector } = deps;
   const card = new MessageMatchLetterCard();
@@ -32,7 +24,6 @@ export function createMessageMatchFlow(deps) {
 
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
   const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
-
   function openTable(index, mySide, names, seq, online = false, onRoundEnd = null) {
     const source = typeof index === 'number' ? CAMPAIGN_LEVELS[index] : index;
     const level = online ? { ...source, objective: null, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3,
@@ -96,20 +87,7 @@ export function createMessageMatchFlow(deps) {
   return {
     async startRoom(index, id, mySide, names, { matchId = null, onRoundEnd = null } = {}) {
       roomSync?.close();
-      const letters = openTable(index, mySide, names, 0, true, onRoundEnd);
-      hud.event('LIVE MATCH', { priority: 6, duration: 2.2, detail: mySide === 'home' ? 'You are HOME' : 'You are AWAY' });
-      let finished = false;
-      const finish = () => { if (finished || !onRoundEnd) return; finished = true; roomSync?.close(); onRoundEnd(); };
-      roomSync = startLiveRoomGameSync({ api, id, matchId, mySide, letters, hud, onEnded: finish });
-      letters.onLetter = async (letter) => {
-        const packed = packLetter(letter);
-        hud.event('YOUR FLICK IS IN', { priority: 5, duration: 1.4, detail: `${names[mySide]} · waiting for the answer` });
-        await sendLiveRoomTurn(api, id, packed, undefined, matchId);
-        roomSync?.noteSent(letter);
-        if (letter.rulesAfter.phase === 'ended') finish();
-      };
-      sound.whistle();
-      app.session.start('home');
+      roomSync = await startLiveRoomFromSnapshot({ api, index, id, mySide, names, matchId, onRoundEnd, openTable, hud, sound, app, menus });
     },
     /** From the 2-Player intro: this device plays home and flicks first. */
     start(index) {
