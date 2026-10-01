@@ -6,7 +6,7 @@
 <script id="web-trailer-entry">
   if (/^https?:$/.test(location.protocol) && !location.search && !location.hash &&
       (location.pathname === '/' || location.pathname.endsWith('/index.html'))) {
-    location.replace(new URL('trailer.html', location.href).href);
+    location.replace(new URL('trailer/', location.href).href);
   }
 </script>
 <title>KONK! — Bottle-Cap Football</title>
@@ -86,7 +86,7 @@
     </nav>
     <p class="title-stars" id="title-stars"></p>
     <nav class="home-utilities" aria-label="Game information">
-      <a class="home-trailer-link" href="/trailer.html" target="_blank" rel="noopener">Watch trailer</a>
+      <a class="home-trailer-link" href="/trailer/" target="_blank" rel="noopener">Watch trailer</a>
       <button type="button" data-action="home-settings">Settings</button>
       <button type="button" data-action="home-credits">Credits</button>
     </nav>

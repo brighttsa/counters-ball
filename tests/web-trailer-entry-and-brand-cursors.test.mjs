@@ -5,7 +5,8 @@ import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
 const game = await readFile(new URL('index.html', root), 'utf8');
-const trailer = await readFile(new URL('trailer.html', root), 'utf8');
+const trailer = await readFile(new URL('trailer/index.html', root), 'utf8');
+const legacyTrailer = await readFile(new URL('trailer.html', root), 'utf8');
 const gate = game.match(/<script id="web-trailer-entry">([\s\S]*?)<\/script>/)?.[1];
 
 function destination(href) {
@@ -21,9 +22,14 @@ function destination(href) {
 
 test('plain web visits see the trailer before the game loads', () => {
   assert.ok(gate);
-  assert.equal(destination('https://konk.world/'), 'https://konk.world/trailer.html');
-  assert.equal(destination('https://konk.world/index.html'), 'https://konk.world/trailer.html');
+  assert.equal(destination('https://konk.world/'), 'https://konk.world/trailer/');
+  assert.equal(destination('https://konk.world/index.html'), 'https://konk.world/trailer/');
   assert.match(trailer, /class="top-play" href="\/\?play=1"/);
+  assert.match(game, /class="home-trailer-link" href="\/trailer\/"/);
+  assert.match(legacyTrailer, /location\.replace\('\/trailer\/'/);
+  assert.match(trailer, /<link rel="canonical" href="https:\/\/konk\.world\/trailer\/">/);
+  assert.match(trailer, /poster="\/promo\/konk-trailer\//);
+  assert.match(trailer, /href="\/styles\/trailer-page\.css/);
 });
 
 test('play, invitation and offline iOS entry go straight to the game', () => {
