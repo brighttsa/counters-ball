@@ -40,13 +40,18 @@ test('installed web app launches straight into play', async () => {
 
 test('both pages share the matching arrow and hand cursors', async () => {
   const css = await readFile(new URL('styles/konk-brand-cursors.css', root), 'utf8');
-  assert.match(game, /styles\/konk-brand-cursors\.css\?v=2/);
-  assert.match(trailer, /styles\/konk-brand-cursors\.css\?v=2/);
+  const grip = await readFile(new URL('assets/konk-cursor-hold.svg', root), 'utf8');
+  assert.match(game, /styles\/konk-brand-cursors\.css\?v=3/);
+  assert.match(trailer, /styles\/konk-brand-cursors\.css\?v=3/);
   assert.match(css, /--konk-arrow: url\(/);
   assert.match(css, /--konk-hand: url\(/);
   assert.equal((css.match(/fill='%23faf5e2'/g) ?? []).length, 2);
+  assert.match(css, /--konk-hold: url\('\.\.\/assets\/konk-cursor-hold\.svg'\) 13 10/);
+  assert.match(grip, /fill="#faf5e2"/);
+  assert.match(grip, /stroke="#0c1110"/);
   assert.match(css, /cursor: var\(--konk-hand\), pointer !important/);
   assert.match(css, /#game-canvas \{ cursor: var\(--konk-hand\), pointer !important; \}/);
+  assert.match(css, /#game-canvas\.can-grab, #game-canvas\.aiming \{ cursor: var\(--konk-hold\), grabbing !important; \}/);
 });
 
 test('room format picker has a defined brand accent and dark options', async () => {

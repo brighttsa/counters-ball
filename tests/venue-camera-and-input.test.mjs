@@ -91,4 +91,35 @@ test('venue openings, goal colliders and gesture camera lifecycle', { skip: !ena
     input.onUp(down); assert.equal(shots, 1); assert.equal(director.aimLocked, false);
     input.onDown(down); input.dispose(); assert.equal(director.aimLocked, false);
   });
+  await t.test('hover grip leaves with the pointer and clears after a held shot', () => {
+    const canvas = new EventTarget();
+    const classes = new Set();
+    canvas.classList = {
+      add: (...names) => names.forEach((name) => classes.add(name)),
+      remove: (...names) => names.forEach((name) => classes.delete(name)),
+      toggle: (name, active) => active ? classes.add(name) : classes.delete(name),
+    };
+    canvas.setPointerCapture = () => {};
+    canvas.hasPointerCapture = () => false;
+    canvas.getBoundingClientRect = () => ({ left: 0, top: 0, width: 390, height: 844 });
+    const hovered = [];
+    const input = new HumanDragAimInput({ camera, domElement: canvas,
+      visuals: { show() {}, hide() {}, hover: (body) => hovered.push(body) },
+      juice: { release() {}, press() {} }, canControl: () => true });
+    const entry = { side: 'home', body: { pos: new THREE.Vector2(), radius: 0.085 } };
+    input.pickEntry = () => entry;
+    input.aimRay = () => input.raycaster.ray.set(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0));
+    input.onMove({ pointerType: 'mouse' });
+    assert.equal(classes.has('can-grab'), true);
+    canvas.dispatchEvent(new Event('pointerleave'));
+    assert.equal(classes.has('can-grab'), false);
+    assert.equal(hovered.at(-1), null);
+    input.onMove({ pointerType: 'mouse' });
+    input.onDown({ button: 0, pointerId: 1, pointerType: 'mouse', timeStamp: 0 });
+    assert.equal(classes.has('aiming'), true);
+    input.cancel();
+    assert.equal(classes.has('aiming'), false);
+    assert.equal(classes.has('can-grab'), false);
+    input.dispose();
+  });
 });

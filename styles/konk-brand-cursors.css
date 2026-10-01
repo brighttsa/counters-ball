@@ -2,10 +2,12 @@
   :root {
     --konk-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='48' viewBox='0 0 44 48'%3E%3Cpath d='M5 3v34l8-8 7 15 7-3-7-15 13 1L5 3z' fill='%23000' stroke='%23000' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M5 3v34l8-8 7 15 7-3-7-15 13 1L5 3z' fill='%23faf5e2' stroke='%230c1110' stroke-width='2.7' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3;
     --konk-hand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='48' viewBox='0 0 44 48'%3E%3Cpath d='M13 4c-2 0-3 1.5-3 3.5V24l-2-2c-1.5-1.5-3.5-1.5-4.8-.1-1.3 1.3-1.3 3.2 0 4.8l8.7 10.9c1.5 1.9 3.6 2.8 6 2.8h5.7c5.8 0 9.5-3.9 9.5-9.8V22c0-2-1.4-3.5-3.3-3.5-1 0-1.8.3-2.4 1-.5-1.7-1.8-2.7-3.3-2.7-1.1 0-2 .5-2.5 1.3-.6-1.5-1.9-2.4-3.4-2.4-1 0-1.8.4-2.4 1V7.5C16 5.5 14.8 4 13 4z' fill='%23000' stroke='%23000' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M13 4c-2 0-3 1.5-3 3.5V24l-2-2c-1.5-1.5-3.5-1.5-4.8-.1-1.3 1.3-1.3 3.2 0 4.8l8.7 10.9c1.5 1.9 3.6 2.8 6 2.8h5.7c5.8 0 9.5-3.9 9.5-9.8V22c0-2-1.4-3.5-3.3-3.5-1 0-1.8.3-2.4 1-.5-1.7-1.8-2.7-3.3-2.7-1.1 0-2 .5-2.5 1.3-.6-1.5-1.9-2.4-3.4-2.4-1 0-1.8.4-2.4 1V7.5C16 5.5 14.8 4 13 4z' fill='%23faf5e2' stroke='%230c1110' stroke-width='2.7' stroke-linejoin='round'/%3E%3C/svg%3E") 13 4;
+    --konk-hold: url('../assets/konk-cursor-hold.svg') 13 10;
   }
 
   html, body { cursor: var(--konk-arrow), default; }
   #game-canvas { cursor: var(--konk-hand), pointer !important; }
+  #game-canvas.can-grab, #game-canvas.aiming { cursor: var(--konk-hold), grabbing !important; }
   body :is(button, a, summary, label, select, [role='button'], [tabindex]):not(:is(input, textarea, [contenteditable='true'], :disabled)),
   .awaiting-start .boot-screen { cursor: var(--konk-hand), pointer !important; }
   body :is(input, textarea, [contenteditable='true']) { cursor: text !important; }

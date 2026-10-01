@@ -45,6 +45,7 @@ export class HumanDragAimInput {
     this.listeners = {
       pointerdown: (e) => this.onDown(e),
       pointermove: (e) => this.onMove(e),
+      pointerleave: () => { if (!this.selected) { this.visuals.hover(null); this.domElement.classList.remove('can-grab'); } },
       pointerup: (e) => this.onUp(e),
       pointercancel: (e) => this.onCancel(e),
       lostpointercapture: (e) => this.onCancel(e),
@@ -177,7 +178,8 @@ export class HumanDragAimInput {
     }
     this.visuals.hide();
     if (this.selectionNotice) this.selectionNotice.textContent = '';
-    this.domElement.classList.remove('aiming');
+    this.domElement.classList.remove('aiming', 'can-grab');
+    this.visuals.hover(null);
     if (this.cancelHint) this.cancelHint.hidden = true;
     if (wasAiming) this.onAimEnd?.();
   }
