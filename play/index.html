@@ -47,7 +47,7 @@
 <link rel="stylesheet" href="styles/game-interaction-guardrails.css?v=3" />
 <link rel="stylesheet" href="styles/konk-brand-cursors.css?v=3" />
 <link rel="stylesheet" href="styles/tournament-room.css?v=3" />
-<link rel="stylesheet" href="styles/table-talk.css?v=6" />
+<link rel="stylesheet" href="styles/table-talk.css?v=7" />
 <link rel="stylesheet" href="styles/home-portrait-utilities.css?v=1" />
 <link rel="stylesheet" href="styles/match-transition-status.css?v=1" />
 <script type="importmap">
@@ -225,7 +225,7 @@
         <div>
           <p class="card-kicker">OPTIONAL VOICE</p>
           <h3 id="table-talk-room-title">Talk with your room</h3>
-          <p>Join to hear your friends. Your microphone stays off until you tap <b>Enable microphone</b>. Only players in this private room can hear you.</p>
+          <p>Join to hear your friends. Tap <b>Turn mic on</b> to speak, then allow microphone access when asked. Only players in this private room can hear you.</p>
         </div>
         <button class="btn btn-primary" id="table-talk-room-join" type="button">Join voice</button>
       </section>
@@ -236,12 +236,13 @@
       <div class="tournament-bracket" id="live-room-bracket" hidden></div>
       <aside class="table-talk-controls" id="table-talk-controls" aria-label="Table Talk voice" hidden>
         <button class="table-talk-toggle" data-table-talk-toggle type="button" aria-controls="table-talk-actions" aria-expanded="true" hidden></button>
+        <button class="btn btn-small btn-primary table-talk-mic-shortcut" data-table-talk-mic-shortcut type="button" hidden>Turn mic on</button>
         <span class="visually-hidden" data-table-talk-live-status aria-live="polite" aria-atomic="true"></span>
         <div class="table-talk-actions" id="table-talk-actions" data-table-talk-actions>
           <span class="table-talk-label" data-table-talk-status tabindex="-1">Voice off</span>
           <button class="btn btn-small" data-voice-action="join" type="button">Join voice</button>
           <button class="btn btn-small" data-voice-action="audio" type="button" hidden>Enable room audio</button>
-          <button class="btn btn-small" data-voice-action="mic" type="button" hidden>Enable microphone</button>
+          <button class="btn btn-small" data-voice-action="mic" type="button" hidden>Turn mic on</button>
           <button class="icon-btn table-talk-leave" data-voice-action="leave" type="button" aria-label="Leave voice" title="Leave voice" hidden>×</button>
           <p class="table-talk-help" data-table-talk-help role="status" hidden></p>
         </div>
@@ -433,6 +434,6 @@
   <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true"><svg class="sound-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
   <noscript><p class="noscript">KONK! needs JavaScript and WebGL to run.</p></noscript>
 <script type="module" src="./src/ui/room-format-picker.js?v=1"></script>
-<script type="module" src="./src/main.js?v=37"></script>
+<script type="module" src="./src/main.js?v=38"></script>
 </body>
 </html>

@@ -1,8 +1,11 @@
+import { createTableTalkBrowserMicrophoneCapture } from './table-talk-browser-microphone-capture.js';
+
 // Inject the pinned SDK only when voice is explicitly requested.
 export function createLiveKitBrowserVoiceAdapter(sdk, audioHost, onRemoteAudioActivity = () => {}, onPlaybackBlocked = () => {}) {
   const room = new sdk.Room({ adaptiveStream: false, dynacast: false });
   const elements = new Set();
   const playback = new Map();
+  const microphone = createTableTalkBrowserMicrophoneCapture(sdk);
 
   async function play(element) {
     element.muted = false;
@@ -36,14 +39,14 @@ export function createLiveKitBrowserVoiceAdapter(sdk, audioHost, onRemoteAudioAc
       try { await room.startAudio(); } catch { /* Element playback below can still recover independently. */ }
       await Promise.all([...elements].map(play));
     },
-    capture: () => sdk.createLocalAudioTrack({
-      echoCancellation: true, noiseSuppression: true, autoGainControl: true,
-    }),
+    capture: microphone.capture,
+    cancelCapture: microphone.cancel,
     publish: track => room.localParticipant.publishTrack(track, {
       source: sdk.Track.Source.Microphone, stopMicTrackOnMute: true,
     }),
     unpublish: track => room.localParticipant.unpublishTrack(track, true),
     async disconnect() {
+      microphone.cancel();
       await room.disconnect(true);
       onRemoteAudioActivity(false);
       onPlaybackBlocked(false);

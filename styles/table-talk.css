@@ -14,8 +14,8 @@
 .table-talk-controls[data-compact="true"] .table-talk-toggle::after { margin-bottom: -1px; transform: rotate(45deg); }
 .table-talk-toggle:hover { background: rgb(255 220 83 / .14); }
 .table-talk-toggle:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
-.table-talk-controls[data-compact="true"] { display: inline-flex; align-items: center; padding: 8px; border-color: rgb(255 220 83 / .62); }
-.table-talk-controls[data-compact="true"] .table-talk-toggle { min-width: 142px; border: 0; background: transparent; }
+.table-talk-controls[data-compact="true"] { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px; border-color: rgb(255 220 83 / .62); }
+.table-talk-controls[data-compact="true"] .table-talk-toggle { min-width: 130px; border: 0; background: transparent; }
 .table-talk-controls[data-compact="true"] .table-talk-toggle:hover { background: rgb(255 220 83 / .12); }
 .table-talk-controls[data-in-match="true"] {
   position: fixed; z-index: 12; top: max(104px, calc(env(safe-area-inset-top) + 94px)); left: max(12px, env(safe-area-inset-left));
@@ -25,6 +25,7 @@
 .table-talk-label { min-width: 88px; font: 600 12px/1.4 var(--font-body); color: rgb(var(--paper-rgb) / .78); }
 .table-talk-label:focus { outline: 2px solid var(--yellow); outline-offset: 3px; }
 .table-talk-controls .btn { min-height: 44px; padding: 8px 12px; font-size: 12px; white-space: nowrap; }
+.table-talk-controls .table-talk-mic-shortcut { background: var(--yellow); color: var(--ink); }
 .table-talk-controls [data-action="table-talk-mic"] { border-color: var(--yellow); }
 .table-talk-controls .table-talk-leave { position: static; flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; font-size: 20px; }
 .table-talk-controls[data-state="speaking"] { border-color: var(--yellow); }
@@ -42,7 +43,7 @@
 .table-talk-room-setup .btn { flex: 0 0 auto; min-height: 44px; }
 @media (max-width: 620px) {
   .table-talk-controls { width: 100%; max-width: none; }
-  .table-talk-controls[data-compact="true"] { width: max-content; max-width: calc(100vw - 20px); }
+  .table-talk-controls[data-compact="true"] { width: max-content; max-width: min(100%, calc(100vw - 20px)); }
   .table-talk-controls[data-in-match="true"] { top: max(104px, calc(env(safe-area-inset-top) + 94px)); left: max(10px, env(safe-area-inset-left)); width: max-content; max-width: calc(100vw - 20px); }
   .table-talk-label { min-width: 72px; }
   .table-talk-controls .btn { padding-inline: 8px; }

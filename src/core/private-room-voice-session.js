@@ -1,3 +1,6 @@
+const MICROPHONE_ERRORS = new Set(['microphone-denied', 'microphone-missing', 'microphone-busy',
+  'microphone-unsupported', 'microphone-timeout', 'microphone-unavailable']);
+
 export class PrivateRoomVoiceSession {
   constructor(createAdapter, onChange = () => {}) {
     this.createAdapter = createAdapter;
@@ -44,16 +47,20 @@ export class PrivateRoomVoiceSession {
         track.stop(); await adapter.unpublish(track).catch(() => {}); return;
       }
       this.notify('speaking');
-    } catch {
+    } catch (error) {
       track?.stop();
       if (track) await adapter.unpublish(track).catch(() => {});
-      if (current()) { this.track = null; this.notify('listening', 'microphone-unavailable'); }
+      if (current()) {
+        this.track = null;
+        this.notify('listening', MICROPHONE_ERRORS.has(error?.code) ? error.code : 'microphone-unavailable');
+      }
     }
   }
 
   async mute() {
     ++this.intent;
     const track = this.track, adapter = this.adapter;
+    adapter?.cancelCapture?.();
     this.track = null;
     // Stop the device synchronously even if signalling or permission is pending.
     track?.stop();
@@ -66,6 +73,7 @@ export class PrivateRoomVoiceSession {
   async leave() {
     ++this.epoch; ++this.intent;
     const adapter = this.adapter, track = this.track;
+    adapter?.cancelCapture?.();
     this.track = null; this.adapter = null;
     track?.stop(); this.notify('idle');
     await adapter?.disconnect().catch(() => {});

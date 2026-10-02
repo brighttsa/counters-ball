@@ -1,18 +1,19 @@
 import { leaveTableTalk, renewTableTalkLease, requestTableTalkJoin } from '../core/live-match-room-transport.js';
-import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-adapter.js';
+import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-adapter.js?v=2';
 import { createNativeTableTalkVoiceAdapter } from '../core/native-table-talk-voice-adapter.js';
 import { loadTableTalkBrowserSdk } from '../core/table-talk-browser-sdk-loader.js';
-import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js';
-import { createTableTalkCompactControl } from './table-talk-compact-control.js';
+import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js?v=2';
+import { createTableTalkCompactControl } from './table-talk-compact-control.js?v=2';
+import { tableTalkVoiceErrorMessage, updateTableTalkMicrophoneFeedback } from './table-talk-microphone-feedback.js';
 
 export function createTableTalkControls(root, api, music) {
   if (typeof root?.querySelector !== 'function') return { configure() {}, setInMatch() {}, leave: async () => {} };
   const joinButton = root.querySelector('[data-voice-action="join"]');
   const audioButton = root.querySelector('[data-voice-action="audio"]');
   const micButton = root.querySelector('[data-voice-action="mic"]');
+  const micShortcut = root.querySelector('[data-table-talk-mic-shortcut]');
   const leaveButton = root.querySelector('[data-voice-action="leave"]');
   const status = root.querySelector('[data-table-talk-status]');
-  const help = root.querySelector('[data-table-talk-help]');
   const compactControl = createTableTalkCompactControl(root);
   const toggleButton = compactControl.button;
   const liveStatus = root.querySelector('[data-table-talk-live-status]');
@@ -41,18 +42,14 @@ export function createTableTalkControls(root, api, music) {
     }
   }
 
-  function voiceErrorMessage(error) {
-    if (error === 'microphone-unavailable') return 'Microphone access is blocked. Allow it for this site or app, then try again.';
-    return error ? 'Voice could not connect. Check your connection and try again.' : '';
-  }
-
-  function update(state, message = '') {
+  function update(state, message = '', error = '') {
     root.dataset.state = state;
     status.textContent = message || (playbackBlocked ? 'Room audio is blocked. Tap Enable room audio.' :
       ({ listening: 'Connected · mic off', speaking: 'Microphone on', 'requesting-microphone': 'Allow microphone access in the prompt' }[state] ?? 'Voice off'));
     if (liveStatus) liveStatus.textContent = status.textContent;
     if (state === 'connecting' && joinButtons.includes(document.activeElement)) status.focus();
-    const micRecovery = status.textContent.startsWith('Microphone access is blocked');
+    if (state === 'requesting-microphone' && document.activeElement === micButton) status.focus();
+    const micRecovery = error.startsWith('microphone-');
     if (state === 'idle') {
       playbackBlocked = false;
       autoCollapseUsed = false;
@@ -74,13 +71,7 @@ export function createTableTalkControls(root, api, music) {
     if (audioButton) audioButton.hidden = state === 'idle' || state === 'connecting' || !playbackBlocked;
     micButton.hidden = !['listening', 'speaking', 'requesting-microphone'].includes(state);
     leaveButton.hidden = state === 'idle' || state === 'connecting';
-    micButton.textContent = state === 'speaking' || state === 'requesting-microphone' ? 'Mute microphone' :
-      status.textContent.startsWith('Microphone access is blocked') ? 'Try microphone again' : 'Enable microphone';
-    micButton.disabled = state === 'requesting-microphone';
-    if (help) {
-      help.hidden = !micRecovery;
-      help.textContent = micRecovery ? 'In your browser or device settings, allow microphone access for KONK!, then tap Try microphone again.' : '';
-    }
+    updateTableTalkMicrophoneFeedback(root, state, error);
   }
 
   async function enter() {
@@ -92,12 +83,12 @@ export function createTableTalkControls(root, api, music) {
       const handler = globalThis.webkit?.messageHandlers?.konkTableTalk;
       if (handler) {
         native = createNativeTableTalkVoiceAdapter(handler, value => {
-          update(value.state, voiceErrorMessage(value.error));
+          update(value.state, tableTalkVoiceErrorMessage(value.error), value.error ?? '');
           music?.setRemoteVoiceActive(value.remoteSpeaking);
         });
         await native.join(credentials);
         const snapshot = await native.status();
-        update(snapshot.state, snapshot.error ? voiceErrorMessage(snapshot.error) : 'Connected · mic off');
+        update(snapshot.state, snapshot.error ? tableTalkVoiceErrorMessage(snapshot.error) : 'Connected · mic off', snapshot.error ?? '');
       } else {
         const sdk = await loadTableTalkBrowserSdk();
         session = new PrivateRoomVoiceSession(() => createLiveKitBrowserVoiceAdapter(sdk,
@@ -106,7 +97,7 @@ export function createTableTalkControls(root, api, music) {
             if (blocked) update(session?.state ?? 'listening', 'Room audio is blocked. Tap Enable room audio.');
             else if (status.textContent.startsWith('Room audio is blocked')) update(session?.state ?? 'listening');
           }),
-        value => update(value.state, voiceErrorMessage(value.error)));
+        value => update(value.state, tableTalkVoiceErrorMessage(value.error), value.error ?? ''));
         await session.join(credentials);
         if (session.state === 'idle') throw new Error('Voice could not connect');
       }
@@ -168,6 +159,10 @@ export function createTableTalkControls(root, api, music) {
 
   joinButtons.forEach(button => button.addEventListener('click', enter));
   toggleButton?.addEventListener('click', () => setCompact(!compact, true));
+  micShortcut?.addEventListener('click', () => {
+    if (root.dataset.state === 'listening') { setCompact(false, true); status.focus(); }
+    return toggleMic();
+  });
   audioButton?.addEventListener('click', async () => {
     audioButton.disabled = true;
     try { await session?.adapter?.resumeAudio(); }

@@ -47,6 +47,15 @@ test('permission denial retains listening and safe error state', async () => {
   await voice.join({}); await voice.unmute();
   assert.equal(voice.state, 'listening'); assert.equal(voice.error, 'microphone-unavailable');
 });
+test('only allowlisted microphone reasons reach the interface', async () => {
+  for (const code of ['microphone-denied', 'microphone-timeout', 'private-provider-detail']) {
+    const { voice, adapter } = fixture();
+    adapter.capture = async () => { throw Object.assign(new Error('private'), { code }); };
+    await voice.join({}); await voice.unmute();
+    assert.equal(voice.state, 'listening');
+    assert.equal(voice.error, code.startsWith('microphone-') ? code : 'microphone-unavailable');
+  }
+});
 test('leave while connecting disposes the stale connection', async () => {
   const { voice, adapter, calls } = fixture(); const pending = deferred();
   adapter.connect = () => pending.promise;

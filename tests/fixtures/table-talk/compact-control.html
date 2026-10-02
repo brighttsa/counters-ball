@@ -5,7 +5,7 @@
 <title>KONK! Table Talk — Compact Control Preview</title>
 <link rel="stylesheet" href="../../../styles/game-ui-base-and-hud.css?v=1">
 <link rel="stylesheet" href="../../../styles/match-hud-one-frame-and-aim-fade.css?v=8">
-<link rel="stylesheet" href="../../../styles/table-talk.css?v=6">
+<link rel="stylesheet" href="../../../styles/table-talk.css?v=7">
 <style>
   body { min-height: 100vh; padding: 24px; background: #171816; color: var(--paper); font: 16px/1.5 var(--font-body); }
   main { width: min(100%, 900px); margin: 0 auto; }
@@ -14,7 +14,7 @@
   h2 { margin: 0 0 8px; font: 700 14px/1.3 var(--font-body); }
   p { margin: 0 0 8px; color: rgb(var(--paper-rgb) / .74); }
   .sample-match { min-height: 250px; position: relative; padding-top: 54px; background: linear-gradient(135deg, #38433a, #18201b); }
-  .sample-match .table-talk-controls { position: relative; top: auto; left: auto; }
+  .sample-match .table-talk-controls { position: relative; top: auto; left: auto; max-width: 100%; }
   .table-talk-controls[hidden] { display: none; }
 </style>
 <main>
@@ -33,11 +33,12 @@
     <p>Play someone live · Roadside Showdown</p>
     <aside class="table-talk-controls" data-state="listening" data-compact="true" aria-label="Table Talk voice">
       <button class="table-talk-toggle" data-table-talk-toggle type="button" aria-controls="room-actions" aria-expanded="false">Voice · Mic off</button>
+      <button class="btn btn-small btn-primary table-talk-mic-shortcut" data-table-talk-mic-shortcut type="button">Turn mic on</button>
       <span class="visually-hidden" aria-live="polite" aria-atomic="true">Connected · mic off</span>
       <div class="table-talk-actions" id="room-actions" data-table-talk-actions hidden>
         <span class="table-talk-label">Connected · mic off</span>
         <button class="btn btn-small" type="button" hidden>Join voice</button>
-        <button class="btn btn-small" type="button">Enable microphone</button>
+        <button class="btn btn-small" type="button">Turn mic on</button>
         <button class="icon-btn table-talk-leave" type="button" aria-label="Leave voice">×</button>
       </div>
     </aside>
@@ -47,6 +48,7 @@
     <p>Active match controls stay in the existing HUD-safe corner.</p>
     <aside class="table-talk-controls" data-in-match="true" data-state="speaking" data-compact="false" aria-label="Table Talk voice">
       <button class="table-talk-toggle" data-table-talk-toggle type="button" aria-controls="match-actions" aria-expanded="true" aria-label="Collapse voice controls. Microphone on.">Hide voice controls</button>
+      <button class="btn btn-small btn-primary table-talk-mic-shortcut" data-table-talk-mic-shortcut type="button" hidden>Mute mic</button>
       <span class="visually-hidden" aria-live="polite" aria-atomic="true">Microphone on</span>
       <div class="table-talk-actions" id="match-actions" data-table-talk-actions>
         <span class="table-talk-label">Microphone on</span>
@@ -55,16 +57,32 @@
       </div>
     </aside>
   </section>
+  <section class="paper-card">
+    <h2>Microphone permission pending</h2>
+    <aside class="table-talk-controls" data-state="requesting-microphone" aria-label="Table Talk voice">
+      <div class="table-talk-actions">
+        <span class="table-talk-label">Allow microphone access in the prompt</span>
+        <button class="btn btn-small" data-voice-action="mic" type="button">Cancel mic request</button>
+        <button class="icon-btn table-talk-leave" type="button" aria-label="Leave voice">×</button>
+        <p class="table-talk-help" data-table-talk-help></p>
+      </div>
+    </aside>
+  </section>
 </main>
 <script type="module">
   import { createTableTalkCompactControl } from '../../../src/ui/table-talk-compact-control.js';
+  import { updateTableTalkMicrophoneFeedback } from '../../../src/ui/table-talk-microphone-feedback.js';
   document.querySelectorAll('.table-talk-controls').forEach(root => {
     const control = createTableTalkCompactControl(root);
     if (!control.button) return;
     let compact = root.dataset.compact === 'true';
+    control.setAvailable(true);
+    control.setCompact(compact, root.dataset.state);
     control.button.addEventListener('click', () => {
       compact = !compact;
       control.setCompact(compact, root.dataset.state);
     });
   });
+  const pending = document.querySelector('[data-state="requesting-microphone"]');
+  updateTableTalkMicrophoneFeedback(pending, 'requesting-microphone');
 </script>
