@@ -22,7 +22,7 @@ class Container {
   insertBefore(node) { node.parentNode = this; this.children.push(node); }
 }
 
-export function setup({ playbackBlocked = false, microphoneDenied = false, capture } = {}) {
+export function setup({ playbackBlocked = false, microphoneDenied = false, capture, startAudio } = {}) {
   const previous = { document: globalThis.document, window: globalThis.window, fetch: globalThis.fetch,
     sdk: globalThis.LivekitClient, navigator: Object.getOwnPropertyDescriptor(globalThis, 'navigator') };
   const documentObject = { activeElement: null, focusHistory: [], hidden: false, addEventListener() {} };
@@ -50,12 +50,12 @@ export function setup({ playbackBlocked = false, microphoneDenied = false, captu
   const room = {
     localParticipant: { publishTrack: async track => { published.push(track); }, unpublishTrack: async () => {} },
     on: (event, callback) => events.set(event, callback),
-    connect: async () => {}, startAudio: playbackBlocked ? async () => { throw new Error('gesture required'); } : async () => {},
+    connect: async () => {}, startAudio: startAudio ?? (playbackBlocked ? async () => { throw new Error('gesture required'); } : async () => {}),
     disconnect: async () => {},
   };
   globalThis.LivekitClient = {
     Room: class { constructor() { return room; } },
-    RoomEvent: { TrackSubscribed: 'subscribed', TrackUnsubscribed: 'unsubscribed', ActiveSpeakersChanged: 'speakers' },
+    RoomEvent: { TrackSubscribed: 'subscribed', TrackUnsubscribed: 'unsubscribed', ActiveSpeakersChanged: 'speakers', AudioPlaybackStatusChanged: 'playback' },
     Track: { Kind: { Audio: 'audio' }, Source: { Microphone: 'microphone' } },
     createLocalAudioTrack: () => {
       captures++;
@@ -66,7 +66,7 @@ export function setup({ playbackBlocked = false, microphoneDenied = false, captu
   };
   const voice = createTableTalkControls(root, 'https://konk.world/m', null);
   return {
-    root, body, controls, setupPanel, setupJoin, document: documentObject, voice, captures: () => captures, published,
+    root, body, controls, setupPanel, setupJoin, document: documentObject, voice, captures: () => captures, published, events,
     restore() {
       globalThis.document = previous.document; globalThis.window = previous.window;
       globalThis.fetch = previous.fetch; globalThis.LivekitClient = previous.sdk;

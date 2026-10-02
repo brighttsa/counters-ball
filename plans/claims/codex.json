@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "Stabilize branded desktop cursors",
+  "task": "Fix mobile Table Talk playback activation",
   "status": "released",
-  "paths": ["styles/konk-brand-cursors.css", "play/index.html", "index.html", "tests/web-trailer-entry-and-brand-cursors.test.mjs", "tests/fixtures/brand-cursors.html", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
-  "updatedAt": "2026-10-02T07:11:00Z",
-  "head": "0a7a63c"
+  "paths": ["src/core/livekit-browser-voice-adapter.js", "src/ui/table-talk-controls.js", "src/ui/live-match-room-flow.js", "tests/livekit-browser-voice-adapter.test.mjs", "tests/helpers/table-talk-controller-harness.mjs", "tests/table-talk-microphone-access.test.mjs", "docs/table-talk-mobile-playback-fix.md", "docs/journals/261002-mobile-table-talk-playback.md", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
+  "updatedAt": "2026-10-02T11:43:00Z",
+  "head": "982f7ad"
 }

@@ -1,5 +1,5 @@
 import { leaveTableTalk, renewTableTalkLease, requestTableTalkJoin } from '../core/live-match-room-transport.js';
-import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-adapter.js?v=2';
+import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-adapter.js?v=3';
 import { createNativeTableTalkVoiceAdapter } from '../core/native-table-talk-voice-adapter.js';
 import { loadTableTalkBrowserSdk } from '../core/table-talk-browser-sdk-loader.js';
 import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js?v=2';
@@ -93,9 +93,10 @@ export function createTableTalkControls(root, api, music) {
         const sdk = await loadTableTalkBrowserSdk();
         session = new PrivateRoomVoiceSession(() => createLiveKitBrowserVoiceAdapter(sdk,
           root.querySelector('[data-table-talk-audio]'), active => music?.setRemoteVoiceActive(active), blocked => {
+            const changed = playbackBlocked !== blocked;
             playbackBlocked = blocked;
-            if (blocked) update(session?.state ?? 'listening', 'Room audio is blocked. Tap Enable room audio.');
-            else if (status.textContent.startsWith('Room audio is blocked')) update(session?.state ?? 'listening');
+            if (blocked) update(session?.state ?? 'listening', 'Room audio is blocked. Tap Enable room audio.', session?.error ?? '');
+            else if (changed) update(session?.state ?? 'listening', tableTalkVoiceErrorMessage(session?.error), session?.error ?? '');
           }),
         value => update(value.state, tableTalkVoiceErrorMessage(value.error), value.error ?? ''));
         await session.join(credentials);

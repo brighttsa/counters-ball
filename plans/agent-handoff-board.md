@@ -45,6 +45,17 @@ Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+Mobile Table Talk browser playback (Codex, 2026-10-02): fixed tap-stack speaker
+unlock alongside mic capture, room/element recovery state, coalesced SDK unlocks
+and retained denied-mic guidance. Ten new regressions; full 486 and focused 41
+tests pass; 226 JS sources parse; whitespace clean. Final independent review
+found no concrete blockers. User approved browser publication; deployment pending.
+Preview boots and multiplayer entry works without console errors. Native/provider
+contracts unchanged; real two-phone conversation is still unverified. Separate
+native idle retry/disconnect findings are not fixed by this browser-only release.
+See docs/table-talk-mobile-playback-fix.md. Scoped claim released manually because
+helper lacks peer remote; unrelated primary game/native work preserved.
+
 | Stabilize branded desktop cursors | Codex | Commit containing this note | Central fine-pointer cursor inheritance prevents nested control text/SVG/camera captions from switching to native component cursors. Radios, checkboxes and sliders use the branded hand rather than the text cursor; typing fields and disabled controls retain intentional native semantics. Camera orbit uses the branded grip; both pages preload its existing SVG and use cursor CSS v4. Before/after browser fixture reproduced native pointer/text leaks and verified corrected descendant/form cursors plus selected/aiming grip states with no console errors. Full 452-test suite passes; diff check clean. Actual OS-rendered Chrome/Safari cursor appearance remains a user device check. Manual claim/handoff because helper requires a local peer origin. |
 | Optional voice label contrast | Codex | Commit containing this note | Scoped cream-panel kicker override uses brand ink instead of yellow. Other kickers stay unchanged; Table Talk CSS v8 bypasses stale stylesheet caches. Added minimum 7:1 contrast regression, verified computed ink/cream colors and desktop/375px preview with no overflow or console errors. Full 451-test suite passes; diff check clean. Manual claim/handoff because helper requires a peer-clone origin. |
 | Recover mobile microphone requests | Codex | Commit containing this note | Visible Turn mic on/Mute mic shortcut stays outside the collapsed panel. Browser capture remains synchronous with the tap; missing APIs and permission/device failures produce safe, specific recovery guidance. Pending requests are cancellable and expire after 30 seconds; canceled/expired late tracks stop without publication. Mic stays opt-in and joining remains listening-only. Cache keys refreshed throughout the changed module chain and CSS v7. Full suite passes 450 tests; 203 source modules parse. Fixture checked at 320/375 portrait, 844 landscape and desktop with 44px targets/no overflow; game boot and live-room menu load with no console errors. Real Safari/Chrome phone permission behavior and two-device voice remain unverified. Manual claim/handoff because helper requires a local-peer origin. |
