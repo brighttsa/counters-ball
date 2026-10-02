@@ -1,4 +1,5 @@
 import { createRoom, joinRoom, publicRoom, newRoom, cleanRoomName } from './live-match-room-rules.js';
+import { readBoundedText } from './bounded-request-body.js';
 
 export const SEARCH_LEASE_MS = 20_000;
 const RESULT_MS = 120_000;
@@ -73,8 +74,8 @@ export async function routePublicMatchmaking(request, env) {
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
   const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim());
   if (!allowed.includes(request.headers.get('Origin') ?? '')) return json({ error: 'origin not allowed' }, 403);
-  const text = await request.text();
-  if (text.length > 1024) return json({ error: 'search request too large' }, 413);
+  const text = await readBoundedText(request, 1024);
+  if (text === null) return json({ error: 'search request too large' }, 413);
   let body;
   try { body = JSON.parse(text); } catch { return json({ error: 'invalid search request' }, 400); }
   // Cloudflare supplies this address; retain only a digest for short-lived abuse limits.

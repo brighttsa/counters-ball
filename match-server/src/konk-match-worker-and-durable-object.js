@@ -19,12 +19,15 @@ import { leavePublicMatchLobby } from './public-match-lobby-departure.js';
 import { duelRoomTurn } from './live-duel-room-turns.js';
 import { handleKonkerProfile, routeKonkerProfiles } from './konker-profile-service.js';
 import { limitProfileRequest } from './profile-request-limits.js';
+import { readBoundedText } from './bounded-request-body.js';
+import { checkMatchCreationLimit, limitMatchCreation } from './match-creation-request-limits.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
 export class KonkMatch extends DurableObject {
   async fetch(request) {
     const { pathname } = new URL(request.url);
+    if (pathname === '/creation-limit') return this.ctx.blockConcurrencyWhile(() => limitMatchCreation(this.ctx, request.headers.get('X-Creation-Client')));
     if (pathname === '/profile-limit') return this.ctx.blockConcurrencyWhile(() => limitProfileRequest(this.ctx, request.headers.get('X-Profile-Client')));
     if (pathname === '/player') return this.ctx.blockConcurrencyWhile(() => handleKonkerProfile(this.ctx, request));
     if (pathname === '/matchmaking') return this.ctx.blockConcurrencyWhile(async () =>
@@ -178,7 +181,9 @@ async function route(request, env) {
   if (parts.length === 1 && parts[0] === 'matchmaking') return routePublicMatchmaking(request, env);
   if (parts[0] === 'm' && request.method === 'GET') return preview(request, env, parts[1], parts[2]);
   if (parts[0] === 'rooms' && request.method === 'POST' && parts.length === 1) {
+    const limit = await checkMatchCreationLimit(request, env); if (!limit.ok) return limit;
     const body = await smallJson(request);
+    if (!body) return json({ error: 'body missing or too large' }, 413);
     if (!body?.levelId) return json({ error: 'levelId missing' }, 400);
     const id = newRoomId();
     const response = await stub(env, id).fetch('https://match/room', { method: 'POST', body: JSON.stringify(body) });
@@ -207,6 +212,7 @@ async function route(request, env) {
   }
 
   if (request.method === 'POST' && !id) {
+    const limit = await checkMatchCreationLimit(request, env); if (!limit.ok) return limit;
     const body = await readBody(request);
     if (!body) return json({ error: 'letter missing or too large' }, 413);
     const matchId = newMatchId();
@@ -216,8 +222,8 @@ async function route(request, env) {
   if (!id || !MATCH_ID.test(id)) return json({ error: 'not found' }, 404);
   if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/latest');
   if (request.method === 'POST' && action === 'subscribe') {
-    const text = await request.text();
-    if (text.length > 4096) return json({ error: 'too large' }, 413);
+    const text = await readBoundedText(request, 4096);
+    if (text === null) return json({ error: 'too large' }, 413);
     let parsed;
     try { parsed = JSON.parse(text); } catch { return json({ error: 'bad subscription' }, 400); }
     const body = JSON.stringify({ side: parsed?.side, subscription: parsed?.subscription, id });
@@ -262,15 +268,15 @@ const stub = (env, id) => env.KONK_MATCH.get(env.KONK_MATCH.idFromName(id));
 
 /** A small JSON object body, or null: room requests never need more than one letter. */
 async function smallJson(request) {
-  const text = await request.text();
-  if (text.length > MAX_LETTER_BYTES) return null;
+  const text = await readBoundedText(request, MAX_LETTER_BYTES);
+  if (text === null) return null;
   try { const parsed = JSON.parse(text); return parsed && typeof parsed === 'object' ? parsed : null; } catch { return null; }
 }
 
 /** The raw body, re-serialised only if it is a small JSON object with a `letter`. */
 async function readBody(request) {
-  const text = await request.text();
-  if (text.length > MAX_LETTER_BYTES) return null;
+  const text = await readBoundedText(request, MAX_LETTER_BYTES);
+  if (text === null) return null;
   try {
     const parsed = JSON.parse(text);
     return parsed && typeof parsed.letter === 'object' ? JSON.stringify({ letter: parsed.letter }) : null;

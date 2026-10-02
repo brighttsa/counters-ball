@@ -6,3 +6,13 @@
 # Xcode's per-user window state and local scheme preferences.
 xcuserdata/
 *.xcuserstate
+
+# Local credentials and dependency/runtime caches.
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+node_modules/
+.wrangler/

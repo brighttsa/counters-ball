@@ -1,5 +1,6 @@
 import { cleanRoomName } from './live-match-room-rules.js';
 import { checkProfileRequestLimit } from './profile-request-limits.js';
+import { readBoundedText } from './bounded-request-body.js';
 const ID = /^[a-f0-9]{32}$/, SECRET = /^[a-f0-9]{64}$/;
 const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
 const hash = async secret => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret))), b => b.toString(16).padStart(2, '0')).join('');
@@ -10,7 +11,7 @@ export async function handleKonkerProfile(ctx, request, now = Date.now()) {
   if (existing && existing.secretHash !== digest) return json({ error: 'invalid recovery credentials' }, 403);
   if (request.method === 'GET') return existing ? json({ profile: existing.profile }) : json({ error: 'profile not found' }, 404);
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
-  const text = await request.text(); if (text.length > 1024) return json({ error: 'profile request too large' }, 413);
+  const text = await readBoundedText(request, 1024); if (text === null) return json({ error: 'profile request too large' }, 413);
   let body; try { body = JSON.parse(text); } catch { return json({ error: 'invalid profile' }, 400); }
   if (!ID.test(body?.id ?? '') || typeof body.name !== 'string') return json({ error: 'invalid profile' }, 400);
   if (existing && existing.profile.id !== body.id) return json({ error: 'profile identity changed' }, 409);
@@ -26,8 +27,8 @@ export async function routeKonkerProfiles(request, env) {
   const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map(s => s.trim());
   if (!allowed.includes(request.headers.get('Origin') ?? '')) return json({ error: 'origin not allowed' }, 403);
   if (!['GET', 'POST'].includes(request.method)) return json({ error: 'method not allowed' }, 405);
-  const text = request.method === 'POST' ? await request.text() : undefined;
-  if (text?.length > 1024) return json({ error: 'profile request too large' }, 413);
+  const text = request.method === 'POST' ? await readBoundedText(request, 1024) : undefined;
+  if (text === null) return json({ error: 'profile request too large' }, 413);
   if (text) {
     let body; try { body = JSON.parse(text); } catch { return json({ error: 'invalid profile' }, 400); }
     if (body?.id !== id) return json({ error: 'profile identity changed' }, 409);
