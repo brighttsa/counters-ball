@@ -45,6 +45,13 @@ Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+Mobile voice goal clearance (Codex, 2026-10-02): scoped styles/table-talk.css
+and play/index.html. Collapsed voice is a 44px ON/OFF tab beneath Pause in the
+reserved HUD column; tapping expands the existing controls with a 180ms reveal.
+Reduced motion removes the reveal. 375/430px portrait and 844px landscape
+geometry, touch size and expand/collapse pass; 13 voice interaction tests pass.
+Manual claim/handoff because the helper requires a local peer remote.
+
 Waitlist sharing preview (Codex, 2026-10-02): added Open Graph and X large-image
 metadata with waitlist-specific copy and existing branded 1600x900 JPEG.
 Preview image responds 200 with image/jpeg. Scoped HTML change; publishing to Pages.
