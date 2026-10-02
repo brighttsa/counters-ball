@@ -2,7 +2,9 @@
 
 2026-10-02. Isolated branch codex/table-talk, based on deployed c7bec27.
 Production Worker pilot deployed as 27c1d9ff-5da4-433c-9774-db2ddc813cec.
-Client deployment and physical-device/live-room verification remain outstanding.
+Web client published from main commit f73abd0; konk.world/play and the LiveKit
+browser asset both return HTTP 200. Physical-device/live-room verification
+remains outstanding.
 
 ## Implemented
 
