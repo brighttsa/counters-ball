@@ -35,8 +35,9 @@ export class MatchSession {
     this.options = options;
     const level = (this.level = options.level);
 
-    this.stage = buildLevelStage({ scene: ctx.scene, renderer: ctx.renderer, camera: ctx.camera,
+    this.stage = options.preparedStage ?? buildLevelStage({ scene: ctx.scene, renderer: ctx.renderer, camera: ctx.camera,
       level, homeTeam: options.homeTeam, awayTeam: options.awayTeam });
+    if (options.preparedStage) this.stage.activate();
     ctx.post.applyPreset(this.stage.preset);
     ctx.cameraDirector.setFogRange(this.stage.preset.fogRange);
 

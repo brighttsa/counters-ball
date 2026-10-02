@@ -48,6 +48,7 @@ export function startGameRenderLoop({ app, camera, cameraDirector, renderer, pos
       return;
     }
     suspended = false;
+    if (app.building) return;
     if (!app.paused) time += dt;
     app.session?.update(dt, time);
     if (!app.paused) cameraDirector.update(dt, time);

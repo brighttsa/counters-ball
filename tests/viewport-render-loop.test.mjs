@@ -76,3 +76,15 @@ test('paused recovery renders without advancing presentation', () => {
     assert.deepEqual(calls.find(c => c[0] === 'session'), ['session', 0, 0]);
   });
 });
+
+test('staged construction suspends the old simulation and GPU work without clock catch-up', () => {
+  fixture(({ calls, app, frame }) => {
+    frame(1000); calls.length = 0;
+    app.building = true;
+    frame(2000); frame(3000);
+    assert.deepEqual(calls, []);
+    app.building = false; frame(3016);
+    assert.equal(calls.find(c => c[0] === 'session')[1], .016);
+    assert.equal(calls.filter(c => c[0] === 'render').length, 1);
+  });
+});

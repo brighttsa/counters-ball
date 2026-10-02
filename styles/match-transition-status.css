@@ -1,0 +1,22 @@
+.match-transition-status {
+  border: 1px solid #f3ead5;
+  border-radius: 0;
+  background: #101715;
+  color: #f3ead5;
+  padding: 24px;
+  width: min(320px, calc(100% - 48px));
+  text-align: center;
+}
+.match-transition-status::backdrop { background: rgb(16 23 21 / 75%); }
+.match-transition-status p { font: 28px 'Anton', sans-serif; margin: 0 0 20px; letter-spacing: 0; }
+.match-transition-status button {
+  min-height: 44px;
+  padding: 8px 24px;
+  border: 1px solid #f3ead5;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: 16px system-ui, sans-serif;
+  cursor: pointer;
+}
+.match-transition-status button:focus-visible { outline: 2px solid #f2cd42; outline-offset: 4px; }

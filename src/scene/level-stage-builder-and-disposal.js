@@ -9,7 +9,8 @@ import { buildTableAndBattens } from './table-and-battens-builder.js';
 import { buildBottleCapTeams } from './bottle-cap-players.js';
 import { buildPaperMatchBall, buildMatchstickGoals } from './match-ball-and-goal-posts.js?v=2';
 import { buildTableObstacles } from './table-obstacles-pebbles-bottles-coins.js';
-import { buildStreetBackdrop } from './street-background-environment.js';
+import { buildStreetBackdropSteps } from './street-background-environment.js';
+import { consumeBuildSteps } from '../core/cooperative-task-yield.js';
 
 function hashString(text) {
   let h = 2166136261;
@@ -17,34 +18,55 @@ function hashString(text) {
   return h >>> 0;
 }
 
-export function buildLevelStage({ scene, renderer, level, homeTeam, awayTeam, camera, photograph }) {
+export function buildLevelStage(options) {
+  const steps = levelStageBuildSteps(options);
+  let next;
+  do { next = steps.next(); } while (!next.done);
+  next.value.activate();
+  return next.value;
+}
+
+export function prepareLevelStage(options, scheduling) {
+  return consumeBuildSteps(levelStageBuildSteps(options), scheduling);
+}
+
+export function* levelStageBuildSteps({ scene, renderer, level, homeTeam, awayTeam, camera, photograph }) {
   const preset = lightingForVenue(level.lighting, level.backdrop);
   const group = new THREE.Group();
   group.name = `stage-${level.id}`;
 
-  scene.background = new THREE.Color(preset.fog);
-  scene.fog.color.setHex(preset.fog);
-  renderer.toneMappingExposure = preset.exposure;
+  let completed = false;
+  try {
+    group.add(buildLightRig(preset));
+    yield;
+    const seed = hashString(level.id);
+    const visualProfile = getVenueVisualProfile(level.backdrop);
+    buildTableAndBattens(group, level.surface, seed, visualProfile);
+    yield;
+    const caps = buildBottleCapTeams(group, homeTeam.palette, awayTeam.palette, seed, level.awaySlots);
+    yield;
+    const ballMesh = buildPaperMatchBall(group);
+    const { postBodies, goals } = buildMatchstickGoals(group, visualProfile, seed);
+    const obstacleBodies = buildTableObstacles(group, level.obstacles, seed);
+    yield;
+    const backdrop = yield* buildStreetBackdropSteps(group, level.backdrop, preset, { camera, photograph });
+    completed = true;
 
-  group.add(buildLightRig(preset));
-  const seed = hashString(level.id);
-  const visualProfile = getVenueVisualProfile(level.backdrop);
-  buildTableAndBattens(group, level.surface, seed, visualProfile);
-  const caps = buildBottleCapTeams(group, homeTeam.palette, awayTeam.palette, seed, level.awaySlots);
-  const ballMesh = buildPaperMatchBall(group);
-  const { postBodies, goals } = buildMatchstickGoals(group, visualProfile, seed);
-  const obstacleBodies = buildTableObstacles(group, level.obstacles, seed);
-  const backdrop = buildStreetBackdrop(group, level.backdrop, preset, { camera, photograph });
-  scene.add(group);
-
-  return {
-    group, preset, caps, ballMesh, goals, postBodies, obstacleBodies, backdrop, visualProfile,
-    dispose() {
-      backdrop.dispose();
-      scene.remove(group);
-      disposeObject3D(group);
-    },
-  };
+    return {
+      group, preset, caps, ballMesh, goals, postBodies, obstacleBodies, backdrop, visualProfile,
+      activate() {
+        scene.background = new THREE.Color(preset.fog);
+        scene.fog.color.setHex(preset.fog);
+        renderer.toneMappingExposure = preset.exposure;
+        scene.add(group);
+      },
+      dispose() {
+        backdrop.dispose();
+        scene.remove(group);
+        disposeObject3D(group);
+      },
+    };
+  } finally { if (!completed) disposeObject3D(group); }
 }
 
 /** Free geometries, materials, textures and shadow maps under `root`. */

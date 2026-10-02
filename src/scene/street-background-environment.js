@@ -95,7 +95,14 @@ function addDustMotes(group, rng, count) {
 /**
  * @returns {{ update(t, dt): void, startle(): void }} — startle() on goals
  */
-export function buildStreetBackdrop(group, key, preset, { camera, photograph } = {}) {
+export function buildStreetBackdrop(...args) {
+  const steps = buildStreetBackdropSteps(...args);
+  let next;
+  do { next = steps.next(); } while (!next.done);
+  return next.value;
+}
+
+export function* buildStreetBackdropSteps(group, key, preset, { camera, photograph } = {}) {
   key = resolveEnvironmentKey(key);
   const spec = VENUE_ENVIRONMENTS[key] ?? VENUE_ENVIRONMENTS.kiosk;
   const rng = createSeededRandom(hashKey(key));
@@ -105,53 +112,62 @@ export function buildStreetBackdrop(group, key, preset, { camera, photograph } =
   let elapsed = 0;
   let disposed = false;
   const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
+  let completed = false;
+  try {
 
-  group.add(buildVenueGround(spec.ground, rng));
-  const { glowMaterials, spillLights } = addWall(group, spec.wall, rng);
-  // Use an independent stream so added architecture never reshuffles existing props.
-  const architecture = buildVenueArchitecture(group, key, createSeededRandom(hashKey(`${key}-architecture`)), spec.wall);
-  updaters.push(architecture.update);
+    group.add(buildVenueGround(spec.ground, rng));
+    yield;
+    const { glowMaterials, spillLights } = addWall(group, spec.wall, rng);
+    yield;
+    // Use an independent stream so added architecture never reshuffles existing props.
+    const architecture = buildVenueArchitecture(group, key, createSeededRandom(hashKey(`${key}-architecture`)), spec.wall);
+    updaters.push(architecture.update);
+    yield;
 
-  const obstacles = [];
-  for (const [kind, x, z, rotationY = 0, options = {}] of spec.props) {
-    const prop = PROP_BUILDERS[kind](rng, options);
-    prop.position.set(x, GROUND_Y, z);
-    prop.rotation.y = rotationY;
-    prop.traverse((o) => {
-      if (!o.isMesh) return;
-      o.castShadow = !o.material.transparent;
-      o.receiveShadow = true;
-    });
-    group.add(prop);
-    if (prop.userData.update) updaters.push(prop.userData.update);
-    if (PROP_FOOTPRINT[kind]) obstacles.push({ x, z, r: PROP_FOOTPRINT[kind] });
-  }
+    const obstacles = [];
+    for (const [kind, x, z, rotationY = 0, options = {}] of spec.props) {
+      const prop = PROP_BUILDERS[kind](rng, options);
+      prop.position.set(x, GROUND_Y, z);
+      prop.rotation.y = rotationY;
+      prop.traverse((o) => {
+        if (!o.isMesh) return;
+        o.castShadow = !o.material.transparent;
+        o.receiveShadow = true;
+      });
+      group.add(prop);
+      if (prop.userData.update) updaters.push(prop.userData.update);
+      if (PROP_FOOTPRINT[kind]) obstacles.push({ x, z, r: PROP_FOOTPRINT[kind] });
+      yield;
+    }
 
-  for (const [kind, options = {}] of spec.animals ?? []) {
-    const creature = buildFowl(kind, rng, { ...options, obstacles });
-    creature.object.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-    group.add(creature.object);
-    creature.update(0, Number.EPSILON);
-    updaters.push(creature.update);
-    creatures.push(creature);
-  }
+    for (const [kind, options = {}] of spec.animals ?? []) {
+      const creature = buildFowl(kind, rng, { ...options, obstacles });
+      creature.object.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+      group.add(creature.object);
+      creature.update(0, Number.EPSILON);
+      updaters.push(creature.update);
+      creatures.push(creature);
+      yield;
+    }
 
-  if (spec.shade && !preset.bulb) updaters.push(buildDappledLeafShade(group, rng, spec.shade));
-  if (spec.dustSheets) updaters.push(buildHarmattanDustSheets(group, rng, spec.dustSheets));
-  const flicker = buildBulbFlicker(group, glowMaterials, spillLights);
-  if (flicker) updaters.push(flicker);
-  updaters.push(addDustMotes(group, rng, spec.dust ?? 90));
+    if (spec.shade && !preset.bulb) updaters.push(buildDappledLeafShade(group, rng, spec.shade));
+    if (spec.dustSheets) updaters.push(buildHarmattanDustSheets(group, rng, spec.dustSheets));
+    const flicker = buildBulbFlicker(group, glowMaterials, spillLights);
+    if (flicker) updaters.push(flicker);
+    updaters.push(addDustMotes(group, rng, spec.dust ?? 90));
+    completed = true;
 
-  return {
-    update(_t, dt) {
-      if (disposed || !Number.isFinite(dt) || dt <= 0) return;
-      if (!reducedMotion?.matches) {
-        elapsed += dt;
-        for (const update of updaters) update(elapsed, dt);
-      }
-      photo.update(elapsed, dt);
-    },
-    dispose() { disposed = true; photo.dispose(); },
-    startle() { if (!disposed && !reducedMotion?.matches) for (const creature of creatures) creature.startle(); },
-  };
+    return {
+      update(_t, dt) {
+        if (disposed || !Number.isFinite(dt) || dt <= 0) return;
+        if (!reducedMotion?.matches) {
+          elapsed += dt;
+          for (const update of updaters) update(elapsed, dt);
+        }
+        photo.update(elapsed, dt);
+      },
+      dispose() { disposed = true; photo.dispose(); },
+      startle() { if (!disposed && !reducedMotion?.matches) for (const creature of creatures) creature.startle(); },
+    };
+  } finally { if (!completed) { disposed = true; photo.dispose(); } }
 }

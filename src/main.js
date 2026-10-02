@@ -10,6 +10,8 @@ import { AttractModeCallout, createAttractHud } from './ui/attract-mode-callout.
 import { CameraDirector } from './fx/camera-director-attract-intro-play-goal.js';
 import { PlayerCameraController } from './fx/player-camera-controller.js?v=3';
 import { createMatchOrientationPrompt } from './ui/match-orientation-prompt.js';
+import { createMatchTransitionStatus } from './ui/match-transition-status.js';
+import { prepareLevelStage } from './scene/level-stage-builder-and-disposal.js?v=2';
 import { ProceduralSoundBoard } from './audio/procedural-sound-effects-web-audio.js?v=5';
 import { installDeveloperAudioDebugPanel } from './audio/developer-audio-debug-panel.js';
 import { SoundtrackDirector } from './audio/soundtrack-music-director.js';
@@ -78,6 +80,8 @@ const liveRoom = createLiveMatchRoomFlow({ level: CAMPAIGN_LEVELS[0],
     home: seats.home?.name ?? 'Player 1', away: seats.away?.name ?? 'Player 2',
   }, options) });
 const orientation = createMatchOrientationPrompt();
+const matchTransition = createMatchTransitionStatus(app, () => {},
+  () => hud.event('COULD NOT OPEN THE TABLE', { priority: 6, duration: 3, detail: 'Please try again.' }));
 new PlayerCameraController(app, cameraDirector);
 const challengeFor = (level) => challengeForLevel(app.challenge, level);
 const unlockedIn = (mode, i) => isTrackLevelUnlocked(progress, mode, i, app.challenge ?? app.friendInvite);
@@ -131,6 +135,7 @@ function ensureAttractMode() {
 }
 
 function showTitle() {
+  matchTransition.cancel();
   app.challenge = null;
   app.friendInvite = null;
   ensureAttractMode();
@@ -162,6 +167,7 @@ function showFriendMatch({ incoming = false } = {}) {
 }
 
 function showLevels(mode = app.mode) {
+  matchTransition.cancel();
   if (mode === 'practice' || mode === 'daily') return showTitle(); // no table list: Back and Quit go home
   app.challenge = null;
   app.friendInvite = null;
@@ -173,6 +179,7 @@ function showLevels(mode = app.mode) {
 }
 
 function previewLevel(index) {
+  matchTransition.cancel();
   const level = trackFor(app.mode)[index];
   if (!level) return;
   replaceSession({ level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team,
@@ -194,16 +201,21 @@ function openMatchTable(level, sessionOptions, versus) {
 }
 
 /** @param rematch 2-Player Rematch: same table, next game of the series, straight to kick-off */
-function prepareMatch(index, { rematch = false } = {}) {
+async function prepareMatch(index, { rematch = false } = {}) {
   if (app.mode === 'daily') return dailyFlick.start(); // Restart from the pause menu
   const track = trackFor(app.mode);
   const level = track[index];
   if (!level || !unlockedIn(app.mode, index)) return showLevels();
   if (orientation.offer(() => prepareMatch(index, { rematch }))) return;
   const versus = app.mode === 'versus';
+  const preparedStage = await matchTransition.prepare(signal => prepareLevelStage({
+    scene, renderer, camera, level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team,
+  }, { signal }));
+  if (!preparedStage) return;
   app.levelIndex = index;
   if (app.mode === 'legends') { progress.lastLegendAct = level.id; saveProgress(progress); }
   openMatchTable(level, {
+    preparedStage,
     controllers: { home: 'human', away: versus ? 'human' : 'ai' },
     playerNames: versus ? hotSeat.names : undefined,
     onEnd: (result) => showResults(result),
@@ -288,6 +300,7 @@ const actions = createMenuActions({
 // so a player whose first touch is on the table would otherwise hear nothing until a menu tap.
 for (const type of ['pointerdown', 'pointerup', 'touchend', 'click']) window.addEventListener(type, () => sound.unlock(), { passive: true });
 window.addEventListener('keydown', (e) => {
+  if (app.building) return;
   if (e.key !== 'Escape') return;
   if (menus.current === 'home-settings') actions['close-settings']();
   else if (menus.current === 'credits') showTitle();

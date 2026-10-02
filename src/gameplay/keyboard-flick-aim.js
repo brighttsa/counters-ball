@@ -47,6 +47,7 @@ export class KeyboardFlickAim {
 
   key(e) {
     if (e.altKey || e.ctrlKey || e.metaKey || typeof document === 'undefined') return;
+    if (document.querySelector('.match-transition-status[open]')) return;
     if (document.body.dataset.screen !== 'match' || /INPUT|TEXTAREA|SELECT/.test(e.target?.tagName ?? '')) return;
     const action = keyboardAction(e.key);
     if (!action) return;
