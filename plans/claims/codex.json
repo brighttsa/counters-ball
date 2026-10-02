@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "Keep Table Talk controls clear of room content",
+  "task": "Plan compact expandable Table Talk control",
   "status": "released",
-  "paths": ["play/index.html", "styles/table-talk.css", "src/ui/table-talk-controls.js", "src/ui/live-match-room-flow.js", "tests/table-talk-onboarding.test.mjs", "plans/agent-handoff-board.md"],
-  "updatedAt": "2026-10-02T06:10:00Z",
-  "head": "07d20e1"
+  "paths": ["plans/261002-table-talk-compact-control/", "plans/reports/261002-0528-table-talk-compact-control-design.md", "docs/journals/261002-0528-table-talk-compact-control-plan.md", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
+  "updatedAt": "2026-10-02T05:33:00Z",
+  "head": "c6d4bec"
 }
