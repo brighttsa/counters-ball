@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KONK! — Community Campaign Studio</title><link rel="icon" href="/assets/konk-favicon.svg">
+<link rel="stylesheet" href="/social/templates/posters.css"><link rel="stylesheet" href="/social/templates/features.css"><link rel="stylesheet" href="/social/studio.css"></head>
+<body>
+<header class="studio-header"><a href="https://konk.world" aria-label="KONK website"><img src="/assets/konk-logo.svg" alt="KONK!"></a><div><h1>Campaign Studio</h1><span>THE KONKERS COLLECTION</span></div><button id="export-pack">Export collection</button></header>
+<nav class="download-packs" aria-label="Finished campaign packs"><a href="/social/?poster=23-table-talk">Voice chat finally dey here</a><span>Download packs</span><a href="/social/KONKERS-Campaign.zip" download>All assets</a><a href="/social/KONK-New-Features.zip" download>New features</a><a href="/social/KONK-Twi-First.zip" download>Twi-first</a></nav>
+<main class="studio">
+  <div class="collection-tools"><label>Collection<select id="collection-filter"><option>All</option></select></label><label>Search<input id="campaign-search" type="search" placeholder="Search campaigns" autocomplete="off"></label><span id="filter-count" aria-live="polite"></span></div>
+  <aside class="collection"><div class="collection-heading"><h2>Compositions</h2><span id="composition-count"></span></div><nav id="gallery" aria-label="Campaign compositions"></nav><p id="empty-gallery" hidden>No matching compositions.</p></aside>
+  <section class="workspace" aria-label="Poster preview">
+    <div class="preview-toolbar"><select id="mobile-poster" aria-label="Composition"></select><div id="formats" role="group" aria-label="Poster format"></div></div>
+    <div class="preview-meta"><span id="current-title"></span><span id="dimensions"></span></div>
+    <div id="preview-shell"><div id="preview"></div></div>
+    <div class="preview-actions"><button id="motion" title="Play or pause motion preview" aria-label="Play motion preview">▶</button><span id="motion-label">Still composition</span><button id="export-video">Export MP4</button><button id="export-png" class="primary">Export PNG</button></div>
+    <section class="caption-panel"><div class="caption-top"><h2>Post Caption</h2><button id="copy-caption">Copy caption</button></div><textarea id="caption" aria-label="Social caption"></textarea></section>
+  </section>
+  <aside class="inspector"><div class="inspector-title"><h2>Art Direction</h2><button id="reset" title="Reset this composition">Reset</button></div>
+    <label>Headline<textarea id="headline" rows="3"></textarea></label>
+    <label>Supporting copy<textarea id="subheadline" rows="3"></textarea></label>
+    <div id="twi-fields" hidden><label>Opening question<input id="question"></label><label>Closing question<input id="closing"></label></div>
+    <label>Eyebrow<input id="eyebrow"></label><label>Community signature<input id="signature"></label><label>Call to action<input id="cta"></label>
+    <div class="field-pair"><label>Venue<select id="venue"></select></label><label>Logo<select id="logoPosition"><option value="top-right">Top right</option><option value="top-left">Top left</option><option value="bottom-right">Bottom right</option></select></label></div>
+    <fieldset><legend>Colorway</legend><div id="palettes"></div></fieldset>
+    <div class="field-pair color-fields"><label>Ground<input id="background" type="color"></label><label>Type<input id="foreground" type="color"></label><label>Accent<input id="accent" type="color"></label></div>
+    <label class="checkbox"><input id="decoration" type="checkbox"> Print texture & edge</label>
+    <label>Gameplay image<input id="gameplayImage" type="file" accept="image/png,image/jpeg,image/webp"></label><button id="clear-image">Use venue capture</button>
+    <div id="score-fields" hidden><div class="field-pair"><label>Home player<input id="homeName"></label><label>Away player<input id="awayName"></label></div><div class="field-pair"><label>Home goals<input id="homeScore" type="number" min="0" max="99"></label><label>Away goals<input id="awayScore" type="number" min="0" max="99"></label></div></div>
+    <button id="save-config">Download campaign data</button>
+  </aside>
+</main><div id="status" role="status" aria-live="polite"></div><script type="module" src="/social/studio.js"></script>
+</body></html>

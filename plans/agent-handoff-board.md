@@ -9,6 +9,15 @@ precedence over stale copies of this board. Until both clones adopt the helper,
 coordinate board claims manually. See `docs/collaboration-workflow.md`.
 
 ## In progress
+Campaign Studio publication: Codex, 2026-10-02. Isolated social/, scripts/social/,
+tests/social-*.test.mjs and Pages workflow. Studio now works on a static host,
+including finished PNG/MP4 downloads, edited browser PNGs and collection ZIPs.
+Voice creative explicitly announces "VOICE CHAT FINALLY DEY HERE" with the
+owner-corrected Ghanaian Pidgin; exact Twi-first copy is unchanged. All 108
+assets were regenerated and checked for exact dimensions and overflow.
+475 release tests pass; narrow mobile previews and browser PNG downloads pass.
+Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
+
 | Task | Owner | Branch | Files / folders claimed | Started |
 |---|---|---|---|---|
 | Connected iPhone Table Talk compact-control check | User + Codex | `codex/table-talk` | Implementation finished; no active file claim. Real connected match-HUD geometry and microphone/audio device checks remain. | 2026-10-02 |

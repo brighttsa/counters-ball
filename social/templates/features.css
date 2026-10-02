@@ -1,0 +1,51 @@
+.poster.feature .headline{top:16%;font-size:calc(140 * var(--unit));line-height:1.08}
+.poster.feature .headline .line:last-child{color:var(--accent)}
+.poster.feature .art{top:42%;bottom:24%;left:5%;right:5%}
+.poster.feature .subheadline{bottom:13%;font-size:calc(31 * var(--unit));line-height:1.25}
+.poster.feature .cap{width:52%;height:100%;left:-2%;right:auto;bottom:0;transform:rotate(10deg)}
+.poster.feature .second{left:auto;right:-2%;transform:rotate(-12deg)}
+.poster.feature .art-label{position:absolute;left:0;right:0;bottom:0;text-align:center;font-size:calc(17 * var(--unit));font-weight:800}
+.poster.feature .invite-path{position:absolute;top:50%;left:38%;width:24%;border-top:calc(4 * var(--unit)) dashed var(--accent);z-index:-1}
+.poster.feature-invite .cap{height:85%;bottom:15%}
+.poster.feature .versus-mark{position:absolute;left:43%;top:35%;font:calc(72 * var(--unit))/1 Anton,Arial,sans-serif;color:var(--accent)}
+.poster.feature-rival .cap{width:43%}
+.poster.feature .knockout-bracket{position:absolute;inset:0}
+.poster.feature .seed{width:30%;height:45%;transform:rotate(8deg);left:0;bottom:auto;top:0}
+.poster.feature .seed-1{top:48%;transform:rotate(-12deg)}
+.poster.feature .seed-2,.poster.feature .seed-3{left:auto;right:0;transform:rotate(-8deg)}
+.poster.feature .seed-3{top:48%;transform:rotate(12deg)}
+.poster.feature .champion{width:30%;height:63%;left:35%;top:15%;transform:rotate(-5deg)}
+.poster.feature .bracket-path{position:absolute;left:21%;top:22%;height:48%;width:20%;border:calc(3 * var(--unit)) solid var(--accent);border-left:0;z-index:-1}
+.poster.feature .path-right{left:auto;right:21%;border-left:calc(3 * var(--unit)) solid var(--accent);border-right:0}
+.poster.feature .bracket-caption{position:absolute;left:0;right:0;text-align:center;bottom:0;font-size:calc(17 * var(--unit));font-weight:800}
+.poster.feature-voice .cap{height:68%;bottom:0}
+.poster.feature .voice-quote,.poster.feature .voice-response{position:absolute;left:0;top:0;font:calc(61 * var(--unit))/1.1 'Patrick Hand',Arial,sans-serif;transform:rotate(-4deg)}
+.poster.feature .voice-response{left:auto;right:0;top:23%;font-size:calc(49 * var(--unit));transform:rotate(4deg);color:var(--accent)}
+.poster.feature-profile .cap{width:65%;left:18%;height:100%;transform:rotate(-12deg)}
+.poster.feature .identity-stamp{position:absolute;bottom:7%;right:-1%;font:calc(56 * var(--unit))/1 Anton,Arial,sans-serif;color:var(--bg);background:var(--fg);padding:calc(10 * var(--unit)) calc(19 * var(--unit));transform:rotate(-6deg)}
+.poster.feature-special .art{top:44%;left:0;right:0;bottom:24%}
+.poster.feature-special .venue{object-position:center 60%}
+.poster.feature-special .cap{width:35%;height:92%;left:auto;right:0;bottom:-7%}
+.poster.square.feature .headline{top:17%;font-size:calc(121 * var(--unit))}
+.poster.square.feature .art{top:44%;bottom:28%}
+.poster.square.feature .subheadline{bottom:15%;font-size:calc(28 * var(--unit))}
+.poster.square.feature .voice-quote{font-size:calc(53 * var(--unit))}
+.poster.square.feature .voice-response{font-size:calc(43 * var(--unit))}
+.poster.story.feature .headline{top:21%;font-size:calc(146 * var(--unit))}
+.poster.story.feature .art{top:42%;bottom:29%}
+.poster.story.feature .art .cap{bottom:0}
+.poster.story.feature .subheadline{bottom:20%;font-size:calc(36 * var(--unit))}
+.poster.story.feature-invite .art .cap{bottom:15%}
+.poster.landscape.feature .headline{top:22%;right:45%;font-size:calc(98 * var(--unit))}
+.poster.landscape.feature .art{top:22%;bottom:24%;left:58%;right:4%}
+.poster.landscape.feature .subheadline{left:5%;right:46%;bottom:19%;font-size:calc(25 * var(--unit))}
+.poster.landscape.feature .cap{width:56%}
+.poster.landscape.feature-rival .cap{width:43%}
+.poster.landscape.feature .versus-mark{font-size:calc(44 * var(--unit))}
+.poster.landscape.feature .art-label,.poster.landscape.feature .bracket-caption{font-size:calc(11 * var(--unit))}
+.poster.landscape.feature .seed,.poster.landscape.feature .champion{width:30%}
+.poster.landscape.feature .voice-quote{font-size:calc(36 * var(--unit))}
+.poster.landscape.feature .voice-response{font-size:calc(31 * var(--unit))}
+.poster.landscape.feature-profile .cap{width:82%;left:9%}
+.poster.landscape.feature .identity-stamp{font-size:calc(35 * var(--unit))}
+.poster.landscape.feature-special .cap{width:55%;left:auto;right:0}
