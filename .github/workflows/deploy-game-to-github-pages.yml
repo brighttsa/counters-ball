@@ -42,7 +42,9 @@ jobs:
       - name: Collect runtime files only
         run: |
           mkdir _site
-          cp -R index.html play trailer.html trailer 404.html privacy.html manifest.webmanifest sw.js assets src styles promo CNAME _site/
+          cp -R index.html play waitlist trailer.html trailer 404.html privacy.html manifest.webmanifest sw.js assets src styles promo CNAME _site/
+          mkdir -p _site/vendor
+          cp -R vendor/fonts _site/vendor/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

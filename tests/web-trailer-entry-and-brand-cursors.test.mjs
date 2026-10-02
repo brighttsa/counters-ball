@@ -48,8 +48,8 @@ test('installed web app launches straight into play', async () => {
 test('homepage link arrows are matching vectors rather than mobile emoji glyphs', async () => {
   const css = await readFile(new URL('styles/trailer-page.css', root), 'utf8');
   const arrows = [...trailer.matchAll(/<svg class="link-arrow"[^>]*>[\s\S]*?<\/svg>/g)];
-  assert.equal(arrows.length, 2);
-  assert.equal(arrows[0][0], arrows[1][0]);
+  assert.equal(arrows.length, 4);
+  for (const arrow of arrows) assert.equal(arrows[0][0], arrow[0]);
   assert.match(arrows[0][0], /stroke="currentColor"/);
   assert.match(arrows[0][0], /aria-hidden="true" focusable="false"/);
   assert.doesNotMatch(trailer, /↗/);

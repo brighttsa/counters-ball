@@ -22,6 +22,8 @@ import { limitProfileRequest } from './profile-request-limits.js';
 import { readBoundedText } from './bounded-request-body.js';
 import { checkMatchCreationLimit, limitMatchCreation } from './match-creation-request-limits.js';
 import { KonkVoiceCoordinator, routePrivateVoice } from './private-room-voice-coordinator.js';
+import { routeCommunityInterest } from './community-interest-routes.js';
+export { KonkCommunity } from './community-interest-durable-object.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
@@ -184,6 +186,7 @@ export default {
 };
 
 async function route(request, env) {
+  const interest = await routeCommunityInterest(request, env); if (interest) return interest;
   const profile = await routeKonkerProfiles(request, env); if (profile) return profile;
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
   const voice = await routePrivateVoice(request, env, parts); if (voice) return voice;

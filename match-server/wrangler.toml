@@ -17,7 +17,7 @@ fallthrough = true
 
 [vars]
 # Pages that may call the API from the browser.
-ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180,konk-local://game"
+ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180,http://localhost:4190,konk-local://game"
 # Where notifications send players back to; also the VAPID contact.
 SITE_URL = "https://konk.world/"
 TABLE_TALK_ENABLED = "true"
@@ -40,3 +40,11 @@ new_sqlite_classes = ["KonkMatch"]
 [[migrations]]
 tag = "v2"
 new_sqlite_classes = ["KonkVoiceCoordinator"]
+
+[[durable_objects.bindings]]
+name = "KONK_COMMUNITY"
+class_name = "KonkCommunity"
+
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = ["KonkCommunity"]

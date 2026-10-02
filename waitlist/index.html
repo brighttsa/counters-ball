@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101211">
+  <title>KONK! — Your next round</title>
+  <meta name="description" content="Join the KONK! iOS and Android waitlist, or tell us how your time at the table has been.">
+  <link rel="icon" href="/assets/konk-favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://konk.world/waitlist/">
+  <link rel="stylesheet" href="/waitlist/waitlist.css">
+</head>
+<body>
+  <header class="masthead">
+    <a href="/" aria-label="KONK! home"><img src="/assets/konk-logo.svg" width="112" height="62" alt="KONK!"></a>
+    <span class="origin">BORN IN GHANA. PLAYED EVERYWHERE.</span>
+    <a class="play-link" href="/play/">Play on the web <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10M7 17 17 7"/></svg></a>
+  </header>
+  <main>
+    <section class="editorial" aria-labelledby="page-title">
+      <p class="eyebrow">THE TABLE GETS BIGGER</p>
+      <h1 id="page-title">YOUR <br>NEXT<br><span>ROUND.</span></h1>
+      <p class="intro">Same childhood game.<br>A new place to play.</p>
+      <figure><img src="/promo/konk-trailer/konk-next-round-poster-wide.jpg" alt="KONK! bottle caps and paper ball on the Roadside Showdown table" width="1600" height="900"><figcaption>ONE CAP. ONE PERFECT ANGLE. ONE CLEAN KONK!</figcaption></figure>
+    </section>
+    <section class="join-section" aria-label="Waitlist and player feedback">
+      <div class="tabs" role="tablist" aria-label="Choose a form">
+        <button id="waitlist-tab" role="tab" aria-selected="true" aria-controls="waitlist-panel" type="button">Join the waitlist</button>
+        <button id="feedback-tab" role="tab" aria-selected="false" aria-controls="feedback-panel" tabindex="-1" type="button">Send feedback</button>
+      </div>
+      <div id="waitlist-panel" role="tabpanel" aria-labelledby="waitlist-tab">
+        <p class="eyebrow">iOS + ANDROID</p>
+        <h2>TAKE YOUR<br>SEAT.</h2>
+        <p class="form-intro">Get the word when KONK! lands on your phone. Until then, the web table is open.</p>
+        <form id="waitlist-form">
+          <fieldset><legend>Which table are you waiting for?</legend>
+            <div class="platforms">
+              <label><input type="checkbox" name="platforms" value="ios"><span>iOS <small>iPhone &amp; iPad</small></span></label>
+              <label><input type="checkbox" name="platforms" value="android"><span>Android <small>Phone &amp; tablet</small></span></label>
+            </div>
+          </fieldset>
+          <label class="field">Email address<input name="email" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254" required></label>
+          <label class="field">Name <span class="optional">Optional</span><input name="name" autocomplete="given-name" maxlength="60" placeholder="What should we call you?"></label>
+          <label class="consent"><input type="checkbox" name="consent" required><span>Email me about the KONK! mobile launch. No unrelated promotions.</span></label>
+          <p class="privacy-note">Your email stays private. <a href="/privacy.html#community">Privacy &amp; removal requests</a></p>
+          <label class="trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+          <button class="submit" type="submit">SAVE MY SEAT <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10M7 17 17 7"/></svg></button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <div id="feedback-panel" role="tabpanel" aria-labelledby="feedback-tab" hidden>
+        <p class="eyebrow">FROM YOUR SIDE OF THE TABLE</p>
+        <h2>HOW WAS<br>THAT ROUND?</h2>
+        <p class="form-intro">The clean flicks. The frustrating bits. The idea you can't shake. We want to hear it.</p>
+        <form id="feedback-form">
+          <div class="field-pair">
+            <label class="field">Where did you play?<select name="platform" required><option value="web">Web browser</option><option value="ios">iOS / TestFlight</option><option value="android">Android browser</option></select></label>
+            <label class="field">What's on your mind?<select name="category"><option value="experience">My experience</option><option value="bug">Something isn't working</option><option value="idea">An idea</option></select></label>
+          </div>
+          <fieldset><legend>Your experience</legend><div class="ratings">
+            <label><input type="radio" name="rating" value="1" required><span>1</span></label>
+            <label><input type="radio" name="rating" value="2"><span>2</span></label>
+            <label><input type="radio" name="rating" value="3"><span>3</span></label>
+            <label><input type="radio" name="rating" value="4"><span>4</span></label>
+            <label><input type="radio" name="rating" value="5"><span>5</span></label>
+          </div><div class="rating-ends"><span>Needs work</span><span>Loved it</span></div></fieldset>
+          <label class="field">Tell us about it<textarea name="message" rows="4" minlength="10" maxlength="3000" required placeholder="What happened at your table?"></textarea></label>
+          <div class="field-pair">
+            <label class="field">Device / browser <span class="optional">Optional</span><input name="device" maxlength="100" placeholder="e.g. iPhone XR, Safari"></label>
+            <label class="field">Email <span class="optional">Optional</span><input name="email" type="email" autocomplete="email" maxlength="254" placeholder="For a reply"></label>
+          </div>
+          <label class="consent"><input type="checkbox" name="replyConsent"><span>You may email me about this feedback. Leave email blank to send anonymously.</span></label>
+          <p class="privacy-note">No account needed. Please don't include private information in your message. <a href="/privacy.html#community">Privacy</a></p>
+          <label class="trap" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+          <button class="submit" type="submit">SEND TO THE TABLE <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10M7 17 17 7"/></svg></button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer><span>WELCOME TO THE TABLE.</span><a class="social-link" href="https://www.instagram.com/konk.world/" target="_blank" rel="noopener">@konk.world <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7h10v10M7 17 17 7"/></svg></a><a href="/privacy.html">Privacy</a></footer>
+  <script type="module" src="/waitlist/waitlist.js"></script>
+</body>
+</html>
