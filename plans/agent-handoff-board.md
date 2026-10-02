@@ -45,6 +45,17 @@ Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+Rival admission capacity (Codex, 2026-10-02): indexed SQLite search storage
+replaces global JSON maps; removes waiting, retained-ticket and client-count
+ceilings while preserving per-client rate protection. Existing records migrate
+in place. Cleanup retains active searches. One shared pairing coordinator,
+independent match rooms; cross-queue sharding remains a separate scaling task.
+500 tests pass; Cloudflare local runtime pairs 1200 clients into 600 unique rooms.
+15 focused cases cover migration, retries, cancellation, failure recovery and
+expiry. Backend deployed as 87002b4c-eb46-4228-9bb9-9adbd9aa1cb1; live
+cancel/join/poll checks pass without entering the real player pool.
+Manual scoped claim due to peer-remote helper.
+
 Mobile voice goal clearance (Codex, 2026-10-02): scoped styles/table-talk.css
 and play/index.html. Collapsed voice is a 44px ON/OFF tab beneath Pause in the
 reserved HUD column; tapping expands the existing controls with a 180ms reveal.

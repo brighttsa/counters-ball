@@ -1,9 +1,9 @@
 import { createRoom, joinRoom, publicRoom, newRoom, cleanRoomName } from './live-match-room-rules.js';
 import { readBoundedText } from './bounded-request-body.js';
+import { publicRivalSearchStorage } from './public-rival-search-storage.js';
 
 export const SEARCH_LEASE_MS = 20_000;
 const RESULT_MS = 120_000;
-const CAPACITY = 100;
 const TICKET = /^[a-f0-9]{36}$/;
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
   status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
@@ -14,41 +14,27 @@ export async function handlePublicMatchmaking(ctx, env, body, now = Date.now(), 
   if (!TICKET.test(body?.ticket ?? '') || !['join', 'poll', 'cancel'].includes(body?.action)) {
     return json({ error: 'invalid search request' }, 400);
   }
-  const entries = await ctx.storage.get('public-searches') ?? {};
-  for (const [key, entry] of Object.entries(entries)) if (entry.expiresAt <= now) delete entries[key];
-  const limits = await ctx.storage.get('public-search-limits') ?? {};
-  for (const [key, value] of Object.entries(limits)) if (value.until <= now) delete limits[key];
-  const limit = limits[client] ?? { requests: 0, joins: 0, until: now + 60_000 };
-  if (++limit.requests > 240 || (body.action === 'join' && !entries[body.ticket] && ++limit.joins > 20)) {
+  const store = await publicRivalSearchStorage(ctx);
+  let entry = store.get(body.ticket, now);
+  if (!store.limit(client, now, body.action === 'join' && !entry)) {
     return json({ error: 'too many searches; try again shortly' }, 429);
   }
-  if (!limits[client] && Object.keys(limits).length >= 1000) return json({ error: 'search is busy' }, 429);
-  limits[client] = limit;
-  await ctx.storage.put('public-search-limits', limits);
-  let entry = entries[body.ticket];
-  const save = async () => {
-    await ctx.storage.put('public-searches', entries);
-    await ctx.storage.setAlarm(now + RESULT_MS);
-  };
+  await store.schedule(now);
   if (entry?.result) return json({ state: 'matched', ...entry.result });
   if (body.action === 'cancel') {
-    if (!entry && Object.keys(entries).length >= CAPACITY * 10) return json({ error: 'search is busy' }, 429);
     // Tombstones also cancel a delayed join that arrived after its cancellation.
-    entries[body.ticket] = { state: 'cancelled', expiresAt: now + RESULT_MS };
-    await save();
+    store.put(body.ticket, { state: 'cancelled', expiresAt: now + RESULT_MS });
     return json({ state: 'cancelled' });
   }
   if (entry?.state === 'cancelled') return json({ state: 'cancelled' });
   if (!entry && body.action === 'poll') return json({ state: 'expired' });
   if (!entry) {
-    if (Object.values(entries).filter(value => value.state === 'waiting').length >= CAPACITY ||
-        Object.keys(entries).length >= CAPACITY * 10) return json({ error: 'search is busy; try again shortly' }, 429);
-    entry = entries[body.ticket] = { state: 'waiting', name: cleanRoomName(body.name),
+    entry = { state: 'waiting', name: cleanRoomName(body.name),
       joinedAt: now, expiresAt: now + SEARCH_LEASE_MS };
   }
   entry.expiresAt = now + SEARCH_LEASE_MS;
-  const rival = Object.entries(entries).filter(([key, value]) => key !== body.ticket && value.state === 'waiting')
-    .sort((a, b) => a[1].joinedAt - b[1].joinedAt)[0];
+  store.put(body.ticket, entry);
+  const rival = store.oldest(body.ticket, now);
   if (rival) {
     const [rivalTicket, waiting] = rival;
     const id = newRoom();
@@ -61,12 +47,11 @@ export async function handlePublicMatchmaking(ctx, env, body, now = Date.now(), 
     });
     if (!installed.ok) return json({ error: 'could not open the table; retry search' }, 503);
     for (const [ticket, seat] of [[rivalTicket, 'home'], [body.ticket, 'away']]) {
-      entries[ticket] = { state: 'matched', expiresAt: now + RESULT_MS,
-        result: { id, seat, token: room.seats[seat].token, room: publicRoom(room, now) } };
+      store.put(ticket, { state: 'matched', expiresAt: now + RESULT_MS,
+        result: { id, seat, token: room.seats[seat].token, room: publicRoom(room, now) } });
     }
   }
-  await save();
-  const result = entries[body.ticket];
+  const result = store.get(body.ticket, now);
   return json(result.result ? { state: 'matched', ...result.result } : { state: 'waiting' });
 }
 

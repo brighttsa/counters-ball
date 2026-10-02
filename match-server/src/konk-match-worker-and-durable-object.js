@@ -23,6 +23,7 @@ import { readBoundedText } from './bounded-request-body.js';
 import { checkMatchCreationLimit, limitMatchCreation } from './match-creation-request-limits.js';
 import { KonkVoiceCoordinator, routePrivateVoice } from './private-room-voice-coordinator.js';
 import { routeCommunityInterest } from './community-interest-routes.js';
+import { publicRivalSearchStorage } from './public-rival-search-storage.js';
 export { KonkCommunity } from './community-interest-durable-object.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
@@ -169,6 +170,9 @@ export class KonkMatch extends DurableObject {
   }
 
   async alarm() {
+    if (await this.ctx.storage.get('public-search-indexed')) {
+      return this.ctx.blockConcurrencyWhile(async () => (await publicRivalSearchStorage(this.ctx)).cleanup(Date.now()));
+    }
     await this.ctx.storage.deleteAll();
   }
 }

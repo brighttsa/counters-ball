@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "Fix iPhone microphone audio-session conflict",
+  "task": "Scalable rival matchmaking without global caps",
   "status": "released",
-  "paths": ["src/audio/browser-game-audio-session.js", "src/audio/procedural-sound-effects-web-audio.js", "src/core/table-talk-browser-microphone-capture.js", "src/core/private-room-voice-session.js", "src/core/livekit-browser-voice-adapter.js", "src/ui/table-talk-microphone-feedback.js", "src/ui/table-talk-controls.js", "src/ui/live-match-room-flow.js", "src/main.js", "play/index.html", "tests/browser-game-audio-session.test.mjs", "tests/table-talk-browser-microphone-capture.test.mjs", "tests/table-talk-real-sdk-microphone.test.mjs", "tests/helpers/table-talk-real-sdk-harness.mjs", "tests/private-room-voice-session.test.mjs", "tests/table-talk-microphone-feedback.test.mjs", "docs/table-talk-mobile-playback-fix.md", "docs/journals/261002-mobile-table-talk-playback.md", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
-  "updatedAt": "2026-10-02T12:08:00Z",
-  "head": "1e68c65"
+  "paths": ["match-server/src/public-rival-matchmaking-service.js", "match-server/src/public-rival-search-storage.js", "match-server/src/konk-match-worker-and-durable-object.js", "tests/public-rival-matchmaking.test.mjs", "docs/public-rival-capacity.md", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
+  "updatedAt": "2026-10-02T16:32:00Z",
+  "head": "b7966bb"
 }
