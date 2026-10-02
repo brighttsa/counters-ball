@@ -67,6 +67,7 @@ test('failed publication stops captured microphone', async () => {
   adapter.publish = async () => { throw new Error('failed'); };
   await voice.join({}); await voice.unmute();
   assert.ok(calls.includes('stop')); assert.equal(voice.state, 'listening');
+  assert.equal(voice.error, 'microphone-publish-failed');
 });
 test('late publish after mute is unpublished without reopening mic', async () => {
   const { voice, adapter, calls } = fixture(); const pending = deferred();

@@ -32,3 +32,13 @@ No physical-phone verification or actual human audio established yet.
 Publishing and review corrections were approved. Final review found no concrete
 blockers; deployment is pending. Full diagnosis and test coverage:
 [mobile playback report](../table-talk-mobile-playback-fix.md).
+# Follow-up: soundtrack audio mode blocked microphone capture
+
+The user's next screenshot exposed the capture path. Game startup forced the
+iPhone audio session into playback-only mode, which WebKit rejects for microphone
+capture. The earlier playback tests did not model this browser-wide audio mode.
+A new regression runs the actual bundled SDK against WebKit's documented media
+boundary; it reproduced the generic failure and passes with coordinated
+play-and-record ownership. Stop/cancel/error restores game playback, and
+publication errors now give connection advice. All 496 tests pass. Physical
+two-phone speech remains unverified; independent review hit a usage limit.

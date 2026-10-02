@@ -66,3 +66,44 @@ test('retry after cancellation stops the old track without stopping the new one'
   await second;
   assert.equal(oldStops, 1); assert.equal(newStops, 0);
 });
+
+test('failed capture releases the iPhone audio mode immediately', async () => {
+  const env = context(); env.navigator.audioSession = { type: 'playback' };
+  const capture = createTableTalkBrowserMicrophoneCapture({ createLocalAudioTrack() {
+    assert.equal(env.navigator.audioSession.type, 'play-and-record');
+    throw Object.assign(new Error('denied'), { name: 'NotAllowedError' });
+  } }, env);
+  await assert.rejects(capture.capture(), error => error.code === 'microphone-denied');
+  assert.equal(env.navigator.audioSession.type, 'playback');
+});
+
+for (const action of ['cancel', 'expire']) {
+  test(`${action} restores playback and a late old track cannot change the retry audio mode`, async () => {
+    const env = context(); env.navigator.audioSession = { type: 'playback' };
+    const resolves = [];
+    const capture = createTableTalkBrowserMicrophoneCapture({ createLocalAudioTrack: () => new Promise(resolve => resolves.push(resolve)) }, env);
+    const pending = capture.capture();
+    const rejected = assert.rejects(pending);
+    if (action === 'cancel') capture.cancel(); else env.expire();
+    await rejected;
+    assert.equal(env.navigator.audioSession.type, 'playback');
+    const retry = capture.capture();
+    resolves[0]({ stop() {} });
+    resolves[1]({ stop() { assert.equal(env.navigator.audioSession.type, 'play-and-record'); } });
+    const track = await retry;
+    assert.equal(env.navigator.audioSession.type, 'play-and-record');
+    track.stop();
+    assert.equal(env.navigator.audioSession.type, 'playback');
+  });
+}
+
+test('device-ended track releases the audio mode without another user tap', async () => {
+  const env = context(); env.navigator.audioSession = { type: 'playback' };
+  const mediaStreamTrack = new EventTarget();
+  const capture = createTableTalkBrowserMicrophoneCapture({ createLocalAudioTrack: async () => ({ mediaStreamTrack, stop() {} }) }, env);
+  const track = await capture.capture();
+  mediaStreamTrack.dispatchEvent(new Event('ended'));
+  assert.equal(env.navigator.audioSession.type, 'playback');
+  track.stop();
+  assert.equal(env.navigator.audioSession.type, 'playback');
+});

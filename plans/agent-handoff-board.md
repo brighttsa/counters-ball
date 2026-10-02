@@ -45,6 +45,18 @@ Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+iPhone microphone/audio-session conflict (Codex, 2026-10-02): game startup forced
+playback-only audio, which WebKit explicitly rejects for microphone capture.
+Added shared play-and-record ownership around capture and restoration on stop,
+cancel, failure, timeout or device end. Game audio cannot override an active mic.
+Actual shipped SDK regression reproduces the prior error and passes after the fix.
+Publication failures now give connection advice; complete module cache chain
+refreshed. 58 focused tests and all 496 tests pass; 227 JS sources parse. Independent
+review hit its usage limit; main reviewed the final patch. Publication pending
+this commit. Two-phone human audibility remains unverified. Unstyled local-file
+tab cannot be navigated by browser policy; opened the served game separately. Manual claim/handoff due to missing peer
+remote; unrelated primary work preserved.
+
 Mobile Table Talk browser playback (Codex, 2026-10-02): fixed tap-stack speaker
 unlock alongside mic capture, room/element recovery state, coalesced SDK unlocks
 and retained denied-mic guidance. Ten new regressions; full 486 and focused 41

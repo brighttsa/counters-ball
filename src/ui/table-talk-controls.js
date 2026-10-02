@@ -1,10 +1,10 @@
 import { leaveTableTalk, renewTableTalkLease, requestTableTalkJoin } from '../core/live-match-room-transport.js';
-import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-adapter.js?v=3';
+import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-adapter.js?v=4';
 import { createNativeTableTalkVoiceAdapter } from '../core/native-table-talk-voice-adapter.js';
 import { loadTableTalkBrowserSdk } from '../core/table-talk-browser-sdk-loader.js';
-import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js?v=2';
+import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js?v=3';
 import { createTableTalkCompactControl } from './table-talk-compact-control.js?v=2';
-import { tableTalkVoiceErrorMessage, updateTableTalkMicrophoneFeedback } from './table-talk-microphone-feedback.js';
+import { tableTalkVoiceErrorMessage, updateTableTalkMicrophoneFeedback } from './table-talk-microphone-feedback.js?v=2';
 
 export function createTableTalkControls(root, api, music) {
   if (typeof root?.querySelector !== 'function') return { configure() {}, setInMatch() {}, leave: async () => {} };

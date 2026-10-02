@@ -11,6 +11,7 @@ import { playSoundEvent, normalizedStrength } from './semantic-sound-event-mappi
 import { bottleTap, cardboardTap, netCatch, paperCrinkle } from './table-object-sound-recipes.js';
 import { ApprovedFoleyBank } from './approved-foley-decoded-buffer-bank.js';
 import { VelocityDrivenCapMovementAudio } from './velocity-driven-cap-movement-audio.js';
+import { useGamePlaybackAudioSession } from './browser-game-audio-session.js';
 
 const NOISE_SECONDS = 1;
 const MASTER_LEVEL = 0.9;
@@ -41,7 +42,7 @@ export class ProceduralSoundBoard extends BoundedAudioVoiceSynthesis {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         // iPhone silent switch mutes Web Audio as "ambient" sound; as "playback" the game is heard like a video.
-        try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* older Safari */ }
+        useGamePlaybackAudioSession();
         this.ctx = new AudioCtx();
         // A call, alarm or another app can interrupt the context; resume as soon as the browser allows,
         // unless the game itself paused or hid the tab.

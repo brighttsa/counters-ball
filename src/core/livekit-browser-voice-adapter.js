@@ -1,4 +1,4 @@
-import { createTableTalkBrowserMicrophoneCapture } from './table-talk-browser-microphone-capture.js';
+import { createTableTalkBrowserMicrophoneCapture } from './table-talk-browser-microphone-capture.js?v=2';
 
 // Inject the pinned SDK only when voice is explicitly requested.
 export function createLiveKitBrowserVoiceAdapter(sdk, audioHost, onRemoteAudioActivity = () => {}, onPlaybackBlocked = () => {}) {

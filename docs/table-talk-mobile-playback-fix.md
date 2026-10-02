@@ -1,7 +1,35 @@
 # Mobile Table Talk Playback Fix
 
 Date: 2026-10-02
-Status: Verified and independently reviewed browser patch; approved deployment pending.
+Status: Playback patch published as 1e68c65. Follow-up audio-session fix verified locally; publication pending.
+
+## Follow-Up: iPhone Capture Blocked By Game Playback Mode
+
+The next phone screenshot reported `Microphone could not start. Your mic is still off.`
+The sound board forces `navigator.audioSession.type = 'playback'` on startup.
+WebKit explicitly rejects microphone capture in this mode, even when permission
+is granted: [WebKit's capture test](https://raw.githubusercontent.com/WebKit/WebKit/main/LayoutTests/media/audioSession/getUserMedia.html).
+The original generic message also hid the distinction between capture and publication.
+
+The capture path now acquires `play-and-record` synchronously before invoking
+the SDK and restores the prior mode after stop, failure, timeout, cancellation,
+or device-ended events. Shared ownership protects concurrent requests; game audio
+initialization cannot overwrite an active microphone mode. The real SDK track
+object is preserved. Publication failures now provide connection recovery advice.
+The complete changed module chain, starting with play/index.html, has fresh cache keys.
+
+A regression using the shipped LiveKit 2.22.3 bundle and an OS boundary implementing
+WebKit's documented restriction failed with the exact original error before the
+patch, then passed. This is a deterministic integration test, not a physical-phone
+recording. Ten new tests cover capture, lifecycle and feedback: 58 focused tests
+and all 496 tests pass; 227 JavaScript files parse. Independent review was attempted
+but the reviewer hit its usage limit; final review is performed by the main agent.
+Production invite links preserve room identity across desktop and mobile.
+Physical two-phone speech and iPhone audio routing remain to be confirmed.
+
+The unstyled screenshot has a separate cause: an open `file://.../play/index.html`
+tab with `<base href="/">` resolves assets from the filesystem root. Use the served
+`/play/` URL; the local served game loads with its styles and no console errors.
 
 The patch addresses reproducible browser playback defects. It does not establish
 the cause of the user's specific phone failure without a two-phone test.

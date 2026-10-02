@@ -5,6 +5,7 @@ const MESSAGES = {
   'microphone-unsupported': 'Microphone access is unavailable in this tab.',
   'microphone-timeout': 'No microphone response yet. Your mic is still off.',
   'microphone-unavailable': 'Microphone could not start. Your mic is still off.',
+  'microphone-publish-failed': 'Your microphone opened, but voice could not be sent. Your mic is now off.',
 };
 
 export function tableTalkVoiceErrorMessage(error) {
@@ -27,5 +28,6 @@ export function updateTableTalkMicrophoneFeedback(root, state, error) {
   help.textContent = requesting ? 'Choose Allow when asked. No prompt? Cancel, check microphone access in your browser’s website settings, then try again.' :
     error === 'microphone-unsupported' ? 'Open https://konk.world in Safari or Chrome, then rejoin your room.' :
     error === 'microphone-busy' ? 'Close other calls or apps using your microphone, then try again.' :
+    error === 'microphone-publish-failed' ? 'Leave voice and join again, then turn your mic on. If this continues, check your connection.' :
     error === 'microphone-missing' ? 'Connect or enable a microphone, then try again.' : recovery ? permissionHelp : '';
 }

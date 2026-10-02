@@ -52,7 +52,8 @@ export class PrivateRoomVoiceSession {
       if (track) await adapter.unpublish(track).catch(() => {});
       if (current()) {
         this.track = null;
-        this.notify('listening', MICROPHONE_ERRORS.has(error?.code) ? error.code : 'microphone-unavailable');
+        this.notify('listening', track ? 'microphone-publish-failed' :
+          MICROPHONE_ERRORS.has(error?.code) ? error.code : 'microphone-unavailable');
       }
     }
   }
