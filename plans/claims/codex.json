@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "",
-  "status": "idle",
-  "paths": [],
-  "updatedAt": "2026-10-02T05:20:00Z",
-  "head": "9725b7a"
+  "task": "Keep Table Talk controls clear of room content",
+  "status": "released",
+  "paths": ["play/index.html", "styles/table-talk.css", "src/ui/table-talk-controls.js", "src/ui/live-match-room-flow.js", "tests/table-talk-onboarding.test.mjs", "plans/agent-handoff-board.md"],
+  "updatedAt": "2026-10-02T06:10:00Z",
+  "head": "07d20e1"
 }

@@ -8,10 +8,18 @@ class Control {
   querySelector() { return new Control(); }
 }
 
+class Container {
+  insertBefore(node) { node.parentNode = this; }
+}
+
 test('private-room voice setup is discoverable, optional and starts with microphone off', () => {
   const previousDocument = globalThis.document;
   const previousWindow = globalThis.window;
   const root = new Control();
+  const roomCard = new Container();
+  const body = new Container();
+  body.append = node => { node.parentNode = body; };
+  root.parentNode = roomCard;
   const controls = new Map([
     ['[data-voice-action="join"]', new Control()],
     ['[data-voice-action="mic"]', new Control()],
@@ -23,6 +31,7 @@ test('private-room voice setup is discoverable, optional and starts with microph
   const setup = new Control(); setup.hidden = true;
   const setupJoin = new Control();
   globalThis.document = {
+    body,
     getElementById: id => id === 'table-talk-room-setup' ? setup : setupJoin,
     addEventListener() {},
   };
@@ -36,6 +45,12 @@ test('private-room voice setup is discoverable, optional and starts with microph
     assert.equal(setup.hidden, false);
     assert.equal(setupJoin.hidden, false);
     assert.equal(controls.get('[data-voice-action="mic"]').hidden, true);
+    voice.setInMatch(true);
+    assert.equal(root.parentNode, body);
+    assert.equal(root.dataset.inMatch, 'true');
+    voice.setInMatch(false);
+    assert.equal(root.parentNode, roomCard);
+    assert.equal(root.dataset.inMatch, 'false');
     voice.configure(null, false);
     assert.equal(root.hidden, true);
     assert.equal(setup.hidden, true);

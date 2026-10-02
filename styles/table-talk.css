@@ -1,8 +1,12 @@
 .table-talk-controls {
-  position: fixed; z-index: 24; top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));
+  position: relative; z-index: 1; margin-top: 14px;
   display: flex; flex-wrap: wrap; align-items: center; gap: 7px; max-width: min(440px, calc(100vw - 24px));
   padding: 6px 8px; color: var(--paper); background: rgb(22 24 22 / .92); border: 1px solid rgb(255 255 255 / .16);
   box-shadow: 0 4px 18px rgb(0 0 0 / .22); pointer-events: auto; backdrop-filter: blur(12px);
+}
+.table-talk-controls[data-in-match="true"] {
+  position: fixed; z-index: 12; top: max(104px, calc(env(safe-area-inset-top) + 94px)); left: max(12px, env(safe-area-inset-left));
+  width: max-content; max-width: min(440px, calc(100vw - 24px)); margin: 0;
 }
 .table-talk-controls[hidden] { display: none; }
 .table-talk-label { min-width: 88px; font: 600 12px/1.2 var(--font-body); color: rgb(var(--paper-rgb) / .78); }
@@ -23,7 +27,8 @@
 .table-talk-room-setup p:last-child { max-width: 46ch; margin: 0; font: 14px/1.4 var(--font-body); }
 .table-talk-room-setup .btn { flex: 0 0 auto; min-height: 44px; }
 @media (max-width: 620px) {
-  .table-talk-controls { top: auto; bottom: max(12px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 20px); }
+  .table-talk-controls { width: 100%; max-width: none; }
+  .table-talk-controls[data-in-match="true"] { top: max(104px, calc(env(safe-area-inset-top) + 94px)); left: max(10px, env(safe-area-inset-left)); width: max-content; max-width: calc(100vw - 20px); }
   .table-talk-label { min-width: 72px; font-size: 11px; }
   .table-talk-controls .btn { padding-inline: 8px; }
   .table-talk-room-setup { align-items: stretch; flex-direction: column; gap: 10px; }

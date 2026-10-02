@@ -5,19 +5,30 @@ import { loadTableTalkBrowserSdk } from '../core/table-talk-browser-sdk-loader.j
 import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js';
 
 export function createTableTalkControls(root, api, music) {
-  if (typeof root?.querySelector !== 'function') return { configure() {}, leave: async () => {} };
+  if (typeof root?.querySelector !== 'function') return { configure() {}, setInMatch() {}, leave: async () => {} };
   const joinButton = root.querySelector('[data-voice-action="join"]');
   const audioButton = root.querySelector('[data-voice-action="audio"]');
   const micButton = root.querySelector('[data-voice-action="mic"]');
   const leaveButton = root.querySelector('[data-voice-action="leave"]');
   const status = root.querySelector('[data-table-talk-status]');
   const help = root.querySelector('[data-table-talk-help]');
+  const roomParent = root.parentNode;
+  const roomNextSibling = root.nextSibling;
   const setup = document.getElementById('table-talk-room-setup');
   const setupJoinButton = document.getElementById('table-talk-room-join');
   const joinButtons = [joinButton, setupJoinButton].filter(Boolean);
   let roomId = null, sessionId = null, leaseTimer = null, speakerTimer = null, session = null, native = null, stopping = false;
   let lastLeaseAt = 0;
   let playbackBlocked = false;
+
+  function setInMatch(active) {
+    root.dataset.inMatch = String(active);
+    if (!roomParent || !document.body) return;
+    if (active && root.parentNode !== document.body) document.body.append(root);
+    else if (!active && root.parentNode !== roomParent) {
+      roomParent.insertBefore(root, roomNextSibling?.parentNode === roomParent ? roomNextSibling : null);
+    }
+  }
 
   function voiceErrorMessage(error) {
     if (error === 'microphone-unavailable') return 'Microphone access is blocked. Allow it for this site or app, then try again.';
@@ -140,6 +151,7 @@ export function createTableTalkControls(root, api, music) {
   window.addEventListener('pagehide', () => { if (sessionId) stop(true); });
 
   return {
+    setInMatch,
     configure(id, enabled) {
       const nextRoomId = enabled ? id : null;
       if (roomId === nextRoomId) return;

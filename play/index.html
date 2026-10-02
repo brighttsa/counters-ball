@@ -47,7 +47,7 @@
 <link rel="stylesheet" href="styles/game-interaction-guardrails.css?v=3" />
 <link rel="stylesheet" href="styles/konk-brand-cursors.css?v=3" />
 <link rel="stylesheet" href="styles/tournament-room.css?v=3" />
-<link rel="stylesheet" href="styles/table-talk.css?v=2" />
+<link rel="stylesheet" href="styles/table-talk.css?v=3" />
 <link rel="stylesheet" href="styles/home-portrait-utilities.css?v=1" />
 <link rel="stylesheet" href="styles/match-transition-status.css?v=1" />
 <script type="importmap">
@@ -234,6 +234,15 @@
         <p><b id="live-room-away">Waiting for a friend</b><span id="live-room-away-state">Not joined</span></p>
       </div>
       <div class="tournament-bracket" id="live-room-bracket" hidden></div>
+      <aside class="table-talk-controls" id="table-talk-controls" aria-label="Table Talk voice" hidden>
+        <span class="table-talk-label" data-table-talk-status aria-live="polite">Voice off</span>
+        <button class="btn btn-small" data-voice-action="join" type="button">Join voice</button>
+        <button class="btn btn-small" data-voice-action="audio" type="button" hidden>Enable room audio</button>
+        <button class="btn btn-small" data-voice-action="mic" type="button" hidden>Enable microphone</button>
+        <button class="icon-btn table-talk-leave" data-voice-action="leave" type="button" aria-label="Leave voice" title="Leave voice" hidden>×</button>
+        <p class="table-talk-help" data-table-talk-help role="status" hidden></p>
+        <div data-table-talk-audio class="table-talk-audio" aria-hidden="true"></div>
+      </aside>
       <div class="card-actions">
         <button class="btn btn-primary" data-action="live-room-ready" hidden>Ready up</button>
         <button class="btn btn-small" data-action="live-room-copy" hidden>Copy invite</button>
@@ -306,16 +315,6 @@
       <span class="tutorial-tip">Drag back from a cap. Release to flick.<span class="tutorial-keys"> Or press Space to aim with the keyboard.</span></span>
     </div>
   </section>
-
-  <aside class="table-talk-controls" id="table-talk-controls" aria-label="Table Talk voice" hidden>
-    <span class="table-talk-label" data-table-talk-status aria-live="polite">Voice off</span>
-    <button class="btn btn-small" data-voice-action="join" type="button">Join voice</button>
-    <button class="btn btn-small" data-voice-action="audio" type="button" hidden>Enable room audio</button>
-    <button class="btn btn-small" data-voice-action="mic" type="button" hidden>Enable microphone</button>
-    <button class="icon-btn table-talk-leave" data-voice-action="leave" type="button" aria-label="Leave voice" title="Leave voice" hidden>×</button>
-    <p class="table-talk-help" data-table-talk-help role="status" hidden></p>
-    <div data-table-talk-audio class="table-talk-audio" aria-hidden="true"></div>
-  </aside>
 
   <section class="screen screen-challenge screen-daily" data-screen="daily-result">
     <article class="paper-card intro-card challenge-card" aria-labelledby="daily-headline">
