@@ -5,7 +5,7 @@
 <title>KONK! Table Talk — Compact Control Preview</title>
 <link rel="stylesheet" href="../../../styles/game-ui-base-and-hud.css?v=1">
 <link rel="stylesheet" href="../../../styles/match-hud-one-frame-and-aim-fade.css?v=8">
-<link rel="stylesheet" href="../../../styles/table-talk.css?v=5">
+<link rel="stylesheet" href="../../../styles/table-talk.css?v=6">
 <style>
   body { min-height: 100vh; padding: 24px; background: #171816; color: var(--paper); font: 16px/1.5 var(--font-body); }
   main { width: min(100%, 900px); margin: 0 auto; }
@@ -19,7 +19,16 @@
 </style>
 <main>
   <h1>Table Talk · Compact Control Preview</h1>
-  <section>
+  <section class="paper-card">
+    <h2>Room card · voice off</h2>
+    <aside class="table-talk-controls" data-state="idle" aria-label="Table Talk voice">
+      <div class="table-talk-actions">
+        <span class="table-talk-label">Voice off</span>
+        <button class="btn btn-small" type="button">Join voice</button>
+      </div>
+    </aside>
+  </section>
+  <section class="paper-card">
     <h2>Room card · connected · microphone off</h2>
     <p>Play someone live · Roadside Showdown</p>
     <aside class="table-talk-controls" data-state="listening" data-compact="true" aria-label="Table Talk voice">
@@ -51,6 +60,7 @@
   import { createTableTalkCompactControl } from '../../../src/ui/table-talk-compact-control.js';
   document.querySelectorAll('.table-talk-controls').forEach(root => {
     const control = createTableTalkCompactControl(root);
+    if (!control.button) return;
     let compact = root.dataset.compact === 'true';
     control.button.addEventListener('click', () => {
       compact = !compact;

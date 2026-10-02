@@ -1,18 +1,20 @@
 .table-talk-controls {
-  position: relative; z-index: 1; margin-top: 14px; max-width: min(440px, calc(100vw - 24px));
-  padding: 6px 8px; color: var(--paper); background: rgb(22 24 22 / .92); border: 1px solid rgb(255 255 255 / .16);
+  position: relative; z-index: 1; display: grid; gap: 12px; box-sizing: border-box;
+  margin-top: 14px; max-width: min(440px, calc(100vw - 24px));
+  padding: 12px; color: var(--paper); background: rgb(22 24 22 / .92); border: 1px solid rgb(255 255 255 / .16);
   box-shadow: 0 4px 18px rgb(0 0 0 / .22); pointer-events: auto; backdrop-filter: blur(12px);
 }
-.table-talk-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+.table-talk-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-width: 0; }
 .table-talk-toggle {
-  min-height: 44px; padding: 8px 12px; border: 1px solid var(--yellow); background: rgb(22 24 22 / .96);
+  justify-self: start; width: max-content; max-width: 100%; min-height: 44px; padding: 8px 12px;
+  border: 1px solid var(--yellow); background: rgb(22 24 22 / .96);
   color: var(--paper); font: 600 12px/1.2 var(--font-body); cursor: pointer; transition: opacity 160ms ease, transform 160ms ease;
 }
 .table-talk-toggle::after { content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 0 3px 10px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(225deg); }
 .table-talk-controls[data-compact="true"] .table-talk-toggle::after { margin-bottom: -1px; transform: rotate(45deg); }
 .table-talk-toggle:hover { background: rgb(255 220 83 / .14); }
 .table-talk-toggle:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
-.table-talk-controls[data-compact="true"] { display: inline-flex; align-items: center; padding: 2px; border-color: rgb(255 220 83 / .62); }
+.table-talk-controls[data-compact="true"] { display: inline-flex; align-items: center; padding: 8px; border-color: rgb(255 220 83 / .62); }
 .table-talk-controls[data-compact="true"] .table-talk-toggle { min-width: 142px; border: 0; background: transparent; }
 .table-talk-controls[data-compact="true"] .table-talk-toggle:hover { background: rgb(255 220 83 / .12); }
 .table-talk-controls[data-in-match="true"] {
@@ -20,11 +22,11 @@
   width: max-content; max-width: min(440px, calc(100vw - 24px)); margin: 0;
 }
 .table-talk-controls[hidden] { display: none; }
-.table-talk-label { min-width: 88px; font: 600 12px/1.2 var(--font-body); color: rgb(var(--paper-rgb) / .78); }
+.table-talk-label { min-width: 88px; font: 600 12px/1.4 var(--font-body); color: rgb(var(--paper-rgb) / .78); }
 .table-talk-label:focus { outline: 2px solid var(--yellow); outline-offset: 3px; }
 .table-talk-controls .btn { min-height: 44px; padding: 8px 12px; font-size: 12px; white-space: nowrap; }
 .table-talk-controls [data-action="table-talk-mic"] { border-color: var(--yellow); }
-.table-talk-controls .table-talk-leave { position: static; width: 44px; height: 44px; min-height: 44px; padding: 0; font-size: 20px; }
+.table-talk-controls .table-talk-leave { position: static; flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; font-size: 20px; }
 .table-talk-controls[data-state="speaking"] { border-color: var(--yellow); }
 .table-talk-controls[data-state="connecting"] .table-talk-label { color: var(--yellow); }
 .table-talk-help { flex: 1 0 100%; margin: 0; color: var(--paper); font: 12px/1.4 var(--font-body); }
@@ -42,7 +44,7 @@
   .table-talk-controls { width: 100%; max-width: none; }
   .table-talk-controls[data-compact="true"] { width: max-content; max-width: calc(100vw - 20px); }
   .table-talk-controls[data-in-match="true"] { top: max(104px, calc(env(safe-area-inset-top) + 94px)); left: max(10px, env(safe-area-inset-left)); width: max-content; max-width: calc(100vw - 20px); }
-  .table-talk-label { min-width: 72px; font-size: 11px; }
+  .table-talk-label { min-width: 72px; }
   .table-talk-controls .btn { padding-inline: 8px; }
   .table-talk-room-setup { align-items: stretch; flex-direction: column; gap: 10px; }
   .table-talk-room-setup .btn { width: 100%; }
