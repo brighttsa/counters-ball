@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "Make mobile microphone access discoverable",
+  "task": "Fix optional voice label contrast",
   "status": "released",
-  "paths": ["src/main.js", "src/ui/live-match-room-flow.js", "src/ui/table-talk-controls.js", "src/ui/table-talk-compact-control.js", "src/ui/table-talk-microphone-feedback.js", "src/core/table-talk-browser-microphone-capture.js", "src/core/livekit-browser-voice-adapter.js", "src/core/private-room-voice-session.js", "styles/table-talk.css", "play/index.html", "tests/table-talk-onboarding.test.mjs", "tests/helpers/table-talk-controller-harness.mjs", "tests/table-talk-microphone-access.test.mjs", "tests/table-talk-browser-microphone-capture.test.mjs", "tests/private-room-voice-session.test.mjs", "tests/fixtures/table-talk/compact-control.html", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
-  "updatedAt": "2026-10-02T06:48:00Z",
-  "head": "f0acaa6"
+  "paths": ["styles/table-talk.css", "play/index.html", "tests/visual-readability-contracts.test.mjs", "tests/fixtures/table-talk/compact-control.html", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
+  "updatedAt": "2026-10-02T06:58:00Z",
+  "head": "10ec52e"
 }

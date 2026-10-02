@@ -37,7 +37,7 @@
   color: var(--ink); background: #fff9e9; border: 1px solid rgb(34 31 24 / .18); border-left: 4px solid var(--yellow);
 }
 .table-talk-room-setup[hidden] { display: none; }
-.table-talk-room-setup .card-kicker { margin: 0 0 3px; }
+.table-talk-room-setup .card-kicker { margin: 0 0 3px; color: var(--ink); }
 .table-talk-room-setup h3 { margin: 0 0 4px; font: 700 17px/1.2 var(--font-heading); }
 .table-talk-room-setup p:last-child { max-width: 46ch; margin: 0; font: 14px/1.4 var(--font-body); }
 .table-talk-room-setup .btn { flex: 0 0 auto; min-height: 44px; }

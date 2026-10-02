@@ -46,3 +46,12 @@ test('core UI colours meet strong contrast targets over the ink surface', () => 
   assert.ok(contrast(tokenRgb('paper-muted'), ink) >= 10, 'muted text still needs readable contrast');
   assert.ok(contrast(tokenRgb('yellow'), ink) >= 11, 'yellow actions should be readable on ink');
 });
+
+test('optional voice label uses ink with readable contrast on its cream panel', () => {
+  const voiceCss = readFileSync(new URL('../styles/table-talk.css', import.meta.url), 'utf8');
+  const kicker = voiceCss.match(/\.table-talk-room-setup \.card-kicker\s*\{([^}]+)\}/)?.[1];
+  assert.match(kicker, /color:\s*var\(--ink\)/, 'light voice panel must override the global yellow kicker');
+  const background = voiceCss.match(/\.table-talk-room-setup\s*\{[^}]*background:\s*(#[\da-f]{6})/i)?.[1];
+  assert.ok(background, 'voice setup background should be defined');
+  assert.ok(contrast(tokenRgb('ink-rgb'), hexToRgb(background)) >= 7, 'small voice label needs strong contrast');
+});

@@ -4,21 +4,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KONK! Table Talk — Compact Control Preview</title>
 <link rel="stylesheet" href="../../../styles/game-ui-base-and-hud.css?v=1">
+<link rel="stylesheet" href="../../../styles/game-ui-menus-and-results.css?v=15">
 <link rel="stylesheet" href="../../../styles/match-hud-one-frame-and-aim-fade.css?v=8">
-<link rel="stylesheet" href="../../../styles/table-talk.css?v=7">
+<link rel="stylesheet" href="../../../styles/table-talk.css?v=8">
 <style>
   body { min-height: 100vh; padding: 24px; background: #171816; color: var(--paper); font: 16px/1.5 var(--font-body); }
   main { width: min(100%, 900px); margin: 0 auto; }
   h1 { margin: 0 0 20px; font: 800 24px/1.2 var(--font-heading); }
   section { margin: 0 0 24px; padding: 20px; border: 1px solid rgb(var(--paper-rgb) / .16); background: rgb(var(--ink-rgb) / .88); }
   h2 { margin: 0 0 8px; font: 700 14px/1.3 var(--font-body); }
-  p { margin: 0 0 8px; color: rgb(var(--paper-rgb) / .74); }
+  p { margin: 0 0 8px; }
+  section:not(.table-talk-room-setup) > p { color: rgb(var(--paper-rgb) / .74); }
   .sample-match { min-height: 250px; position: relative; padding-top: 54px; background: linear-gradient(135deg, #38433a, #18201b); }
   .sample-match .table-talk-controls { position: relative; top: auto; left: auto; max-width: 100%; }
   .table-talk-controls[hidden] { display: none; }
 </style>
 <main>
   <h1>Table Talk · Compact Control Preview</h1>
+  <section class="table-talk-room-setup" aria-labelledby="voice-setup-title">
+    <div>
+      <p class="card-kicker">OPTIONAL VOICE</p>
+      <h3 id="voice-setup-title">Talk with your room</h3>
+      <p>Join to hear your friends. Tap <b>Turn mic on</b> to speak, then allow microphone access when asked. Only players in this private room can hear you.</p>
+    </div>
+    <button class="btn btn-primary" type="button">Join voice</button>
+  </section>
   <section class="paper-card">
     <h2>Room card · voice off</h2>
     <aside class="table-talk-controls" data-state="idle" aria-label="Table Talk voice">
