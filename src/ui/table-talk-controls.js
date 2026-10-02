@@ -7,6 +7,7 @@ import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js';
 export function createTableTalkControls(root, api, music) {
   if (typeof root?.querySelector !== 'function') return { configure() {}, leave: async () => {} };
   const joinButton = root.querySelector('[data-voice-action="join"]');
+  const audioButton = root.querySelector('[data-voice-action="audio"]');
   const micButton = root.querySelector('[data-voice-action="mic"]');
   const leaveButton = root.querySelector('[data-voice-action="leave"]');
   const status = root.querySelector('[data-table-talk-status]');
@@ -16,6 +17,7 @@ export function createTableTalkControls(root, api, music) {
   const joinButtons = [joinButton, setupJoinButton].filter(Boolean);
   let roomId = null, sessionId = null, leaseTimer = null, speakerTimer = null, session = null, native = null, stopping = false;
   let lastLeaseAt = 0;
+  let playbackBlocked = false;
 
   function voiceErrorMessage(error) {
     if (error === 'microphone-unavailable') return 'Microphone access is blocked. Allow it for this site or app, then try again.';
@@ -27,6 +29,7 @@ export function createTableTalkControls(root, api, music) {
     status.textContent = message || ({ listening: 'Connected · mic off', speaking: 'Microphone on', 'requesting-microphone': 'Allow microphone access in the prompt' }[state] ?? 'Voice off');
     joinButtons.forEach(button => { button.hidden = state !== 'idle'; button.disabled = state === 'connecting'; });
     if (setup) setup.hidden = !roomId || state !== 'idle';
+    if (audioButton) audioButton.hidden = state === 'idle' || state === 'connecting' || !playbackBlocked;
     micButton.hidden = !['listening', 'speaking', 'requesting-microphone'].includes(state);
     leaveButton.hidden = state === 'idle' || state === 'connecting';
     micButton.textContent = state === 'speaking' || state === 'requesting-microphone' ? 'Mute microphone' :
@@ -57,7 +60,14 @@ export function createTableTalkControls(root, api, music) {
       } else {
         const sdk = await loadTableTalkBrowserSdk();
         session = new PrivateRoomVoiceSession(() => createLiveKitBrowserVoiceAdapter(sdk,
-          root.querySelector('[data-table-talk-audio]'), active => music?.setRemoteVoiceActive(active)),
+          root.querySelector('[data-table-talk-audio]'), active => music?.setRemoteVoiceActive(active), blocked => {
+            playbackBlocked = blocked;
+            if (audioButton) audioButton.hidden = !blocked;
+            if (blocked) status.textContent = 'Room audio is blocked. Tap Enable room audio.';
+            else if (status.textContent.startsWith('Room audio is blocked')) {
+              status.textContent = session?.state === 'speaking' ? 'Microphone on' : 'Connected · mic off';
+            }
+          }),
         value => update(value.state, voiceErrorMessage(value.error)));
         await session.join(credentials);
         if (session.state === 'idle') throw new Error('Voice could not connect');
@@ -119,6 +129,11 @@ export function createTableTalkControls(root, api, music) {
   }
 
   joinButtons.forEach(button => button.addEventListener('click', enter));
+  audioButton?.addEventListener('click', async () => {
+    audioButton.disabled = true;
+    try { await session?.adapter?.resumeAudio(); }
+    finally { audioButton.disabled = false; }
+  });
   micButton.addEventListener('click', toggleMic);
   leaveButton.addEventListener('click', () => stop(true));
   document.addEventListener('visibilitychange', () => { if (document.hidden && sessionId) stop(true); });

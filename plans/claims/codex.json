@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "owner": "codex",
-  "branch": "main",
+  "branch": "codex/table-talk",
   "task": "",
   "status": "idle",
   "paths": [],
-  "updatedAt": "2026-10-02T04:47:00Z",
-  "head": "e1272e3"
+  "updatedAt": "2026-10-02T05:20:00Z",
+  "head": "9725b7a"
 }

@@ -12,6 +12,7 @@
 .table-talk-controls[data-state="speaking"] { border-color: var(--yellow); }
 .table-talk-controls[data-state="connecting"] .table-talk-label { color: var(--yellow); }
 .table-talk-help { flex: 1 0 100%; margin: 0; color: var(--paper); font: 12px/1.4 var(--font-body); }
+.table-talk-audio { position: fixed; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .table-talk-room-setup {
   display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 14px;
   color: var(--ink); background: #fff9e9; border: 1px solid rgb(34 31 24 / .18); border-left: 4px solid var(--yellow);
