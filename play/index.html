@@ -221,6 +221,14 @@
         <button class="btn" data-action="live-room-join" disabled>Join the table</button>
       </div>
       <p class="results-share-status" id="live-room-status" aria-live="polite"></p>
+      <section class="table-talk-room-setup" id="table-talk-room-setup" aria-labelledby="table-talk-room-title" hidden>
+        <div>
+          <p class="card-kicker">OPTIONAL VOICE</p>
+          <h3 id="table-talk-room-title">Talk with your room</h3>
+          <p>Join to hear your friends. Your microphone stays off until you tap <b>Enable microphone</b>. Only players in this private room can hear you.</p>
+        </div>
+        <button class="btn btn-primary" id="table-talk-room-join" type="button">Join voice</button>
+      </section>
       <div class="room-seats" id="live-room-seats" hidden>
         <p><b id="live-room-home">Player 1</b><span id="live-room-home-state">Waiting</span></p>
         <p><b id="live-room-away">Waiting for a friend</b><span id="live-room-away-state">Not joined</span></p>
@@ -302,8 +310,9 @@
   <aside class="table-talk-controls" id="table-talk-controls" aria-label="Table Talk voice" hidden>
     <span class="table-talk-label" data-table-talk-status aria-live="polite">Voice off</span>
     <button class="btn btn-small" data-voice-action="join" type="button">Join voice</button>
-    <button class="btn btn-small" data-voice-action="mic" type="button" hidden>Unmute mic</button>
+    <button class="btn btn-small" data-voice-action="mic" type="button" hidden>Enable microphone</button>
     <button class="icon-btn table-talk-leave" data-voice-action="leave" type="button" aria-label="Leave voice" title="Leave voice" hidden>×</button>
+    <p class="table-talk-help" data-table-talk-help role="status" hidden></p>
     <div data-table-talk-audio hidden></div>
   </aside>
 

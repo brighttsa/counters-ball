@@ -9,7 +9,8 @@ export function createNativeTableTalkVoiceAdapter(handler, onState = () => {}) {
           typeof response.remoteSpeaking !== 'boolean') {
         throw new Error('Invalid reply');
       }
-      const safe = { state: response.state, error: response.error ? 'voice-unavailable' : null,
+      const safe = { state: response.state,
+        error: ['microphone-unavailable', 'voice-unavailable'].includes(response.error) ? response.error : null,
         remoteSpeaking: response.remoteSpeaking };
       onState(safe);
       return safe;

@@ -1,17 +1,30 @@
 .table-talk-controls {
   position: fixed; z-index: 24; top: max(12px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left));
-  display: flex; align-items: center; gap: 7px; max-width: min(440px, calc(100vw - 76px));
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px; max-width: min(440px, calc(100vw - 24px));
   padding: 6px 8px; color: var(--paper); background: rgb(22 24 22 / .92); border: 1px solid rgb(255 255 255 / .16);
   box-shadow: 0 4px 18px rgb(0 0 0 / .22); pointer-events: auto; backdrop-filter: blur(12px);
 }
+.table-talk-controls[hidden] { display: none; }
 .table-talk-label { min-width: 88px; font: 600 12px/1.2 var(--font-body); color: rgb(var(--paper-rgb) / .78); }
-.table-talk-controls .btn { min-height: 34px; padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+.table-talk-controls .btn { min-height: 44px; padding: 8px 12px; font-size: 12px; white-space: nowrap; }
 .table-talk-controls [data-action="table-talk-mic"] { border-color: var(--yellow); }
-.table-talk-controls .table-talk-leave { position: static; width: 34px; height: 34px; min-height: 34px; padding: 0; font-size: 20px; }
+.table-talk-controls .table-talk-leave { position: static; width: 44px; height: 44px; min-height: 44px; padding: 0; font-size: 20px; }
 .table-talk-controls[data-state="speaking"] { border-color: var(--yellow); }
 .table-talk-controls[data-state="connecting"] .table-talk-label { color: var(--yellow); }
+.table-talk-help { flex: 1 0 100%; margin: 0; color: var(--paper); font: 12px/1.4 var(--font-body); }
+.table-talk-room-setup {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; padding: 14px;
+  color: var(--ink); background: #fff9e9; border: 1px solid rgb(34 31 24 / .18); border-left: 4px solid var(--yellow);
+}
+.table-talk-room-setup[hidden] { display: none; }
+.table-talk-room-setup .card-kicker { margin: 0 0 3px; }
+.table-talk-room-setup h3 { margin: 0 0 4px; font: 700 17px/1.2 var(--font-heading); }
+.table-talk-room-setup p:last-child { max-width: 46ch; margin: 0; font: 14px/1.4 var(--font-body); }
+.table-talk-room-setup .btn { flex: 0 0 auto; min-height: 44px; }
 @media (max-width: 620px) {
-  .table-talk-controls { top: auto; bottom: max(12px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); max-width: calc(100vw - 20px); }
+  .table-talk-controls { top: auto; bottom: max(12px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 20px); }
   .table-talk-label { min-width: 72px; font-size: 11px; }
   .table-talk-controls .btn { padding-inline: 8px; }
+  .table-talk-room-setup { align-items: stretch; flex-direction: column; gap: 10px; }
+  .table-talk-room-setup .btn { width: 100%; }
 }

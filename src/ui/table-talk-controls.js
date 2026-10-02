@@ -10,17 +10,33 @@ export function createTableTalkControls(root, api, music) {
   const micButton = root.querySelector('[data-voice-action="mic"]');
   const leaveButton = root.querySelector('[data-voice-action="leave"]');
   const status = root.querySelector('[data-table-talk-status]');
+  const help = root.querySelector('[data-table-talk-help]');
+  const setup = document.getElementById('table-talk-room-setup');
+  const setupJoinButton = document.getElementById('table-talk-room-join');
+  const joinButtons = [joinButton, setupJoinButton].filter(Boolean);
   let roomId = null, sessionId = null, leaseTimer = null, speakerTimer = null, session = null, native = null, stopping = false;
   let lastLeaseAt = 0;
 
+  function voiceErrorMessage(error) {
+    if (error === 'microphone-unavailable') return 'Microphone access is blocked. Allow it for this site or app, then try again.';
+    return error ? 'Voice could not connect. Check your connection and try again.' : '';
+  }
+
   function update(state, message = '') {
     root.dataset.state = state;
-    status.textContent = message || ({ listening: 'Connected · mic off', speaking: 'Mic on', 'requesting-microphone': 'Allow microphone access' }[state] ?? 'Voice off');
-    joinButton.hidden = state !== 'idle';
+    status.textContent = message || ({ listening: 'Connected · mic off', speaking: 'Microphone on', 'requesting-microphone': 'Allow microphone access in the prompt' }[state] ?? 'Voice off');
+    joinButtons.forEach(button => { button.hidden = state !== 'idle'; button.disabled = state === 'connecting'; });
+    if (setup) setup.hidden = !roomId || state !== 'idle';
     micButton.hidden = !['listening', 'speaking', 'requesting-microphone'].includes(state);
     leaveButton.hidden = state === 'idle' || state === 'connecting';
-    micButton.textContent = state === 'speaking' || state === 'requesting-microphone' ? 'Mute mic' : 'Unmute mic';
+    micButton.textContent = state === 'speaking' || state === 'requesting-microphone' ? 'Mute microphone' :
+      status.textContent.startsWith('Microphone access is blocked') ? 'Try microphone again' : 'Enable microphone';
     micButton.disabled = state === 'requesting-microphone';
+    if (help) {
+      const blocked = status.textContent.startsWith('Microphone access is blocked');
+      help.hidden = !blocked;
+      help.textContent = blocked ? 'In your browser or device settings, allow microphone access for KONK!, then tap Try microphone again.' : '';
+    }
   }
 
   async function enter() {
@@ -32,17 +48,17 @@ export function createTableTalkControls(root, api, music) {
       const handler = globalThis.webkit?.messageHandlers?.konkTableTalk;
       if (handler) {
         native = createNativeTableTalkVoiceAdapter(handler, value => {
-          update(value.state);
+          update(value.state, voiceErrorMessage(value.error));
           music?.setRemoteVoiceActive(value.remoteSpeaking);
         });
         await native.join(credentials);
         const snapshot = await native.status();
-        update(snapshot.state, snapshot.error ? 'Voice could not connect' : 'Connected · mic off');
+        update(snapshot.state, snapshot.error ? voiceErrorMessage(snapshot.error) : 'Connected · mic off');
       } else {
         const sdk = await loadTableTalkBrowserSdk();
         session = new PrivateRoomVoiceSession(() => createLiveKitBrowserVoiceAdapter(sdk,
           root.querySelector('[data-table-talk-audio]'), active => music?.setRemoteVoiceActive(active)),
-        value => update(value.state, value.error ? 'Microphone or voice unavailable' : ''));
+        value => update(value.state, voiceErrorMessage(value.error)));
         await session.join(credentials);
         if (session.state === 'idle') throw new Error('Voice could not connect');
       }
@@ -102,7 +118,7 @@ export function createTableTalkControls(root, api, music) {
     if (roomId) update('idle');
   }
 
-  joinButton.addEventListener('click', enter);
+  joinButtons.forEach(button => button.addEventListener('click', enter));
   micButton.addEventListener('click', toggleMic);
   leaveButton.addEventListener('click', () => stop(true));
   document.addEventListener('visibilitychange', () => { if (document.hidden && sessionId) stop(true); });
