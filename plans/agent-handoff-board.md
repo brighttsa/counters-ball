@@ -45,6 +45,11 @@ Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+Waitlist sharing preview (Codex, 2026-10-02): added Open Graph and X large-image
+metadata with waitlist-specific copy and existing branded 1600x900 JPEG.
+Preview image responds 200 with image/jpeg. Scoped HTML change; publishing to Pages.
+Manual coordination because the live-claim helper requires a local peer remote.
+
 iPhone microphone/audio-session conflict (Codex, 2026-10-02): game startup forced
 playback-only audio, which WebKit explicitly rejects for microphone capture.
 Added shared play-and-record ownership around capture and restoration on stop,
