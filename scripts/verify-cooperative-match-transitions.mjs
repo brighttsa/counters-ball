@@ -6,21 +6,29 @@ try {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('http://localhost:4189/play/');
+  await page.goto(process.env.KONK_TRANSITION_TEST_URL ?? 'http://localhost:4189/play/');
   await page.waitForFunction(() => window.__countersBall?.actions);
   const parity = await page.evaluate(async () => {
     await document.fonts.ready;
+    // Keep pixel-hash comparisons on one raster backend; GPU antialiasing can vary by a few bytes.
+    const getContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function(type, options) {
+      return getContext.call(this, type, type === '2d' ? { ...options, willReadFrequently: true } : options);
+    };
     const THREE = await import('three');
     const { CAMPAIGN_LEVELS, HOME_TEAM } = await import('/src/levels/campaign-level-definitions.js');
     const { buildLevelStage, prepareLevelStage } = await import('/src/scene/level-stage-builder-and-disposal.js?v=2');
     const hash = bytes => { let value = 2166136261; for (const byte of bytes) value = Math.imul(value ^ byte, 16777619); return value >>> 0; };
+    let pixels = [];
     function signature(stage) {
+      pixels = [];
       const result = [];
       stage.group.traverse(o => {
         const attributes = Object.entries(o.geometry?.attributes ?? {}).map(([key, value]) => [key, hash(new Uint8Array(value.array.buffer))]);
         const maps = (Array.isArray(o.material) ? o.material : [o.material]).filter(Boolean).map(material =>
           Object.entries(material).filter(([, value]) => value?.isTexture).map(([key, texture]) => {
             const canvas = texture.image;
+            if (canvas?.getContext) pixels.push(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data);
             return [key, canvas?.width, canvas?.height, canvas?.getContext ? hash(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data) : null];
           }));
         result.push([o.type, o.position.toArray(), o.rotation.toArray(), o.scale.toArray(), attributes, maps]);
@@ -33,18 +41,25 @@ try {
       const renderer = { toneMappingExposure: 1 };
       const options = { scene, renderer, camera: new THREE.PerspectiveCamera(), level, homeTeam: HOME_TEAM, awayTeam: level.opponent.team };
       const sync = buildLevelStage(options), expected = signature(sync);
+      const expectedPixels = pixels;
       sync.dispose();
       const staged = await prepareLevelStage(options, { yieldTask: async () => {} });
       if (scene.children.length !== 0) throw Error('Incomplete stage attached before activation');
       const actual = signature(staged);
       if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+        const differences = pixels.map((data, i) => {
+          let changed = 0, max = 0;
+          for (let j = 0; j < data.length; j++) { const delta = Math.abs(data[j] - expectedPixels[i][j]); if (delta) changed++; max = Math.max(max, delta); }
+          return { i, changed, max, length: data.length };
+        }).filter(value => value.changed);
         const index = expected.findIndex((value, i) => JSON.stringify(value) !== JSON.stringify(actual[i]));
-        throw Error(`Scene changed: ${level.id} at ${index}: ${JSON.stringify(expected[index])} versus ${JSON.stringify(actual[index])}`);
+        throw Error(`Scene changed: ${level.id} at ${index}: ${JSON.stringify(differences)}`);
       }
       staged.activate(); staged.dispose();
       if (scene.children.length !== 0) throw Error('Stage leaked');
       verified.push(level.id);
     }
+    HTMLCanvasElement.prototype.getContext = getContext;
     return verified;
   });
   assert.equal(parity.length, 6);

@@ -35,3 +35,12 @@ This is local work, not deployed. It does not resolve homepage/trailer LCP,
 initial boot construction, first-frame shader compilation, or sustained gameplay
 frame rate. Field improvement requires deployment and fresh analytics data.
 Native-device performance has not been measured.
+
+## Production Integration
+
+The release is integrated independently onto 0d6b1a3, retaining its existing
+hashString seed function instead of importing unpublished multiplayer code.
+All 400 production-branch tests pass. Pixel-hash verification uses a consistent
+CPU canvas raster backend: Chrome's default backend showed sparse antialiasing
+differences (one sample: 26 channels out of 262144, maximum delta 4). Runtime
+canvas settings remain unchanged, and timing checks restore the original API.
