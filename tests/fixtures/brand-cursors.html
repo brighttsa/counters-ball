@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KONK! Cursor Regression Preview</title>
+<link rel="preload" as="image" href="../../assets/konk-cursor-hold.svg" media="(hover: hover) and (pointer: fine)">
+<link rel="stylesheet" href="../../styles/game-ui-base-and-hud.css">
+<link rel="stylesheet" href="../../styles/player-camera-controls.css">
+<link rel="stylesheet" href="../../styles/konk-brand-cursors.css">
+<style>
+  body { padding: 32px; background: var(--ink); color: var(--paper); font: 16px/1.5 var(--font-body); }
+  main { max-width: 720px; margin: auto; display: grid; gap: 24px; }
+  h1 { margin: 0; font-size: 24px; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  button span, button svg, label span { cursor: pointer; }
+  .drag-target { min-height: 80px; padding: 20px; border: 1px solid var(--yellow); }
+  #game-canvas { position: static; width: 240px; height: 80px; border: 1px solid var(--yellow); }
+  .player-camera { position: static; }
+  .player-camera fieldset { display: block; }
+</style>
+<body data-screen="match">
+<main>
+  <h1>KONK! cursor states</h1>
+  <p id="plain-text">Plain text and backgrounds keep the branded arrow.</p>
+  <div class="row">
+    <button class="btn" id="nested-button"><span>Button text</span><svg width="18" height="18" viewBox="0 0 24 24"><path id="button-icon" d="M7 17 17 7M7 7h10v10" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+    <button class="btn" disabled id="disabled-button"><span>Unavailable</span></button>
+    <a id="nested-link" href="#plain-text"><span>Link text</span></a>
+  </div>
+  <div class="player-camera">
+    <fieldset><legend>Camera choice</legend><label><input id="camera-radio" type="radio" name="camera"><span id="camera-caption">Broadcast</span></label></fieldset>
+  </div>
+  <label><input id="checkbox" type="checkbox"><span>Sound</span></label>
+  <label>Name <input id="name" type="text" value="KONKER"></label>
+  <label>Volume <input id="range" type="range" min="0" max="100"></label>
+  <textarea id="text-area">Your match note</textarea>
+  <div id="editable" contenteditable="true">Editable text</div>
+  <label>Table cursor mode <select id="cursor-mode"><option value="">Idle</option><option value="can-grab">Cap selected</option><option value="aiming">Aiming</option></select></label>
+  <canvas id="game-canvas" width="240" height="80" aria-label="Table cursor"></canvas>
+  <div id="camera-orbit" class="drag-target" tabindex="0" aria-label="Orbit pad"><span>Drag camera</span></div>
+</main>
+<script>
+  document.getElementById('cursor-mode').addEventListener('change', event => {
+    document.getElementById('game-canvas').className = event.target.value;
+  });
+</script>
+</body>
+</html>

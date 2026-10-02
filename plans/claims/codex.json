@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "Fix optional voice label contrast",
+  "task": "Stabilize branded desktop cursors",
   "status": "released",
-  "paths": ["styles/table-talk.css", "play/index.html", "tests/visual-readability-contracts.test.mjs", "tests/fixtures/table-talk/compact-control.html", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
-  "updatedAt": "2026-10-02T06:58:00Z",
-  "head": "10ec52e"
+  "paths": ["styles/konk-brand-cursors.css", "play/index.html", "index.html", "tests/web-trailer-entry-and-brand-cursors.test.mjs", "tests/fixtures/brand-cursors.html", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
+  "updatedAt": "2026-10-02T07:11:00Z",
+  "head": "0a7a63c"
 }

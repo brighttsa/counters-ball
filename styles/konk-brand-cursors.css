@@ -6,10 +6,14 @@
   }
 
   html, body { cursor: var(--konk-arrow), default; }
+  /* Child text and artwork must not replace their control's cursor with native component styles. */
+  body * { cursor: inherit !important; }
   #game-canvas { cursor: var(--konk-hand), pointer !important; }
   #game-canvas.can-grab, #game-canvas.aiming { cursor: var(--konk-hold), grabbing !important; }
   body :is(button, a, summary, label, select, [role='button'], [tabindex]):not(:is(input, textarea, [contenteditable='true'], :disabled)),
+  body input:is([type='checkbox'], [type='radio'], [type='range'], [type='button'], [type='submit'], [type='reset'], [type='image'], [type='color']):not(:disabled),
   .awaiting-start .boot-screen { cursor: var(--konk-hand), pointer !important; }
-  body :is(input, textarea, [contenteditable='true']) { cursor: text !important; }
+  body :is(input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='button'], [type='submit'], [type='reset'], [type='image'], [type='color'])), textarea, [contenteditable='true']) { cursor: text !important; }
+  #camera-orbit, #camera-orbit:active { cursor: var(--konk-hold), grabbing !important; }
   body :disabled { cursor: not-allowed !important; }
 }

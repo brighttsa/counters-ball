@@ -61,8 +61,8 @@ test('homepage link arrows are matching vectors rather than mobile emoji glyphs'
 test('both pages share the matching arrow and hand cursors', async () => {
   const css = await readFile(new URL('styles/konk-brand-cursors.css', root), 'utf8');
   const grip = await readFile(new URL('assets/konk-cursor-hold.svg', root), 'utf8');
-  assert.match(game, /styles\/konk-brand-cursors\.css\?v=3/);
-  assert.match(trailer, /styles\/konk-brand-cursors\.css\?v=3/);
+  assert.match(game, /styles\/konk-brand-cursors\.css\?v=4/);
+  assert.match(trailer, /styles\/konk-brand-cursors\.css\?v=4/);
   assert.match(css, /--konk-arrow: url\(/);
   assert.match(css, /--konk-hand: url\(/);
   assert.equal((css.match(/fill='%23faf5e2'/g) ?? []).length, 2);
@@ -91,4 +91,15 @@ test('room format picker has a defined brand accent and dark options', async () 
   assert.equal((game.match(/name="room-format-choice"/g) ?? []).length, 2);
   assert.match(css, /\.room-format-options label:has\(input:checked\) \{ background: var\(--yellow\); color: var\(--ink\); \}/);
   assert.match(css, /\.room-format-options \{[^}]*background: var\(--ink-raised\)/);
+});
+
+test('nested control artwork inherits branded cursors and grip is preloaded', async () => {
+  const css = await readFile(new URL('styles/konk-brand-cursors.css', root), 'utf8');
+  assert.match(css, /body \* \{ cursor: inherit !important; \}/);
+  assert.match(css, /body input:is\([^\n]*\[type='radio'\][^\n]*\[type='range'\]/);
+  assert.match(css, /input:not\(:is\([^\n]*\[type='checkbox'\]/);
+  assert.match(css, /#camera-orbit[^\n]*cursor: var\(--konk-hold\)/);
+  for (const page of [game, trailer]) {
+    assert.match(page, /rel="preload" as="image" href="\/?assets\/konk-cursor-hold\.svg" media="\(hover: hover\) and \(pointer: fine\)"/);
+  }
 });
