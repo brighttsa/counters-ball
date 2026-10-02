@@ -26,6 +26,8 @@ jobs:
           node-version: 24
       - name: Fetch the exact Three.js build the game imports
         run: curl --fail --location --max-time 30 https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js --output "$RUNNER_TEMP/three-r160.mjs"
+      - name: Install match server test dependencies
+        run: npm ci --prefix match-server
       - name: Run tests
         run: COUNTERS_TEST_THREE="$RUNNER_TEMP/three-r160.mjs" node --test tests/*.test.mjs
 
