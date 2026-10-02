@@ -1,14 +1,14 @@
 ---
-title: "Compact expandable Table Talk control"
-description: "Test-first implementation plan for Table Talk's compact connected state"
-status: pending
+title: Compact expandable Table Talk control
+description: Test-first implementation plan for Table Talk's compact connected state
+status: in-progress
 priority: P2
-branch: "codex/table-talk"
+branch: codex/table-talk
 tags: []
 blockedBy: []
 blocks: []
-created: "2026-10-02T05:30:19.807Z"
-createdBy: "ck:plan"
+created: '2026-10-02T05:30:19.807Z'
+createdBy: 'ck:plan'
 source: skill
 ---
 
@@ -22,9 +22,9 @@ Implement a one-time automatic collapse after Table Talk reaches a healthy conne
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [Test-first control contract](./phase-01-test-first-control-contract.md) | Pending |
-| 2 | [Implement compact state](./phase-02-implement-compact-state.md) | Pending |
-| 3 | [Verify responsive and accessible behavior](./phase-03-verify-responsive-and-accessible-behavior.md) | Pending |
+| 1 | [Test-first control contract](./phase-01-test-first-control-contract.md) | Completed |
+| 2 | [Implement compact state](./phase-02-implement-compact-state.md) | Completed |
+| 3 | [Verify responsive and accessible behavior](./phase-03-verify-responsive-and-accessible-behavior.md) | Automated and fixture checks pass; connected iPhone HUD check pending |
 
 ## Dependencies
 

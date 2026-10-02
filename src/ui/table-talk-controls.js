@@ -3,6 +3,7 @@ import { createLiveKitBrowserVoiceAdapter } from '../core/livekit-browser-voice-
 import { createNativeTableTalkVoiceAdapter } from '../core/native-table-talk-voice-adapter.js';
 import { loadTableTalkBrowserSdk } from '../core/table-talk-browser-sdk-loader.js';
 import { PrivateRoomVoiceSession } from '../core/private-room-voice-session.js';
+import { createTableTalkCompactControl } from './table-talk-compact-control.js';
 
 export function createTableTalkControls(root, api, music) {
   if (typeof root?.querySelector !== 'function') return { configure() {}, setInMatch() {}, leave: async () => {} };
@@ -12,6 +13,9 @@ export function createTableTalkControls(root, api, music) {
   const leaveButton = root.querySelector('[data-voice-action="leave"]');
   const status = root.querySelector('[data-table-talk-status]');
   const help = root.querySelector('[data-table-talk-help]');
+  const compactControl = createTableTalkCompactControl(root);
+  const toggleButton = compactControl.button;
+  const liveStatus = root.querySelector('[data-table-talk-live-status]');
   const roomParent = root.parentNode;
   const roomNextSibling = root.nextSibling;
   const setup = document.getElementById('table-talk-room-setup');
@@ -20,6 +24,13 @@ export function createTableTalkControls(root, api, music) {
   let roomId = null, sessionId = null, leaseTimer = null, speakerTimer = null, session = null, native = null, stopping = false;
   let lastLeaseAt = 0;
   let playbackBlocked = false;
+  let autoCollapseUsed = false, compact = false;
+
+  function setCompact(value, manual = false) {
+    compact = value;
+    compactControl.setCompact(compact, root.dataset.state);
+    if (manual) autoCollapseUsed = true;
+  }
 
   function setInMatch(active) {
     root.dataset.inMatch = String(active);
@@ -37,7 +48,27 @@ export function createTableTalkControls(root, api, music) {
 
   function update(state, message = '') {
     root.dataset.state = state;
-    status.textContent = message || ({ listening: 'Connected · mic off', speaking: 'Microphone on', 'requesting-microphone': 'Allow microphone access in the prompt' }[state] ?? 'Voice off');
+    status.textContent = message || (playbackBlocked ? 'Room audio is blocked. Tap Enable room audio.' :
+      ({ listening: 'Connected · mic off', speaking: 'Microphone on', 'requesting-microphone': 'Allow microphone access in the prompt' }[state] ?? 'Voice off'));
+    if (liveStatus) liveStatus.textContent = status.textContent;
+    if (state === 'connecting' && joinButtons.includes(document.activeElement)) status.focus();
+    const micRecovery = status.textContent.startsWith('Microphone access is blocked');
+    if (state === 'idle') {
+      playbackBlocked = false;
+      autoCollapseUsed = false;
+      setCompact(false);
+    } else if (state === 'connecting' || state === 'requesting-microphone' || playbackBlocked || micRecovery) {
+      setCompact(false);
+    } else if (['listening', 'speaking'].includes(state)) {
+      const shouldAutoCollapse = !autoCollapseUsed;
+      compactControl.setAvailable(true);
+      if (shouldAutoCollapse) compactControl.focusIf([joinButton, audioButton, micButton, leaveButton, status]);
+      setCompact(shouldAutoCollapse ? true : compact);
+      if (shouldAutoCollapse) {
+        autoCollapseUsed = true;
+      }
+    }
+    compactControl.setAvailable(['listening', 'speaking'].includes(state) && !playbackBlocked && !micRecovery);
     joinButtons.forEach(button => { button.hidden = state !== 'idle'; button.disabled = state === 'connecting'; });
     if (setup) setup.hidden = !roomId || state !== 'idle';
     if (audioButton) audioButton.hidden = state === 'idle' || state === 'connecting' || !playbackBlocked;
@@ -47,15 +78,14 @@ export function createTableTalkControls(root, api, music) {
       status.textContent.startsWith('Microphone access is blocked') ? 'Try microphone again' : 'Enable microphone';
     micButton.disabled = state === 'requesting-microphone';
     if (help) {
-      const blocked = status.textContent.startsWith('Microphone access is blocked');
-      help.hidden = !blocked;
-      help.textContent = blocked ? 'In your browser or device settings, allow microphone access for KONK!, then tap Try microphone again.' : '';
+      help.hidden = !micRecovery;
+      help.textContent = micRecovery ? 'In your browser or device settings, allow microphone access for KONK!, then tap Try microphone again.' : '';
     }
   }
 
   async function enter() {
     if (!roomId || session || native) return;
-    joinButton.disabled = true; update('connecting', 'Connecting to the table…');
+    update('connecting', 'Connecting to the table…'); joinButton.disabled = true;
     try {
       const credentials = await requestTableTalkJoin(api, roomId);
       sessionId = credentials.sessionId;
@@ -73,11 +103,8 @@ export function createTableTalkControls(root, api, music) {
         session = new PrivateRoomVoiceSession(() => createLiveKitBrowserVoiceAdapter(sdk,
           root.querySelector('[data-table-talk-audio]'), active => music?.setRemoteVoiceActive(active), blocked => {
             playbackBlocked = blocked;
-            if (audioButton) audioButton.hidden = !blocked;
-            if (blocked) status.textContent = 'Room audio is blocked. Tap Enable room audio.';
-            else if (status.textContent.startsWith('Room audio is blocked')) {
-              status.textContent = session?.state === 'speaking' ? 'Microphone on' : 'Connected · mic off';
-            }
+            if (blocked) update(session?.state ?? 'listening', 'Room audio is blocked. Tap Enable room audio.');
+            else if (status.textContent.startsWith('Room audio is blocked')) update(session?.state ?? 'listening');
           }),
         value => update(value.state, voiceErrorMessage(value.error)));
         await session.join(credentials);
@@ -140,6 +167,7 @@ export function createTableTalkControls(root, api, music) {
   }
 
   joinButtons.forEach(button => button.addEventListener('click', enter));
+  toggleButton?.addEventListener('click', () => setCompact(!compact, true));
   audioButton?.addEventListener('click', async () => {
     audioButton.disabled = true;
     try { await session?.adapter?.resumeAudio(); }
@@ -157,6 +185,8 @@ export function createTableTalkControls(root, api, music) {
       if (roomId === nextRoomId) return;
       if (roomId) void stop(true);
       roomId = nextRoomId;
+      autoCollapseUsed = false;
+      setCompact(false);
       root.hidden = !roomId;
       update('idle');
     },

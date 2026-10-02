@@ -1,8 +1,8 @@
 ---
 phase: 2
-title: "Implement compact state"
-status: pending
-effort: ""
+title: Implement compact state
+status: completed
+effort: ''
 ---
 
 # Phase 2: Implement compact state
@@ -24,10 +24,10 @@ Implement the approved compact voice pill inside the existing Table Talk aside. 
 
 ## Success Criteria
 
-- [ ] All phase 1 tests pass without changing network, server, or mic-capture behavior.
-- [ ] Compact pill states clearly read `Voice · Mic off` or `Voice · Mic on`; the expand/collapse action remains discoverable.
-- [ ] The full existing action set is reachable when expanded; voice recovery cannot be hidden.
-- [ ] Button target is at least 44px, keyboard focus is visible, and reduced-motion removes spatial transition.
+- [x] All phase 1 tests pass without changing network, server, or mic-capture behavior.
+- [x] Compact pill states clearly read `Voice · Mic off` or `Voice · Mic on`; the expand/collapse action remains discoverable.
+- [x] The full existing action set is reachable when expanded; voice recovery cannot be hidden.
+- [x] Button target is at least 44px, keyboard focus is visible, and reduced-motion removes spatial transition.
 
 ## Risk Assessment
 

@@ -1,8 +1,8 @@
 ---
 phase: 1
-title: "Test-first control contract"
-status: pending
-effort: ""
+title: Test-first control contract
+status: completed
+effort: ''
 ---
 
 # Phase 1: Test-first control contract
@@ -22,8 +22,8 @@ Add failing state/DOM-contract tests before implementation so the current always
 
 ## Success Criteria
 
-- [ ] Tests cover one-time auto-collapse, mic-off default, explicit toggle, state persistence, recovery exceptions, focus handoff, reset, and relocation.
-- [ ] New focused tests fail before implementation for the intended assertions; existing voice onboarding behavior remains represented.
+- [x] Tests cover one-time auto-collapse, mic-off default, explicit toggle, state persistence, recovery exceptions, focus handoff, reset, and relocation.
+- [x] New focused tests fail before implementation for the intended assertions; existing voice onboarding behavior remains represented.
 
 ## Risk Assessment
 

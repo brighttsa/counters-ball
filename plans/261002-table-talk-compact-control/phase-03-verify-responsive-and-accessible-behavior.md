@@ -1,8 +1,8 @@
 ---
 phase: 3
-title: "Verify responsive and accessible behavior"
-status: pending
-effort: ""
+title: Verify responsive and accessible behavior
+status: in-progress
+effort: ''
 ---
 
 # Phase 3: Verify responsive and accessible behavior
@@ -23,10 +23,18 @@ Verify that compact voice controls remain legible and non-obstructive across the
 
 ## Success Criteria
 
-- [ ] No overlap, clipping, or horizontal overflow at the target phone, landscape, and desktop sizes.
-- [ ] User can reach microphone, leave, and playback recovery controls in at most one expansion action.
-- [ ] Focus/expanded state stays correct through voice updates and room-to-match relocation.
-- [ ] Full regression suite, syntax checks, and whitespace check pass; any unavailable physical-device check is explicitly listed as remaining.
+- [x] Compact and expanded fixture controls fit at the target phone and desktop sizes; short landscape remains scrollable.
+- [ ] Confirm active-match HUD placement during a real connected voice session on iPhone.
+- [x] User can reach microphone, leave, and playback recovery controls in at most one expansion action.
+- [x] Focus/expanded state stays correct through voice updates and room-to-match relocation.
+- [x] Full regression suite, syntax checks, and whitespace check pass; any unavailable physical-device check is explicitly listed as remaining.
+
+## Verification Notes
+
+- Local browser fixture uses the production KONK! CSS and compact-control helper. Reviewed at 375×812, 844×390, and 1440×900; mouse and Enter-key toggling behaved correctly. The fixture uses relative placement, so it does not certify the active game's fixed HUD geometry. Short landscape requires scrolling between fixture samples.
+- Controller tests cover healthy connection, mic-off default, both Join entry points and focus handoff, manual choice through mic changes and relocation, audio/mic recovery, and reset.
+- Focused voice tests: 33 passed. Full suite: 437 passed, 0 failed. All source JS parses; `git diff --check` is clean.
+- Voice transport, server, and mic capture were not changed. No local LiveKit endpoint was available for an actual connected session; physical iPhone verification remains outstanding. Reduced-motion CSS disables transitions, but browser reduced-motion emulation was not exercised.
 
 ## Risk Assessment
 

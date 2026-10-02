@@ -2,9 +2,9 @@
   "schema": 1,
   "owner": "codex",
   "branch": "codex/table-talk",
-  "task": "Plan compact expandable Table Talk control",
+  "task": "Implement compact expandable Table Talk control",
   "status": "released",
-  "paths": ["plans/261002-table-talk-compact-control/", "plans/reports/261002-0528-table-talk-compact-control-design.md", "docs/journals/261002-0528-table-talk-compact-control-plan.md", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
-  "updatedAt": "2026-10-02T05:33:00Z",
-  "head": "c6d4bec"
+  "paths": ["src/main.js", "src/ui/live-match-room-flow.js", "src/ui/table-talk-controls.js", "src/ui/table-talk-compact-control.js", "play/index.html", "styles/table-talk.css", "tests/table-talk-onboarding.test.mjs", "tests/fixtures/table-talk/compact-control.html", "docs/journals/261002-0600-table-talk-compact-control.md", "plans/261002-table-talk-compact-control/", "plans/agent-handoff-board.md", "plans/claims/codex.json"],
+  "updatedAt": "2026-10-02T06:12:19Z",
+  "head": "4d5733e"
 }

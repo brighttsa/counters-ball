@@ -6,7 +6,7 @@ import { resumeLiveRoom, forgetLiveRoomSeat } from '../core/live-match-room-tran
 import { wireKonkerProfileControls } from './konker-profile-controls.js';
 import { markRoomLocation } from '../core/live-room-seat-recovery.js';
 import { STREET_LEGENDS_ACTS } from '../levels/street-legends-acts-and-unlocks.js?v=2';
-import { createTableTalkControls } from './table-talk-controls.js';
+import { createTableTalkControls } from './table-talk-controls.js?v=2';
 
 const $ = (id) => document.getElementById(id);
 const other = (seat) => seat === 'home' ? 'away' : 'home';
