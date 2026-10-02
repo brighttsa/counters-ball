@@ -10,6 +10,7 @@
     "wrangler": "^4.146.0"
   },
   "dependencies": {
-    "@resvg/resvg-wasm": "^2.6.2"
+    "@resvg/resvg-wasm": "^2.6.2",
+    "livekit-server-sdk": "2.19.1"
   }
 }

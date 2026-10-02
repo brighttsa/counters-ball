@@ -17,6 +17,7 @@ const SWITCH_FADE = 1.2;         // seconds: one track hands over to the next
 const RESULTS_DIP = 0.63;        // about −4 dB under the results card
 const GOAL_DIP = 0.5;            // about −6 dB while the whistle, the net and the slow motion play
 const GOAL_DIP_SECONDS = 2.5;
+const VOICE_DIP = 0.56;
 const KEEP_DECODED = 2;
 const HIDE_FADE = 0.4;           // seconds: music fades to silence before tab suspends
 const SHOW_FADE = 0.8;           // seconds: music fades back in after tab resumes
@@ -49,6 +50,7 @@ export class SoundtrackDirector {
     this.prefetched = new Map(); // id → Promise<ArrayBuffer>, raw bytes fetched before unlock
     this.token = 0;
     this.warned = false;
+    this.remoteVoiceActive = false;
   }
 
   /** Start fetching a track's MP3 bytes on page load, before any user gesture or AudioContext. */
@@ -153,7 +155,12 @@ export class SoundtrackDirector {
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
     this.dip.gain.cancelScheduledValues(now);
-    this.dip.gain.setTargetAtTime(value, now, seconds / 3);
+    this.dip.gain.setTargetAtTime(Math.min(value, this.remoteVoiceActive ? VOICE_DIP : 1), now, seconds / 3);
+  }
+
+  setRemoteVoiceActive(active) {
+    this.remoteVoiceActive = Boolean(active);
+    this.setDip(this.wanted?.dip ? RESULTS_DIP : 1, 0.35);
   }
 
   /** Fade the music bus gracefully for tab hide/show (the effects bus handles its own). */
@@ -174,7 +181,7 @@ export class SoundtrackDirector {
   /** A goal: dip under the whistle and the net, then come back up. */
   duckForGoal() {
     if (!this.ctx) return;
-    const now = this.ctx.currentTime, rest = this.wanted?.dip ? RESULTS_DIP : 1;
+    const now = this.ctx.currentTime, rest = Math.min(this.wanted?.dip ? RESULTS_DIP : 1, this.remoteVoiceActive ? VOICE_DIP : 1);
     this.dip.gain.cancelScheduledValues(now);
     this.dip.gain.setTargetAtTime(GOAL_DIP, now, 0.05);
     this.dip.gain.setTargetAtTime(rest, now + GOAL_DIP_SECONDS, 0.4);

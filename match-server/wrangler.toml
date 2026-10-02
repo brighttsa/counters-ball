@@ -2,6 +2,7 @@
 name = "konk-match-server"
 main = "src/konk-match-worker-and-durable-object.js"
 compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
 
 # Chat apps fetch konk.world/m/<id> for link previews; the rest of konk.world stays on GitHub Pages.
 routes = [{ pattern = "konk.world/m/*", zone_name = "konk.world" }]
@@ -16,9 +17,10 @@ fallthrough = true
 
 [vars]
 # Pages that may call the API from the browser.
-ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180"
+ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180,konk-local://game"
 # Where notifications send players back to; also the VAPID contact.
 SITE_URL = "https://konk.world/"
+TABLE_TALK_ENABLED = "true"
 # Public half of the Web Push VAPID key (the private half is the secret VAPID_PRIVATE_JWK).
 VAPID_PUBLIC_KEY = "BLpzTuejTciUgcCBrrFCDewABuKpHfQetTVfarfjMpdTsV5uG4j-wcjnPUiU3EFMSLmb9NKimmIoE6ybYpX5zuI"
 
@@ -26,7 +28,15 @@ VAPID_PUBLIC_KEY = "BLpzTuejTciUgcCBrrFCDewABuKpHfQetTVfarfjMpdTsV5uG4j-wcjnPUiU
 name = "KONK_MATCH"
 class_name = "KonkMatch"
 
+[[durable_objects.bindings]]
+name = "KONK_VOICE"
+class_name = "KonkVoiceCoordinator"
+
 # SQLite-backed Durable Objects are available on the Workers free plan.
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["KonkMatch"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["KonkVoiceCoordinator"]

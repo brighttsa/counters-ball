@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KONK! Table Talk — Audio Probe</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f8f7f3; color: #191b1b; font: 16px system-ui; }
+  main { max-width: 680px; margin: 60px auto; padding: 24px; }
+  header { border-bottom: 4px solid #a83b2a; padding-bottom: 24px; }
+  h1 { font-size: 32px; margin: 8px 0; }
+  .eyebrow { font-weight: 800; color: #a83b2a; }
+  output { display: block; margin: 28px 0; font-weight: 600; min-height: 48px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; }
+  button { font: inherit; font-weight: 650; padding: 14px 20px; min-height: 48px;
+    border: 1px solid #191b1b; border-radius: 4px; background: transparent; cursor: pointer; }
+  button:first-child { background: #191b1b; color: white; }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible { outline: 3px solid #a83b2a; outline-offset: 3px; }
+  #audio { display: none; }
+</style>
+<main>
+  <header><div class="eyebrow">KONK! / PRIVATE AUDIO PROBE</div><h1>Table Talk</h1></header>
+  <output id="state" role="status" aria-live="polite">Disconnected</output>
+  <div class="controls">
+    <button id="join">Join Voice</button>
+    <button id="microphone" disabled>Unmute</button>
+    <button id="leave" disabled>Leave</button>
+  </div>
+  <div id="audio"></div>
+</main>
+<script src="/sdk.js"></script>
+<script type="module" src="/probe.js"></script>
+</html>

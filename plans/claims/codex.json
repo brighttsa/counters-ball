@@ -1,10 +1,18 @@
 {
   "schema": 1,
   "owner": "codex",
-  "branch": "main",
-  "task": "",
-  "status": "idle",
-  "paths": [],
-  "updatedAt": "2026-09-29T10:31:00Z",
-  "head": "d2ec879"
+  "branch": "codex/table-talk",
+  "task": "Ship Table Talk voice",
+  "status": "active",
+  "paths": [
+    "src/ui/table-talk-controls.js",
+    "src/ui/live-match-room-flow.js",
+    "src/core/private-room-voice-session.js",
+    "src/core/livekit-browser-voice-adapter.js",
+    "src/core/native-table-talk-voice-adapter.js",
+    "match-server/src/private-room-voice-coordinator.js",
+    "ios/KONKNative/KONKNative/Voice/"
+  ],
+  "updatedAt": "2026-10-02T03:45:00Z",
+  "head": "c7bec27"
 }

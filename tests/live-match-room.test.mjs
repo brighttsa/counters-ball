@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
+import { createRoom, joinRoom, privateVoiceSeat, publicRoom, renameSeat, seatFor, setReady, touch, PRESENCE_MS } from '../match-server/src/live-match-room-rules.js';
 import { connectLiveRoomSocket, createLiveRoom, joinLiveRoom, readLiveRoomTurn, roomApiBase, roomLink, roomSocketBase, setLiveRoomName, setLiveRoomReady } from '../src/core/live-match-room-transport.js';
 import { createLiveMatchRoomFlow } from '../src/ui/live-match-room-flow.js';
 import { STREET_LEGENDS_ACTS } from '../src/levels/street-legends-acts-and-unlocks.js';
@@ -89,6 +89,22 @@ test('reclaiming an abandoned seat revokes the old token', () => {
   const old = room.seats.away.token;
   joinRoom(room, { name: 'Yaw', now: 200 + PRESENCE_MS + 1 });
   assert.equal(seatFor(room, old), null);
+});
+
+test('private voice seat proofs require a present private player and bind room and seat generations', () => {
+  const room = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 100 });
+  const token = room.seats.home.token;
+  room.phase = 'ready';
+  assert.equal(privateVoiceSeat(room, token, 101).seatGeneration, 1);
+  assert.equal(privateVoiceSeat(room, token, 100 + PRESENCE_MS + 1), null);
+  room.phase = 'playing'; room.matchmaking = true;
+  assert.equal(privateVoiceSeat(room, token, 101), null);
+  room.matchmaking = false;
+  const lobby = createRoom({ levelId: 'kiosk', homeName: 'Ama', now: 200 });
+  joinRoom(lobby, { name: 'Kofi', now: 201 });
+  const generation = lobby.seats.away.generation;
+  joinRoom(lobby, { name: 'Yaw', now: 201 + PRESENCE_MS + 1 });
+  assert.equal(lobby.seats.away.generation, generation + 1);
 });
 
 test('browser transport proves the seat with the token it was given', async () => {

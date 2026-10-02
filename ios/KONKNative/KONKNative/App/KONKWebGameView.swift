@@ -70,6 +70,10 @@ private struct KONKWebView: UIViewRepresentable {
         configuration.mediaTypesRequiringUserActionForPlayback = [.audio]
         configuration.websiteDataStore = .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        configuration.userContentController.addScriptMessageHandler(
+            context.coordinator.voiceBridge, contentWorld: .page,
+            name: TableTalkVoiceBridge.handlerName
+        )
         configuration.setURLSchemeHandler(KONKLocalSchemeHandler(),
                                           forURLScheme: KONKLocalSchemeHandler.scheme)
         configuration.userContentController.addUserScript(WKUserScript(
@@ -98,10 +102,22 @@ private struct KONKWebView: UIViewRepresentable {
 
     func updateUIView(_ webView: WKWebView, context: Context) {}
 
+    static func dismantleUIView(_ webView: WKWebView, coordinator: Coordinator) {
+        coordinator.voiceBridge.detach(from: webView.configuration.userContentController)
+        webView.navigationDelegate = nil
+        webView.stopLoading()
+    }
+
     final class Coordinator: NSObject, WKNavigationDelegate {
         private var state: Binding<LoadState>
+        let voiceBridge = TableTalkVoiceBridge()
 
         init(state: Binding<LoadState>) { self.state = state }
+
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            decisionHandler(TableTalkVoiceBridge.navigationPolicy(navigationAction.request.url))
+        }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation?) {
             state.wrappedValue = .ready

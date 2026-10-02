@@ -83,6 +83,21 @@ export function setLiveRoomName(base, id, name, fetchImpl) {
 export function heartbeatLiveRoom(base, id, seat, fetchImpl) {
   return call(base, `/rooms/${id}/heartbeat`, { method: 'POST', body: JSON.stringify({ seat, token: tokenFor(id) }) }, fetchImpl);
 }
+
+export function requestTableTalkJoin(base, id, fetchImpl) {
+  return call(base, `/rooms/${id}/voice/join`, { method: 'POST', body: '{}',
+    headers: { Authorization: `Bearer ${tokenFor(id)}` } }, fetchImpl);
+}
+
+export function renewTableTalkLease(base, id, sessionId, fetchImpl) {
+  return call(base, `/rooms/${id}/voice/renew`, { method: 'POST', body: JSON.stringify({ sessionId }),
+    headers: { Authorization: `Bearer ${tokenFor(id)}` } }, fetchImpl);
+}
+
+export function leaveTableTalk(base, id, sessionId, fetchImpl) {
+  return call(base, `/rooms/${id}/voice/leave`, { method: 'POST', body: JSON.stringify({ sessionId }),
+    headers: { Authorization: `Bearer ${tokenFor(id)}` } }, fetchImpl);
+}
 export function resumeLiveRoom(base, id, fetchImpl) {
   return heartbeatLiveRoom(base, id, savedLiveRoomSeat(id), fetchImpl).then(result => ({ ...result, id, seat: savedLiveRoomSeat(id) }));
 }

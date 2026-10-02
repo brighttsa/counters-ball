@@ -27,11 +27,11 @@ export function newRoom(random = crypto.getRandomValues.bind(crypto)) {
 }
 
 export function createRoom({ levelId, homeName, mode = 'duel', now = Date.now() }) {
-  if (mode === 'tournament') return { mode, phase: 'lobby', levelId: String(levelId ?? '').slice(0, 40), createdAt: now, updatedAt: now,
+  if (mode === 'tournament') return { mode, phase: 'lobby', epoch: crypto.randomUUID(), levelId: String(levelId ?? '').slice(0, 40), createdAt: now, updatedAt: now,
     seats: Object.fromEntries(TOURNAMENT_SEATS.map((id, index) => [id, index === 0
-      ? { name: cleanRoomName(homeName, 'Player 1'), ready: false, seenAt: now, token: newSeatToken() } : null])), tournament: null };
-  return { phase: 'lobby', levelId: String(levelId ?? '').slice(0, 40), createdAt: now, updatedAt: now,
-    seats: { home: { name: cleanRoomName(homeName, 'Player 1'), ready: false, seenAt: now, token: newSeatToken() }, away: null } };
+      ? { name: cleanRoomName(homeName, 'Player 1'), ready: false, seenAt: now, token: newSeatToken(), generation: 1 } : null])), tournament: null };
+  return { phase: 'lobby', epoch: crypto.randomUUID(), levelId: String(levelId ?? '').slice(0, 40), createdAt: now, updatedAt: now,
+    seats: { home: { name: cleanRoomName(homeName, 'Player 1'), ready: false, seenAt: now, token: newSeatToken(), generation: 1 }, away: null } };
 }
 
 export function joinRoom(room, { name, now = Date.now() }) {
@@ -42,13 +42,15 @@ export function joinRoom(room, { name, now = Date.now() }) {
     if (room.phase !== 'lobby') return { ok: false, status: 409, error: 'tournament has started' };
     const seat = TOURNAMENT_SEATS.find((id) => !room.seats[id] || now - room.seats[id].seenAt > PRESENCE_MS);
     if (!seat) return { ok: false, status: 409, error: 'room is full' };
-    room.seats[seat] = { name: cleanRoomName(name, `Player ${Number(seat[1])}`), ready: false, seenAt: now, token: newSeatToken() };
+    const generation = (room.seats[seat]?.generation ?? 0) + 1;
+    room.seats[seat] = { name: cleanRoomName(name, `Player ${Number(seat[1])}`), ready: false, seenAt: now, token: newSeatToken(), generation };
     room.updatedAt = now;
     return { ok: true, seat };
   }
   if (room.seats.away && now - room.seats.away.seenAt <= PRESENCE_MS) return { ok: false, status: 409, error: 'room is full' };
   // Reclaiming an abandoned seat issues a new token, so the player who left can no longer act for it.
-  room.seats.away = { name: cleanRoomName(name, 'Player 2'), ready: false, seenAt: now, token: newSeatToken() };
+  const generation = (room.seats.away?.generation ?? 0) + 1;
+  room.seats.away = { name: cleanRoomName(name, 'Player 2'), ready: false, seenAt: now, token: newSeatToken(), generation };
   room.updatedAt = now;
   return { ok: true, seat: 'away' };
 }
@@ -79,6 +81,14 @@ export function touch(room, seat, now = Date.now()) {
   room.seats[seat].seenAt = now;
   room.updatedAt = now;
   return { ok: true };
+}
+
+export function privateVoiceSeat(room, token, now = Date.now()) {
+  const seat = seatFor(room, token);
+  const player = seat && room.seats[seat];
+  if (!room || room.matchmaking || room.phase === 'ended' || !player ||
+      now - player.seenAt > PRESENCE_MS || !['duel', 'tournament'].includes(room.mode ?? 'duel')) return null;
+  return { roomEpoch: room.epoch ?? String(room.createdAt), seat, seatGeneration: player.generation ?? 1, displayName: player.name };
 }
 
 export function publicRoom(room, now = Date.now()) {

@@ -6,12 +6,15 @@ import { resumeLiveRoom, forgetLiveRoomSeat } from '../core/live-match-room-tran
 import { wireKonkerProfileControls } from './konker-profile-controls.js';
 import { markRoomLocation } from '../core/live-room-seat-recovery.js';
 import { STREET_LEGENDS_ACTS } from '../levels/street-legends-acts-and-unlocks.js?v=2';
+import { createTableTalkControls } from './table-talk-controls.js';
 
 const $ = (id) => document.getElementById(id);
 const other = (seat) => seat === 'home' ? 'away' : 'home';
 
-export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGENDS_ACTS.find(act => act.id === id), prepareLevel = (value) => value, baseUrl, showTitle, showRoomScreen = () => {}, onStart }) {
+export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGENDS_ACTS.find(act => act.id === id), prepareLevel = (value) => value, baseUrl, showTitle, showRoomScreen = () => {}, onStart, music }) {
   const api = roomApiBase();
+  const voiceRoot = $('table-talk-controls');
+  const voice = voiceRoot ? createTableTalkControls(voiceRoot, api, music) : { configure() {}, leave: async () => {} };
   wireKonkerProfileControls(api);
   let currentLevel = level;
   let roomId = null;
@@ -48,6 +51,7 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
   const status = (text) => { $('live-room-status').textContent = text; };
   const render = (room) => {
     if (room.phase === 'cancelled') {
+      voice.configure(null, false);
       clearTimeout(nameTimer);
       clearInterval(timer); socket?.close(); socket = null; roomId = null; seat = null; publicPair = false;
       search.reset();
@@ -59,11 +63,13 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
       setBusy(false);
       return;
     }
+    voice.configure(roomId, !publicPair && room.phase !== 'ended');
     if (room.mode === 'tournament') {
       $('live-room-seats').hidden = true;
       $('live-room-bracket').hidden = false;
       renderTournamentBracket($('live-room-bracket'), room, seat);
       $('live-room-title').textContent = 'Four-player knockout';
+      if (room.phase === 'ended') voice.leave();
       $('live-room-line').textContent = room.phase === 'lobby' ? 'Four players. Two semifinals. One final.' :
         room.phase === 'ended' ? 'The room standings are final.' : 'Semifinals are live. Winners meet in the final.';
       const ready = document.querySelector('[data-action="live-room-ready"]');
@@ -132,6 +138,7 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
     $('konker-profile-controls').hidden = true;
     $('find-rival').hidden = true; $('cancel-rival-search').hidden = true;
     roomId = result.id ?? roomId; seat = result.seat ?? seat; invite = roomLink(`${baseUrl}`, roomId);
+    voice.configure(roomId, !publicPair);
     markRoomLocation(roomId);
     currentLevel = levelForId(result.room.levelId) ?? currentLevel;
     $('live-room-code').value = roomId; $('live-room-code').readOnly = true;
@@ -172,7 +179,7 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
   $('find-rival').addEventListener('click', () => search.start());
   $('cancel-rival-search').addEventListener('click', () => search.cancel());
   return {
-    show(nextLevel = currentLevel) { publicPair = false; search.reset(); createButton.hidden = false; joinButton.hidden = false; roomCode.closest('label').hidden = false; currentLevel = prepareLevel(nextLevel); started = false; playingMatchId = null; completedMatches.clear(); clearInterval(timer); socket?.close(); socket = null; roomId = null; seat = null; showRoomScreen(); $('live-room-name').disabled = false; $('live-room-name').readOnly = false; $('live-room-venue').textContent = currentLevel.name; $('live-room-title').textContent = 'Play someone live'; $('live-room-line').textContent = 'Find a rival or invite your friends.'; $('live-room-format-field').hidden = false; $('live-room-seats').hidden = true; $('live-room-bracket').hidden = true; roomCode.readOnly = false; roomCode.value = ''; $('live-room-status').textContent = ''; document.querySelector('[data-action="live-room-ready"]').hidden = true; document.querySelector('[data-action="live-room-copy"]').hidden = true; setBusy(false); },
+    show(nextLevel = currentLevel) { voice.configure(null, false); publicPair = false; search.reset(); createButton.hidden = false; joinButton.hidden = false; roomCode.closest('label').hidden = false; currentLevel = prepareLevel(nextLevel); started = false; playingMatchId = null; completedMatches.clear(); clearInterval(timer); socket?.close(); socket = null; roomId = null; seat = null; showRoomScreen(); $('live-room-name').disabled = false; $('live-room-name').readOnly = false; $('live-room-venue').textContent = currentLevel.name; $('live-room-title').textContent = 'Play someone live'; $('live-room-line').textContent = 'Find a rival or invite your friends.'; $('live-room-format-field').hidden = false; $('live-room-seats').hidden = true; $('live-room-bracket').hidden = true; roomCode.readOnly = false; roomCode.value = ''; $('live-room-status').textContent = ''; document.querySelector('[data-action="live-room-ready"]').hidden = true; document.querySelector('[data-action="live-room-copy"]').hidden = true; setBusy(false); },
     async open(id) { this.show(); const saved = savedLiveRoomSeat(id); if (saved) { try { open(await resumeLiveRoom(api, id)); return; } catch (error) { if (![403, 404].includes(error.status)) { status('Could not reconnect. Reopen your invite to retry.'); return; } forgetLiveRoomSeat(id); } } $('live-room-code').value = id; return this.join(); },
     async create() { setBusy(true); status('Creating your room…'); try { const result = await createLiveRoom(api, { levelId: currentLevel.id, homeName: $('live-room-name').value, mode: $('live-room-format').value }); open(result); status(`Room created. Your code is ${result.id}. Send the invite.`); } catch (error) { console.error('Live room create failed', error); setBusy(false); status('Could not create a room. Check your connection.'); } },
     async join() { const id = roomCode.value.trim(); if (!id) return status('Paste a room code first.'); setBusy(true); status('Joining room…'); try { if (savedLiveRoomSeat(id)) { open(await resumeLiveRoom(api, id)); return; } open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { setBusy(false); status(error.status === 410 || error.status === 404 ? 'That room has ended or expired. Ask for a fresh invite.' : error.status === 409 ? 'That room is full or already playing. Ask for a fresh invite.' : 'Could not join that room. Check the code and your connection.'); } },
@@ -187,6 +194,6 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
         try { await leavePublicLiveRoom(api, roomId); publicPair = false; }
         catch { status('Could not leave yet. Check your connection and try again.'); return; }
       }
-      clearTimeout(nameTimer); clearInterval(timer); socket?.close(); socket = null; roomId = null; seat = null; markRoomLocation(null); showTitle(); },
+      await voice.leave(); clearTimeout(nameTimer); clearInterval(timer); socket?.close(); socket = null; roomId = null; seat = null; markRoomLocation(null); showTitle(); },
   };
 }

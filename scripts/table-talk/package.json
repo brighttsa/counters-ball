@@ -1,0 +1,9 @@
+{
+  "name": "konk-table-talk-sdk-tools",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "livekit-client": "2.22.3",
+    "livekit-server-sdk": "2.19.1"
+  }
+}

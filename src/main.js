@@ -27,7 +27,7 @@ import { createMenuActions } from './ui/menu-button-action-routes.js?v=3';
 import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
 import { createMessageMatchFlow } from './ui/message-match-flow.js?v=8';
-import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=10';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=11';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
@@ -76,6 +76,7 @@ const liveRoom = createLiveMatchRoomFlow({ level: CAMPAIGN_LEVELS[0],
   prepareLevel: (level) => liveRoomVenueFor(level, CAMPAIGN_LEVELS),
   levelForId: (id) => STREET_LEGENDS_ACTS.find((act) => act.id === id) ?? CAMPAIGN_LEVELS.find((level) => level.id === id),
   baseUrl: publicBaseUrl, showTitle, showRoomScreen: () => menus.show('live-room'),
+  music,
   onStart: (roomId, seat, seats, level, options) => messageMatch.startRoom(level, roomId, seat, {
     home: seats.home?.name ?? 'Player 1', away: seats.away?.name ?? 'Player 2',
   }, options) });

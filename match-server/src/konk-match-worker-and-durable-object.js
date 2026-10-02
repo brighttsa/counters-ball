@@ -11,7 +11,7 @@ import { checkNextLetter, checkOpeningLetter, MATCH_ID, MAX_LETTER_BYTES, newMat
 import { cleanSubscription, sendPush } from './web-push-vapid-and-aes128gcm.js';
 import { describeMatch, previewPageHtml, scoreCardSvg } from './match-link-preview-card-and-page.js';
 import { renderScoreCardPng } from './score-card-png-renderer.js';
-import { createRoom, joinRoom, publicRoom, renameSeat, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
+import { createRoom, joinRoom, privateVoiceSeat, publicRoom, renameSeat, seatFor, setReady, touch, newRoom as newRoomId, ROOM_ID } from './live-match-room-rules.js';
 import { broadcastLiveRoom, handleLiveRoomSocketMessage, upgradeLiveRoomSocket } from './live-room-websocket-session.js';
 import { tournamentTurn } from './tournament-room-turns.js';
 import { handlePublicMatchmaking, routePublicMatchmaking } from './public-rival-matchmaking-service.js';
@@ -21,12 +21,14 @@ import { handleKonkerProfile, routeKonkerProfiles } from './konker-profile-servi
 import { limitProfileRequest } from './profile-request-limits.js';
 import { readBoundedText } from './bounded-request-body.js';
 import { checkMatchCreationLimit, limitMatchCreation } from './match-creation-request-limits.js';
+import { KonkVoiceCoordinator, routePrivateVoice } from './private-room-voice-coordinator.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
 
 export class KonkMatch extends DurableObject {
   async fetch(request) {
     const { pathname } = new URL(request.url);
+    if (pathname === '/internal/voice-seat' && request.method === 'GET') return this.internalVoiceSeat(request);
     if (pathname === '/creation-limit') return this.ctx.blockConcurrencyWhile(() => limitMatchCreation(this.ctx, request.headers.get('X-Creation-Client')));
     if (pathname === '/profile-limit') return this.ctx.blockConcurrencyWhile(() => limitProfileRequest(this.ctx, request.headers.get('X-Profile-Client')));
     if (pathname === '/player') return this.ctx.blockConcurrencyWhile(() => handleKonkerProfile(this.ctx, request));
@@ -62,6 +64,12 @@ export class KonkMatch extends DurableObject {
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
     if (latest) this.ctx.waitUntil(this.notify(letter)); // the sender's share sheet never waits on a push service
     return json({ seq: letter.k }, latest ? 200 : 201);
+  }
+
+  async internalVoiceSeat(request) {
+    const credential = request.headers.get('Authorization')?.match(/^Bearer ([0-9a-f]{36})$/i)?.[1];
+    const proof = credential && privateVoiceSeat(await this.ctx.storage.get('room'), credential);
+    return proof ? json(proof) : json({ error: 'private seat unavailable' }, 403);
   }
 
   async room(request) {
@@ -178,6 +186,7 @@ export default {
 async function route(request, env) {
   const profile = await routeKonkerProfiles(request, env); if (profile) return profile;
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
+  const voice = await routePrivateVoice(request, env, parts); if (voice) return voice;
   if (parts.length === 1 && parts[0] === 'matchmaking') return routePublicMatchmaking(request, env);
   if (parts[0] === 'm' && request.method === 'GET') return preview(request, env, parts[1], parts[2]);
   if (parts[0] === 'rooms' && request.method === 'POST' && parts.length === 1) {
@@ -295,3 +304,5 @@ function corsHeaders(request, env) {
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 }
+
+export { KonkVoiceCoordinator };
