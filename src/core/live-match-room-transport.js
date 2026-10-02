@@ -1,6 +1,8 @@
 // Transport for the live-match lobby. Gameplay commands will use the same room
 // once the authoritative simulation is wired in; this keeps lobby state out of UI code.
 import { recoveredRoomSeats, rememberRoomSeat, forgetRoomSeat } from './live-room-seat-recovery.js';
+import { readyProfileProof } from './konker-room-seat-transport.js';
+import { localMatchApi, isWifiMatchPreview } from './local-match-preview-network.js';
 const ROOM_ID = /^[a-km-np-zA-HJ-NP-Z2-9]{10}$/;
 const PRODUCTION_API = 'https://konk-match-server.konk-match-server.workers.dev';
 const TIMEOUT_MS = 8000;
@@ -13,7 +15,10 @@ export function roomSocketBase(base) {
 
 export function roomApiBase(loc = globalThis.location) {
   if (!loc) return '';
-  return loc.hostname === 'localhost' || loc.hostname === '127.0.0.1' ? 'http://localhost:8787' : PRODUCTION_API;
+  return localMatchApi(loc) ?? PRODUCTION_API;
+}
+export function requestRoomRematch(base,id,matchId){
+  return call(base,`/rooms/${id}/rematch`,{method:'POST',body:JSON.stringify({token:liveRoomSeatToken(id),matchId})});
 }
 
 async function call(base, path, init = {}, fetchImpl = globalThis.fetch) {
@@ -49,6 +54,7 @@ export function savedLiveRoomSeat(id) {
   try { const seat = JSON.parse(sessionStorage.getItem(`konk:room:${id}`))?.seat; if (seat) return seat; } catch {}
   return recoveredRoomSeats().find(r => r.id === id)?.seat ?? null;
 }
+export const liveRoomSeatToken = (id) => tokenFor(id);
 export function forgetLiveRoomSeat(id) {
   seatTokens.delete(id); forgetRoomSeat(id);
   try { sessionStorage.removeItem(`konk:room:${id}`); } catch {}
@@ -69,7 +75,9 @@ export function readLiveRoom(base, id, fetchImpl) {
 }
 
 export function setLiveRoomReady(base, id, seat, ready, fetchImpl) {
-  return call(base, `/rooms/${id}/ready`, { method: 'POST', body: JSON.stringify({ seat, ready, token: tokenFor(id) }) }, fetchImpl);
+  const proof = ready ? readyProfileProof() : { body: {}, headers: {} };
+  return call(base, `/rooms/${id}/ready`, { method: 'POST', headers: proof.headers,
+    body: JSON.stringify({ seat, ready, token: tokenFor(id), ...proof.body }) }, fetchImpl);
 }
 
 export function leavePublicLiveRoom(base, id, fetchImpl) {
@@ -161,7 +169,9 @@ export function connectLiveRoomSocket(base, id, onMessage, onState = () => {}, W
 
 export function roomLink(baseUrl, id) {
   if (!ROOM_ID.test(id ?? '')) return '';
-  const url = new URL(baseUrl); url.search = ''; url.hash = ''; url.searchParams.set('room', id); return url.toString();
+  const url = new URL(baseUrl);
+  if(isWifiMatchPreview(url))url.pathname='/play/';
+  url.search = ''; url.hash = ''; url.searchParams.set('room', id); return url.toString();
 }
 
 export function takeRoomIdFromUrl(loc = globalThis.location, hist = globalThis.history) {

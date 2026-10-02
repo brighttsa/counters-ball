@@ -3,6 +3,7 @@
 // opening your own short link shows "waiting" rather than letting you play your friend's move.
 // With no server configured or reachable, callers fall back to self-contained letter links.
 
+import { localMatchApi } from './local-match-preview-network.js';
 export const MATCH_PARAM = 'm';
 const MATCH_ID = /^[a-km-np-zA-HJ-NP-Z2-9]{10}$/;
 const SEATS_KEY = 'konk-message-seats-v1';
@@ -13,7 +14,7 @@ const PRODUCTION_API = 'https://konk-match-server.konk-match-server.workers.dev'
 
 export function matchApiBase(loc = globalThis.location) {
   if (!loc) return '';
-  return loc.hostname === 'localhost' || loc.hostname === '127.0.0.1' ? 'http://localhost:8787' : PRODUCTION_API;
+  return localMatchApi(loc) ?? PRODUCTION_API;
 }
 
 export class MatchServerError extends Error {

@@ -8,7 +8,7 @@ import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js'
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
 import { startLiveRoomFromSnapshot } from './live-room-snapshot-start.js';
-
+import { startAuthoritativeRoomSession } from './authoritative-room-session-start.js';
 const other = (side) => (side === 'home' ? 'away' : 'home');
 export function createMessageMatchFlow(deps) {
   const { app, menus, hud, sound, cameraDirector } = deps;
@@ -21,12 +21,11 @@ export function createMessageMatchFlow(deps) {
   let sentUrl = null;    // once a move is on the server, resending shares the same link
   let result = null;     // full time, held back until our last letter is sent
   let roomSync = null;
-
   const levelIndexOf = (levelId) => CAMPAIGN_LEVELS.findIndex((level) => level.id === levelId);
   const levelOf = (letter) => CAMPAIGN_LEVELS[levelIndexOf(letter.levelId)];
-  function openTable(index, mySide, names, seq, online = false, onRoundEnd = null) {
+  function openTable(index, mySide, names, seq, online = false, onRoundEnd = null, serverOwned = false) {
     const source = typeof index === 'number' ? CAMPAIGN_LEVELS[index] : index;
-    const level = online ? { ...source, objective: null, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3,
+    const level = online && !serverOwned ? { ...source, objective: null, rules: { ...source.rules, goalsToWin: 3, minimumFlicksEach: 3,
       ...(onRoundEnd ? { knockout: true } : {}) } } : source;
     Object.assign(app, { mode: 'versus', levelIndex: Math.max(0, CAMPAIGN_LEVELS.findIndex((candidate) => candidate.id === source.id)) });
     result = null;
@@ -43,6 +42,7 @@ export function createMessageMatchFlow(deps) {
     cameraDirector.setMode('play');
     menus.show(null);
     hud.show(true);
+    if (serverOwned) return null;
     return new MessageMatchLetters(app.session, { mySide, levelId: level.id, names, seq, onLetter: (letter) => {
       outgoing = letter;
       app.session.schedule(0.7, () => {
@@ -51,7 +51,6 @@ export function createMessageMatchFlow(deps) {
       });
     } });
   }
-
   /** Puts our move on the server and returns its short link, or null to fall back to a letter link. */
   async function upload(packed) {
     if (!api) return null;
@@ -85,9 +84,10 @@ export function createMessageMatchFlow(deps) {
   }
 
   return {
-    async startRoom(index, id, mySide, names, { matchId = null, onRoundEnd = null } = {}) {
+    async startRoom(index, id, mySide, names, { matchId = null, onRoundEnd = null, simulation = null } = {}) {
       roomSync?.close();
-      roomSync = await startLiveRoomFromSnapshot({ api, index, id, mySide, names, matchId, onRoundEnd, openTable, hud, sound, app, menus });
+      const start = simulation === 'server-v1' ? startAuthoritativeRoomSession : startLiveRoomFromSnapshot;
+      roomSync = await start({ api, index, id, mySide, names, matchId, onRoundEnd, openTable, hud, sound, app, menus });
     },
     /** From the 2-Player intro: this device plays home and flicks first. */
     start(index) {

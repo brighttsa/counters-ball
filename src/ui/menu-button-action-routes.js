@@ -125,6 +125,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     quit: (el) => { if (confirmed(el, 'Sure? Press again to quit')) flow.showLevels(); },
     'results-levels': () => flow.showLevels(),
     replay: () => { // Play again goes straight to kick-off: the rules card was read the first time
+      if(liveRoom?.rematch?.())return;
       if (app.mode === 'versus') hotSeat.rematch(); // 2-Player: next game of the series
       flow.prepareMatch(app.levelIndex, { rematch: true });
     },

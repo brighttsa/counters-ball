@@ -24,6 +24,10 @@ import { checkMatchCreationLimit, limitMatchCreation } from './match-creation-re
 import { KonkVoiceCoordinator, routePrivateVoice } from './private-room-voice-coordinator.js';
 import { routeCommunityInterest } from './community-interest-routes.js';
 import { publicRivalSearchStorage } from './public-rival-search-storage.js';
+import { bindKonkerSeat, verifyReadyProfile } from './konker-room-seat-identity.js';
+import { authoritativeRoomShot } from './authoritative-room-shot-service.js';
+import { authoritativeRoomRematch } from './authoritative-room-rematch-service.js';
+import { classicLevel, SIMULATION_VERSION } from './authoritative-classic-match-simulation.js';
 export { KonkCommunity } from './community-interest-durable-object.js';
 
 const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches for 30 days is deleted
@@ -47,10 +51,13 @@ export class KonkMatch extends DurableObject {
     if (pathname === '/room') return this.room(request);
     if (pathname === '/room/join') return this.roomJoin(request);
     if (pathname === '/room/name') return this.roomName(request);
-    if (pathname === '/room/ready') return this.roomReady(request);
+    if (pathname === '/room/ready') return this.ctx.blockConcurrencyWhile(() => this.roomReady(request));
+    if (pathname === '/room/rematch') return this.ctx.blockConcurrencyWhile(() => authoritativeRoomRematch(this.ctx,request));
     if (pathname === '/room/leave') return leavePublicMatchLobby(this.ctx, request);
     if (pathname === '/room/heartbeat') return this.roomHeartbeat(request);
     if (pathname === '/room/turn') return this.roomTurn(request);
+    if (pathname === '/room/shot') return this.ctx.blockConcurrencyWhile(async () =>
+      authoritativeRoomShot(this.ctx, request, await this.ctx.storage.get('room')));
     if (pathname.endsWith('/socket')) return this.roomSocket(request);
     const latest = await this.ctx.storage.get('latest');
     if (request.method === 'GET') return latest ? json({ letter: latest, seq: latest.k }) : json({ error: 'no such match' }, 404);
@@ -82,6 +89,7 @@ export class KonkMatch extends DurableObject {
     const body = await request.json();
     if (room) return json({ error: 'room already exists' }, 409);
     const created = createRoom(body);
+    if (body.simulation === SIMULATION_VERSION) created.simulation = SIMULATION_VERSION;
     await this.ctx.storage.put('room', created);
     await this.ctx.storage.setAlarm(Date.now() + MATCH_LIFETIME_MS);
     const seat = created.mode === 'tournament' ? 'p1' : 'home';
@@ -104,6 +112,8 @@ export class KonkMatch extends DurableObject {
     const body = await request.json();
     const seat = seatFor(room, body.token);
     if (!seat) return json({ error: 'not your seat' }, 403);
+    const identity = bindKonkerSeat(room, seat, body.verifiedProfileId);
+    if (!identity.ok) return json({ error: identity.error }, identity.status);
     const verdict = setReady(room, seat, body.ready);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
     await this.ctx.storage.put('room', room);
@@ -139,6 +149,7 @@ export class KonkMatch extends DurableObject {
 
   async roomTurn(request) {
     const room = await this.ctx.storage.get('room');
+    if (room?.simulation) return json({ error: 'this room accepts server shot intents only' }, 409);
     if (room?.mode === 'tournament') return tournamentTurn(this.ctx, request, room);
     return duelRoomTurn(this.ctx, request, room);
   }
@@ -201,6 +212,11 @@ async function route(request, env) {
     const body = await smallJson(request);
     if (!body) return json({ error: 'body missing or too large' }, 413);
     if (!body?.levelId) return json({ error: 'levelId missing' }, 400);
+    if (body.simulation !== undefined) {
+      if (env.SERVER_SIMULATION_ENABLED !== 'true') return json({ error: 'server simulation is not released' }, 409);
+      if (body.simulation !== SIMULATION_VERSION || body.mode === 'tournament') return json({ error: 'unsupported server simulation mode' }, 400);
+      try { classicLevel(body.levelId); } catch { return json({ error: 'server simulation requires a classic venue' }, 400); }
+    }
     const id = newRoomId();
     const response = await stub(env, id).fetch('https://match/room', { method: 'POST', body: JSON.stringify(body) });
     return response.status === 201 ? json({ id, ...(await response.json()) }, 201) : response;
@@ -210,6 +226,18 @@ async function route(request, env) {
 
   if (parts[0] === 'rooms') {
     if (!id || !ROOM_ID.test(id)) return json({ error: 'room not found' }, 404);
+    if(action==='rematch'&&parts.length===3&&request.method==='POST'){
+      if(env.SERVER_SIMULATION_ENABLED!=='true')return json({error:'server simulation is not released'},409);
+      const body=await smallJson(request);if(!body)return json({error:'body missing or too large'},413);
+      return stub(env,id).fetch('https://match/room/rematch',{method:'POST',body:JSON.stringify(body)});
+    }
+    if (action === 'shot' && parts.length === 3 && ['GET', 'POST'].includes(request.method)) {
+      if (env.SERVER_SIMULATION_ENABLED !== 'true') return json({ error: 'server simulation is not released' }, 409);
+      if (request.method === 'GET') return stub(env, id).fetch('https://match/room/shot', { headers: { Authorization: request.headers.get('Authorization') ?? '' } });
+      const body = await smallJson(request);
+      if (!body) return json({ error: 'body missing or too large' }, 413);
+      return stub(env, id).fetch('https://match/room/shot', { method: 'POST', body: JSON.stringify(body) });
+    }
     const target = action === 'leave' ? '/room/leave' : action === 'join' ? '/room/join' : action === 'name' ? '/room/name' : action === 'ready' ? '/room/ready' : action === 'heartbeat' ? '/room/heartbeat' : action === 'turn' ? '/room/turn' : '/room';
     if (request.method === 'GET' && !action) return stub(env, id).fetch('https://match/room');
     if (request.method === 'GET' && action === 'turn') return stub(env, id).fetch(`https://match/room/turn${new URL(request.url).search}`,
@@ -222,6 +250,11 @@ async function route(request, env) {
     if (request.method === 'POST' && ['join', 'name', 'ready', 'leave', 'heartbeat', 'turn'].includes(action)) {
       const body = await smallJson(request);
       if (!body) return json({ error: 'body missing or too large' }, 413);
+      delete body.verifiedProfileId;
+      if (action === 'ready') {
+        const rejection = await verifyReadyProfile(request, env, body);
+        if (rejection) return rejection;
+      }
       return stub(env, id).fetch(`https://match${target}${action === 'turn' ? new URL(request.url).search : ''}`, { method: 'POST', body: JSON.stringify(body) });
     }
     return json({ error: 'not found' }, 404);

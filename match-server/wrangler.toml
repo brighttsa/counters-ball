@@ -9,6 +9,9 @@ routes = [{ pattern = "konk.world/m/*", zone_name = "konk.world" }]
 # The game calls the API on workers.dev (PRODUCTION_API); declaring routes would otherwise switch it off.
 workers_dev = true
 
+[alias]
+three = "./node_modules/three/build/three.module.js"
+
 # Fonts for the score card image are bundled as raw bytes.
 [[rules]]
 type = "Data"
@@ -21,6 +24,8 @@ ALLOWED_ORIGINS = "https://konk.world,http://localhost:4180,http://localhost:419
 # Where notifications send players back to; also the VAPID contact.
 SITE_URL = "https://konk.world/"
 TABLE_TALK_ENABLED = "true"
+# Verified private classic rooms; public Rival and tournaments retain their protocol.
+SERVER_SIMULATION_ENABLED = "true"
 # Public half of the Web Push VAPID key (the private half is the secret VAPID_PRIVATE_JWK).
 VAPID_PUBLIC_KEY = "BLpzTuejTciUgcCBrrFCDewABuKpHfQetTVfarfjMpdTsV5uG4j-wcjnPUiU3EFMSLmb9NKimmIoE6ybYpX5zuI"
 

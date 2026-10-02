@@ -98,5 +98,6 @@ export function publicRoom(room, now = Date.now()) {
     return [seat, player && { name: player.name, ready: player.ready, online: now - player.seenAt <= PRESENCE_MS }];
   }));
   return { mode: room.mode ?? 'duel', phase: room.phase, levelId: room.levelId, seats,
+    ...(room.simulation ? { simulation: room.simulation, matchId:room.epoch } : {}),
     ...(room.mode === 'tournament' ? { tournament: publicTournament(room) } : {}), updatedAt: room.updatedAt };
 }
