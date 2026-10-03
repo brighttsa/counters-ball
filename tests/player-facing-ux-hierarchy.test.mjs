@@ -12,7 +12,7 @@ test('Home prioritizes the featured match, Street Legends and Play Together', as
   assert.match(home, /data-action="play-featured"/);
   assert.match(home, /data-action="play-legends">Street Legends/);
   assert.match(home, /PLAY TOGETHER/);
-  assert.match(home, /<details class="home-more">[\s\S]*Daily Flick[\s\S]*Practice with Kwame[\s\S]*All pitches[\s\S]*Settings[\s\S]*Credits/);
+  assert.match(home, /<details class="home-more">[\s\S]*Daily Flick[\s\S]*All pitches[\s\S]*Practice with Kwame[\s\S]*Settings[\s\S]*Credits/);
 });
 
 test('Play Together stages friend, rival and knockout choices before room controls', async () => {

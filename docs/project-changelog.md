@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-10-03 - Home practice button
+
+- Gave Practice with Kwame its own full-width row under Daily Flick and All
+  pitches, keeping the full action label visible on narrow layouts.
+
+
 ## 2026-10-03 - NXWRTH soundtrack throughout KONK!
 
 - Afro Rave 35 now plays across menus, Classic, Street Legends, practice and

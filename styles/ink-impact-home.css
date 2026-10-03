@@ -347,7 +347,16 @@
 
 /* Trial: Classic Campaign is hidden so Street Legends is the one single-player path. Remove the button's
    hidden attribute in index.html (and this rule) to bring it back. */
-.screen-title .home-secondary { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); } /* Daily Flick and Practice share the row; either fills it alone */
+.screen-title .home-secondary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+}
+.screen-title .home-secondary .btn[data-action="play-practice"] {
+  grid-column: 1 / -1;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
 .home-secondary .btn[hidden] { display: none; }
 
 /* Shorter menu: the two quiet choices ("Just play" and "All venues") share one row when both show; the
