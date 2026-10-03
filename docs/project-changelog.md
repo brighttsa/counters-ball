@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-10-03 - NXWRTH main theme and sound reveal
+
+- Added the owner-provided Afro Rave 35 by NXWRTH as the main title/menu theme,
+  encoded directly from the approved WAV at 128 kbps. Existing match tracks remain.
+- Added `/promo/nxwrth/` with automatic soundtrack loading, audio-clock-driven
+  cinematic playback, editable 12-second artist reveal, pause, restart and capture.
+- Added NXWRTH music credit and timeline/loop regression coverage.
+
 ## 2026-09-29 — Live-room field rhythm
 
 ### Fixed

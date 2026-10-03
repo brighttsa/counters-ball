@@ -1,4 +1,4 @@
-// KONK!'s soundtrack: the owner's three original recordings, and which one each screen plays. Web copies of
+// KONK!'s soundtrack: owner-approved recordings, and which one each screen plays. Web copies of
 // the originals (128 kbps, cover art removed) live in assets/audio/; the originals are kept outside the repo.
 //
 // Each track plays its opening once, then loops [loopStart, loopEnd): the region between the end of its
@@ -7,9 +7,9 @@
 // (soundtrack-loop-seam.js). Found by an offline search over each recording's rhythm and level; the loop
 // lengths came out the same over repeated searches for the first two, which marks a real musical repeat.
 export const SOUNDTRACK = {
-  // Brightest of the three: kept to the menus, where there are almost no sound effects to mask.
-  home: { url: 'assets/audio/konk-home-theme-three-contact-motif.mp3', title: 'Three-Contact Motif',
-    loopStart: 19.18, loopEnd: 145.3994, trim: 0.95 },
+  // NXWRTH's main theme: play the tag once, then loop 32 bars at 155 BPM.
+  home: { url: 'assets/audio/afro-rave35-155bpm-konk-world.mp3', title: 'Afro Rave 35 - NXWRTH',
+    loopStart: 12.3871, loopEnd: 61.9355, trim: 0.95 },
   // Steadiest level and least treble: sits under the cap clinks, bottle tinks and flick snaps.
   classic: { url: 'assets/audio/konk-classic-match-found-object-groove.mp3', title: 'Found Object Groove',
     loopStart: 14.1, loopEnd: 127.223, trim: 1 },

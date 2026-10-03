@@ -33,8 +33,16 @@ test('the three recordings are in the project and every loop sits inside its tra
   for (const [id, track] of Object.entries(SOUNDTRACK)) {
     assert.ok(existsSync(new URL(`../${track.url}`, import.meta.url)), `${id}: ${track.url}`);
     assert.ok(statSync(new URL(`../${track.url}`, import.meta.url)).size > 1e6, `${id} is the real recording`);
-    assert.ok(track.loopStart > 5 && track.loopEnd - track.loopStart > 100, `${id} loops a long stretch after its intro`);
+    assert.ok(track.loopStart > 5 && track.loopEnd - track.loopStart > 30, `${id} loops a substantial section after its intro`);
   }
+});
+
+test('NXWRTH main theme loops 32 bars after the producer tag and before its outro', () => {
+  assert.match(SOUNDTRACK.home.title, /NXWRTH/);
+  assert.equal(SOUNDTRACK.home.url, 'assets/audio/afro-rave35-155bpm-konk-world.mp3');
+  assert.ok(SOUNDTRACK.home.loopStart > 12);
+  assert.ok(Math.abs(SOUNDTRACK.home.loopEnd - SOUNDTRACK.home.loopStart - 32 * 4 * 60 / 155) < 0.001);
+  assert.ok(SOUNDTRACK.home.loopEnd < 74.338707);
 });
 
 // A stand-in AudioContext that records what the director asks of it.

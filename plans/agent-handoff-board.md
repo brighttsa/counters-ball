@@ -9,6 +9,11 @@ precedence over stale copies of this board. Until both clones adopt the helper,
 coordinate board claims manually. See `docs/collaboration-workflow.md`.
 
 ## In progress
+NXWRTH release: Codex, 2026-10-03. Isolated release checkout from origin/main.
+Owner approved Afro Rave 35 WAV as main theme and requested publication.
+Scope: promo/nxwrth, soundtrack routing/asset, music credits and focused tests.
+Live claim helper could not run because origin is GitHub rather than a peer clone.
+
 Campaign Studio publication: Codex, 2026-10-02. Isolated social/, scripts/social/,
 tests/social-*.test.mjs and Pages workflow. Studio now works on a static host,
 including finished PNG/MP4 downloads, edited browser PNGs and collection ZIPs.
