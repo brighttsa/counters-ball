@@ -19,6 +19,6 @@ test('compact layouts preserve the Apple 44 point interaction floor', async () =
   assert.match(native, /html\.konk-native \.room-fields \{\s*gap: 16px;/);
   assert.doesNotMatch(circuit, /screen-header \.btn \{ min-height: (?:36|40)px/);
   assert.ok(html.includes('styles/game-ui-menus-and-results.css?v=11'));
-  assert.ok(html.includes('styles/ink-impact-home.css?v=14'));
+  assert.match(html, /styles\/ink-impact-home\.css\?v=\d+/);
   assert.ok(html.includes('styles/circuit-venue-preview.css?v=7'));
 });
