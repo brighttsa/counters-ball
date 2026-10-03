@@ -74,6 +74,8 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'play-campaign': () => flow.showLevels('campaign'),
     'play-practice': () => { app.mode = 'practice'; flow.prepareMatch(0); },
     'play-friend': () => liveRoom.show(levels[featuredIndex()]),
+    'live-room-path': (el) => liveRoom.choosePath(el.dataset.path),
+    'live-room-path-back': () => liveRoom.backToPaths(),
     'play-legends': () => flow.showLevels('legends'),
     'back-to-title': () => flow.showTitle(),
     'home-settings': () => {
@@ -144,6 +146,7 @@ export function createMenuActions({ app, progress, save, flow, hud, sound, music
     'live-room-join': () => liveRoom.join(),
     'live-room-ready': () => liveRoom.ready(),
     'live-room-copy': () => liveRoom.copy(),
+    'live-room-copy-code': () => liveRoom.copyCode(),
     'live-room-back': () => liveRoom.back(),
     'challenge-accept': () => {
       app.mode = app.challenge.mode;

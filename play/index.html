@@ -51,6 +51,7 @@
 <link rel="stylesheet" href="styles/table-talk.css?v=9" />
 <link rel="stylesheet" href="styles/home-portrait-utilities.css?v=1" />
 <link rel="stylesheet" href="styles/match-transition-status.css?v=1" />
+<link rel="stylesheet" href="styles/konk-player-ux-hierarchy.css?v=1" />
 <script type="importmap">
 {
   "imports": {
@@ -71,24 +72,28 @@
 
   <section class="screen screen-title" data-screen="title">
     <h1 class="home-logo"><img src="assets/konk-logo.svg" width="1390" height="680" alt="KONK! Bottle-cap football" /></h1>
-    <p class="home-edition">Next match</p>
+    <p class="home-edition">YOUR NEXT MATCH</p>
     <div class="home-location"><b id="home-feature-act">ACT 1 / 3</b><span><span id="home-feature-venue">Roadside Showdown</span><br><span id="home-feature-title"></span></span></div>
     <nav class="menu-stack">
       <button class="btn btn-primary home-play home-learn" data-action="play-practice" hidden><span class="home-learn-label">Learn with Kwame <small>2-minute practice</small></span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
       <button class="btn home-just-play" data-action="skip-practice" hidden>Just play</button>
       <button class="btn btn-primary home-play home-featured" data-action="play-featured"><span id="home-feature-button">Play</span> <svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <button class="btn home-venues" data-action="play-legends">All venues</button>
-      <button class="btn home-live" data-action="play-friend" aria-label="Play live online"><span>Play Live</span><small>Create or join a room</small><svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
-      <div class="home-secondary"><button class="btn" data-action="daily-start" id="home-daily">Daily Flick</button>
-      <button class="btn" data-action="play-practice" aria-label="Practice with Kwame">Practice</button>
-      <button class="btn" data-action="play-campaign" aria-label="Classic Campaign" hidden>Campaign</button></div>
+      <button class="btn home-venues" data-action="play-legends">Street Legends <small>Choose a challenge</small></button>
+      <button class="btn home-live" data-action="play-friend" aria-label="Play together online"><span>PLAY TOGETHER</span><small>Call someone to the table</small><svg class="play-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></button>
+      <details class="home-more">
+        <summary>More ways to play</summary>
+        <div class="home-secondary"><button class="btn" data-action="daily-start" id="home-daily">Daily Flick</button>
+        <button class="btn" data-action="play-practice" aria-label="Practice with Kwame">Practice with Kwame</button>
+        <button class="btn" data-action="play-legends" aria-label="All pitches">All pitches</button>
+        <button class="btn" data-action="play-campaign" aria-label="Classic Campaign" hidden>Campaign</button></div>
+        <nav class="home-more-utilities" aria-label="Game information">
+          <a class="home-trailer-link" href="/" target="_blank" rel="noopener">KONK! home</a>
+          <button type="button" data-action="home-settings">Settings</button>
+          <button type="button" data-action="home-credits">Credits</button>
+        </nav>
+      </details>
     </nav>
     <p class="title-stars" id="title-stars"></p>
-    <nav class="home-utilities" aria-label="Game information">
-      <a class="home-trailer-link" href="/" target="_blank" rel="noopener">KONK! home</a>
-      <button type="button" data-action="home-settings">Settings</button>
-      <button type="button" data-action="home-credits">Credits</button>
-    </nav>
   </section>
   <p class="attract-callout" id="attract-callout" aria-hidden="true" hidden></p>
 
@@ -189,14 +194,20 @@
 
   <section class="screen screen-challenge screen-live-room" data-screen="live-room">
     <article class="paper-card intro-card challenge-card friend-card" aria-labelledby="live-room-title">
-      <p class="card-kicker">Live Match Room</p>
-      <h2 class="card-title" id="live-room-title">Play someone live</h2>
+      <p class="card-kicker">PLAY TOGETHER</p>
+      <h2 class="card-title" id="live-room-title" tabindex="-1">Who are you playing?</h2>
       <p class="intro-place" id="live-room-venue"></p>
-      <p class="intro-blurb" id="live-room-line">Host the table or join a rival with a code. You will each see your own side during the match.</p>
+      <p class="intro-blurb" id="live-room-line">Pick a way to bring someone to the table.</p>
+      <div class="room-paths" id="live-room-paths" role="group" aria-label="Choose how to play together">
+        <button class="btn room-path" type="button" data-action="live-room-path" data-path="friend"><b>A FRIEND</b><small>Host a table or join with a code</small></button>
+        <button class="btn room-path" type="button" data-action="live-room-path" data-path="rival"><b>FIND SOMEONE</b><small>Meet a player for a casual match</small></button>
+        <button class="btn room-path" type="button" data-action="live-room-path" data-path="knockout"><b>FOUR-PLAYER KNOCKOUT</b><small>Four players. Two semifinals. One final.</small></button>
+      </div>
+      <button class="btn btn-small room-path-back" id="live-room-path-back" type="button" data-action="live-room-path-back" hidden>Choose another way</button>
       <div class="room-fields">
-        <label class="name-field"><span>Your name</span><input id="live-room-name" maxlength="22" autocomplete="nickname" placeholder="Player 1"></label>
-        <label class="name-field"><span>Room code to join</span><input id="live-room-code" maxlength="10" autocapitalize="characters" placeholder="Paste a code to join"></label>
-        <div class="name-field" id="live-room-format-field">
+        <label class="name-field" id="live-room-name-field" hidden><span>Your name</span><input id="live-room-name" maxlength="22" autocomplete="nickname" placeholder="Player 1"></label>
+        <label class="name-field" id="live-room-code-field" hidden><span>Room code to join</span><input id="live-room-code" maxlength="10" autocapitalize="characters" placeholder="Paste a code to join"></label>
+        <div class="name-field" id="live-room-format-field" hidden>
           <span id="room-format-label">Host a</span>
           <input type="hidden" id="live-room-format" value="duel" />
           <details class="room-format-picker" id="room-format-picker">
@@ -208,18 +219,19 @@
           </details>
         </div>
       </div>
-      <details id="konker-profile-controls">
-        <summary>KONKER profile</summary>
-        <div class="friend-actions"><button class="btn btn-small" id="konker-profile-save" type="button">Create KONKER profile</button><button class="btn btn-small" id="konker-profile-export" type="button" hidden>Download private recovery code</button></div>
+      <details id="konker-profile-controls" hidden>
+        <summary>Keep your name with a KONKER profile</summary>
+        <p class="profile-benefit">Restore your player name on another browser. Match progress does not sync yet.</p>
+        <div class="friend-actions"><button class="btn btn-small" id="konker-profile-save" type="button">Create KONKER</button><button class="btn btn-small" id="konker-profile-export" type="button" hidden>Download private recovery code</button></div>
         <label class="name-field"><span>Private recovery code</span><input id="konker-profile-code" type="password" autocomplete="off" spellcheck="false" maxlength="97"></label>
         <button class="btn btn-small" id="konker-profile-restore" type="button">Restore profile</button>
         <p id="konker-profile-status" class="results-share-status" aria-live="polite"></p>
       </details>
       <div class="friend-actions">
-        <button class="btn" id="find-rival" type="button">Find a rival</button>
+        <button class="btn" id="find-rival" type="button" hidden>Find someone</button>
         <button class="btn" id="cancel-rival-search" type="button" hidden>Cancel search</button>
-        <button class="btn btn-primary" data-action="live-room-create">Host the table</button>
-        <button class="btn" data-action="live-room-join" disabled>Join the table</button>
+        <button class="btn btn-primary" data-action="live-room-create" hidden>Host the table</button>
+        <button class="btn" data-action="live-room-join" disabled hidden>Join with code</button>
       </div>
       <p class="results-share-status" id="live-room-status" aria-live="polite"></p>
       <section class="table-talk-room-setup" id="table-talk-room-setup" aria-labelledby="table-talk-room-title" hidden>
@@ -251,7 +263,8 @@
       </aside>
       <div class="card-actions">
         <button class="btn btn-primary" data-action="live-room-ready" hidden>Ready up</button>
-        <button class="btn btn-small" data-action="live-room-copy" hidden>Copy invite</button>
+        <button class="btn btn-small" data-action="live-room-copy" hidden>Share invite</button>
+        <button class="btn btn-small" data-action="live-room-copy-code" hidden>Copy code</button>
         <button class="btn btn-small" data-action="live-room-back">Back home</button>
       </div>
     </article>
@@ -435,6 +448,6 @@
   <button class="icon-btn sound-btn" id="sound-toggle" data-action="toggle-sound" aria-label="Sound is on" aria-pressed="true"><svg class="sound-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
   <noscript><p class="noscript">KONK! needs JavaScript and WebGL to run.</p></noscript>
 <script type="module" src="./src/ui/room-format-picker.js?v=1"></script>
-<script type="module" src="./src/main.js?v=40"></script>
+<script type="module" src="./src/main.js?v=41"></script>
 </body>
 </html>
