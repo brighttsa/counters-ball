@@ -7,6 +7,8 @@
 - Added `/promo/nxwrth/` with automatic soundtrack loading, audio-clock-driven
   cinematic playback, editable 12-second artist reveal, pause, restart and capture.
 - Added NXWRTH music credit and timeline/loop regression coverage.
+- Refined public credits to focus on KONK!'s creator, Ghanaian origins and music;
+  removed development-tool references.
 
 ## 2026-09-29 — Live-room field rhythm
 
