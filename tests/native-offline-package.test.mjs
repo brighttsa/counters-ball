@@ -24,7 +24,7 @@ test('native package contains the complete local boot runtime', () => {
     for (const path of [
       'src/main.js',
       'styles/game-ui-base-and-hud.css',
-      'assets/audio/konk-home-theme-three-contact-motif.mp3',
+      'assets/audio/afro-rave35-155bpm-konk-world.mp3',
       'assets/audio/foley/flick-hard-01.mp3',
       'assets/audio/foley/post-hard-01.mp3',
       'vendor/fonts/anton-regular.ttf',

@@ -6,17 +6,18 @@ import { bakeLoopSeam } from '../src/audio/soundtrack-loop-seam.js';
 import { SoundtrackDirector } from '../src/audio/soundtrack-music-director.js';
 import { MUSIC_LEVELS } from '../src/audio/music-and-effects-audio-settings.js';
 
-test('each screen plays its track: Home on menus, Classic or Legends in play, results quieter, retries uninterrupted', () => {
+test('Afro Rave 35 carries across menus and every match mode without restarting', () => {
   assert.equal(musicForScreen('title', 'campaign').id, 'home');
   assert.equal(musicForScreen('levels', 'legends').id, 'home');
   assert.equal(musicForScreen('challenge', 'campaign').id, 'home');
   assert.equal(musicForScreen('intro', 'campaign', 'home').id, 'home', 'the rules card from the menus keeps the menu music');
-  assert.equal(musicForScreen(null, 'campaign').id, 'classic');
-  assert.equal(musicForScreen(null, 'legends').id, 'legends');
-  for (const mode of ['versus', 'practice']) assert.equal(matchTrackFor(mode), 'classic');
-  assert.deepEqual(musicForScreen('pause', 'legends'), { id: 'legends', dip: false });
-  assert.deepEqual(musicForScreen('results', 'legends'), { id: 'legends', dip: true });
-  assert.equal(musicForScreen('intro', 'legends', 'legends').id, 'legends', 'Play again passes the intro card without a change');
+  for (const mode of ['campaign', 'legends', 'versus', 'practice']) {
+    assert.equal(matchTrackFor(mode), 'home');
+    assert.equal(musicForScreen(null, mode).id, 'home');
+    assert.deepEqual(musicForScreen('pause', mode), { id: 'home', dip: false });
+    assert.deepEqual(musicForScreen('results', mode), { id: 'home', dip: true });
+    assert.equal(musicForScreen('intro', mode, 'home').id, 'home');
+  }
 });
 
 test('the loop join is continuous: just before loopEnd the audio has become what leads into loopStart', () => {
@@ -29,7 +30,8 @@ test('the loop join is continuous: just before loopEnd the audio has become what
   assert.deepEqual(Array.from(data.slice(0, end - length)), Array.from(original.slice(0, end - length)), 'nothing else changes');
 });
 
-test('the three recordings are in the project and every loop sits inside its track', () => {
+test('the sole soundtrack is in the project and its loop sits inside the recording', () => {
+  assert.deepEqual(Object.keys(SOUNDTRACK), ['home']);
   for (const [id, track] of Object.entries(SOUNDTRACK)) {
     assert.ok(existsSync(new URL(`../${track.url}`, import.meta.url)), `${id}: ${track.url}`);
     assert.ok(statSync(new URL(`../${track.url}`, import.meta.url)).size > 1e6, `${id} is the real recording`);
@@ -81,13 +83,13 @@ test('asking again for the playing track never restarts it, and rapid hops end o
   const { d, fetched } = director();
   const ctx = fakeContext();
   d.attach(ctx);
-  d.request('classic'); await flush();
-  d.request('classic'); d.request('classic', { dip: true }); await flush();
+  d.request('home'); await flush();
+  d.request('home'); d.request('home', { dip: true }); await flush();
   assert.equal(ctx.sources.length, 1, 'turns, goals and the results card keep the same playback');
-  d.request('home'); d.request('legends'); d.request('home'); await flush();
+  d.request('home'); d.request('home'); d.request('home'); await flush();
   assert.equal(ctx.sources.filter((s) => s.started && !s.stopped).length, 1, 'never two tracks at once');
   assert.equal(d.playing, 'home');
-  assert.ok(ctx.sources[0].stopped, 'the old track was faded out and stopped');
+  assert.ok(!ctx.sources[0].stopped, 'the track continues through mode changes');
   assert.equal(fetched.filter((u) => u === SOUNDTRACK.home.url).length, 1, 'a track is fetched once');
 });
 

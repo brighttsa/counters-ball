@@ -2,7 +2,7 @@
 // ignores a request for what is already playing), the sound board hands over its AudioContext the first
 // time a tap or key unlocks audio (browsers allow sound only after one), a hidden tab goes quiet, and the
 // saved Music / Sound effects / ♪ preferences are applied from the start.
-import { matchTrackFor, musicForScreen } from './soundtrack-track-list-and-screen-routing.js';
+import { matchTrackFor, musicForScreen } from './soundtrack-track-list-and-screen-routing.js?v=2';
 import { applyAudioSettings } from './music-and-effects-audio-settings.js';
 
 export function wireSoundtrack({ app, sound, music, menus, progress }) {

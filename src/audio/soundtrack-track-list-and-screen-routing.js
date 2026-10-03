@@ -1,25 +1,12 @@
-// KONK!'s soundtrack: owner-approved recordings, and which one each screen plays. Web copies of
-// the originals (128 kbps, cover art removed) live in assets/audio/; the originals are kept outside the repo.
-//
-// Each track plays its opening once, then loops [loopStart, loopEnd): the region between the end of its
-// intro build and the start of its ending (a wind-down, or Three-Contact Motif's hard stop), chosen where the
-// music just before loopEnd matches the music just before loopStart, and joined with a short baked crossfade
-// (soundtrack-loop-seam.js). Found by an offline search over each recording's rhythm and level; the loop
-// lengths came out the same over repeated searches for the first two, which marks a real musical repeat.
+// KONK!'s owner-approved main soundtrack. The intro and producer tag play once,
+// then the music loops a 32-bar section with a short baked crossfade.
 export const SOUNDTRACK = {
-  // NXWRTH's main theme: play the tag once, then loop 32 bars at 155 BPM.
   home: { url: 'assets/audio/afro-rave35-155bpm-konk-world.mp3', title: 'Afro Rave 35 - NXWRTH',
     loopStart: 12.3871, loopEnd: 61.9355, trim: 0.95 },
-  // Steadiest level and least treble: sits under the cap clinks, bottle tinks and flick snaps.
-  classic: { url: 'assets/audio/konk-classic-match-found-object-groove.mp3', title: 'Found Object Groove',
-    loopStart: 14.1, loopEnd: 127.223, trim: 1 },
-  // Longest and dark: the Street Legends acts run long, and the effects stay clear.
-  legends: { url: 'assets/audio/konk-street-legends-bottle-cap-challenge.mp3', title: 'Bottle Cap Challenge',
-    loopStart: 18.66, loopEnd: 169.1941, trim: 1 },
 };
 
-/** The track a match in this mode plays: Street Legends has its own; Classic, 2-Player and Kwame's Corner share one. */
-export const matchTrackFor = (mode) => (mode === 'legends' ? 'legends' : 'classic');
+/** The same soundtrack carries through menus and every match mode. */
+export const matchTrackFor = () => 'home';
 
 /**
  * What should be playing on this screen.
@@ -32,7 +19,7 @@ export function musicForScreen(screen, mode, playing = null) {
   const match = matchTrackFor(mode);
   if (screen === null || screen === 'match' || screen === 'pause') return { id: match, dip: false };
   if (screen === 'results') return { id: match, dip: true };
-  // Play again, Restart and Next act pass through the intro card: the match music carries on through it.
+  // Play again, Restart and Next act pass through the intro card without restarting the music.
   if (screen === 'intro' && playing === match) return { id: match, dip: false };
   return { id: 'home', dip: false };
 }

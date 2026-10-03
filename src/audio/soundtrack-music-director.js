@@ -7,7 +7,7 @@
 // the music freezes where it is and resumes from the same spot. Tracks are fetched only when first needed and
 // decoded at 32 kHz (128 kbps MP3 carries nothing above ~17 kHz), which roughly halves their memory; at most
 // two stay decoded (the menu track and one match track), so going back and forth never waits on a decode.
-import { SOUNDTRACK } from './soundtrack-track-list-and-screen-routing.js';
+import { SOUNDTRACK } from './soundtrack-track-list-and-screen-routing.js?v=2';
 import { bakeLoopSeam } from './soundtrack-loop-seam.js';
 
 const DECODE_RATE = 32000;

@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-10-03 - NXWRTH soundtrack throughout KONK!
+
+- Afro Rave 35 now plays across menus, Classic, Street Legends, practice and
+  multiplayer. Match transitions keep the same playback position.
+- Removed the superseded music files and updated the public credits and offline
+  package check.
+
+
 ## 2026-10-03 - NXWRTH main theme and sound reveal
 
 - Added the owner-provided Afro Rave 35 by NXWRTH as the main title/menu theme,
