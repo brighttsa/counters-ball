@@ -233,7 +233,18 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
     async open(id) { this.show(); const saved = savedLiveRoomSeat(id); if (saved) { try { open(await resumeLiveRoom(api, id)); return; } catch (error) { if (![403, 404].includes(error.status)) { status('Could not reconnect. Reopen your invite to retry.'); return; } forgetLiveRoomSeat(id); } } choosePath('friend'); $('live-room-code').value = id; return this.join(); },
     async create() { setBusy(true); status('Creating your room…'); try { const result = await createPreviewAwareRoom(api, { levelId: currentLevel.id, homeName: $('live-room-name').value, mode: $('live-room-format').value }); open(result); status(`Room created. Your code is ${result.id}. Send the invite.`); } catch (error) { console.error('Live room create failed', error); setBusy(false); status('Could not create a room. Check your connection.'); } },
     async join() { const id = roomCode.value.trim(); if (!id) return status('Paste a room code first.'); setBusy(true); status('Joining room…'); try { if (savedLiveRoomSeat(id)) { open(await resumeLiveRoom(api, id)); return; } open({ ...(await joinLiveRoom(api, id, $('live-room-name').value)), id }); status('You joined. Ready up when you are set.'); } catch (error) { setBusy(false); status(error.status === 410 || error.status === 404 ? 'That room has ended or expired. Ask for a fresh invite.' : error.status === 409 ? 'That room is full or already playing. Ask for a fresh invite.' : 'Could not join that room. Check the code and your connection.'); } },
-    async ready() { const room = await readLiveRoom(api, roomId); const next = !room.room.seats[seat].ready; await setLiveRoomReady(api, roomId, seat, next); render((await readLiveRoom(api, roomId)).room); },
+    async ready() {
+      try {
+        const room = await readLiveRoom(api, roomId);
+        const next = !room.room.seats[seat].ready;
+        await setLiveRoomReady(api, roomId, seat, next);
+        render((await readLiveRoom(api, roomId)).room);
+      } catch (error) {
+        status(error.message?.includes('profile verification failed')
+          ? 'This saved profile is not recognized here. Tap Save profile name above, then try Ready up again.'
+          : error.message || 'Could not ready up. Check your connection and try again.');
+      }
+    },
     async copy() {
       const message = `Join my KONK! ${$('live-room-bracket').hidden ? 'live match' : 'four-player knockout'} at ${currentLevel.name}. Choose your name and ready up: ${invite}`;
       try {
