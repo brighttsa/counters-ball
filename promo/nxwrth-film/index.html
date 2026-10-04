@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex" />
+<title>NXWRTH × KONK! — promo cinematic (development)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Cabin+Sketch:wght@700&family=Patrick+Hand&display=swap" />
+<link rel="stylesheet" href="nxwrth-promo-viewer.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <!-- The long-form NXWRTH film and its capture viewer. Codex's shorter reveal lives in ../nxwrth/. -->
+  <main id="frame" aria-label="NXWRTH × KONK! promo">
+    <canvas id="film"></canvas>
+    <canvas id="graphics"></canvas>
+    <button type="button" id="start" hidden>Play<small>space</small></button>
+    <p id="status" role="status">Setting the caps…</p>
+  </main>
+
+  <form id="controls" aria-label="Playback controls" hidden>
+    <button type="button" data-do="toggle" title="Space">Play</button>
+    <button type="button" data-do="restart" title="R">Restart</button>
+    <input type="range" id="scrub" min="0" max="1" step="0.001" value="0" aria-label="Scrub" />
+    <output id="clock">0.00</output>
+    <button type="button" data-do="tag" title="G: replay the NORTH tag">Tag ↺</button>
+    <button type="button" data-do="mute" title="M" aria-pressed="false">Mute</button>
+    <select id="format" aria-label="Frame format" title="Frame format">
+      <option>16:9</option><option>9:16</option><option>1:1</option>
+    </select>
+    <button type="button" data-do="fullscreen" title="F">Fullscreen</button>
+    <button type="button" data-do="capture" title="C: hide controls and cursor, start from zero">Capture</button>
+  </form>
+  <script type="module" src="nxwrth-promo-viewer-controls.js"></script>
+</body>
+</html>

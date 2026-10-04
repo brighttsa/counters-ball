@@ -1,5 +1,16 @@
 # Project Changelog
 
+## 2026-10-04 - NXWRTH × KONK! long-form film (`promo/nxwrth-film/`)
+
+- A ~30 s film, "KONK! has a sound", rendered live with the game's venues, caps and physics and cut to NXWRTH's
+  beat: macro opening under the Jamestown bulb, the "NORTH!!!" tag reveal, a printed NXWRTH cap, end card.
+  It sits beside the shorter reveal in `promo/nxwrth/` and changes no game files.
+- The soundtrack is the clock: every cut derives from the tempo and `NXWRTH_TAG_TIME` in
+  `nxwrth-promo-timeline-config.js`. Play, pause, restart, scrub, mute, fullscreen, capture, 16:9 / 9:16 / 1:1.
+- Flicks are played through the real physics engine and recorded, so any frame can be drawn exactly;
+  `promo/nxwrth-film/capture/export-nxwrth-promo-film.mjs` exports frame by frame with an offline audio mix.
+- Details, controls and known limits: `promo/nxwrth-film/README.md`.
+
 ## 2026-10-04 - Personal ranked progress
 
 - The standings page now shows separate match and opponent placement progress, plus the exact remaining requirements.

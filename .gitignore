@@ -16,3 +16,7 @@ xcuserdata/
 !.dev.vars.example
 node_modules/
 .wrangler/
+
+# The NXWRTH film's lossless master and exported frames/videos stay local.
+promo/nxwrth-film/audio/*.wav
+promo/nxwrth-film/capture/out/
