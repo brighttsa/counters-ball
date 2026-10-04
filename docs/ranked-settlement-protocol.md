@@ -141,3 +141,8 @@ Remaining release gates: physical two-device ranked playtest and final security
 review. Production ranked remains disabled; do not enable it or rate friend
 rooms yet. Activation also requires a published Monday UTC season anchor in
 `RANKED_SEASON_ANCHOR`.
+
+The localhost-only preview is available at `http://localhost:4202/standings/`.
+A LAN server aimed at the whole private checkout was not started because it
+would expose source and documentation to other devices on that network. Use an
+approved, limited test distribution before the physical two-device playtest.

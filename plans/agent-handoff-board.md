@@ -18,6 +18,9 @@ distinct opponents; populated board and lobby were inspected at desktop and
 phone widths. Remaining: physical two-device ranked test and final security
 review before any live activation. Collaboration helper could not claim because
 this checkout's origin is GitHub, not the local peer remote.
+LAN playtest setup was not started: serving the private checkout on all
+interfaces would expose source and docs. Localhost-only preview remains at
+`http://localhost:4202/standings/`; a limited distribution needs approval.
 
 NXWRTH release: Codex, 2026-10-03. Isolated release checkout from origin/main.
 Owner approved Afro Rave 35 WAV as main theme and requested publication.
