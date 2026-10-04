@@ -9,9 +9,12 @@ async function load(more=false){
     const result=await readRankedStanding(api,{cursor:more?cursor:null,season,personal:true});
     if(current!==version)return;
     if(!more)$('rows').replaceChildren();
-    if(!season){season=result.season.id;$('season').replaceChildren();
+    if(season==null){season=result.season.id;$('season').replaceChildren();
       for(let n=Number(season);n>=Math.max(0,Number(season)-3);n--){const option=document.createElement('option');option.value=String(n);option.textContent=`Season ${n+1}`;$('season').append(option);}}
-    $('season').disabled=false;$('ranked').hidden=false;
+    $('season-current').textContent=`Season ${Number(season)+1}`;
+    const hasPreviousSeason=$('season').options.length>1;
+    $('season-current').hidden=hasPreviousSeason;$('season').hidden=!hasPreviousSeason;
+    $('season').disabled=!hasPreviousSeason;$('ranked').hidden=false;
     for(const row of result.rows){const tr=document.createElement('tr');
       for(const text of [row.rank,row.name,row.rating,`${row.wins} / ${row.draws} / ${row.losses}`]){const td=document.createElement('td');td.textContent=String(text);tr.append(td);}
       $('rows').append(tr);}
