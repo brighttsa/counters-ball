@@ -1,5 +1,9 @@
 # Project Changelog
 
+## 2026-10-04 - Compact idle voice control
+
+- Sized the disconnected Join Voice panel to its contents on room screens, while preserving the 44px button target and expandable connected/error states.
+
 ## 2026-10-04 - Ranked multiplayer live
 
 - Published server-owned ranked matchmaking, verified result settlement, seasonal standings and turn clocks with a Monday UTC season anchor.

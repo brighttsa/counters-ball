@@ -55,3 +55,9 @@ test('optional voice label uses ink with readable contrast on its cream panel', 
   assert.ok(background, 'voice setup background should be defined');
   assert.ok(contrast(tokenRgb('ink-rgb'), hexToRgb(background)) >= 7, 'small voice label needs strong contrast');
 });
+
+test('idle voice control sizes to its contents on small screens', () => {
+  const voiceCss = readFileSync(new URL('../styles/table-talk.css', import.meta.url), 'utf8');
+  assert.match(voiceCss, /\.table-talk-controls\[data-state="idle"\]\s*\{[^}]*width:\s*max-content/);
+  assert.match(voiceCss, /\.table-talk-controls \.btn\s*\{[^}]*min-height:\s*44px/);
+});
