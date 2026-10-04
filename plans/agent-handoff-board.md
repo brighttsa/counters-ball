@@ -9,19 +9,6 @@ precedence over stale copies of this board. Until both clones adopt the helper,
 coordinate board claims manually. See `docs/collaboration-workflow.md`.
 
 ## In progress
-Ranked production integration: Codex, 2026-10-04, branch `codex/ranked-integration`
-at `/private/tmp/konk-ranked-integration`. Based on public `4100a27`, with ranked
-backend, standings and opt-in lobby reconciled while keeping the production flag
-off. Focused 54 tests and full 607-test suite pass; Worker dry run and local
-two-profile match pass. A five-match local run placed one KONKER after three
-distinct opponents; populated board and lobby were inspected at desktop and
-phone widths. Remaining: physical two-device ranked test and final security
-review before any live activation. Collaboration helper could not claim because
-this checkout's origin is GitHub, not the local peer remote.
-LAN playtest setup was not started: serving the private checkout on all
-interfaces would expose source and docs. Localhost-only preview remains at
-`http://localhost:4202/standings/`; a limited distribution needs approval.
-
 NXWRTH release: Codex, 2026-10-03. Isolated release checkout from origin/main.
 Owner approved Afro Rave 35 WAV as main theme and requested publication.
 Scope: promo/nxwrth, soundtrack routing/asset, music credits and focused tests.
@@ -63,6 +50,17 @@ Deployment to konk.world/social/ pending this commit. Game runtime unchanged.
 | Human playtest of Street Legends Acts 2–3 (draw rate) | user | Current rules already include golden flick and +2 flicks. Use `plans/reports/street-legends-flow-recovery.md` to test comprehension, retry intent and genuine human draws before any balance change. |
 
 ## Done (newest first)
+Ranked multiplayer release (Codex, 2026-10-04): Owner confirmed a two-device
+ranked match with matching final results and increased provisional standings.
+The limited public-assets LAN test preview was shut down after testing. Integrated
+ranked Worker and web UI from `codex/ranked-integration` into `main` at `1fe34be`;
+Cloudflare Worker version `38e1c919-aa64-48d6-aa9e-bc824f610f45` has ranked
+enabled with Monday 2026-09-28 UTC season anchor. GitHub Pages deployment
+`37168645800` passed and live `/standings/` plus Worker `/standings` return 200.
+Full 608-test suite passes. Local test leaderboard data was not published.
+Remaining operational check: complete one new production ranked match and confirm
+both players' provisional counts; do not use local preview results as evidence.
+
 Rival admission capacity (Codex, 2026-10-02): indexed SQLite search storage
 replaces global JSON maps; removes waiting, retained-ticket and client-count
 ceilings while preserving per-client rate protection. Existing records migrate

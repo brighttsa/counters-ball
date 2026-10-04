@@ -1,10 +1,10 @@
 # Project Changelog
 
-## 2026-10-04 - Ranked integration candidate (not live)
+## 2026-10-04 - Ranked multiplayer live
 
-- Integrated server-owned ranked matchmaking, verified result settlement, seasonal standings and turn clocks against the current public site without enabling production ranked play.
-- Added a direct ranked lobby entry and standings link, preserving the current casual and private-room navigation.
-- Verified a local two-profile match and a placed leaderboard entry after five matches against three opponents; physical two-device testing remains before release.
+- Published server-owned ranked matchmaking, verified result settlement, seasonal standings and turn clocks with a Monday UTC season anchor.
+- Added a direct ranked lobby entry and the public standings page, preserving casual and private-room navigation.
+- Two physical devices agreed on the final match result and provisional progress increased. All 608 tests and the GitHub Pages deployment passed; the production standings page and API respond successfully.
 
 ## 2026-10-03 - Home practice button
 

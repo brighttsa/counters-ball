@@ -1,8 +1,8 @@
 # Ranked Settlement Foundation
 
-Status: implemented and tested locally; not deployed or enabled. Casual private
-rooms, guests, public casual Rival and tournaments award no rating. Ranked entry,
-matchmaking and standings exist behind the release flag.
+Status: deployed on 2026-10-04 after a two-device LAN test. Casual private rooms,
+guests, public casual Rival and tournaments award no rating. Ranked entry,
+matchmaking and standings are live behind the production release flag.
 
 ## Internal Contract
 
@@ -10,7 +10,7 @@ One named ranked coordinator must own all reservation and settlement requests.
 Its Durable Object concurrency lock surrounds each operation. No Worker public
 route forwards to these internal endpoints. The feature requires the explicit
 `RANKED_SETTLEMENT_ENABLED=true` flag and a published Monday UTC season anchor
-in `RANKED_SEASON_ANCHOR`; neither is configured in production.
+in `RANKED_SEASON_ANCHOR`; production uses 2026-09-28T00:00:00Z.
 
 - `POST /internal/ranked/reserve`: `{roomId,matchId}`.
 - `POST /internal/ranked/settle`: `{roomId,matchId}`.
@@ -129,20 +129,17 @@ identical final checkpoints and each receive exactly one settled draw. Desktop
 and mobile real-empty board checks pass with no horizontal overflow or console
 errors; guest ranked search shows an actionable saved-profile message.
 
-Integration checkout `/private/tmp/konk-ranked-integration` is based on the
-current public site revision. The full 607-test suite and Worker dry run pass.
+Integration checkout `/private/tmp/konk-ranked-integration` was based on the
+previous public site revision. The full 608-test suite and Worker dry run pass.
 `scripts/verify-local-ranked-board.mjs` played five local ranked draws against
 three distinct opponents, then confirmed one placed player on `/standings`.
 The populated board and direct ranked lobby were inspected at desktop and phone
 widths with no clipping or console errors. Local match verification also passed
 against this integrated Worker.
 
-Remaining release gates: physical two-device ranked playtest and final security
-review. Production ranked remains disabled; do not enable it or rate friend
-rooms yet. Activation also requires a published Monday UTC season anchor in
-`RANKED_SEASON_ANCHOR`.
-
-The localhost-only preview is available at `http://localhost:4202/standings/`.
-A LAN server aimed at the whole private checkout was not started because it
-would expose source and documentation to other devices on that network. Use an
-approved, limited test distribution before the physical two-device playtest.
+The owner confirmed a two-device ranked match with matching final results and
+increased provisional standings on the limited LAN preview. That preview was
+restricted to public browser assets and shut down after the test. The production
+Worker is version `38e1c919-aa64-48d6-aa9e-bc824f610f45`; the Pages release
+at `1fe34be` passed and live standings load. Local test data did not migrate.
+One production match and standings increment remain to be checked operationally.
