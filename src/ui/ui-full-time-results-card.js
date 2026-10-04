@@ -19,6 +19,9 @@ function chalkSide(value, colour) {
 }
 
 export function fullTimeNote(result, level, mode, { improved, isFinalVenue }) {
+  if(result.kind==='forfeit')return result.reason==='turn-timeout'
+    ? 'Turn time expired. The server awarded this match by forfeit.'
+    : 'The reconnect grace period expired. The server awarded this match by forfeit.';
   if (mode === 'versus') return '';
   const { winner } = result;
   const kid = level.opponent.kid;
@@ -110,6 +113,6 @@ export class FullTimeResultsCard {
     replay.classList.toggle('btn-primary', !nextLeads);
     $('btn-next').classList.toggle('btn-primary', nextLeads);
     $('btn-next').hidden = !hasNext;
-    $('btn-next').textContent = level.legend ? 'Next act' : 'Next pitch';
+    $('btn-next').textContent = level.legend ? 'Next challenge' : 'Next pitch';
   }
 }

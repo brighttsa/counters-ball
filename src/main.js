@@ -19,15 +19,15 @@ import { wireSoundtrack } from './audio/soundtrack-app-wiring.js?v=2';
 import { MatchSession } from './gameplay/match-session-runtime.js?v=12';
 import { MenuScreens } from './ui/ui-menu-screens-title-levels-intro.js?v=5';
 import { MatchHud } from './ui/ui-match-hud-scoreboard-callouts-and-tutorial.js?v=3';
-import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=3';
+import { FullTimeResultsCard } from './ui/ui-full-time-results-card.js?v=4';
 import { ResultsShare } from './ui/share-results-and-challenge-link.js';
 import { FriendMatchInviteShare, buildFriendInvite } from './ui/friend-match-invite-share.js';
 import { presentFullTimeResults } from './ui/full-time-results-presentation.js?v=2';
 import { createMenuActions } from './ui/menu-button-action-routes.js?v=5';
 import { createGoalClipSharing } from './ui/goal-replay-clip-recorder.js';
 import { createDailyFlickFlow } from './ui/daily-flick-flow.js';
-import { createMessageMatchFlow } from './ui/message-match-flow.js?v=9';
-import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=16';
+import { createMessageMatchFlow } from './ui/message-match-flow.js?v=10';
+import { createLiveMatchRoomFlow } from './ui/live-match-room-flow.js?v=17';
 import { openTapToPlayGate } from './ui/tap-to-play-start-gate.js';
 import { takeLetterFromUrl } from './core/message-match-turn-letter-codec.js';
 import { takeMatchIdFromUrl } from './core/message-match-server-transport.js';
@@ -319,6 +319,9 @@ app.challenge = matchId || letter ? null : takeChallengeFromUrl();
 app.friendInvite = matchId || roomId || letter || app.challenge ? null : takeFriendInviteFromUrl();
 // Message Match links wait on a card for a tap: audio needs a gesture before the replay.
 if (roomId) { ensureAttractMode(); liveRoom.open(roomId); }
+else if (new URLSearchParams(location.search).get('ranked') === '1') {
+  ensureAttractMode(); liveRoom.show(); liveRoom.choosePath('rival');
+}
 else if (matchId) { ensureAttractMode(); messageMatch.openMatch(matchId); }
 else if (letter) { ensureAttractMode(); if (!messageMatch.open(letter)) showTitle(); }
 else if (app.challenge) showChallenge(); else if (app.friendInvite) showFriendMatch({ incoming: true }); else showTitle();

@@ -44,7 +44,7 @@ test('UI terms use the chosen player-facing language', async () => {
 test('Street Legends and multiplayer choices stay readable on light hover/selected states', async () => {
   const html = await load('../play/index.html');
   const css = await load('../styles/konk-player-ux-hierarchy.css');
-  assert.match(html, /styles\/konk-player-ux-hierarchy\.css\?v=1/);
+  assert.match(html, /styles\/konk-player-ux-hierarchy\.css\?v=2/);
   assert.match(css, /\.screen-title \.home-venues:hover small\s*\{\s*color:\s*var\(--ink\)/);
   assert.match(css, /\.screen-live-room \.room-path:hover b,[\s\S]*?\.screen-live-room \.room-path:hover small\s*\{\s*color:\s*var\(--ink\)/);
   assert.match(css, /\.screen-live-room \.room-path\[aria-pressed="true"\] b,[\s\S]*?\.screen-live-room \.room-path\[aria-pressed="true"\] small\s*\{\s*color:\s*var\(--ink\)/);

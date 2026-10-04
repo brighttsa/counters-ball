@@ -19,6 +19,7 @@ import { leavePublicMatchLobby } from './public-match-lobby-departure.js';
 import { duelRoomTurn } from './live-duel-room-turns.js';
 import { handleKonkerProfile, routeKonkerProfiles } from './konker-profile-service.js';
 import { limitProfileRequest } from './profile-request-limits.js';
+import {limitRankedRequest,cleanupRankedLimit,checkRankedNetworkLimit,checkRankedPlayerLimit} from './ranked-request-limits.js';
 import { readBoundedText } from './bounded-request-body.js';
 import { checkMatchCreationLimit, limitMatchCreation } from './match-creation-request-limits.js';
 import { KonkVoiceCoordinator, routePrivateVoice } from './private-room-voice-coordinator.js';
@@ -27,6 +28,15 @@ import { publicRivalSearchStorage } from './public-rival-search-storage.js';
 import { bindKonkerSeat, verifyReadyProfile } from './konker-room-seat-identity.js';
 import { authoritativeRoomShot } from './authoritative-room-shot-service.js';
 import { authoritativeRoomRematch } from './authoritative-room-rematch-service.js';
+import { handleRankedCoordinator,rankedSource } from './ranked-internal-coordinator.js';
+import { deliverRankedResult } from './ranked-result-outbox.js';
+import { routeRankedStandings } from './ranked-standings-routes.js';
+import {routeRankedMatchmaking} from './ranked-matchmaking-routes.js';
+import {handleRankedMatchmaking,recoverRankedSearches} from './ranked-matchmaking-service.js';
+import {installRankedRoom,activateRankedRoom} from './ranked-room-installation.js';
+import {tickRankedRoom} from './ranked-room-watchdog.js';
+import {startRankedTurn,resumeRankedTurn} from './ranked-abandonment-policy.js';
+import {closeRankedRoom,closeExpiredRankedReservations} from './ranked-season-closure.js';
 import { classicLevel, SIMULATION_VERSION } from './authoritative-classic-match-simulation.js';
 export { KonkCommunity } from './community-interest-durable-object.js';
 
@@ -35,6 +45,14 @@ const MATCH_LIFETIME_MS = 30 * 24 * 60 * 60 * 1000; // a match nobody touches fo
 export class KonkMatch extends DurableObject {
   async fetch(request) {
     const { pathname } = new URL(request.url);
+    if(pathname==='/internal/ranked/limit'&&request.method==='POST')return this.ctx.blockConcurrencyWhile(()=>limitRankedRequest(this.ctx,request.headers.get('X-Ranked-Limit-Scope')));
+    if(pathname==='/internal/ranked/close'&&request.method==='POST')return this.ctx.blockConcurrencyWhile(()=>closeRankedRoom(this.ctx,this.env,request));
+    if(pathname==='/internal/ranked/activate'&&request.method==='POST')return this.ctx.blockConcurrencyWhile(()=>activateRankedRoom(this.ctx,this.env,request));
+    if(pathname==='/internal/ranked/install'&&request.method==='POST')return this.ctx.blockConcurrencyWhile(()=>installRankedRoom(this.ctx,this.env,request));
+    if(pathname==='/internal/ranked/search'&&request.method==='POST')return this.ctx.blockConcurrencyWhile(async()=>handleRankedMatchmaking(this.ctx,this.env,await request.json()));
+    if(pathname==='/internal/ranked-source'&&request.method==='GET')return this.ctx.blockConcurrencyWhile(()=>rankedSource(this.ctx,new URL(request.url).searchParams.get('matchId')));
+    if(['/internal/ranked/reserve','/internal/ranked/settle','/internal/ranked/void','/internal/ranked/standing'].includes(pathname)&&request.method==='POST')
+      return this.ctx.blockConcurrencyWhile(()=>handleRankedCoordinator(this.ctx,this.env,request));
     if (pathname === '/internal/voice-seat' && request.method === 'GET') return this.internalVoiceSeat(request);
     if (pathname === '/creation-limit') return this.ctx.blockConcurrencyWhile(() => limitMatchCreation(this.ctx, request.headers.get('X-Creation-Client')));
     if (pathname === '/profile-limit') return this.ctx.blockConcurrencyWhile(() => limitProfileRequest(this.ctx, request.headers.get('X-Profile-Client')));
@@ -51,13 +69,14 @@ export class KonkMatch extends DurableObject {
     if (pathname === '/room') return this.room(request);
     if (pathname === '/room/join') return this.roomJoin(request);
     if (pathname === '/room/name') return this.roomName(request);
-    if (pathname === '/room/ready') return this.ctx.blockConcurrencyWhile(() => this.roomReady(request));
+    if (pathname === '/room/ready') return this.ctx.blockConcurrencyWhile(async() => {await tickRankedRoom(this.ctx);return this.roomReady(request);});
     if (pathname === '/room/rematch') return this.ctx.blockConcurrencyWhile(() => authoritativeRoomRematch(this.ctx,request));
-    if (pathname === '/room/leave') return leavePublicMatchLobby(this.ctx, request);
-    if (pathname === '/room/heartbeat') return this.roomHeartbeat(request);
+    if (pathname === '/room/leave') return this.ctx.blockConcurrencyWhile(()=>leavePublicMatchLobby(this.ctx, request));
+    if (pathname === '/room/heartbeat') return this.ctx.blockConcurrencyWhile(async()=>{await tickRankedRoom(this.ctx);return this.roomHeartbeat(request);});
     if (pathname === '/room/turn') return this.roomTurn(request);
-    if (pathname === '/room/shot') return this.ctx.blockConcurrencyWhile(async () =>
-      authoritativeRoomShot(this.ctx, request, await this.ctx.storage.get('room')));
+    if (pathname === '/room/shot') return this.ctx.blockConcurrencyWhile(async () => {
+      await tickRankedRoom(this.ctx);return authoritativeRoomShot(this.ctx, request, await this.ctx.storage.get('room'));
+    });
     if (pathname.endsWith('/socket')) return this.roomSocket(request);
     const latest = await this.ctx.storage.get('latest');
     if (request.method === 'GET') return latest ? json({ letter: latest, seq: latest.k }) : json({ error: 'no such match' }, 404);
@@ -116,6 +135,7 @@ export class KonkMatch extends DurableObject {
     if (!identity.ok) return json({ error: identity.error }, identity.status);
     const verdict = setReady(room, seat, body.ready);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
+    if(room.phase==='ready'){startRankedTurn(room,Date.now());if(room.ranked?.active)await this.ctx.storage.setAlarm(Date.now()+10000);}
     await this.ctx.storage.put('room', room);
     broadcastLiveRoom(this.ctx, room);
     return json({ room: publicRoom(room), seat });
@@ -142,6 +162,7 @@ export class KonkMatch extends DurableObject {
     if (!seat) return json({ error: 'not your seat' }, 403);
     const verdict = touch(room, seat);
     if (!verdict.ok) return json({ error: verdict.error }, verdict.status);
+    resumeRankedTurn(room,Date.now());
     await this.ctx.storage.put('room', room);
     broadcastLiveRoom(this.ctx, room);
     return json({ room: publicRoom(room) });
@@ -161,7 +182,7 @@ export class KonkMatch extends DurableObject {
     return upgradeLiveRoomSocket(this.ctx);
   }
 
-  webSocketMessage(socket, message) { return handleLiveRoomSocketMessage(this.ctx, socket, message); }
+  webSocketMessage(socket, message) { return this.ctx.blockConcurrencyWhile(async()=>{await tickRankedRoom(this.ctx);return handleLiveRoomSocketMessage(this.ctx, socket, message);}); }
 
   async subscribe(latest, { side, subscription, id }) {
     const clean = cleanSubscription(subscription);
@@ -181,6 +202,13 @@ export class KonkMatch extends DurableObject {
   }
 
   async alarm() {
+    if(await this.ctx.blockConcurrencyWhile(()=>cleanupRankedLimit(this.ctx)))return;
+    if(await this.ctx.storage.get('ranked-search-indexed')){
+      return this.ctx.blockConcurrencyWhile(()=>recoverRankedSearches(this.ctx,this.env));
+    }
+    if (await this.ctx.storage.get('ranked-ledger-sql')) return this.ctx.blockConcurrencyWhile(()=>closeExpiredRankedReservations(this.ctx,this.env));
+    if (await deliverRankedResult(this.ctx,this.env)) return;
+    if (await this.ctx.blockConcurrencyWhile(()=>tickRankedRoom(this.ctx))) return;
     if (await this.ctx.storage.get('public-search-indexed')) {
       return this.ctx.blockConcurrencyWhile(async () => (await publicRivalSearchStorage(this.ctx)).cleanup(Date.now()));
     }
@@ -201,6 +229,8 @@ export default {
 };
 
 async function route(request, env) {
+  const ranked = await routeRankedMatchmaking(request,env); if(ranked)return ranked;
+  const standings = await routeRankedStandings(request,env); if (standings) return standings;
   const interest = await routeCommunityInterest(request, env); if (interest) return interest;
   const profile = await routeKonkerProfiles(request, env); if (profile) return profile;
   const parts = new URL(request.url).pathname.split('/').filter(Boolean);
@@ -252,7 +282,11 @@ async function route(request, env) {
       if (!body) return json({ error: 'body missing or too large' }, 413);
       delete body.verifiedProfileId;
       if (action === 'ready') {
-        const rejection = await verifyReadyProfile(request, env, body);
+        const snapshot=env.RANKED_SETTLEMENT_ENABLED==='true'
+          ? await (await stub(env,id).fetch('https://match/room')).json():null;
+        const ranked=snapshot?.room?.ranked?.kind==='ranked';
+        const rejection = await verifyReadyProfile(request, env, body,ranked
+          ? {checkLimit:checkRankedNetworkLimit,afterVerify:checkRankedPlayerLimit}:{});
         if (rejection) return rejection;
       }
       return stub(env, id).fetch(`https://match${target}${action === 'turn' ? new URL(request.url).search : ''}`, { method: 'POST', body: JSON.stringify(body) });

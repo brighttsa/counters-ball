@@ -99,5 +99,7 @@ export function publicRoom(room, now = Date.now()) {
   }));
   return { mode: room.mode ?? 'duel', phase: room.phase, levelId: room.levelId, seats,
     ...(room.simulation ? { simulation: room.simulation, matchId:room.epoch } : {}),
+    ...(room.ranked?.active?{ranked:{kind:'ranked',serverNow:now,suspendedAt:room.ranked.suspendedAt??null,
+      turnDeadline:room.ranked.turnDeadline??null,turnSeconds:60,reconnectSeconds:90}}:{}),
     ...(room.mode === 'tournament' ? { tournament: publicTournament(room) } : {}), updatedAt: room.updatedAt };
 }

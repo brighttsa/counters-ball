@@ -1,11 +1,12 @@
 export function createAuthoritativeRoomController({matchId,mySide,initial,adapter,send,read,
-  socketFactory,onStatus=()=>{},onEnd=()=>{},pollMs=2500,retryMs=1500}) {
+  socketFactory,onStatus=()=>{},onEnd=()=>{},onRoom=()=>{},pollMs=2500,retryMs=1500}) {
   let state=initial,closed=false,pending=false,applying=false,recovery=false,chain=Promise.resolve(),retryTimer=null,wakeRetry=null;
   adapter.apply(initial);
   const lock=()=>adapter.lock(closed || pending || applying || recovery || state.rules.phase==='ended');
   const receive=message=>{
     chain=chain.then(async()=>{
       const next=message?.state;
+      if(!closed && message?.room?.matchId===matchId)onRoom(message.room);
       if(closed || message?.matchId!==matchId || next?.version!=='server-v1' || next.levelId!==state.levelId
         || !Number.isInteger(next.seq) || next.seq<=state.seq)return;
       applying=true;lock();
@@ -18,7 +19,7 @@ export function createAuthoritativeRoomController({matchId,mySide,initial,adapte
     }).catch(()=>{if(!closed){recovery=true;lock();onStatus('recovery');}});
     return chain;
   };
-  const socket=socketFactory(message=>{if(message.type==='authoritative-shot')void receive(message);});
+  const socket=socketFactory(message=>{if(message.type==='authoritative-shot'||message.room)void receive(message);});
   const refresh=async()=>{try{await receive(await read());}catch{if(!closed)onStatus('reconnecting');}};
   const timer=setInterval(()=>{if(!closed)void refresh();},pollMs);
   const retry=()=>new Promise(resolve=>{wakeRetry=resolve;retryTimer=setTimeout(()=>{wakeRetry=null;resolve();},retryMs);});

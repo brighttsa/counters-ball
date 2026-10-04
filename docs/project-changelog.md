@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-10-04 - Ranked integration candidate (not live)
+
+- Integrated server-owned ranked matchmaking, verified result settlement, seasonal standings and turn clocks against the current public site without enabling production ranked play.
+- Added a direct ranked lobby entry and standings link, preserving the current casual and private-room navigation.
+- Verified a local two-profile match and a placed leaderboard entry after five matches against three opponents; physical two-device testing remains before release.
+
 ## 2026-10-03 - Home practice button
 
 - Gave Practice with Kwame its own full-width row under Daily Flick and All

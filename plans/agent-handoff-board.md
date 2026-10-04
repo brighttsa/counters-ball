@@ -9,6 +9,16 @@ precedence over stale copies of this board. Until both clones adopt the helper,
 coordinate board claims manually. See `docs/collaboration-workflow.md`.
 
 ## In progress
+Ranked production integration: Codex, 2026-10-04, branch `codex/ranked-integration`
+at `/private/tmp/konk-ranked-integration`. Based on public `4100a27`, with ranked
+backend, standings and opt-in lobby reconciled while keeping the production flag
+off. Focused 54 tests and full 607-test suite pass; Worker dry run and local
+two-profile match pass. A five-match local run placed one KONKER after three
+distinct opponents; populated board and lobby were inspected at desktop and
+phone widths. Remaining: physical two-device ranked test and final security
+review before any live activation. Collaboration helper could not claim because
+this checkout's origin is GitHub, not the local peer remote.
+
 NXWRTH release: Codex, 2026-10-03. Isolated release checkout from origin/main.
 Owner approved Afro Rave 35 WAV as main theme and requested publication.
 Scope: promo/nxwrth, soundtrack routing/asset, music credits and focused tests.

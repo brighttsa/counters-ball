@@ -1,5 +1,6 @@
 import { publicRoom, seatFor, touch } from './live-match-room-rules.js';
 import { tournamentMatchFor } from './tournament-room-rules.js';
+import {resumeRankedTurn} from './ranked-abandonment-policy.js';
 
 export function upgradeLiveRoomSocket(ctx, Pair = globalThis.WebSocketPair) {
   const pair = new Pair();
@@ -29,6 +30,7 @@ export async function handleLiveRoomSocketMessage(ctx, socket, raw) {
   if (seatFor(room, attachment.token) !== attachment.seat) { socket.close(1008, 'Seat unavailable'); return; }
   const verdict = touch(room, attachment.seat);
   if (!verdict.ok) { socket.close(1008, 'Seat unavailable'); return; }
+  resumeRankedTurn(room,Date.now());
   await ctx.storage.put('room', room);
   broadcastLiveRoom(ctx, room);
 }

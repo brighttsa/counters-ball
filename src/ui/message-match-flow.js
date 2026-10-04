@@ -8,7 +8,7 @@ import { cleanPlayerNames } from '../core/hot-seat-series-and-rivalry-record.js'
 import { CAMPAIGN_LEVELS } from '../levels/campaign-level-definitions.js';
 import { MessageMatchLetterCard } from './message-match-letter-card.js?v=2';
 import { startLiveRoomFromSnapshot } from './live-room-snapshot-start.js';
-import { startAuthoritativeRoomSession } from './authoritative-room-session-start.js';
+import { startAuthoritativeRoomSession } from './authoritative-room-session-start.js?v=2';
 const other = (side) => (side === 'home' ? 'away' : 'home');
 export function createMessageMatchFlow(deps) {
   const { app, menus, hud, sound, cameraDirector } = deps;

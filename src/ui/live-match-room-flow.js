@@ -2,7 +2,8 @@ import { joinLiveRoom, readLiveRoom, roomApiBase, roomLink, setLiveRoomName, set
 import { createPreviewAwareRoom } from '../core/live-room-preview-creation.js';
 import { requestRoomRematch } from '../core/live-match-room-transport.js?v=7';
 import { renderTournamentBracket } from './tournament-room-bracket.js';
-import { createPublicRivalSearch } from './public-rival-matchmaking-flow.js';
+import { createPublicRivalSearch } from './public-rival-matchmaking-flow.js?v=2';
+import { rankedSearchEntry, decorateRankedLobby } from './ranked-search-entry.js';
 import { wireKonkerProfileControls } from './konker-profile-controls.js';
 import { markRoomLocation } from '../core/live-room-seat-recovery.js';
 import { STREET_LEGENDS_ACTS } from '../levels/street-legends-acts-and-unlocks.js?v=2';
@@ -10,7 +11,7 @@ import { createTableTalkControls } from './table-talk-controls.js?v=5';
 const $ = (id) => document.getElementById(id);
 const other = (seat) => seat === 'home' ? 'away' : 'home';
 export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGENDS_ACTS.find(act => act.id === id), prepareLevel = (value) => value, baseUrl, showTitle, showRoomScreen = () => {}, onStart, music }) {
-  const api = roomApiBase();
+  const api = roomApiBase(), ranked = rankedSearchEntry();
   const voiceRoot = $('table-talk-controls');
   const voice = voiceRoot ? createTableTalkControls(voiceRoot, api, music) : { configure() {}, setInMatch() {}, leave: async () => {} };
   wireKonkerProfileControls(api);
@@ -53,12 +54,15 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
     document.querySelector('[name="room-format-choice"][value="duel"]').checked = path !== 'knockout';
     createButton.hidden = path === 'rival'; joinButton.hidden = path === 'rival';
     $('find-rival').hidden = path !== 'rival';
+    $('konker-profile-controls').hidden = !(path === 'rival' && ranked.requestSearch);
     $('live-room-title').textContent = path === 'friend' ? 'Bring a friend to the table'
-      : path === 'knockout' ? 'Host a four-player knockout' : 'Find someone to play';
+      : path === 'knockout' ? 'Host a four-player knockout' : ranked.requestSearch ? 'Play ranked' : 'Find someone to play';
     $('live-room-line').textContent = path === 'friend' ? 'Host a table or enter your friend’s room code.'
       : path === 'knockout' ? 'Four players. Two semifinals. One final. Host or join with a room code.'
-        : 'Meet another player for a casual match.';
+        : ranked.requestSearch ? 'Skill-based matchmaking. 60-second turns; 90-second reconnect grace. Saved KONKER profiles only.'
+          : 'Meet another player for a casual match.';
     joinButton.disabled = !roomCode.value.trim();
+    if (path === 'rival') decorateRankedLobby(ranked);
   };
   const setBusy = (busy) => {
     createButton.disabled = busy;
@@ -189,7 +193,7 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
     render(result.room);
     if (!started || result.room.mode === 'tournament') { startSocket(); startPolling(); }
   };
-  const search = createPublicRivalSearch({ api, status, name: () => $('live-room-name').value,
+  const search = createPublicRivalSearch({ ...ranked, api, status, name: () => $('live-room-name').value,
     busy(value) {
       setBusy(value);
       for (const id of ['live-room-name', 'live-room-code', 'live-room-format']) $(id).disabled = value;
@@ -201,13 +205,14 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
       pathFields.format.hidden = true;
       $('live-room-path-back').hidden = value;
       $('live-room-venue').textContent = value ? 'Schoolyard Break' : currentLevel.name;
-      $('live-room-line').textContent = value ? 'A casual match. Two real players.' : 'Find a rival or invite your friends.';
+      $('live-room-line').textContent = ranked.requestSearch ? 'Ranked: 60-second turns. 90-second reconnect grace. Saved profiles only.'
+        : value ? 'A casual match. Two real players.' : 'Find a rival or invite your friends.';
     },
     matched(result) {
       publicPair = true;
       open(acceptMatchedLiveRoom(result));
-      $('live-room-title').textContent = 'Rival found';
-      $('live-room-line').textContent = 'A casual match at Schoolyard Break.';
+      $('live-room-title').textContent = result.ranked ? 'Ranked rival found' : 'Rival found';
+      $('live-room-line').textContent = result.ranked ? 'Ranked at Schoolyard Break. 60-second turns; reconnect within 90 seconds.' : 'A casual match at Schoolyard Break.';
       createButton.hidden = true; joinButton.hidden = true;
       roomCode.closest('label').hidden = true;
       document.querySelector('[data-action="live-room-copy"]').hidden = true;
@@ -215,6 +220,7 @@ export function createLiveMatchRoomFlow({ level, levelForId = id => STREET_LEGEN
       status('Your rival is here. Ready up together.');
     },
   });
+  if (ranked.requestSearch) $('find-rival').textContent = 'Find ranked rival';
   $('find-rival').addEventListener('click', () => search.start());
   $('cancel-rival-search').addEventListener('click', () => search.cancel());
   return {

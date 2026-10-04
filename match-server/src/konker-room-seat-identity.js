@@ -2,7 +2,7 @@
 // Only the worker may supply verifiedProfileId; seat tokens still prove ownership.
 import { checkProfileRequestLimit } from './profile-request-limits.js';
 
-export async function verifyReadyProfile(request, env, body) {
+export async function verifyReadyProfile(request, env, body, {checkLimit=checkProfileRequestLimit,afterVerify,includeName=false}={}) {
   delete body.verifiedProfileId;
   const id = body.profileId;
   delete body.profileId;
@@ -15,7 +15,7 @@ export async function verifyReadyProfile(request, env, body) {
   if (origin && !(env.ALLOWED_ORIGINS ?? '').split(',').map(value => value.trim()).includes(origin)) {
     return Response.json({ error: 'origin not allowed' }, { status: 403 });
   }
-  const limit = await checkProfileRequestLimit(request, env);
+  const limit = await checkLimit(request, env);
   if (!limit.ok) return limit;
   const stub = env.KONK_MATCH.get(env.KONK_MATCH.idFromName(`player:${id}`));
   const response = await stub.fetch('https://match/player', { headers: { Authorization: authorization } });
@@ -24,6 +24,8 @@ export async function verifyReadyProfile(request, env, body) {
     return Response.json({ error: 'profile verification failed; check your account before readying up' }, { status: 403 });
   }
   body.verifiedProfileId = id;
+  if(afterVerify){const allowance=await afterVerify(env,id);if(!allowance.ok)return allowance;}
+  if(includeName)body.verifiedName=result.profile.name;
   return null;
 }
 

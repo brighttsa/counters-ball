@@ -1,5 +1,6 @@
 import { publicRoom, seatFor } from './live-match-room-rules.js';
 import { broadcastLiveRoom } from './live-room-websocket-session.js';
+import {rankedResultJob,RANKED_OUTBOX} from './ranked-result-outbox.js';
 
 export async function leavePublicMatchLobby(ctx, request) {
   const room = await ctx.storage.get('room');
@@ -11,10 +12,14 @@ export async function leavePublicMatchLobby(ctx, request) {
   else if (!room.matchmaking || !['lobby', 'cancelled'].includes(room.phase)) {
     status = 409; body = { error: 'match has already started' };
   } else {
+    if(room.phase==='cancelled')return Response.json({room:publicRoom(room)});
     room.phase = 'cancelled';
     for (const player of Object.values(room.seats)) if (player) player.ready = false;
     room.updatedAt = Date.now();
-    await ctx.storage.put('room', room);
+    if(room.ranked?.active){
+      room.cancelReason='lobby-departure';const job={...rankedResultJob(room),action:'void'};
+      await ctx.storage.put({room,[RANKED_OUTBOX]:job});await ctx.storage.setAlarm(job.nextAt);
+    }else await ctx.storage.put('room', room);
     broadcastLiveRoom(ctx, room);
     body = { room: publicRoom(room) };
   }

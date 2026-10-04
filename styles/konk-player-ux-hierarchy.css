@@ -67,6 +67,9 @@
 .screen-live-room .room-path[aria-pressed="true"] b,
 .screen-live-room .room-path[aria-pressed="true"] small { color: var(--ink); }
 .room-path-back { margin: 8px 0; }
+#ranked-standings-link,
+#ranked-standings-link:visited { display: inline-block; margin: 8px 0 16px; color: var(--yellow); font-weight: 800; }
+#ranked-standings-link:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
 .screen-live-room .room-fields { margin-top: 12px; }
 .screen-live-room .friend-actions { margin-block: 12px; }
 #konker-profile-controls { margin-top: 12px; border-top: 1px solid var(--line-strong); }
