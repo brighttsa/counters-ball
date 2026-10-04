@@ -42,6 +42,18 @@ test('own provisional standing reports qualification without publishing a rank',
     assert.equal(result.own.rank,null);assert.equal(result.own.distinctOpponents,3);assert.equal(result.own.activeMatch,'abcdefgh23');assert.deepEqual(result.rows,[]);
   }finally{f.db.close();}
 });
+test('last rating movement is personal-only',async()=>{
+  const f=fixture();try{
+    await add(f,1,1012);
+    const key=`ranked:rating:0:${id(1)}`;
+    await f.ctx.storage.put({[key]:{...await f.ctx.storage.get(key),lastResult:{matchId:'match-1',delta:12,rating:1012,finishedAt:now}}});
+    const personal=await rankedStanding(f.ctx,f.env,{profileId:id(1)},now);
+    const publicBoard=await rankedStanding(f.ctx,f.env,{},now);
+    assert.equal(personal.own.lastResult.delta,12);
+    assert.equal(publicBoard.own,null);
+    assert.equal('lastResult' in publicBoard.rows[0],false);
+  }finally{f.db.close();}
+});
 test('malformed cursor and future seasons are rejected; fractional limits stay integral',async()=>{
   const f=fixture();try{
     await add(f,1,1200);await add(f,2,1100);

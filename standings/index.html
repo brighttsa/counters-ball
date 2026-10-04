@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KONK! | Ranked Standings</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap"><link rel="stylesheet" href="standings.css"></head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap"><link rel="stylesheet" href="standings.css"><link rel="stylesheet" href="personal-standing.css"></head>
 <body><header><a href="../"><img src="../assets/konk-logo.svg" alt="KONK!"></a><a href="../play/">Play KONK!</a></header>
 <main><p class="eyebrow">THE KONKERS BOARD</p><h1>WHO RUNS<br>THE TABLE?</h1>
 <div class="toolbar"><div class="season-control"><span class="season-label">Season</span><strong id="season-current" class="season-current">Loading</strong><select id="season" aria-label="Choose season" hidden disabled></select></div><button id="refresh">Refresh</button><a id="ranked" href="../play/?ranked=1" hidden>Play ranked</a></div>
 <p id="status" role="status" aria-live="polite">Loading standings...</p>
-<section id="own" hidden aria-label="Your standing"><strong id="own-name"></strong><span id="own-detail"></span></section>
+<section id="own" hidden aria-label="Your standing"><div class="own-heading"><span class="eyebrow">YOUR ROAD TO THE BOARD</span><strong id="own-name"></strong><span id="own-detail"></span></div><div id="own-progress" class="own-progress"></div><p id="own-last" class="own-last" hidden></p></section>
 <div class="table-wrap"><table><thead><tr><th>Rank</th><th>KONKER</th><th>Rating</th><th>W / D / L</th></tr></thead><tbody id="rows"></tbody></table></div>
 <button id="more" hidden>Show more</button><p class="note">Placement: five ranked matches against at least three opponents. Results and opponent strength determine rating.</p>
-<footer><strong>YƐ KONKI!</strong><span>BORN IN GHANA. PLAYED EVERYWHERE.</span></footer></main><script type="module" src="standings.js"></script></body></html>
+<footer><strong>YƐ KONKI!</strong><span>BORN IN GHANA. PLAYED EVERYWHERE.</span></footer></main><script type="module" src="standings.js?v=2"></script></body></html>

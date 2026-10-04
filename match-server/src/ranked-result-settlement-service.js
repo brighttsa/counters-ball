@@ -80,7 +80,10 @@ export async function settleRankedResult(ctx,source,{now=Date.now()}={}){
     const away=await seasonRecord(storage,entry.season,entry.participants.away);
     const ratings=settleRatings(home,away,result.winner,entry.participants.home,entry.participants.away);
     for(const side of ['home','away']){
-      const record=ratings[side];writes[recordKey(entry.season.id,entry.participants[side])]={...record,placed:isPlaced(record)};
+      const record=ratings[side],before=side==='home'?home:away;
+      writes[recordKey(entry.season.id,entry.participants[side])]={...record,placed:isPlaced(record),
+        lastResult:{matchId:entry.matchId,delta:Math.round(record.rating)-Math.round(before.rating),
+          rating:Math.round(record.rating),finishedAt:receipt.finishedAt}};
     }
     completed.delta={home:ratings.delta,away:-ratings.delta};
   }

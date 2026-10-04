@@ -3,6 +3,7 @@ import { createAuthoritativeRoomController } from '../core/authoritative-room-co
 import { connectLiveRoomSocket } from '../core/live-match-room-transport.js?v=7';
 import { createAuthoritativeCheckpointPlayback } from '../gameplay/authoritative-room-checkpoint-playback.js';
 import { createRankedMatchClock } from './ranked-match-clock.js';
+import { showRankedFullTimeRating } from './ranked-full-time-rating.js';
 
 export async function startAuthoritativeRoomSession({api,index,id,mySide,names,openTable,hud,sound,app,menus}) {
   try {
@@ -24,7 +25,10 @@ export async function startAuthoritativeRoomSession({api,index,id,mySide,names,o
             controller?.close();menus.show('live-room');hud.show(false);
             document.getElementById('live-room-status').textContent='Ranked match void. No rating change. Search again when both players can connect.';
           }
-        },onEnd:()=>clock.close(),
+        },onEnd:()=>{
+          clock.close();
+          if(initial.room.ranked)void Promise.resolve().then(()=>showRankedFullTimeRating(api,initial.matchId));
+        },
         onStatus(status){
           const messages={pending:['SENDING YOUR FLICK','Waiting for the table.'],
             reconnecting:['RECONNECTING','Your flick will be retried safely.'],

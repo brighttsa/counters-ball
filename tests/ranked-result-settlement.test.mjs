@@ -26,6 +26,8 @@ test('equal ratings exchange 12 points; draws and opponent strength drive Elo, n
 test('one atomic write settles both players; duplicates survive a coordinator restart',async()=>{
   const f=fixture();await f.reserve();const first=await f.settle();
   assert.equal(first.status,'settled');assert.equal(f.store.get(`ranked:rating:0:${ids.home}`).rating,1012);
+  assert.deepEqual(f.store.get(`ranked:rating:0:${ids.home}`).lastResult,{matchId:f.source.room.epoch,delta:12,rating:1012,finishedAt:now+1000});
+  assert.equal(f.store.get(`ranked:rating:0:${ids.away}`).lastResult.delta,-12);
   assert.equal(f.store.get(`ranked:rating:0:${ids.away}`).matches,1);
   assert.deepEqual(await f.settle(),first);
   assert.deepEqual(await settleRankedResult({storage:f.ctx.storage},{roomId:f.source.roomId,receipt:f.receipt()},{now:now+2000}),first);

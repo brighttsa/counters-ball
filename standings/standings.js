@@ -21,8 +21,23 @@ async function load(more=false){
     cursor=result.nextCursor;$('more').hidden=!cursor;
     $('status').textContent=result.placedPlayers?`${result.placedPlayers} placed KONKER${result.placedPlayers===1?'':'S'}`:'No placed KONKERS yet.';
     $('own').hidden=!result.own;
-    if(result.own){$('own-name').textContent=result.own.name??'YOUR STANDING';
-      $('own-detail').textContent=result.own.placed?`Rank ${result.own.rank} · ${result.own.rating} rating`:`Provisional · ${result.own.rating} rating · ${Math.min(5,result.own.matches)}/5 matches · ${result.own.distinctOpponents}/3 opponents`;}
+    if(result.own){const own=result.own;
+      $('own-name').textContent=own.name??'KONKER';
+      $('own-detail').textContent=own.placed?`Rank ${own.rank} · ${own.rating} rating`:`Provisional · ${own.rating} rating`;
+      $('own-progress').replaceChildren();
+      for(const [label,value,target] of [['Ranked matches',own.matches,5],['Different opponents',own.distinctOpponents,3]]){
+        const item=document.createElement('div'),heading=document.createElement('span'),bar=document.createElement('progress');
+        heading.textContent=`${label} · ${Math.min(value,target)} / ${target}`;bar.max=target;bar.value=Math.min(value,target);
+        item.append(heading,bar);$('own-progress').append(item);}
+      const remainingMatches=Math.max(0,5-own.matches),remainingOpponents=Math.max(0,3-own.distinctOpponents);
+      const next=document.createElement('p');next.className='own-next';
+      next.textContent=own.placed?'You are on the board. Every ranked result can move your rating.':
+        `To place: ${remainingMatches} more ranked match${remainingMatches===1?'':'es'} and ${remainingOpponents} new opponent${remainingOpponents===1?'':'s'}.`;
+      $('own-progress').append(next);
+      $('own-last').hidden=!own.lastResult;
+      if(own.lastResult){const delta=own.lastResult.delta;
+        $('own-last').textContent=`Last ranked match · ${delta>0?'+':''}${delta} rating · now ${own.lastResult.rating}`;}
+    }
   }catch(error){
     $('status').textContent=error.status===409?'Ranked standings are not live yet. Casual play is available.':error.status?error.message:'Standings could not load. Check your connection and retry.';
     if(!more){$('rows').replaceChildren();$('own').hidden=true;$('ranked').hidden=true;$('more').hidden=true;}

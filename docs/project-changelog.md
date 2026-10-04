@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-10-04 - Personal ranked progress
+
+- The standings page now shows separate match and opponent placement progress, plus the exact remaining requirements.
+- Ranked full-time results wait for verified server settlement before showing rating movement; the authenticated standings card keeps the most recent change.
+
 ## 2026-10-04 - Compact idle voice control
 
 - Sized the disconnected Join Voice panel to its contents on room screens, while preserving the 44px button target and expandable connected/error states.

@@ -20,7 +20,9 @@ export async function rankedStanding(ctx,env,{profileId,seasonId,cursor,limit=25
     if(!row&&Number(season)>0&&(await ctx.storage.get(`ranked:pending:${Number(season)-1}`)??0)>0)throw Object.assign(Error('Previous season results are still settling'),{status:503});
     const previous=!row&&Number(season)>0?await ctx.storage.get(`ranked:rating:${Number(season)-1}:${profileId}`):null;
     own=row?{...publicRow(row),rank:row.placed?rankFor(row.rating):null,placed:Boolean(row.placed)}:{...freshRating(previous),rank:null,placed:false};
-    own.distinctOpponents=(await ctx.storage.get(`ranked:rating:${season}:${profileId}`))?.opponents?.length??0;
+    const record=await ctx.storage.get(`ranked:rating:${season}:${profileId}`);
+    own.distinctOpponents=record?.opponents?.length??0;
+    own.lastResult=record?.lastResult??null;
     const active=await ctx.storage.get(`ranked:active:${profileId}`);own.activeMatch=active?.roomId??null;
   }
   const last=rows.at(-1);
